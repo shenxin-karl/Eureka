@@ -34,6 +34,7 @@ function(GetRelativeDir relativeDir)
 endfunction()
 
 list(APPEND allSubDir "Dx12Renderer")
+list(APPEND allSubDir "Engine")
 
 set(PROJECT_COMPONENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Component)
 set(PROJECT_LIBRAIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Libraies)
