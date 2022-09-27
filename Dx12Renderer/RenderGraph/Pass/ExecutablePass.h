@@ -3,7 +3,6 @@
 #include <RenderGraph/RenderGraphStd.h>
 #include <Dx12lib/Context/ContextProxy.hpp>
 #include <RenderGraph/Pass/PassResourcePtr.hpp>
-#include <Dx12lib/Texture/DepthStencilTexture.h>
 
 namespace rgph {
 

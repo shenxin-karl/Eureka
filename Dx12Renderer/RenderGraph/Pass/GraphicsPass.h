@@ -1,5 +1,6 @@
 #pragma once
 #include <RenderGraph/Pass/ExecutablePass.h>
+#include <Dx12lib/Texture/Texture.h>
 
 namespace rgph {
 
@@ -16,15 +17,15 @@ public:
 	const dx12lib::RenderTargetView &getRTV() const;
 	const dx12lib::DepthStencilView &getDSV() const;
 public:
-	using GetRTVFuncType = std::function<const dx12lib::RenderTargetView &(const dx12lib::IRenderTarget *)>;
-	using GetDSVFuncType = std::function<const dx12lib::DepthStencilView &(const dx12lib::IDepthStencil *)>;
+	using GetRTVFuncType = std::function<const dx12lib::RenderTargetView &(const dx12lib::Texture *)>;
+	using GetDSVFuncType = std::function<const dx12lib::DepthStencilView &(const dx12lib::Texture *)>;
 
 	std::optional<D3D12_RECT> customScissorRect;
 	std::optional<D3D12_VIEWPORT> customViewport;
 	GetRTVFuncType pGetRTVFunc;
 	GetDSVFuncType pGetDSVFunc;
-	PassResourcePtr<dx12lib::IRenderTarget> pRenderTarget;
-	PassResourcePtr<dx12lib::IDepthStencil> pDepthStencil;
+	PassResourcePtr<dx12lib::Texture> pRenderTarget;
+	PassResourcePtr<dx12lib::Texture> pDepthStencil;
 };
 
 }

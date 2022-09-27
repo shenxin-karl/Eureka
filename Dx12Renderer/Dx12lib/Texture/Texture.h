@@ -113,6 +113,18 @@ private:
 	bool _isSupportSRV = false;
 };
 
+bool hasAlpha(DXGI_FORMAT format);
+bool isUAVCompatibleFormat(DXGI_FORMAT format);
+bool isSRGBFormat(DXGI_FORMAT format);
+bool isBGRFormat(DXGI_FORMAT format);
+bool isDepthFormat(DXGI_FORMAT format);
+bool hasStencilFormat(DXGI_FORMAT format);
+DXGI_FORMAT getDepthDSVFormat(DXGI_FORMAT format);
+DXGI_FORMAT getDepthSRVFormat(DXGI_FORMAT format);
+DXGI_FORMAT getSRGBFormat(DXGI_FORMAT format, bool hasStencil);
+DXGI_FORMAT getUAVCompatableFormat(DXGI_FORMAT format);
+DXGI_FORMAT getTypelessFormat(DXGI_FORMAT format);
+
 
 }
 

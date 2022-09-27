@@ -1,5 +1,4 @@
 #include "GraphicsPass.h"
-#include "Dx12lib/Texture/TextureStd.h"
 
 namespace rgph {
 
@@ -8,15 +7,11 @@ GraphicsPass::GraphicsPass(const std::string &passName, bool rtActive, bool dsAc
 , pRenderTarget(this, "RenderTarget", rtActive)
 , pDepthStencil(this, "DepthStencil", dsActive)
 {
-	pGetRTVFunc = [](const dx12lib::IRenderTarget *ptr) -> const dx12lib::RenderTargetView & {
-		auto *pResource = dynamic_cast<const dx12lib::IRenderTarget2D *>(ptr);
-		assert(pResource != nullptr);
-		return pResource->getRTV();
+	pGetRTVFunc = [](const dx12lib::Texture *ptr) -> const dx12lib::RenderTargetView & {
+		return ptr->get2dRTV();
 	};
-	pGetDSVFunc = [](const dx12lib::IDepthStencil *ptr) -> const dx12lib::DepthStencilView &{
-		auto *pResource = dynamic_cast<const dx12lib::IDepthStencil2D *>(ptr);
-		assert(pResource != nullptr);
-		return pResource->getDSV();
+	pGetDSVFunc = [](const dx12lib::Texture *ptr) -> const dx12lib::DepthStencilView &{
+		return ptr->get2dDSV();
 	};
 }
 
