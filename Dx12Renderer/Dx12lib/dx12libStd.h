@@ -142,21 +142,6 @@ class SRStructuredBuffer;
 class UAStructuredBuffer;
 class ReadBackBuffer;
 
-class DepthStencil2D;
-class DepthStencil2DArray;
-
-class SamplerTexture2D;
-class SamplerTexture2DArray;
-class SamplerTextureCube;
-
-class RenderTarget2D;
-class RenderTarget2DArray;
-class RenderTargetCube;
-
-class UnorderedAccess2D;
-class UnorderedAccess2DArray;
-class UnorderedAccessCube;
-
 interface IResource;
 interface IBufferResource;
 interface IConstantBuffer;
@@ -165,25 +150,6 @@ interface IIndexBuffer;
 interface ISRStructuredBuffer;
 interface IUAStructuredBuffer;
 interface IReadBackBuffer;
-
-interface ITextureResource;
-interface ITextureResource2D;
-interface ITextureResource2DArray;
-interface ITextureResourceCube;
-
-interface IRenderTarget;
-interface IRenderTarget2D;
-interface IRenderTarget2DArray;
-interface IRenderTargetCube;
-
-interface IUnorderedAccess;
-interface IUnorderedAccess2D;
-interface IUnorderedAccess2DArray;
-interface IUnorderedAccessCube;
-
-interface IDepthStencil;
-interface IDepthStencil2D;
-interface IDepthStencil2DArray;
 
 class Texture;
 

@@ -3,10 +3,8 @@
 #include "InputSystem/window.h"
 #include <dx12lib/Device/DeviceStd.h>
 #include <dx12lib/Context/ContextStd.h>
-
-#include "Dx12lib/Texture/DepthStencilTexture.h"
-#include "Dx12lib/Texture/RenderTargetTexture.h"
 #include "GameTimer/GameTimer.h"
+#include "Dx12lib/Texture/Texture.h"
 
 using namespace Math;
 
@@ -136,15 +134,17 @@ void Application::onTick(std::shared_ptr<GameTimer> pGameTimer) {
 		.right = static_cast<LONG>(_width),
 		.bottom = static_cast<LONG>(_height),
 	};
+	auto pRenderTarget2D = _pSwapChain->getRenderTarget2D();
+	auto pDepthStencil2D = _pSwapChain->getDepthStencil2D();
 
 	pDirectProxy->setViewport(viewport);
 	pDirectProxy->setScissorRect(scissorRect);
 	pDirectProxy->transitionBarrier(_pSwapChain->getRenderTarget2D(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 	{
-		pDirectProxy->setRenderTarget(_pSwapChain->getRenderTarget2D()->getRTV(), _pSwapChain->getDepthStencil2D()->getDSV());
-		pDirectProxy->clearColor(_pSwapChain->getRenderTarget2D()->getRTV(), color);
+		pDirectProxy->setRenderTarget(pRenderTarget2D->get2dRTV(), pDepthStencil2D->get2dDSV());
+		pDirectProxy->clearColor(pRenderTarget2D->get2dRTV(), color);
 	}
-	pDirectProxy->transitionBarrier(_pSwapChain->getRenderTarget2D(), D3D12_RESOURCE_STATE_PRESENT);
+	pDirectProxy->transitionBarrier(pRenderTarget2D, D3D12_RESOURCE_STATE_PRESENT);
 	pCmdQueue->executeCommandList(pDirectProxy);
 }
 

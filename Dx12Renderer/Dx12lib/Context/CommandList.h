@@ -19,12 +19,6 @@ public:
 
 /// CommonContext api
 	void trackResource(std::shared_ptr<IResource> &&pResource) override;
-	std::shared_ptr<SamplerTexture2D> createDDSTexture2DFromFile(const std::wstring &fileName) override;
-	std::shared_ptr<SamplerTexture2D> createDDSTexture2DFromMemory(const void *pData, size_t sizeInByte) override;
-	std::shared_ptr<SamplerTexture2DArray> createDDSTexture2DArrayFromFile(const std::wstring &fileName) override;
-	std::shared_ptr<SamplerTexture2DArray> createDDSTexture2DArrayFromMemory(const void *pData, size_t sizeInByte) override;
-	std::shared_ptr<SamplerTextureCube> createDDSTextureCubeFromFile(const std::wstring &fileName) override;
-	std::shared_ptr<SamplerTextureCube> createDDSTextureCubeFromMemory(const void *pData, size_t sizeInByte) override;
 	std::shared_ptr<Texture> createTextureFromFile(const std::wstring &fileName, bool sRGB) override;
 	std::shared_ptr<Texture> createTextureFromMemory(const std::string &extension, const void *pData, size_t sizeInByte, bool sRGB) override;
 

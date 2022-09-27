@@ -1,7 +1,6 @@
 #pragma once
 #include <RenderGraph/RenderGraphStd.h>
 #include <RenderGraph/Bindable/Bindable.hpp>
-#include <Dx12lib/Texture/SamplerTexture.h>
 #include <Dx12lib/Pipeline/ShaderRegister.hpp>
 
 namespace rgph {

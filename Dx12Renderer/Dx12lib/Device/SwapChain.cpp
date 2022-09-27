@@ -4,9 +4,9 @@
 #include <Dx12lib/Context/CommandQueue.h>
 #include <Dx12lib/Context/CommandList.h>
 #include <Dx12lib/Tool/MakeObejctTool.hpp>
-#include <Dx12lib/Texture/DepthStencilTexture.h>
-#include <Dx12lib/Texture/RenderTargetTexture.h>
 #include <string>
+
+#include "Dx12lib/Texture/Texture.h"
 
 namespace dx12lib {
 
@@ -95,11 +95,11 @@ bool SwapChain::getVerticalSync() const {
 	return _verticalSync;
 }
 
-std::shared_ptr<RenderTarget2D> SwapChain::getRenderTarget2D() const {
+std::shared_ptr<Texture> SwapChain::getRenderTarget2D() const {
 	return _pSwapChainBuffer[_currentBackBufferIndex];
 }
 
-std::shared_ptr<DepthStencil2D> SwapChain::getDepthStencil2D() const {
+std::shared_ptr<Texture> SwapChain::getDepthStencil2D() const {
 	return _pDepthStencil2D;
 }
 
@@ -119,7 +119,7 @@ void SwapChain::updateBuffer(DirectContextProxy pDirectContext) {
 		name.append(std::to_wstring(i));
 		name.append(L"]");
 		pBuffer->SetName(name.c_str());
-		_pSwapChainBuffer[i] = std::make_shared<dx12libTool::MakeRenderTargetBuffer>(
+		_pSwapChainBuffer[i] = std::make_shared<dx12libTool::MakeTexture>(
 			_pDevice,
 			pBuffer, 
 			D3D12_RESOURCE_STATE_COMMON
@@ -132,7 +132,14 @@ void SwapChain::updateBuffer(DirectContextProxy pDirectContext) {
 	optClear.DepthStencil.Depth = 1.f;
 	optClear.DepthStencil.Stencil = 0;
 
-	_pDepthStencil2D = pDirectContext->createDepthStencil2D(_width, _height, &optClear);
+	auto depthMapDesc = Texture::make2D(
+		_depthStencilFormat,
+		_width,
+		_height,
+		D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
+	);
+
+	_pDepthStencil2D = pDirectContext->createTexture(depthMapDesc, &optClear);
 	_pDepthStencil2D->setResourceName(L"DepthStencil2D");
 }
 

@@ -8,7 +8,6 @@
 
 namespace dx12lib {
 
-
 interface IContext {
 	IContext() = default;
 	IContext(const IContext &) = delete;
@@ -21,12 +20,6 @@ interface IContext {
 
 interface ICommonContext : IContext {
 	virtual void trackResource(std::shared_ptr<IResource> &&pResource) = 0;
-	virtual std::shared_ptr<SamplerTexture2D> createDDSTexture2DFromFile(const std::wstring &fileName) = 0;
-	virtual std::shared_ptr<SamplerTexture2D> createDDSTexture2DFromMemory(const void *pData, size_t sizeInByte) = 0;
-	virtual std::shared_ptr<SamplerTexture2DArray> createDDSTexture2DArrayFromFile(const std::wstring &fileName) = 0;
-	virtual std::shared_ptr<SamplerTexture2DArray> createDDSTexture2DArrayFromMemory(const void *pData, size_t sizeInByte) = 0;
-	virtual std::shared_ptr<SamplerTextureCube> createDDSTextureCubeFromFile(const std::wstring &fileName) = 0;
-	virtual std::shared_ptr<SamplerTextureCube> createDDSTextureCubeFromMemory(const void *pData, size_t sizeInByte) = 0;
 	virtual std::shared_ptr<Texture> createTextureFromFile(const std::wstring &fileName, bool sRGB = false) = 0;
 	virtual std::shared_ptr<Texture> createTextureFromMemory(const std::string &extension, const void *pData, size_t sizeInByte, bool sRGB = false) = 0;
 
@@ -141,51 +134,6 @@ interface ICommonContext : IContext {
 		this->setShaderResourceView(sr, pStructuredBuffer->getSRV());
 	}
 #endif
-	/////////////////////////////////// RenderTarget //////////////////////////////////
-#if 1
-	template<typename...Args>
-	std::shared_ptr<RenderTarget2D> createRenderTarget2D(Args&&...args) {
-		return std::make_shared<dx12libTool::MakeRenderTarget2D>(
-			getDevice(),
-			std::forward<Args>(args)...
-		);
-	}
-
-	template<typename...Args>
-	std::shared_ptr<RenderTarget2DArray> createRenderTarget2DArray(Args&&...args) {
-		return std::make_shared<dx12libTool::MakeRenderTarget2DArray>(
-			getDevice(),
-			std::forward<Args>(args)...
-		);
-	}
-
-	template<typename...Args>
-	std::shared_ptr<RenderTargetCube> createRenderTargetCube(Args&&...args) {
-		return std::make_shared<dx12libTool::MakeRenderTargetCube>(
-			getDevice(),
-			std::forward<Args>(args)...
-		);
-	}
-#endif
-	/////////////////////////////////// DepthBuffer //////////////////////////////////
-#if 1
-	template<typename...Args>
-	std::shared_ptr<DepthStencil2D> createDepthStencil2D(Args&&... args) {
-		return std::make_shared<dx12libTool::MakeDepthStencil2D>(
-			getDevice(),
-			std::forward<Args>(args)...
-		);
-	}
-
-	template<typename...Args>
-	std::shared_ptr<DepthStencil2DArray> createDepthStencil2DArray(Args&& ...args) {
-		return std::make_shared<dx12libTool::MakeDepthStencil2DArray>(
-			getDevice(),
-			std::forward<Args>(args)...
-		);
-	}
-
-#endif
 	/////////////////////////////////// ReadBackBuffer //////////////////////////////////
 #if 1
 	template<typename... Args>
@@ -238,32 +186,6 @@ interface IComputeContext : virtual ICommonContext {
 	virtual void setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset = 0) = 0;
 	virtual void dispatch(size_t GroupCountX = 1, size_t GroupCountY = 1, size_t GroupCountZ = 1) = 0;
 
-	/////////////////////////////////// UnorderedAccess //////////////////////////////////
-#if 1
-	template<typename...Args>
-	std::shared_ptr<UnorderedAccess2D> createUnorderedAccess2D(Args&&...args) {
-		return std::make_shared<dx12libTool::MakeUnorderedAccess2D>(
-			getDevice(),
-			std::forward<Args>(args)...
-		);
-	}
-
-	template<typename...Args>
-	std::shared_ptr<UnorderedAccess2DArray> createUnorderedAccess2DArray(Args&&...args) {
-		return std::make_shared<dx12libTool::MakeUnorderedAccess2DArray>(
-			getDevice(),
-			std::forward<Args>(args)...
-		);
-	}
-
-	template<typename...Args>
-	std::shared_ptr<UnorderedAccessCube> createUnorderedAccessCube(Args&&...args) {
-		return std::make_shared<dx12libTool::MakeUnorderedAccessCube>(
-			getDevice(),
-			std::forward<Args>(args)...
-		);
-	}
-#endif
 	/////////////////////////////////// UAStructuredBuffer //////////////////////////////////
 #if 1
 	template<typename...Args>

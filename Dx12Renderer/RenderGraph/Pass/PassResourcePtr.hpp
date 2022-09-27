@@ -3,11 +3,9 @@
 #include <functional>
 #include <RenderGraph/Pass/PassResourceBase.h>
 #include <Dx12lib/Resource/IResource.h>
-#include <Dx12lib/Texture/TextureStd.h>
 #include <Dx12lib/Buffer/BufferStd.h>
 
 namespace rgph {
-
 
 template<typename T> requires(std::is_base_of_v<dx12lib::IResource, T>)
 class PassResourcePtr : public PassResourceBase {

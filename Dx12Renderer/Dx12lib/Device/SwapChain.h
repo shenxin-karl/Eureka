@@ -16,8 +16,8 @@ public:
 	void resize(DirectContextProxy pDirectContext, uint32 width, uint32 height);
 	DXGI_FORMAT getRenderTargetFormat() const;
 	DXGI_FORMAT getDepthStencilFormat() const;
-	std::shared_ptr<RenderTarget2D> getRenderTarget2D() const;
-	std::shared_ptr<DepthStencil2D> getDepthStencil2D() const;
+	std::shared_ptr<Texture> getRenderTarget2D() const;
+	std::shared_ptr<Texture> getDepthStencil2D() const;
 	Math::float2 getRenderTargetSize() const;
 	Math::float2 getInvRenderTargetSize() const;
 	void present();
@@ -35,8 +35,8 @@ private:
 	bool		_verticalSync = false;
 	std::weak_ptr<Device>			_pDevice;
 	WRL::ComPtr<IDXGISwapChain>		_pSwapChain;
-	std::shared_ptr<DepthStencil2D>	_pDepthStencil2D;
-	std::shared_ptr<RenderTarget2D>	_pSwapChainBuffer[kSwapChainBufferCount];
+	std::shared_ptr<Texture>		_pDepthStencil2D;
+	std::shared_ptr<Texture>		_pSwapChainBuffer[kSwapChainBufferCount];
 };
 
 }

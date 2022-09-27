@@ -41,7 +41,6 @@ using MakeComputePSO = _MakeObjectTool<ComputePSO>;
 using MakeConstantBuffer = _MakeObjectTool<ConstantBuffer>;
 using MakeIndexBuffer = _MakeObjectTool<IndexBuffer>;
 using MakeVertexBuffer = _MakeObjectTool<VertexBuffer>;
-using MakeRenderTargetBuffer = _MakeObjectTool<RenderTarget2D>;
 using MakeSRStructuredBuffer = _MakeObjectTool<SRStructuredBuffer>;
 using MakeReadBackBuffer = _MakeObjectTool<ReadBackBuffer>;
 
@@ -54,26 +53,7 @@ using MakeFRRawSRStructuredBuffer = _MakeObjectTool<FRSRStructuredBuffer<RawData
 
 template<typename T>
 using MakeFRSRStructuredBuffer = _MakeObjectTool<FRSRStructuredBuffer<T>>;
-
-
-// Texture
-using MakeSamplerTexture2D = _MakeObjectTool<SamplerTexture2D>;
-using MakeSamplerTexture2DArray = _MakeObjectTool<SamplerTexture2DArray>;
-using MakeSamplerTextureCube = _MakeObjectTool<SamplerTextureCube>;
-
-using MakeRenderTarget2D = _MakeObjectTool<RenderTarget2D>;
-using MakeRenderTarget2DArray = _MakeObjectTool<RenderTarget2DArray>;
-using MakeRenderTargetCube = _MakeObjectTool<RenderTargetCube>;
-
-using MakeDepthStencil2D = _MakeObjectTool<DepthStencil2D>;
-using MakeDepthStencil2DArray = _MakeObjectTool<DepthStencil2DArray>;
-
-using MakeUnorderedAccess2D = _MakeObjectTool<UnorderedAccess2D>;
-using MakeUnorderedAccess2DArray = _MakeObjectTool<UnorderedAccess2DArray>;
-using MakeUnorderedAccessCube = _MakeObjectTool<UnorderedAccessCube>;
-
 using MakeUAStructuredBuffer = _MakeObjectTool<UAStructuredBuffer>;
-
 using MakeTexture = _MakeObjectTool<Texture>;
 
 }
