@@ -1,4 +1,10 @@
-struct CbPrePass : register(b0, space8) {
+#ifndef __COMMON_HLSLI_
+#define __COMMON_HLSLI_
+
+#define PRE_PASS_SPACE			space8
+#define PRE_OBJ_SPACE			space0
+
+struct CbPrePass : register(b8, PASS_SPACE) {
     // camera
 	float4x4 matView;
 	float4x4 matInvView;
@@ -17,19 +23,21 @@ struct CbPrePass : register(b0, space8) {
 	float2   invRenderTargetSize;
 
     /// time
-	float		   totalTime;
-	float		   deltaTime;
+	float	totalTime;
+	float	deltaTime;
 
     /// fog
     float4   fogColor;						
-	float          fogStart;
-    float          fogEnd;
+	float    fogStart;
+    float    fogEnd;
     float2   cbPerPassPad1;
 };
 
-struct CbPreObject : register(b1, space8) {
+struct CbPreObject : register(b8, OBJ_SPACE) {
     float4x4 matWorld;
     float4x4 matInvWorld;
     float4x4 matNormal;
     float4x4 matInvNormal;
 };
+
+#endif

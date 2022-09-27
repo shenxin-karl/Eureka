@@ -2,6 +2,11 @@
 #include <Math/MathStd.hpp>
 #include <Dx12lib/Pipeline/ShaderRegister.hpp>
 
+namespace Eureak {
+
+constexpr dx12lib::RegisterSpace kPrePassSpace = dx12lib::RegisterSpace::Space8;
+constexpr dx12lib::RegisterSpace kPreObjectSpace = dx12lib::RegisterSpace::Space0;
+
 struct CbPrePass {
     // camera
 	Math::float4x4 matView;
@@ -31,8 +36,8 @@ struct CbPrePass {
     Math::float2   cbPerPassPad1;
 
 	constexpr static dx12lib::ShaderRegister kShaderRegister{
-		dx12lib::RegisterSlot::CBV0,
-		dx12lib::RegisterSpace::Space8
+		dx12lib::RegisterSlot::CBV8,
+		kPrePassSpace
 	};
 };
 
@@ -43,7 +48,10 @@ struct CbPreObject {
     Math::float4x4 matInvNormal;
 
 	constexpr static dx12lib::ShaderRegister kShaderRegister{
-		dx12lib::RegisterSlot::CBV1,
-		dx12lib::RegisterSpace::Space8
+		dx12lib::RegisterSlot::CBV8,
+		kPreObjectSpace
 	};
 };
+
+}
+
