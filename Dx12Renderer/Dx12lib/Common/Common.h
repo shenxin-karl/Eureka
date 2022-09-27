@@ -6,6 +6,7 @@
 #include <locale>
 #include <string>
 #include <Dx12lib/Common/D3DException.h>
+#include <cassert>
 
 inline void ThrowIfFailed(HRESULT hr, const std::source_location &sl = std::source_location::current()) {
 	if (FAILED(hr)) {

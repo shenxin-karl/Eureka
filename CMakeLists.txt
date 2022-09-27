@@ -39,7 +39,7 @@ list(APPEND allSubDir "Ext")
 
 set(PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Ext)
 set(PROJECT_BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Build)
-
+set(EUREAK_WORK_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 foreach(dirname ${allSubDir})
 	add_subdirectory(${dirname})

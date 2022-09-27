@@ -35,3 +35,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 	assimp
 )
 
+# 设置工作目录
+set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${EUREAK_WORK_DIR}")
