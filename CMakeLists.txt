@@ -35,9 +35,9 @@ endfunction()
 
 list(APPEND allSubDir "Dx12Renderer")
 list(APPEND allSubDir "Engine")
+list(APPEND allSubDir "Ext")
 
-set(PROJECT_COMPONENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Component)
-set(PROJECT_LIBRAIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Libraies)
+set(PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Ext)
 set(PROJECT_BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Build)
 
 

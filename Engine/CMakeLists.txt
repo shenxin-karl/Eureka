@@ -26,9 +26,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "")
 target_include_directories(${PROJECT_NAME} PUBLIC 
 	${PROJECT_FUNCTION_DIR}/
 	${PROJECT_RENDERER_DIR}/
+	${PROJECT_EXT_DIR}/assimp/include
+	${PROJECT_BUILD_DIR}/Ext/assimp/include/
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	Dx12lib
+	assimp
 )
 
