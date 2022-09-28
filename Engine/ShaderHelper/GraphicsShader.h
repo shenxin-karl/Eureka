@@ -7,8 +7,7 @@
 #include <vector>
 #include <Dx12lib/Tool/D3Dx12.h>
 #include <Dx12lib/dx12libStd.h>
-
-#include "KeywordMask.h"
+#include "ShaderHelper/KeywordMask.h"
 
 namespace Eureka {
 
