@@ -2,7 +2,7 @@
 #include <Math/MathStd.hpp>
 #include <Dx12lib/Pipeline/ShaderRegister.hpp>
 
-namespace Eureak {
+namespace Eureka {
 
 constexpr dx12lib::RegisterSpace kPrePassSpace = dx12lib::RegisterSpace::Space8;
 constexpr dx12lib::RegisterSpace kPreObjectSpace = dx12lib::RegisterSpace::Space0;

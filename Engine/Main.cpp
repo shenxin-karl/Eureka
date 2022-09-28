@@ -55,9 +55,12 @@ void test() {
 		std::cout << "type name is " << resourceType << std::endl;
 		std::cout << "bind point is " << bindPoint << std::endl;
 		std::cout << "register space is " << registerSpace << std::endl;
-
 	}
 
+	D3D12_SIGNATURE_PARAMETER_DESC signDesc;
+	for (size_t i = 0; i < desc.InputParameters; ++i) {
+		pShaderRef->GetInputParameterDesc(i, &signDesc);
+	}
 }
 
 int main() {
