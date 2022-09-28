@@ -4,7 +4,7 @@
 #define PRE_PASS_SPACE			space8
 #define PRE_OBJ_SPACE			space0
 
-struct CbPrePass : register(b8, PASS_SPACE) {
+struct CbPrePass : register(b8, PRE_PASS_SPACE) {
     // camera
 	float4x4 matView;
 	float4x4 matInvView;
@@ -33,7 +33,7 @@ struct CbPrePass : register(b8, PASS_SPACE) {
     float2   cbPerPassPad1;
 };
 
-struct CbPreObject : register(b8, OBJ_SPACE) {
+struct CbPreObject : register(b8, PRE_OBJ_SPACE) {
     float4x4 matWorld;
     float4x4 matInvWorld;
     float4x4 matNormal;

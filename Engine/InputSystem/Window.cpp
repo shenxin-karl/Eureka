@@ -239,6 +239,8 @@ void Window::start() {
 		_pGameTimer->start();
 }
 
+std::unique_ptr<Window::WindowClass> Window::WindowClass::_pSingleton = std::make_unique<WindowClass>();
+
 Window::WindowClass::WindowClass() : hInstance_(GetModuleHandle(nullptr)) {
 	// register class
 	WNDCLASSEX wc;
@@ -255,6 +257,10 @@ Window::WindowClass::WindowClass() : hInstance_(GetModuleHandle(nullptr)) {
 	wc.lpszClassName = getClassName();
 	wc.hIconSm = nullptr;
 	RegisterClassEx(&wc);
+}
+
+Window::WindowClass::~WindowClass() {
+
 }
 
 const char *Window::WindowClass::getClassName() {

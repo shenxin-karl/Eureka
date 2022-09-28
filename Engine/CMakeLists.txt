@@ -10,7 +10,8 @@ endif()
 
 file(GLOB_RECURSE HEADER_FILES *.h *.hpp *.ini)
 file(GLOB_RECURSE SOURCE_FILES *.c *.cpp)
-SET(AllFile ${HEADER_FILES} ${SOURCE_FILES})
+file(GLOB_RECURSE SHADER_FILES *.hlsl *.hlsli)
+SET(AllFile ${HEADER_FILES} ${SOURCE_FILES} ${SHADER_FILES})
 
 foreach(fileItem ${AllFile})       
 	# Get the directory of the source file
@@ -34,9 +35,27 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_BUILD_DIR}/Ext/assimp/include/
 )
 
+set_property(SOURCE ${SHADER_FILES} PROPERTY VS_TOOL_OVERRIDE "shader")	# 设置 hlsl 为 shader 资源文件
+
+## 定义 库 shader 提供文件
+add_definitions(-DEUREKA_HLSL_SHADER_PATH="${CMAKE_CURRENT_SOURCE_DIR}/HlslShader") 
+
+include(CmakeRC.cmake)
+cmrc_add_resource_library(Eureka-resources ALIAS Eureka::rc
+	NAMESPACE Eureka
+	# 打包到 exe 里面的 shader 
+	"HlslShader/Common.hlsli"
+)
+
+set_target_properties(Eureka-resources PROPERTIES FOLDER "EngineResource")
+
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	Dx12lib
 	assimp
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+	Eureka::rc
 )
 
 # 设置工作目录

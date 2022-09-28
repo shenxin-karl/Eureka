@@ -65,9 +65,10 @@ class Window::WindowClass {
 	HINSTANCE hInstance_ = nullptr;
 private:
 	using HandleMessageFuncType = LRESULT (CALLBACK *)(HWND, UINT, WPARAM, LPARAM);
-	static inline std::unique_ptr<WindowClass> _pSingleton = std::make_unique<WindowClass>();
+	static std::unique_ptr<WindowClass> _pSingleton;
 public:
 	WindowClass();
+	~WindowClass();
 	static HINSTANCE getInstance();
 	static const char *getClassName();
 	static inline HandleMessageFuncType pHandleMessageFunc = &(DefWindowProc);

@@ -1,9 +1,16 @@
 #include <iostream>
 #include "Application/Application.h"
 #include "GameTimer/GameTimer.h"
+#include "ShaderHelper/GraphicsShader.h"
 #include "ShaderHelper/ShaderHelper.h"
 
 void test() {
+
+	Eureka::GraphicsShaderDesc graphicsShaderDesc;
+	graphicsShaderDesc.fileName = "Assert/TestShader.hlsl";
+	
+	auto shader = std::make_unique<Eureka::GraphicsShader>(graphicsShaderDesc);
+
 	auto pByteCode = Eureka::ShaderHelper::compile(
 		L"Asset/Shaders/TestShader.hlsl",
 		nullptr,
@@ -41,7 +48,7 @@ void test() {
 	}
 
 	// 获取绑定槽位
-	for (int i = 0; i < desc.BoundResources; i++)
+	for (int i = 0; i < (INT)desc.BoundResources; i++)
 	{
 		D3D12_SHADER_INPUT_BIND_DESC  resource_desc;
 		pShaderRef->GetResourceBindingDesc(i, &resource_desc);

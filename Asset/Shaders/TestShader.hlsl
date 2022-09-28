@@ -1,3 +1,4 @@
+#include <Common.glsl>
 
 cbuffer cbPreCamera : register(b0) {
 	float4x4 gViewProj;

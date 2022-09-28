@@ -1,10 +1,13 @@
 #include "GraphicsShader.h"
-
 #include "GraphicsShaderVariant.h"
+#include "ShaderHelper/ShaderInclude.h"
 
 namespace Eureka {
 
 GraphicsShader::GraphicsShader(const GraphicsShaderDesc &graphicsShaderDesc) {
+}
+
+GraphicsShader::~GraphicsShader() {
 
 }
 

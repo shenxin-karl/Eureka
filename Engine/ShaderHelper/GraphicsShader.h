@@ -51,6 +51,7 @@ public:
 	static inline std::vector<ShaderEnterPoint> VS_HS_DS_GS_PS = { VSEnterPoint, HSEnterPoint, DSEnterPoint, GSEnterPoint, PSEnterPoint };
 public:
 	GraphicsShader(const GraphicsShaderDesc &desc);
+	~GraphicsShader();
 	void setKeyWord(const std::string &keyword, bool enable);
 	auto getShaderContent() const -> const std::string &;
 	auto getBlendDesc() const -> const D3D12_BLEND_DESC &;
