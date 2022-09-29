@@ -7,15 +7,15 @@
 void test() {
 
 	Eureka::GraphicsShaderDesc graphicsShaderDesc;
-	graphicsShaderDesc.fileName = "Assert/TestShader.hlsl";
+	graphicsShaderDesc.fileName = "Assets/Shaders/TestShader.hlsl";
 	
 	auto shader = std::make_unique<Eureka::GraphicsShader>(graphicsShaderDesc);
 
 	auto pByteCode = Eureka::ShaderHelper::compile(
-		L"Asset/Shaders/TestShader.hlsl",
+		L"Assets/Shaders/TestShader.hlsl",
 		nullptr,
 		"VS",
-		"vs_5_0"
+		"vs_5_1"
 	);
 
 	WRL::ComPtr<ID3D12ShaderReflection> pShaderRef;

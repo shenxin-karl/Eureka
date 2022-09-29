@@ -6,6 +6,19 @@ void KeywordMask::setFeatureKeywords(std::vector<FeatureKeywords> &&featureKeywo
 	_featureKeywords = std::move(featureKeywords);
 }
 
+void KeywordMask::setShaderContent(const char *pShaderContent) {
+	const char *pStart = pShaderContent;
+	const char *pLast = nullptr;
+	while (*pStart != '\0') {
+		pLast = pStart + 1;
+		while (*pLast != '\0' && *pLast != '\n')
+			++pLast;
+
+
+		pStart = pLast + 1;
+	}
+}
+
 void KeywordMask::setKeyWord(const std::string &keyword, bool enable) {
 	size_t index = findKeywordIndex(keyword);
 	if (index == -1)

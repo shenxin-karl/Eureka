@@ -37,8 +37,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 set_property(SOURCE ${SHADER_FILES} PROPERTY VS_TOOL_OVERRIDE "shader")	# 设置 hlsl 为 shader 资源文件
 
-## 定义 库 shader 提供文件
-add_definitions(-DEUREKA_HLSL_SHADER_PATH="${CMAKE_CURRENT_SOURCE_DIR}/HlslShader") 
+## 提供查找路径
+add_definitions(-DEUREKA_HLSL_SHADER_PATH="HlslShader") 
 
 include(CmakeRC.cmake)
 cmrc_add_resource_library(Eureka-resources ALIAS Eureka::rc

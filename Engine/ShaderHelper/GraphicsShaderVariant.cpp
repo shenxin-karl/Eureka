@@ -4,6 +4,7 @@ namespace Eureka {
 
 
 GraphicsShaderVariant::GraphicsShaderVariant(const GraphicsShader *pGraphicsShader) {
+
 }
 
 auto GraphicsShaderVariant::getPSO(std::vector<DXGI_FORMAT> rtFormats, DXGI_FORMAT dsFormat) const

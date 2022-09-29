@@ -1,10 +1,22 @@
+#include <filesystem>
 #include "GraphicsShader.h"
 #include "GraphicsShaderVariant.h"
 #include "ShaderHelper/ShaderInclude.h"
+#include "ShaderHelper/ShaderHelper.h"
 
 namespace Eureka {
 
-GraphicsShader::GraphicsShader(const GraphicsShaderDesc &graphicsShaderDesc) {
+GraphicsShader::GraphicsShader(const GraphicsShaderDesc &graphicsShaderDesc) : _graphicsShaderDesc(std::move(graphicsShaderDesc)) {
+	char error[256] = { '\0' };
+	auto path = std::filesystem::path(_graphicsShaderDesc.fileName).parent_path().string();
+	_pShaderContent = std::unique_ptr<char[]>(stb_include_file(
+		const_cast<char*>(_graphicsShaderDesc.fileName.c_str()),
+		nullptr, 
+		const_cast<char*>(path.c_str()), 
+		error
+	));
+	assert(_pShaderContent != nullptr);
+	_keywordMask.setShaderContent(_pShaderContent.get());
 }
 
 GraphicsShader::~GraphicsShader() {
@@ -15,8 +27,8 @@ void GraphicsShader::setKeyWord(const std::string &keyword, bool enable) {
 	_keywordMask.setKeyWord(keyword, enable);
 }
 
-auto GraphicsShader::getShaderContent() const -> const std::string & {
-	return _shaderContent;
+auto GraphicsShader::getShaderContent() const -> const char *{
+	return _pShaderContent.get();
 }
 
 auto GraphicsShader::getBlendDesc() const -> const D3D12_BLEND_DESC & {

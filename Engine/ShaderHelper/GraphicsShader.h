@@ -40,11 +40,11 @@ class GraphicsShaderVariant;
 class GraphicsShader {
 public:
 	using ShaderVariantMap = std::unordered_map<std::bitset<KeywordMask::kMaxKeyWord>, std::unique_ptr<GraphicsShaderVariant>>;
-	static inline ShaderEnterPoint VSEnterPoint = { EnterPointType::VS, "VS", "vs_5_0" };
-	static inline ShaderEnterPoint HSEnterPoint = { EnterPointType::HS, "HS", "hs_5_0" };
-	static inline ShaderEnterPoint DSEnterPoint = { EnterPointType::DS, "DS", "ds_5_0" };
-	static inline ShaderEnterPoint GSEnterPoint = { EnterPointType::GS, "GS", "gs_5_0" };
-	static inline ShaderEnterPoint PSEnterPoint = { EnterPointType::PS, "PS", "ps_5_0" };
+	static inline ShaderEnterPoint VSEnterPoint = { EnterPointType::VS, "VS", "vs_5_1" };
+	static inline ShaderEnterPoint HSEnterPoint = { EnterPointType::HS, "HS", "hs_5_1" };
+	static inline ShaderEnterPoint DSEnterPoint = { EnterPointType::DS, "DS", "ds_5_1" };
+	static inline ShaderEnterPoint GSEnterPoint = { EnterPointType::GS, "GS", "gs_5_1" };
+	static inline ShaderEnterPoint PSEnterPoint = { EnterPointType::PS, "PS", "ps_5_1" };
 	static inline std::vector<ShaderEnterPoint> VS_PS = { VSEnterPoint, PSEnterPoint };
 	static inline std::vector<ShaderEnterPoint> VS_GS_PS = { VSEnterPoint, GSEnterPoint, PSEnterPoint };
 	static inline std::vector<ShaderEnterPoint> VS_HS_DS_PS = { VSEnterPoint, HSEnterPoint, DSEnterPoint, PSEnterPoint };
@@ -53,7 +53,7 @@ public:
 	GraphicsShader(const GraphicsShaderDesc &desc);
 	~GraphicsShader();
 	void setKeyWord(const std::string &keyword, bool enable);
-	auto getShaderContent() const -> const std::string &;
+	auto getShaderContent() const -> const char *;
 	auto getBlendDesc() const -> const D3D12_BLEND_DESC &;
 	auto getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &;
 	auto getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &;
@@ -64,7 +64,7 @@ public:
 	auto findKeywordIndex(const std::string &keyword) const -> size_t;
 	auto getEnableKeywords() const -> std::vector<std::string>;
 private:
-	std::string				 _shaderContent;
+	std::unique_ptr<char[]>	 _pShaderContent;
 	KeywordMask				 _keywordMask;
 	GraphicsShaderDesc		 _graphicsShaderDesc;
 	mutable ShaderVariantMap _shaderVariantMap;

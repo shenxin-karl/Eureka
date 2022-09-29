@@ -1,7 +1,12 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <d3dcompiler.h>
+#include <filesystem>
 #include "ShaderHelper/ShaderHelper.h"
 #include "Dx12lib/Common/Common.h"
 #include "ShaderHelper/ShaderInclude.h"
+
+#define STB_INCLUDE_IMPLEMENTATION
+#include "ShaderHelper/StringInclude.h"
 
 namespace Eureka {
 
@@ -16,7 +21,8 @@ WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
 	compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
-	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>("", "");
+	auto path = std::filesystem::path(fileName).parent_path();
+	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string(), EUREKA_HLSL_SHADER_PATH);
 
 	using Microsoft::WRL::ComPtr;
 	HRESULT hr = S_OK;
@@ -52,6 +58,7 @@ WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
 #if defined(DEBUG) || defined(_DEBUG) 
 	compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
+
 
 	HRESULT hr = S_OK;
 	WRL::ComPtr<ID3DBlob> byteCode;
