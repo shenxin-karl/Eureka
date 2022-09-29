@@ -33,6 +33,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_RENDERER_DIR}/
 	${PROJECT_EXT_DIR}/assimp/include
 	${PROJECT_BUILD_DIR}/Ext/assimp/include/
+	${PROJECT_EXT_DIR}/sol2/include/
+	${PROJECT_EXT_DIR}/lua/
 )
 
 set_property(SOURCE ${SHADER_FILES} PROPERTY VS_TOOL_OVERRIDE "shader")	# 设置 hlsl 为 shader 资源文件

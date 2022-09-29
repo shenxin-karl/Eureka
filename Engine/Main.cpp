@@ -3,9 +3,9 @@
 #include "GameTimer/GameTimer.h"
 #include "ShaderHelper/GraphicsShader.h"
 #include "ShaderHelper/ShaderHelper.h"
+#include <sol/sol.hpp>
 
 void test() {
-
 	Eureka::GraphicsShaderDesc graphicsShaderDesc;
 	graphicsShaderDesc.fileName = "Assets/Shaders/TestShader.hlsl";
 	
