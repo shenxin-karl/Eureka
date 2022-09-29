@@ -1,9 +1,11 @@
 #include "GraphicsShaderVariant.h"
+#include "GraphicsShader.h"
 
 namespace Eureka {
 
-
-GraphicsShaderVariant::GraphicsShaderVariant(const GraphicsShader *pGraphicsShader) {
+GraphicsShaderVariant::GraphicsShaderVariant(const GraphicsShader *pGraphicsShader) : _pGraphicsShader(pGraphicsShader)
+{
+	const auto &graphicsShaderDesc = pGraphicsShader->getGraphicsShaderDesc();
 
 }
 

@@ -31,10 +31,6 @@ GraphicsShader::~GraphicsShader() {
 
 }
 
-void GraphicsShader::setKeyWord(const std::string &keyword, bool enable) {
-	_keywordMask.setKeyWord(keyword, enable);
-}
-
 auto GraphicsShader::getShaderContent() const -> const char *{
 	return _pShaderContent.get();
 }
@@ -55,14 +51,14 @@ auto GraphicsShader::getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE {
 	return _graphicsShaderDesc.primitiveType;
 }
 
-auto GraphicsShader::getShaderVariant() const -> GraphicsShaderVariant * {
-	auto iter = _shaderVariantMap.find(_keywordMask.getBitMask());
+auto GraphicsShader::getShaderVariant(const KeywordMask &keywordMask) const -> GraphicsShaderVariant * {
+	auto iter = _shaderVariantMap.find(keywordMask.getBitMask());
 	if (iter != _shaderVariantMap.end())
 		return iter->second.get();
 
 	auto pShaderVariant = std::make_unique<GraphicsShaderVariant>(this);
 	auto *pRet = pShaderVariant.get();
-	_shaderVariantMap[_keywordMask.getBitMask()] = std::move(pShaderVariant);
+	_shaderVariantMap[keywordMask.getBitMask()] = std::move(pShaderVariant);
 	return pRet;
 }
 
@@ -74,12 +70,12 @@ auto GraphicsShader::getDevice() const -> std::weak_ptr<dx12lib::Device> {
 	return _graphicsShaderDesc.pDevice;
 }
 
-auto GraphicsShader::findKeywordIndex(const std::string &keyword) const -> size_t {
-	return _keywordMask.findKeywordIndex(keyword);
+auto GraphicsShader::getShaderKeywordMask() const -> const KeywordMask & {
+	return _keywordMask;
 }
 
-auto GraphicsShader::getEnableKeywords() const -> std::vector<std::string> {
-	return _keywordMask.getEnableKeywords();
+auto GraphicsShader::getGraphicsShaderDesc() const -> const GraphicsShaderDesc & {
+	return _graphicsShaderDesc;
 }
 
 }

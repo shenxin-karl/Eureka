@@ -52,17 +52,16 @@ public:
 public:
 	GraphicsShader(const GraphicsShaderDesc &desc);
 	~GraphicsShader();
-	void setKeyWord(const std::string &keyword, bool enable);
 	auto getShaderContent() const -> const char *;
 	auto getBlendDesc() const -> const D3D12_BLEND_DESC &;
 	auto getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &;
 	auto getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &;
 	auto getPrimitiveType() const ->D3D12_PRIMITIVE_TOPOLOGY_TYPE;
-	auto getShaderVariant() const -> GraphicsShaderVariant *;
+	auto getShaderVariant(const KeywordMask &keywordMask) const -> GraphicsShaderVariant *;
 	auto getEntryPoints() const -> const std::vector<ShaderEnterPoint> &;
 	auto getDevice() const -> std::weak_ptr<dx12lib::Device>;
-	auto findKeywordIndex(const std::string &keyword) const -> size_t;
-	auto getEnableKeywords() const -> std::vector<std::string>;
+	auto getShaderKeywordMask() const -> const KeywordMask &;
+	auto getGraphicsShaderDesc() const -> const GraphicsShaderDesc &;
 private:
 	std::unique_ptr<char[]>	 _pShaderContent;
 	KeywordMask				 _keywordMask;
