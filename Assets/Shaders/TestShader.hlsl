@@ -1,5 +1,9 @@
 #include "Common.hlsli"
 
+#pragma shader_feature _ _ASS _SDFDS
+#pragma shader_feature _ _A1S _SDF3S
+#pragma shader_feature _ _A2S _SDF1S
+
 cbuffer cbPreCamera : register(b0) {
 	float4x4 gViewProj;
 	float	 gRoughness;

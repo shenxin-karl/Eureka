@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <iostream>
 #include "GraphicsShader.h"
 #include "GraphicsShaderVariant.h"
 #include "ShaderHelper/ShaderInclude.h"
@@ -16,7 +17,14 @@ GraphicsShader::GraphicsShader(const GraphicsShaderDesc &graphicsShaderDesc) : _
 		error
 	));
 	assert(_pShaderContent != nullptr);
-	_keywordMask.setShaderContent(_pShaderContent.get());
+
+	try {
+		_keywordMask.setShaderContent(_pShaderContent.get());
+	} catch (const std::string &errMsg) {
+		std::string msg = std::format("In file {}: {}", _graphicsShaderDesc.fileName, errMsg);
+		std::cerr << msg << std::endl;
+		MessageBox(nullptr, msg.c_str(), "Error", MB_OK | MB_ICONHAND);
+	} 
 }
 
 GraphicsShader::~GraphicsShader() {
