@@ -22,16 +22,22 @@ struct SubPassDesc {
 	void setPixelShader(const std::string &entryPoint);
 	void setComputeShader(const std::string &entryPoint);
 	void setAlphaToMask(bool enabled);
-	void setBlend(const std::string &srcOp, const std::string &dstOp);
+	void setBlendColor(const std::string &srcOp, const std::string &dstOp);
+	void setBlendColor(const std::string &srcOp, const std::string &dstOp, size_t renderTarget);
+	void setBlendAlpha(const std::string &srcOp, const std::string &dstOp);
+	void setBlendAlpha(const std::string &srcOp, const std::string &dstOp, size_t renderTarget);
 	void setBlendOp(const std::string &op);
-	void setColorMask(const std::string &channel, int renderTarget = 0);
-	void setConservative(const std::string &enabled);
+	void setBlendOp(const std::string &op, size_t renderTarget);
+	void setColorMask(const std::string &channel);
+	void setColorMask(const std::string &channel, int renderTarget);
+	void setConservative(bool enabled);
 	void setCull(const std::string &state);
-	void setOffset(float offset);
+	void setOffset(float slopeScaledDepthBias, INT depthBias);
 	void setZClip(bool enabled);
 	void setZTest(const std::string &op);
 	void setZWrite(bool enabled);
-	void finalized();
+	void setPrimitiveType(const std::string &primitiveType);
+	bool checkValid() const;
 private:
 	std::vector<ShaderEntryPoint> entryPoints;
 	std::vector<std::vector<std::string>> shaderFeatures;
@@ -45,6 +51,7 @@ class ShaderMeta {
 public:
 	ShaderMeta(const std::string &luaScriptName);
 	void setShaderFileName(const std::string &fileName);
+	void addSubPassDesc(const SubPassDesc *pDesc);
 private:
 	std::string _fileName;
 	std::vector<SubPassDesc> _subPassDescs;
