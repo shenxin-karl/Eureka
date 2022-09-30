@@ -1,17 +1,12 @@
 #include <iostream>
 #include "Application/Application.h"
 #include "GameTimer/GameTimer.h"
-#include "ShaderHelper/GraphicsShader.h"
+#include "ShaderHelper/Shader.h"
 #include "ShaderHelper/ShaderHelper.h"
 #include <sol/sol.hpp>
 #include "ShaderHelper/ShaderMeta.h"
 
 void test() {
-	Eureka::GraphicsShaderDesc graphicsShaderDesc;
-	graphicsShaderDesc.fileName = "Assets/Shaders/TestShader.hlsl";
-	
-	auto shader = std::make_unique<Eureka::GraphicsShader>(graphicsShaderDesc);
-
 	auto pByteCode = Eureka::ShaderHelper::compile(
 		L"Assets/Shaders/TestShader.hlsl",
 		nullptr,

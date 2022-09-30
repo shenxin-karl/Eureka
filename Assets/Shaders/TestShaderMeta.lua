@@ -2,7 +2,7 @@
 function InitShaderMeta(pShaderMeta)
     pShaderMeta:setShaderFileName("Assets/Shaders/TestShader.hlsl");
     do
-        local subPass1 = SubPassDesc.new();
+        local subPass1 = SubPassDesc.new("SubPass1");
         subPass1:addShaderFeature({ " AAA ", " BBB " });
         subPass1:setVertexShader("VS");
         subPass1:setPixelShader("PS");

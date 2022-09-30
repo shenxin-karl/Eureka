@@ -5,7 +5,7 @@
 
 namespace Eureka {
 
-class GraphicsShaderVariant;
+class SubPassVariant;
 class KeywordMask {
 public:
 	constexpr static size_t kMaxKeyWord = 128;

@@ -7,8 +7,7 @@
 
 namespace Eureka {
 
-class GraphicsShader;
-class GraphicsShaderVariant {
+class SubPassVariant {
 public:
 	struct PSOItem {
 		std::vector<DXGI_FORMAT> rtFormats;
@@ -16,7 +15,7 @@ public:
 		std::shared_ptr<dx12lib::GraphicsPSO> pso;
 	};
 public:
-	GraphicsShaderVariant(const GraphicsShader *pGraphicsShader);
+	SubPassVariant(const SubPassVariant *pGraphicsShader);
 	auto getPSO(std::vector<DXGI_FORMAT> rtFormats, DXGI_FORMAT dsFormat) const -> std::weak_ptr<dx12lib::GraphicsPSO>;
 	auto getPSO(DXGI_FORMAT rtFormat, DXGI_FORMAT dsFormat) const -> std::weak_ptr<dx12lib::GraphicsPSO>;
 	auto getPSO(DXGI_FORMAT dsFormat) const -> std::weak_ptr<dx12lib::GraphicsPSO>;
@@ -24,7 +23,7 @@ public:
 	auto getNumRenderTarget() const -> size_t;
 private:
 	size_t _numRenderTarget = 0;
-	const GraphicsShader *_pGraphicsShader;
+	const SubPassVariant *_pGraphicsShader;
 	WRL::ComPtr<ID3DBlob> _pVertexShader;
 	WRL::ComPtr<ID3DBlob> _pHullShader;
 	WRL::ComPtr<ID3DBlob> _pGeometryShader;
