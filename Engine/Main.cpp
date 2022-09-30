@@ -4,6 +4,7 @@
 #include "ShaderHelper/GraphicsShader.h"
 #include "ShaderHelper/ShaderHelper.h"
 #include <sol/sol.hpp>
+#include "ShaderHelper/ShaderAsset.h"
 
 void test() {
 	Eureka::GraphicsShaderDesc graphicsShaderDesc;
@@ -70,8 +71,13 @@ void test() {
 	}
 }
 
+void testShaderAsset() {
+	Eureka::ShaderMeta meta("Assets/Materials/TestMaterial.lua");
+}
+
 int main() {
 	test();
+	testShaderAsset();
 
 	Eureka::Application app;
 	try {

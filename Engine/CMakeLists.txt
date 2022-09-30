@@ -54,6 +54,7 @@ set_target_properties(Eureka-resources PROPERTIES FOLDER "EngineResource")
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	Dx12lib
 	assimp
+	lua
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
