@@ -1,20 +1,30 @@
 #pragma once
 #include <RenderGraph/RenderGraphStd.h>
+#include <RenderGraph/Job/ShaderLayout.h>
 
 namespace rgph {
 
 interface IMesh : public NonCopyable {
+#define VEC_REF(type) static std::vector<type> vec; return vec;
 	using BoneIndex = std::array<uint8_t, 4>;
 	virtual const std::string &getMeshName() const = 0;
-	virtual const std::vector<Math::float4> &getPositions() const { static std::vector<Math::float4> vec; return vec; }
-	virtual const std::vector<Math::float3> &getNormals() const { static std::vector<Math::float3> vec; return vec; }
-	virtual const std::vector<Math::float3> &getTangents() const { static std::vector<Math::float3> vec; return vec; }
-	virtual const std::vector<Math::float2> &getTexcoord0() const { static std::vector<Math::float2> vec; return vec; }
-	virtual const std::vector<Math::float2> &getTexcoord1() const { static std::vector<Math::float2> vec; return vec; }
-	virtual const std::vector<BoneIndex> &getBoneIndices() const { static std::vector<BoneIndex> vec; return vec; }
-	virtual const std::vector<Math::float3> &getBoneWeight() const { static std::vector<Math::float3> vec; return vec; }
-	virtual const std::vector<uint32_t> &getIndices() const { static std::vector<uint32_t> vec; return vec; }
-	virtual const Math::BoundingBox &getBoundingBox() const { static Math::BoundingBox box; return box; }
+	virtual const std::vector<Math::float3> &getPositions() const	{ VEC_REF(Math::float3); }
+	virtual const std::vector<Math::float3> &getNormals() const		{ VEC_REF(Math::float3); }
+	virtual const std::vector<Math::float4> &getTangents() const	{ VEC_REF(Math::float4); }
+	virtual const std::vector<Math::float4> &getColors() const		{ VEC_REF(Math::float4); }
+	virtual const std::vector<Math::float2> &getTexCoord0() const	{ VEC_REF(Math::float2); }
+	virtual const std::vector<Math::float2> &getTexCoord1() const	{ VEC_REF(Math::float2); }
+	virtual const std::vector<Math::float2> &getTexCoord2() const	{ VEC_REF(Math::float2); }
+	virtual const std::vector<Math::float2> &getTexCoord3() const	{ VEC_REF(Math::float2); }
+	virtual const std::vector<Math::float3> &getTexCoord4() const	{ VEC_REF(Math::float3); }
+	virtual const std::vector<Math::float3> &getTexCoord5() const	{ VEC_REF(Math::float3); }
+	virtual const std::vector<Math::float4> &getTexCoord6() const	{ VEC_REF(Math::float4); }
+	virtual const std::vector<Math::float4> &getTexCoord7() const	{ VEC_REF(Math::float4); }
+	virtual const std::vector<BoneIndex>	&getBoneIndices() const	{ VEC_REF(BoneIndex);	 }
+	virtual const std::vector<Math::float3> &getBoneWeight() const	{ VEC_REF(Math::float3); }
+	virtual const std::vector<uint32_t>		&getIndices() const		{ VEC_REF(uint32_t);	 }
+	virtual const Math::BoundingBox			&getBoundingBox() const	{ static Math::BoundingBox box; return box; }
+#undef VEC_REF
 };
 
 using VertexInputSlots = std::bitset<dx12lib::kVertexBufferSlotCount>;

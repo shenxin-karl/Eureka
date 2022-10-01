@@ -138,6 +138,9 @@ public:
 		RegisterSlot slot = lhs.slot + rhs;
 		return { slot, lhs.space };
 	}
+	friend ShaderRegister &operator+=(ShaderRegister &lhs, size_t rhs) noexcept {
+		return (lhs = lhs + rhs);
+	}
 };
 
 struct ShaderRegisterHasher {

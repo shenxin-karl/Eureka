@@ -1,8 +1,8 @@
-#include "ShaderMeta.h"
 #include <sol/sol.hpp>
 #include <locale>
 #include <unordered_set>
-#include "ShaderHelper/SubPassDesc.h"
+#include "ShaderMeta.h"
+#include "SubPassDesc.h"
 
 namespace Eureka {
 
@@ -37,7 +37,6 @@ ShaderMeta::ShaderMeta(const std::string &luaScriptName) {
 		"setDomainShader", &SubPassDesc::setDomainShader,
 		"setGeometryShader", &SubPassDesc::setGeometryShader,
 		"setPixelShader", &SubPassDesc::setPixelShader,
-		"setComputeShader", &SubPassDesc::setComputeShader,
 		"setAlphaToMask", &SubPassDesc::setAlphaToMask,
 		"setBlendColor", sol::overload(pSetBlendColor0, pSetBlendColor1),
 		"setBlendAlpha", sol::overload(pSetBlendAlpha0, pSetBlendAlpha1),
@@ -62,6 +61,7 @@ ShaderMeta::ShaderMeta(const std::string &luaScriptName) {
 		std::cerr << "invalid shader meta script: " << luaScriptName << std::endl;
 		assert(false);
 	}
+	assert(!_subPassDescs.empty());
 }
 
 void ShaderMeta::setShaderFileName(const std::string &fileName) {
@@ -73,6 +73,14 @@ void ShaderMeta::addSubPassDesc(const SubPassDesc *pDesc) {
 	if (!pDesc->checkValid())
 		assert(false);
 	_subPassDescs.push_back(std::make_shared<SubPassDesc>(*pDesc));
+}
+
+auto ShaderMeta::getFileName() const -> const std::string & {
+	return _fileName;
+}
+
+auto ShaderMeta::getSubPassDescs() const -> const std::vector<std::shared_ptr<SubPassDesc>> & {
+	return _subPassDescs;
 }
 
 }

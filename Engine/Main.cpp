@@ -1,17 +1,17 @@
 #include <iostream>
+#include <sol/sol.hpp>
 #include "Application/Application.h"
 #include "GameTimer/GameTimer.h"
-#include "ShaderHelper/Shader.h"
-#include "ShaderHelper/ShaderHelper.h"
-#include <sol/sol.hpp>
-#include "ShaderHelper/ShaderMeta.h"
+#include "MaterialSystem/Shader.h"
+#include "MaterialSystem/ShaderHelper.h"
+#include "MaterialSystem/ShaderMeta.h"
 
 void test() {
 	auto pByteCode = Eureka::ShaderHelper::compile(
 		L"Assets/Shaders/TestShader.hlsl",
 		nullptr,
-		"VS",
-		"vs_5_1"
+		"PS",
+		"ps_5_1"
 	);
 
 	WRL::ComPtr<ID3D12ShaderReflection> pShaderRef;

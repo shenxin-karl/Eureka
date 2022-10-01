@@ -44,16 +44,6 @@ T getEnum(const std::pair<std::string, T>(&map)[N], const std::string &str) {
 	return static_cast<T>(-1);
 }
 
-static bool checkShader(const std::vector<ShaderEntryPoint> &entryPoints, std::string_view version) {
-	for (const auto &entry : entryPoints) {
-		if (entry.version == version) {
-			assert(false);
-			return false;
-		}
-	}
-	return true;
-}
-
 SubPassDesc::SubPassDesc(const std::string &subPassName) : subPassName(subPassName) {
 }
 
@@ -80,33 +70,28 @@ void SubPassDesc::addShaderFeature(const sol::as_table_t<std::vector<std::string
 }
 
 void SubPassDesc::setVertexShader(const std::string &entryPoint) {
-	checkShader(entryPoints, "vs_5_1");
-	entryPoints.push_back({ "vs_5_1", entryPoint });
+	assert(!hasShader(ShaderType::VS));
+	entryPoints.push_back({ ShaderType::VS, entryPoint });
 }
 
 void SubPassDesc::setHullShader(const std::string &entryPoint) {
-	checkShader(entryPoints, "hs_5_1");
-	entryPoints.push_back({ "hs_5_1", entryPoint });
+	assert(!hasShader(ShaderType::HS));
+	entryPoints.push_back({ ShaderType::HS, entryPoint });
 }
 
 void SubPassDesc::setDomainShader(const std::string &entryPoint) {
-	checkShader(entryPoints, "ds_5_1");
-	entryPoints.push_back({ "ds_5_1", entryPoint });
+	assert(!hasShader(ShaderType::DS));
+	entryPoints.push_back({ ShaderType::DS, entryPoint });
 }
 
 void SubPassDesc::setGeometryShader(const std::string &entryPoint) {
-	checkShader(entryPoints, "gs_5_1");
-	entryPoints.push_back({ "gs_5_1", entryPoint });
+	assert(!hasShader(ShaderType::GS));
+	entryPoints.push_back({ ShaderType::GS, entryPoint });
 }
 
 void SubPassDesc::setPixelShader(const std::string &entryPoint) {
-	checkShader(entryPoints, "ps_5_1");
-	entryPoints.push_back({ "ps_5_1", entryPoint });
-}
-
-void SubPassDesc::setComputeShader(const std::string &entryPoint) {
-	checkShader(entryPoints, "cs_5_1");
-	entryPoints.push_back({ "cs_5_1", entryPoint });
+	assert(!hasShader(ShaderType::PS));
+	entryPoints.push_back({ ShaderType::PS, entryPoint });
 }
 
 void SubPassDesc::setAlphaToMask(bool enabled) {
@@ -302,6 +287,14 @@ auto SubPassDesc::getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC 
 
 auto SubPassDesc::getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE {
 	return primitiveType;
+}
+
+bool SubPassDesc::hasShader(ShaderType shaderType) const {
+	for (const ShaderEntryPoint &entry : entryPoints) {
+		if (entry.shaderType == shaderType)
+			return true;
+	}
+	return false;
 }
 
 }

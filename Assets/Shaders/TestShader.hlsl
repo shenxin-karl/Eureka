@@ -26,7 +26,7 @@ VertexOut VS(VertexIn vin) {
 	return vout;
 }
 
-TextureCube gEnvMap         : register(t0);
+TextureCube gEnvMap         : register(t0);		// D3D_SIT_TEXTURE
 SamplerState gSamLinearWrap	: register(s0);
 
 static const uint kSampleCount = 1024;
@@ -75,7 +75,12 @@ float3 ImportanceSampleGGX(float2 Xi, float roughness, float3x3 TBN) {
     return mul(H, TBN);
 }
 
-float4 PS(VertexOut pin) {
+
+
+Texture2D _MainTex			 : register(t1);
+SamplerState gSamLinearClamp : register(s3);
+
+float4 PS(VertexOut pin) : SV_Target {
 	float3 N = normalize(pin.localPosition);
     float3 up = abs(N.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0);
     float3 tangent = normalize(cross(up, N));
@@ -96,5 +101,6 @@ float4 PS(VertexOut pin) {
 	    }
 	}
 
-	return float4(colorSum / weightSum, 1.0);
+	float4 c = _MainTex.Sample(gSamLinearClamp, pin.SVPosition.xy);
+	return float4(colorSum / weightSum, 1.0) * c;
 }

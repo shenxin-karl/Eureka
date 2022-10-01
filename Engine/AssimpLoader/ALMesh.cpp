@@ -25,14 +25,22 @@ ALMesh::ALMesh(ALTree *pTree, std::string_view modelPath, size_t nodeIdx, size_t
 
 	for (unsigned i = 0; i < pAiMesh->mNumVertices; ++i) {
 		const aiVector3D &pos = pAiMesh->mVertices[i];
-		_positions.emplace_back(pos.x, pos.y, pos.z, 1.0);
+		_positions.emplace_back(pos.x, pos.y, pos.z);
 		if (pAiMesh->mNormals) {
 			const aiVector3D &nrm = pAiMesh->mNormals[i];
 			_normals.emplace_back(nrm.x, nrm.y, nrm.z);
 		}
 		if (pAiMesh->mTangents) {
 			const aiVector3D &tan = pAiMesh->mTangents[i];
-			_tangents.emplace_back(tan.x, tan.y, tan.z);
+			float det = 1.f;
+			if (pAiMesh->mNormals && pAiMesh->mBitangents) {
+				const aiVector3D &bit = pAiMesh->mBitangents[i];
+				Vector3 N = Vector3(_normals[i]);
+				Vector3 T(tan.x, tan.y, tan.z);
+				Vector3 B(bit.x, bit.y, bit.z);
+				det = dot(cross(N, T), B) < 0.f ? -1.f : 1.f;
+			}
+			_tangents.emplace_back(tan.x, tan.y, tan.z, det);
 		}
 		if (pAiMesh->mTextureCoords[0]) {
 			const aiVector3D &tex0 = pAiMesh->mTextureCoords[0][i];
@@ -68,7 +76,7 @@ const std::string &ALMesh::getMeshName() const {
 	return _meshName;
 }
 
-const std::vector<float4> &ALMesh::getPositions() const {
+const std::vector<float3> &ALMesh::getPositions() const {
 	return _positions;
 }
 
@@ -76,15 +84,15 @@ const std::vector<float3> &ALMesh::getNormals() const {
 	return _normals;
 }
 
-const std::vector<float3> &ALMesh::getTangents() const {
+const std::vector<float4> &ALMesh::getTangents() const {
 	return _tangents;
 }
 
-const std::vector<float2> &ALMesh::getTexcoord0() const {
+const std::vector<float2> &ALMesh::getTexCoord0() const {
 	return _texcoord0;
 }
 
-const std::vector<float2> &ALMesh::getTexcoord1() const {
+const std::vector<float2> &ALMesh::getTexCoord1() const {
 	return _texcoord1;
 }
 
@@ -108,7 +116,7 @@ bool ALMesh::saveToObj(const std::string &fileName) const {
 	const auto &indices = getIndices();
 	const auto &positions = getPositions();
 	const auto &normals = getNormals();
-	const auto &texcoord0 = getTexcoord0();
+	const auto &texcoord0 = getTexCoord0();
 	if (positions.size() < 2)
 		return false;
 
@@ -122,7 +130,7 @@ bool ALMesh::saveToObj(const std::string &fileName) const {
 	std::stringstream idxBuf;
 
 	for (size_t i = 0; i < positions.size(); ++i) {
-		const float4 &position = positions[i];
+		const float3 &position = positions[i];
 		posBuf << "v " << position.x
 			   << " " << position.y
 			   << " " << position.z

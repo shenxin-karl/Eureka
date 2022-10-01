@@ -124,7 +124,7 @@ auto KeywordMask::getEnableKeywords() const -> std::vector<std::string> {
 	return keywords;
 }
 
-auto KeywordMask::getBitMask() const -> const std::bitset<kMaxKeyWord> & {
+auto KeywordMask::getBitMask() const -> const std::bitset<kMaxKeyword> & {
 	return _keywordMask;
 }
 

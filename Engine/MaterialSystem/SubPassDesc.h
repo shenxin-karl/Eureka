@@ -7,8 +7,16 @@
 
 namespace Eureka {
 
+enum class ShaderType {
+	VS = 0,
+	HS = 1,
+	DS = 2,
+	GS = 3,
+	PS = 4,
+};
+
 struct ShaderEntryPoint {
-	std::string_view version;
+	ShaderType shaderType;
 	std::string entryPoint;
 };
 
@@ -21,7 +29,6 @@ struct SubPassDesc {
 	void setDomainShader(const std::string &entryPoint);
 	void setGeometryShader(const std::string &entryPoint);
 	void setPixelShader(const std::string &entryPoint);
-	void setComputeShader(const std::string &entryPoint);
 	void setAlphaToMask(bool enabled);
 	void setBlendColor(const std::string &srcOp, const std::string &dstOp);
 	void setBlendColor(const std::string &srcOp, const std::string &dstOp, size_t renderTarget);
@@ -46,6 +53,7 @@ struct SubPassDesc {
 	auto getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &;
 	auto getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &;
 	auto getPrimitiveType() const->D3D12_PRIMITIVE_TOPOLOGY_TYPE;
+	bool hasShader(ShaderType shaderType) const;
 private:
 	std::string subPassName;
 	std::vector<ShaderEntryPoint> entryPoints;

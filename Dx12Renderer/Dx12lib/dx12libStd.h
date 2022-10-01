@@ -63,13 +63,6 @@ enum class CubeFace : size_t {
 	NEGATIVE_Z	= 5,
 };
 
-enum class ShaderResourceDimension {
-	Texture2D,
-	Texture2DArray,
-	Texture3D,
-	TextureCube,
-};
-
 enum class BufferType {
 	DefaultBuffer,
 	UploadBuffer,

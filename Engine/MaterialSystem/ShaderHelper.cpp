@@ -1,12 +1,12 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <d3dcompiler.h>
 #include <filesystem>
-#include "ShaderHelper/ShaderHelper.h"
+#include "MaterialSystem/ShaderHelper.h"
 #include "Dx12lib/Common/Common.h"
-#include "ShaderHelper/ShaderInclude.h"
+#include "MaterialSystem/ShaderInclude.h"
 
 #define STB_INCLUDE_IMPLEMENTATION
-#include "ShaderHelper/StringInclude.h"
+#include "MaterialSystem/StringInclude.h"
 
 namespace Eureka {
 
