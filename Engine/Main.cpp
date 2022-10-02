@@ -2,8 +2,6 @@
 #include <sol/sol.hpp>
 #include "Application/Application.h"
 #include "GameTimer/GameTimer.h"
-#include "MaterialSystem/Shader.h"
-#include "MaterialSystem/ShaderHelper.h"
 
 int main() {
 	Eureka::Application app;

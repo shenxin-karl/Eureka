@@ -27,8 +27,6 @@ interface IMesh : public NonCopyable {
 #undef VEC_REF
 };
 
-using VertexInputSlots = std::bitset<dx12lib::kVertexBufferSlotCount>;
-
 struct DrawArgs {
 	size_t vertexCount = 0;
 	size_t baseVertexLocation = 0;
@@ -40,7 +38,7 @@ struct DrawArgs {
 
 class Geometry {
 public:
-	void bind(dx12lib::IGraphicsContext &graphicsCtx, const VertexInputSlots &vertexInputSlot) const;
+	void bind(dx12lib::IGraphicsContext &graphicsCtx, const ShaderLayoutMask &vertexInputSlot) const;
 	void setVertexBuffer(size_t idx, std::shared_ptr<dx12lib::VertexBuffer> pVertexBuffer);
 	void setIndexBuffer(std::shared_ptr<dx12lib::IndexBuffer> pIndexBuffer);
 	void setMesh(std::shared_ptr<IMesh> pMesh);

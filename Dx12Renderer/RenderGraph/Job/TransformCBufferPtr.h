@@ -6,7 +6,9 @@ namespace rgph {
 
 struct TransformStore {
 	Math::float4x4 matWorld;
+	Math::float4x4 matInvWorld;
 	Math::float4x4 matNormal;
+	Math::float4x4 matInvNormal;
 };
 
 class TransformCBufferPtr {

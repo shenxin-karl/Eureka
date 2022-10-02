@@ -49,7 +49,7 @@ const std::vector<Job> &SubPass::getJobs() const {
 	return _jobs;
 }
 
-void SubPass::setVertexDataInputSlots(const VertexInputSlots &inputSlot) {
+void SubPass::setVertexDataInputSlots(const ShaderLayoutMask &inputSlot) {
 	_vertexDataSlots = inputSlot;
 }
 
@@ -61,7 +61,7 @@ void SubPass::setPassCBufferShaderRegister(const dx12lib::ShaderRegister &passSh
 	_passCBufferShaderRegister = passShaderRegister;
 }
 
-const VertexInputSlots &SubPass::getVertexDataInputSlots() const {
+const ShaderLayoutMask &SubPass::getVertexDataInputSlots() const {
 	return _vertexDataSlots;
 }
 

@@ -1,27 +1,10 @@
 #include <Common.hlsli>
 #include <CookTorrance.hlsli>
 
-struct Test {
-	bool   b1;
-	bool2  b2;
-	bool3  b3;
-	bool4  b4;
-	float  f1;
-	float2 f2;
-	float3 f3;
-	float4 f4;
-	uint   u1;
-	uint2  u2;
-	uint3  u3;
-	uint4  u4;
-	
-};
-
 cbuffer cbMaterial : register(b0) {
 	float4 gDiffuseAlbedo;
 	float  gRoughness;
 	float  gMetallic;
-	Test   gtest[2];
 };
 
 cbuffer cbLight : register(b0, PRE_PASS_SPACE) {

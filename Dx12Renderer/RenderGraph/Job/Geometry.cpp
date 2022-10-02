@@ -7,7 +7,7 @@ namespace rgph {
 
 using namespace Math;
 
-void Geometry::bind(dx12lib::IGraphicsContext &graphicsCtx, const VertexInputSlots &vertexInputSlot) const {
+void Geometry::bind(dx12lib::IGraphicsContext &graphicsCtx, const ShaderLayoutMask &vertexInputSlot) const {
 	graphicsCtx.setPrimitiveTopology(_topology);
 	for (size_t slot = 0; slot < dx12lib::kVertexBufferSlotCount; ++slot) {
 		if (!vertexInputSlot.test(slot)) 
