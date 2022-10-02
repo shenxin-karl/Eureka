@@ -11,11 +11,11 @@ public:
 	const std::string &getMaterialName() const;
 	size_t getNumTechnique() const;
 	std::shared_ptr<Technique> getTechnique(size_t idx) const;
-	VertexInputSlots getVertexInputSlots() const;
+	ShaderLayoutMask getVertexInputSlots() const;
 	~Material() override;
 protected:
 	std::string _materialName;
-	VertexInputSlots _vertexInputSlots;
+	ShaderLayoutMask _shaderLayoutMask;
 	std::vector<std::shared_ptr<Technique>> _techniques;
 };
 

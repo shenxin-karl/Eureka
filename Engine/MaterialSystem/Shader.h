@@ -5,19 +5,27 @@
 
 namespace Eureka {
 
-class ShaderMeta;
-class SubPass;
+struct ShaderDesc;
+class ShaderVariant;
 
 class Shader {
+	using ShaderVariantMap = std::unordered_map<KeywordBitMask, std::unique_ptr<ShaderVariant>>;
 public:
-	Shader(const ShaderMeta &shaderMeta);
+	Shader(std::weak_ptr<dx12lib::Device> pDevice, std::string &&shaderMetaFile);
 	~Shader();
+	void setShaderName(std::string &&shaderName);
 	auto getShaderContent() const -> std::string_view;
-	auto getSubPass(const std::string &subPassName) const -> const SubPass *;
+	auto getShaderVariant(const KeywordBitMask &bitMask) const -> const ShaderVariant *;
+	auto getShaderDesc() const -> const ShaderDesc *;
+	auto getDevice() const -> std::weak_ptr<dx12lib::Device>;
+	auto getShaderName() const -> const std::string &;
 private:
+	std::string _shaderName;
 	size_t _shaderContentLength;
 	std::unique_ptr<char[]>	_pShaderContent;
-	std::vector<std::unique_ptr<SubPass>> _subPasses;
+	std::unique_ptr<ShaderDesc> _pShaderDesc;
+	mutable ShaderVariantMap _shaderVariants;
+	std::weak_ptr<dx12lib::Device> _pDevice;
 };
 
 }

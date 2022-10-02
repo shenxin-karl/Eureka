@@ -20,9 +20,10 @@ struct ShaderEntryPoint {
 	std::string entryPoint;
 };
 
-struct SubPassDesc {
-	explicit SubPassDesc(const std::string &subPassName);
-	SubPassDesc(const SubPassDesc &) = default;
+struct ShaderDesc {
+	ShaderDesc() = default;
+	ShaderDesc(const ShaderDesc &) = default;
+	void setShaderFileName(const std::string &shaderFileName);
 	void addShaderFeature(const sol::as_table_t<std::vector<std::string>> &strings);
 	void setVertexShader(const std::string &entryPoint);
 	void setHullShader(const std::string &entryPoint);
@@ -46,7 +47,7 @@ struct SubPassDesc {
 	void setZWrite(bool enabled);
 	void setPrimitiveType(const std::string &primitiveType);
 	bool checkValid() const;
-	auto getSubPassName() const -> const std::string &;
+	auto getShaderFileName() const -> const std::string &;
 	auto getEntryPoints() const -> const std::vector<ShaderEntryPoint> &;
 	auto getShaderFeatures() const -> const std::vector<std::vector<std::string>> &;
 	auto getBlendDesc() const -> const D3D12_BLEND_DESC &;
@@ -55,7 +56,7 @@ struct SubPassDesc {
 	auto getPrimitiveType() const->D3D12_PRIMITIVE_TOPOLOGY_TYPE;
 	bool hasShader(ShaderType shaderType) const;
 private:
-	std::string subPassName;
+	std::string shaderFileName;
 	std::vector<ShaderEntryPoint> entryPoints;
 	std::vector<std::vector<std::string>> shaderFeatures;
 	D3D12_BLEND_DESC blendDesc = CD3DX12_BLEND_DESC(D3D12_DEFAULT);

@@ -1,7 +1,6 @@
-#include "SubPassDesc.h"
-
 #include <cassert>
 #include <unordered_set>
+#include "ShaderDesc.h"
 
 namespace Eureka {
 
@@ -44,10 +43,11 @@ T getEnum(const std::pair<std::string, T>(&map)[N], const std::string &str) {
 	return static_cast<T>(-1);
 }
 
-SubPassDesc::SubPassDesc(const std::string &subPassName) : subPassName(subPassName) {
+void ShaderDesc::setShaderFileName(const std::string &shaderFileName) {
+	this->shaderFileName = shaderFileName;
 }
 
-void SubPassDesc::addShaderFeature(const sol::as_table_t<std::vector<std::string>> &strings) {
+void ShaderDesc::addShaderFeature(const sol::as_table_t<std::vector<std::string>> &strings) {
 	auto strArray = strings.value();
 	for (auto &s : strArray) {
 		trim(s);
@@ -69,40 +69,40 @@ void SubPassDesc::addShaderFeature(const sol::as_table_t<std::vector<std::string
 	shaderFeatures.push_back(strings.value());
 }
 
-void SubPassDesc::setVertexShader(const std::string &entryPoint) {
+void ShaderDesc::setVertexShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::VS));
 	entryPoints.push_back({ ShaderType::VS, entryPoint });
 }
 
-void SubPassDesc::setHullShader(const std::string &entryPoint) {
+void ShaderDesc::setHullShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::HS));
 	entryPoints.push_back({ ShaderType::HS, entryPoint });
 }
 
-void SubPassDesc::setDomainShader(const std::string &entryPoint) {
+void ShaderDesc::setDomainShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::DS));
 	entryPoints.push_back({ ShaderType::DS, entryPoint });
 }
 
-void SubPassDesc::setGeometryShader(const std::string &entryPoint) {
+void ShaderDesc::setGeometryShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::GS));
 	entryPoints.push_back({ ShaderType::GS, entryPoint });
 }
 
-void SubPassDesc::setPixelShader(const std::string &entryPoint) {
+void ShaderDesc::setPixelShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::PS));
 	entryPoints.push_back({ ShaderType::PS, entryPoint });
 }
 
-void SubPassDesc::setAlphaToMask(bool enabled) {
+void ShaderDesc::setAlphaToMask(bool enabled) {
 	blendDesc.AlphaToCoverageEnable = enabled;
 }
 
-void SubPassDesc::setBlendColor(const std::string &srcOp, const std::string &dstOp) {
+void ShaderDesc::setBlendColor(const std::string &srcOp, const std::string &dstOp) {
 	setBlendColor(srcOp, dstOp, 0);
 }
 
-void SubPassDesc::setBlendColor(const std::string &srcOp, const std::string &dstOp, size_t renderTarget) {
+void ShaderDesc::setBlendColor(const std::string &srcOp, const std::string &dstOp, size_t renderTarget) {
 	assert(renderTarget < 7);
 	static const std::pair<std::string, D3D12_BLEND> blendMap[] = {
 		{ toupper("One"), D3D12_BLEND_ONE },
@@ -127,11 +127,11 @@ void SubPassDesc::setBlendColor(const std::string &srcOp, const std::string &dst
 	blendDesc.IndependentBlendEnable = (renderTarget != 0);
 }
 
-void SubPassDesc::setBlendAlpha(const std::string &srcOp, const std::string &dstOp) {
+void ShaderDesc::setBlendAlpha(const std::string &srcOp, const std::string &dstOp) {
 	setBlendAlpha(srcOp, dstOp, 0);
 }
 
-void SubPassDesc::setBlendAlpha(const std::string &srcOp, const std::string &dstOp, size_t renderTarget) {
+void ShaderDesc::setBlendAlpha(const std::string &srcOp, const std::string &dstOp, size_t renderTarget) {
 	static const std::pair<std::string, D3D12_BLEND> blendMap[] = {
 		{ toupper("One"), D3D12_BLEND_ONE },
 		{ toupper("Zero"), D3D12_BLEND_ZERO },
@@ -150,11 +150,11 @@ void SubPassDesc::setBlendAlpha(const std::string &srcOp, const std::string &dst
 	blendDesc.IndependentBlendEnable = (renderTarget != 0);
 }
 
-void SubPassDesc::setBlendOp(const std::string &op) {
+void ShaderDesc::setBlendOp(const std::string &op) {
 	setBlendOp(op, 0);
 }
 
-void SubPassDesc::setBlendOp(const std::string &op, size_t renderTarget) {
+void ShaderDesc::setBlendOp(const std::string &op, size_t renderTarget) {
 	assert(renderTarget < 7);
 	static const std::pair<std::string, D3D12_BLEND_OP> blendOpMap[] = {
 		{ toupper("Add"), D3D12_BLEND_OP_ADD },
@@ -168,11 +168,11 @@ void SubPassDesc::setBlendOp(const std::string &op, size_t renderTarget) {
 	blendDesc.RenderTarget[renderTarget].BlendOp = oper;
 }
 
-void SubPassDesc::setColorMask(const std::string &channel) {
+void ShaderDesc::setColorMask(const std::string &channel) {
 	setColorMask(channel, 0);
 }
 
-void SubPassDesc::setColorMask(const std::string &channel, int renderTarget) {
+void ShaderDesc::setColorMask(const std::string &channel, int renderTarget) {
 	assert(renderTarget < 7);
 	UINT8 state = 0;
 	for (auto c : channel) {
@@ -200,11 +200,11 @@ void SubPassDesc::setColorMask(const std::string &channel, int renderTarget) {
 	blendDesc.RenderTarget[renderTarget].RenderTargetWriteMask = state;
 }
 
-void SubPassDesc::setConservative(bool enabled) {
+void ShaderDesc::setConservative(bool enabled) {
 	rasterizerDesc.ConservativeRaster = enabled ? D3D12_CONSERVATIVE_RASTERIZATION_MODE_ON : D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 }
 
-void SubPassDesc::setCull(const std::string &state) {
+void ShaderDesc::setCull(const std::string &state) {
 	static const std::pair<std::string, D3D12_CULL_MODE> cullMap[] = {
 		{ toupper("Off"), D3D12_CULL_MODE_NONE },
 		{ toupper("Front"), D3D12_CULL_MODE_FRONT },
@@ -215,16 +215,16 @@ void SubPassDesc::setCull(const std::string &state) {
 	rasterizerDesc.CullMode = mode;
 }
 
-void SubPassDesc::setOffset(float slopeScaledDepthBias, INT depthBias) {
+void ShaderDesc::setOffset(float slopeScaledDepthBias, INT depthBias) {
 	rasterizerDesc.SlopeScaledDepthBias = slopeScaledDepthBias;
 	rasterizerDesc.DepthBias = depthBias;
 }
 
-void SubPassDesc::setZClip(bool enabled) {
+void ShaderDesc::setZClip(bool enabled) {
 	depthStencilDesc.DepthEnable = enabled;
 }
 
-void SubPassDesc::setZTest(const std::string &op) {
+void ShaderDesc::setZTest(const std::string &op) {
 	static const std::pair<std::string, D3D12_COMPARISON_FUNC> zTestMap[] = {
 		{ toupper("Less"), D3D12_COMPARISON_FUNC_LESS },
 		{ toupper("LEqual"), D3D12_COMPARISON_FUNC_LESS_EQUAL },
@@ -239,11 +239,11 @@ void SubPassDesc::setZTest(const std::string &op) {
 	depthStencilDesc.DepthFunc = func;
 }
 
-void SubPassDesc::setZWrite(bool enabled) {
+void ShaderDesc::setZWrite(bool enabled) {
 	depthStencilDesc.DepthWriteMask = enabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 }
 
-void SubPassDesc::setPrimitiveType(const std::string &primitiveType) {
+void ShaderDesc::setPrimitiveType(const std::string &primitiveType) {
 	static const std::pair<std::string, D3D12_PRIMITIVE_TOPOLOGY_TYPE> primitiveTypeMap[] = {
 		{ toupper("Point"), D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT },
 		{ toupper("Line"), D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE },
@@ -255,41 +255,41 @@ void SubPassDesc::setPrimitiveType(const std::string &primitiveType) {
 	this->primitiveType = type;
 }
 
-bool SubPassDesc::checkValid() const {
+bool ShaderDesc::checkValid() const {
 	if (entryPoints.empty())
 		return false;
 	return true;
 }
 
-auto SubPassDesc::getSubPassName() const -> const std::string & {
-	return subPassName;
+auto ShaderDesc::getShaderFileName() const -> const std::string & {
+	return shaderFileName;
 }
 
-auto SubPassDesc::getEntryPoints() const -> const std::vector<ShaderEntryPoint> &{
+auto ShaderDesc::getEntryPoints() const -> const std::vector<ShaderEntryPoint> &{
 	return entryPoints;
 }
 
-auto SubPassDesc::getShaderFeatures() const -> const std::vector<std::vector<std::string>> &{
+auto ShaderDesc::getShaderFeatures() const -> const std::vector<std::vector<std::string>> &{
 	return shaderFeatures;
 }
 
-auto SubPassDesc::getBlendDesc() const -> const D3D12_BLEND_DESC &{
+auto ShaderDesc::getBlendDesc() const -> const D3D12_BLEND_DESC &{
 	return blendDesc;
 }
 
-auto SubPassDesc::getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &{
+auto ShaderDesc::getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &{
 	return rasterizerDesc;
 }
 
-auto SubPassDesc::getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &{
+auto ShaderDesc::getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &{
 	return depthStencilDesc;
 }
 
-auto SubPassDesc::getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE {
+auto ShaderDesc::getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE {
 	return primitiveType;
 }
 
-bool SubPassDesc::hasShader(ShaderType shaderType) const {
+bool ShaderDesc::hasShader(ShaderType shaderType) const {
 	for (const ShaderEntryPoint &entry : entryPoints) {
 		if (entry.shaderType == shaderType)
 			return true;

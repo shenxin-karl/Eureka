@@ -33,12 +33,55 @@ constexpr operator IndexType() const noexcept {
 constexpr explicit operator bool() const noexcept {
 	return static_cast<bool>(indexType);
 }
-friend bool operator==(const ShaderLayoutIndex &lhs, const ShaderLayoutIndex &rhs) noexcept {
-	return lhs.indexType == rhs.indexType;
+constexpr friend auto operator<=>(const ShaderLayoutIndex &, const ShaderLayoutIndex &) = default;
+
+static ShaderLayoutIndex stringToEnum(const std::string &str) {
+	static std::unordered_map<std::string, IndexType> map {
+		{ "POSITION0",		Position    },
+		{ "NORMAL0",		Normal	    },
+		{ "TANGENT0",		Tangent     },
+		{ "COLOR0",			Color		},
+		{ "TEXCOORD0",		TexCoord0   },
+		{ "TEXCOORD1",		TexCoord1   },
+		{ "TEXCOORD2",		TexCoord2   },
+		{ "TEXCOORD3",		TexCoord3   },
+		{ "TEXCOORD4",		TexCoord4   },
+		{ "TEXCOORD5",		TexCoord5   },
+		{ "TEXCOORD6",		TexCoord6   },
+		{ "TEXCOORD7",		TexCoord7   },
+		{ "BONEINDICES",	BoneIndices },
+		{ "BONEWEIGHTS",	BoneWeights },
+	};
+	auto iter = map.find(str);
+	if (iter != map.end())
+		return iter->second;
+	return Nothing;
 }
-friend bool operator!=(const ShaderLayoutIndex &lhs, const ShaderLayoutIndex &rhs) noexcept {
-	return lhs.indexType != rhs.indexType;
+
+static D3D12_INPUT_ELEMENT_DESC getInputLayoutByEnum(const ShaderLayoutIndex &layoutIndex) {
+#define DEF_DESC(sem, idx, fmt, slot) \
+	D3D12_INPUT_ELEMENT_DESC { sem, idx, fmt, slot, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 1 }
+	static D3D12_INPUT_ELEMENT_DESC descMap[] = {
+		DEF_DESC("POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0),
+		DEF_DESC("NORMAL",		1, DXGI_FORMAT_R32G32B32_FLOAT,		0),
+		DEF_DESC("TANGENT",		2, DXGI_FORMAT_R32G32B32A32_FLOAT,	0),
+		DEF_DESC("COLOR",		3, DXGI_FORMAT_R32G32B32A32_FLOAT,	0),
+		DEF_DESC("TEXCOORD0",	3, DXGI_FORMAT_R32G32_FLOAT,		0),
+		DEF_DESC("TEXCOORD1",	3, DXGI_FORMAT_R32G32_FLOAT,		0),
+		DEF_DESC("TEXCOORD2",	3, DXGI_FORMAT_R32G32_FLOAT,		0),
+		DEF_DESC("TEXCOORD3",	3, DXGI_FORMAT_R32G32_FLOAT,		0),
+		DEF_DESC("TEXCOORD4",	3, DXGI_FORMAT_R32G32B32_FLOAT,		0),
+		DEF_DESC("TEXCOORD5",	3, DXGI_FORMAT_R32G32B32_FLOAT,		0),
+		DEF_DESC("TEXCOORD6",	3, DXGI_FORMAT_R32G32B32A32_FLOAT,	0),
+		DEF_DESC("TEXCOORD7",	3, DXGI_FORMAT_R32G32B32A32_FLOAT,	0),
+		DEF_DESC("BONEINDICES", 3, DXGI_FORMAT_R8G8B8A8_UINT,		0),
+		DEF_DESC("BONEINDICES", 3, DXGI_FORMAT_R32G32B32_FLOAT,		0),
+	};
+#undef DEF_DESC
+	assert((size_t)layoutIndex < std::size(descMap));
+	return descMap[(size_t)layoutIndex];
 }
+
 public:
 	IndexType indexType = Nothing;
 };
@@ -104,7 +147,7 @@ constexpr friend ShaderLayoutMask operator~(ShaderLayoutMask lhs) noexcept {
 	return LayoutType(~lhs.layoutMask);
 }
 private:
-LayoutType layoutMask = Nothing;
+	LayoutType layoutMask = Nothing;
 };
 
 

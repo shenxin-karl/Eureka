@@ -87,11 +87,18 @@ static char *stb_include_load_file(const char *filename, size_t *plen)
    return text;
 }
 
+enum IncludeType {
+    Unknow = 0,
+    Local  = 1,
+    System = 2,
+};
+
 typedef struct
 {
    int offset;
    int end;
    char *filename;
+   IncludeType includeType;
    int next_line_after;
 } include_info;
 
@@ -138,11 +145,20 @@ static int stb_include_find_includes(char *text, include_info **plist)
             s += 7;
             while (*s == ' ' || *s == '\t')
                ++s;
-            if (*s == '"') {
+            if (*s == '"' || *s == '<') {
+               char charter = *s;
                char *t = ++s;
-               while (*t != '"' && *t != '\n' && *t != '\r' && *t != 0)
+               while (*t != '"' && *t != '>' && *t != '\n' && *t != '\r' && *t != 0)
                   ++t;
-               if (*t == '"') {
+               if (*t == '"' || *t == '>') {
+                  IncludeType includeType = Unknow;
+                  if (charter == '"' && *t == '"')
+                      includeType = Local;
+                  else if (charter == '<' && *t == '>')
+                      includeType = System;
+                  else
+                      assert(false);
+
                   char *filename = (char *) malloc(t-s+1);
                   memcpy(filename, s, t-s);
                   filename[t-s] = 0;
@@ -151,6 +167,7 @@ static int stb_include_find_includes(char *text, include_info **plist)
                      ++s;
                   // s points to the newline, so s-start is everything except the newline
                   list = stb_include_append_include(list, inc_count++, int(start-text), int(s-text), filename, line_count+1);
+                  list->includeType = includeType;
                }
             }
          } else if (0==strncmp(s, "inject", 6) && (stb_include_isspace(s[6]) || s[6]==0)) {
@@ -293,7 +310,9 @@ char *stb_include_file(char *filename, char *inject, char *path_to_includes, cha
       strcat(error, "'");
       return 0;
    }
-   result = stb_include_string(text, inject, path_to_includes, filename, error);
+
+   std::string newFilename = std::format("\"{}\"", filename);
+   result = stb_include_string(text, inject, path_to_includes, newFilename.data(), error);
    free(text);
    return result;
 }

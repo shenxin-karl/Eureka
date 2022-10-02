@@ -75,7 +75,7 @@ void RootParameter::initAsDescriptorTable(const std::initializer_list<std::pair<
 }
 
 void RootParameter::setTableRange(size_t index, ShaderRegister shaderRegister, UINT count) {
-	assert(!valid());
+	assert(valid());
 	assert(DescriptorTable.pDescriptorRanges != nullptr);
 	assert(index < DescriptorTable.NumDescriptorRanges);
 	D3D12_DESCRIPTOR_RANGE &range = const_cast<D3D12_DESCRIPTOR_RANGE &>(DescriptorTable.pDescriptorRanges[index]);
@@ -111,7 +111,6 @@ void RootSignature::reset(size_t numRootParams, size_t numStaticSamplers) {
 		std::fill(_rootParamDescriptorPerTable[i].begin(), _rootParamDescriptorPerTable[i].end(), 0);
 		_rootParamBitMask[i] = 0;
 	}
-
 }
 
 void RootSignature::finalize(D3D12_ROOT_SIGNATURE_FLAGS flags) {

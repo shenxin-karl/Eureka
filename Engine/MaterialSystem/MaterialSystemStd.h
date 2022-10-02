@@ -1,21 +1,25 @@
 #pragma once
 #include <Dx12lib/Pipeline/ShaderRegister.hpp>
+#include <string_view>
 
 namespace Eureka {
 
 constexpr size_t kMaxKeyword = 128;
+constexpr size_t kPrePassSpaceIndex = 8;
+constexpr size_t kPreObjectSpaceIndex = 0;
+constexpr size_t kStaticSamplerCount = 8;
+
+constexpr std::string_view kCbPrePassName   = "CbPrePass";
+constexpr std::string_view kCbPreObjectName = "CbPreObject";
+
 using KeywordBitMask = std::bitset<kMaxKeyword>;
 
-enum class CBufferVarType {
-	Float, Float2, Float3, Float4,
-	Int, Int2, Int3, Int4,
-	Uint, Uint2, Uint3, Uint4
-};
-
 struct CBufferVar {
-	size_t offset;
-	CBufferVarType size;
-	dx12lib::ShaderRegister shaderRegister;
+	D3D_SHADER_VARIABLE_TYPE type;
+	UINT					 rows;
+	UINT					 elements;
+	size_t					 offset;
+	dx12lib::ShaderRegister  shaderRegister;
 };
 
 struct CBufferDesc {
@@ -41,5 +45,14 @@ struct BoundResourceDesc {
 	dx12lib::ShaderRegister shaderRegister;
 };
 
+CD3DX12_STATIC_SAMPLER_DESC getPointWrapStaticSampler(UINT shaderRegister);
+CD3DX12_STATIC_SAMPLER_DESC getPointClampStaticSampler(UINT shaderRegister);
+CD3DX12_STATIC_SAMPLER_DESC getLinearWrapStaticSampler(UINT shaderRegister);
+CD3DX12_STATIC_SAMPLER_DESC getLinearClampStaticSampler(UINT shaderRegister);
+CD3DX12_STATIC_SAMPLER_DESC getAnisotropicWrapStaticSampler(UINT shaderRegister);
+CD3DX12_STATIC_SAMPLER_DESC getAnisotropicClampStaticSampler(UINT shaderRegister);
+CD3DX12_STATIC_SAMPLER_DESC getLinearShadowCompareStaticSampler(UINT shaderRegister);
+CD3DX12_STATIC_SAMPLER_DESC getPointShadowCompareStaticSampler(UINT shaderRegister);
+const std::array<CD3DX12_STATIC_SAMPLER_DESC, 8> &getStaticSamplers();
 
 }

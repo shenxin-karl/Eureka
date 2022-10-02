@@ -11,7 +11,9 @@ endif()
 file(GLOB_RECURSE HEADER_FILES *.h *.hpp *.ini)
 file(GLOB_RECURSE SOURCE_FILES *.c *.cpp)
 file(GLOB_RECURSE SHADER_FILES *.hlsl *.hlsli)
-SET(AllFile ${HEADER_FILES} ${SOURCE_FILES} ${SHADER_FILES})
+file(GLOB_RECURSE SCRIPT_FILES *.lua)
+
+SET(AllFile ${HEADER_FILES} ${SOURCE_FILES} ${SHADER_FILES} ${SCRIPT_FILES})
 
 foreach(fileItem ${AllFile})       
 	# Get the directory of the source file
@@ -38,6 +40,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 set_property(SOURCE ${SHADER_FILES} PROPERTY VS_TOOL_OVERRIDE "shader")	# 设置 hlsl 为 shader 资源文件
+set_property(SOURCE ${SCRIPT_FILES} PROPERTY VS_TOOL_OVERRIDE "script")	# 设置 hlsl 为 shader 资源文件
 
 ## 提供查找路径
 add_definitions(-DEUREKA_HLSL_SHADER_PATH="HlslShader") 

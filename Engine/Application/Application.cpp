@@ -5,6 +5,7 @@
 #include <dx12lib/Context/ContextStd.h>
 #include "GameTimer/GameTimer.h"
 #include "Dx12lib/Texture/Texture.h"
+#include "MaterialSystem/Shader.h"
 
 using namespace Math;
 
@@ -99,6 +100,8 @@ bool Application::isRunning() const {
 }
 
 void Application::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
+	auto pShader = std::make_unique<Eureka::Shader>(_pDevice, "Engine/HlslShader/ForwardPBRMeta.lua");
+	auto *pShaderVariant = pShader->getShaderVariant({});
 }
 
 void Application::onDestroy() {

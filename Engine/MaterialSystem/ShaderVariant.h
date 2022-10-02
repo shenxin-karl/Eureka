@@ -1,14 +1,10 @@
 #pragma once
-#include <dxgiformat.h>
-#include <memory>
-#include <vector>
-#include <Dx12lib/dx12libStd.h>
+#include <RenderGraph/Job/ShaderLayout.h>
 #include "MaterialSystem/MaterialSystemStd.h"
-#include <Dx12lib/Pipeline/ShaderRegister.hpp>
-#include <RenderGraph/Job/Geometry.h>
+#include <vector>
 
 namespace Eureka {
-
+	
 struct RenderTargetFormats {
 	DXGI_FORMAT depthStencilFormat;
 	DXGI_FORMAT renderTargetFormats[dx12lib::kMaxRenderTargetCount];
@@ -25,34 +21,36 @@ public:
 	}
 };
 
-class SubPass;
-class SubPassVariant {
-	using PSOMap = std::unordered_map<
-		RenderTargetFormats, 
-		std::shared_ptr<dx12lib::GraphicsPSO>,
+class ShaderVariant {
+public:
+	ShaderVariant(const Shader *pShader, const KeywordBitMask &bitMask);
+	auto getPSO(const RenderTargetFormats &mrtFormats) const -> std::shared_ptr<dx12lib::GraphicsPSO>;
+private:
+	using PSOMap = std::unordered_map<RenderTargetFormats, 
+		std::shared_ptr<dx12lib::GraphicsPSO>, 
 		RenderTargetFormats::Hasher
 	>;
-public:
-	SubPassVariant(const SubPass *pSubPass, const KeywordBitMask &bitMask);
-	auto getPSO(const RenderTargetFormats &MRTFormats) const -> std::shared_ptr<dx12lib::GraphicsPSO>;
-	auto getShaderLayoutMask() const -> rgph::ShaderLayoutMask;
-	auto getBoundResources() const -> const std::vector<BoundResourceDesc> &;
+	struct ShaderInput {
+		std::string name;
+		UINT bindCount;
+		dx12lib::ShaderRegister shaderRegister;
+	};
+	void generateShaderReflectionInfo(std::shared_ptr<dx12lib::Device> pDevice);
 private:
-	void generateShaderReflectionInfo();
-private:
+	const Shader  *_pShader;
+	mutable PSOMap _psoMap;
+	KeywordBitMask _keywordBitMask;
+
 	WRL::ComPtr<ID3DBlob>  _pVertexShader;
 	WRL::ComPtr<ID3DBlob>  _pHullShader;
 	WRL::ComPtr<ID3DBlob>  _pDomainShader;
 	WRL::ComPtr<ID3DBlob>  _pGeometryShader;
 	WRL::ComPtr<ID3DBlob>  _pPixelShader;
-	const SubPass	      *_pSubPass;
-	mutable PSOMap		   _psoMap;
-
+	
 	// generate by shader reflection 
 	rgph::ShaderLayoutMask _shaderLayoutMask;
-	std::vector<BoundResourceDesc> _boundResources;
+	std::vector<ShaderInput> _shaderInputViews;
 	std::shared_ptr<dx12lib::RootSignature> _pRootSignature;
-	std::unordered_map<std::string, CBufferVar> _cbufferVars;
 };
 
 }

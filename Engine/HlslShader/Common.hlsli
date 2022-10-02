@@ -40,4 +40,13 @@ cbuffer CbPreObject : register(b8, PRE_OBJ_SPACE) {
     float4x4 matInvNormal;
 };
 
+SamplerState gSamPointWrap					   : register(s0, space0);
+SamplerState gSamPointClamp					   : register(s1, space0);
+SamplerState gSamLinearWrap					   : register(s2, space0);
+SamplerState gSamLinearClamp				   : register(s3, space0);
+SamplerState gSamAnisotropicWrap			   : register(s4, space0);
+SamplerState gSamAnisotropicClamp			   : register(s5, space0);
+SamplerComparisonState gSamLinearShadowCompare : register(s6, space0);
+SamplerComparisonState gSamPointShadowCompare  : register(s7, space0);
+
 #endif
