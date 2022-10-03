@@ -1,11 +1,12 @@
 #include <format>
+#include <iostream>
 #include "RenderItem.h"
-#include "D3D/Model/IModel.hpp"
+#include "Model/IModel.hpp"
 #include "RenderGraph/Material/Material.h"
-
-namespace d3d {
+#include "Model/MeshManager.h"
 
 using namespace Math;
+namespace Eureka {
 
 RenderItem::RenderItem(dx12lib::IDirectContext &directCtx, INode *pNode, size_t meshIdx) {
 	auto pALMesh = pNode->getMesh(meshIdx);
@@ -67,22 +68,23 @@ void RenderItem::rebuildTechniqueFromMaterial(dx12lib::IDirectContext &directCtx
 	for (size_t i = 0; i < _pMaterial->getNumTechnique(); ++i)
 		addTechnique(_pMaterial->getTechnique(i));
 
-	auto vertexInputSlots = _pMaterial->getVertexInputSlots();
-	for (size_t i = 0; i < std::size(d3d::SemanticList); ++i) {
-		if (vertexInputSlots.test(i))
-			buildVertexDataInput(directCtx, d3d::SemanticList[i]);
+	auto shaderLayoutMask = _pMaterial->getShaderLayoutMask();
+	for (size_t i = rgph::ShaderLayoutIndex::Position; i < rgph::ShaderLayoutIndex::Max; ++i) {
+		rgph::ShaderLayoutIndex index(i);
+		if (shaderLayoutMask & index)
+			buildVertexDataInput(directCtx, index);
 	}
 }
 
 template<typename T>
 static std::shared_ptr<dx12lib::VertexBuffer> buildVertexDataInputImpl(
 	dx12lib::IDirectContext &directCtx,
-	const VertexDataSemantic &semantic,
-	const std::string &meshName,
+	const std::string &key,
 	const std::vector<T> &data)
 {
-	assert(!data.empty());
-	std::string key = meshName + std::format("_{}", semantic.name);
+	if (data.empty())
+		return nullptr;
+
 	auto pVertexBuffer = MeshManager::instance()->getVertexBuffer(key);
 	if (pVertexBuffer == nullptr) {
 		pVertexBuffer = directCtx.createVertexBuffer(data.data(), data.size(), sizeof(T));
@@ -91,26 +93,81 @@ static std::shared_ptr<dx12lib::VertexBuffer> buildVertexDataInputImpl(
 	return pVertexBuffer;
 }
 
-bool RenderItem::buildVertexDataInput(dx12lib::IDirectContext &directCtx, const VertexDataSemantic &semantic) {
-	if (_pGeometry->getVertexBuffer(semantic.slot) != nullptr)
-		return false;
-
+bool RenderItem::buildVertexDataInput(dx12lib::IDirectContext &directCtx, const rgph::ShaderLayoutIndex &index) {
+	if (_pGeometry->getVertexBuffer(index) != nullptr)
+		return true;
+	
+	std::string name;
 	auto pMesh = _pGeometry->getMesh();
-	const std::string &meshName = pMesh->getMeshName();
-	std::shared_ptr<dx12lib::VertexBuffer> pVertexBuffer = nullptr;
-	if (semantic == PositionSemantic)
-		pVertexBuffer = buildVertexDataInputImpl(directCtx, semantic, meshName, pMesh->getPositions());
-	else if (semantic == NormalSemantic)
-		pVertexBuffer = buildVertexDataInputImpl(directCtx, semantic, meshName, pMesh->getNormals());
-	else if (semantic == TangentSemantic)
-		pVertexBuffer = buildVertexDataInputImpl(directCtx, semantic, meshName, pMesh->getTangents());
-	else if (semantic == Texcoord0Semantic)
-		pVertexBuffer = buildVertexDataInputImpl(directCtx, semantic, meshName, pMesh->getTexcoord0());
-	else if (semantic == Texcoord1Semantic)
-		pVertexBuffer = buildVertexDataInputImpl(directCtx, semantic, meshName, pMesh->getTexcoord1());
+	std::shared_ptr<dx12lib::VertexBuffer> pVertexBuffer;
+	switch (index) {
+	case rgph::ShaderLayoutIndex::Position:
+		name = std::format("{}_{}", pMesh->getMeshName(), "POSITION");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getPositions());
+		break;
+	case rgph::ShaderLayoutIndex::Normal:
+		name = std::format("{}_{}", pMesh->getMeshName(), "NORMAL");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getNormals());
+		break;
+	case rgph::ShaderLayoutIndex::Tangent:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TANGENT");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTangents());
+		break;
+	case rgph::ShaderLayoutIndex::Color:
+		name = std::format("{}_{}", pMesh->getMeshName(), "COLOR");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getColors());
+		break;
+	case rgph::ShaderLayoutIndex::TexCoord0:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD0");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord0());
+		break;
+	case rgph::ShaderLayoutIndex::TexCoord1:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD1");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord1());
+		break;
+	case rgph::ShaderLayoutIndex::TexCoord2:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD2");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord2());
+		break;
+	case rgph::ShaderLayoutIndex::TexCoord3:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD3");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord3());
+		break;
+	case rgph::ShaderLayoutIndex::TexCoord4:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD4");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord4());
+		break;
+	case rgph::ShaderLayoutIndex::TexCoord5:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD5");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord5());
+		break;
+	case rgph::ShaderLayoutIndex::TexCoord6:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD6");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord6());
+		break;
+	case rgph::ShaderLayoutIndex::TexCoord7:
+		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD7");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord7());
+		break;
+	case rgph::ShaderLayoutIndex::BoneIndices:
+		name = std::format("{}_{}", pMesh->getMeshName(), "BONEINDICES");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getBoneIndices());
+		break;
+	case rgph::ShaderLayoutIndex::BoneWeights:
+		name = std::format("{}_{}", pMesh->getMeshName(), "BONEWEIGHTS");
+		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getBoneWeight());
+		break;
+	default:
+		assert(false);
+		break;
+	}
 
-	assert(pVertexBuffer != nullptr);
-	_pGeometry->setVertexBuffer(semantic.slot, pVertexBuffer);
+	if (pVertexBuffer == nullptr) {
+		std::cerr << "vertex semantic invalid: " << name << std::endl;
+		return false;
+	}
+
+	_pGeometry->setVertexBuffer(index, pVertexBuffer);
 	return true;
 }
 

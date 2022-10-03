@@ -17,14 +17,14 @@ Job::Job(const Step *pStep, const Geometry *pGeometry, const TransformCBufferPtr
 }
 
 void Job::execute(dx12lib::IGraphicsContext &graphicsCtx, 
-	const VertexInputSlots &vertexInputSlots,
+	const ShaderLayoutMask &shaderLayoutMask,
 	const dx12lib::ShaderRegister &transformCBufferReg) const
 {
 	assert(pStep != nullptr);
 	assert(pGeometry != nullptr);
 	assert(pTransformCBuffer != nullptr);
 
-	pGeometry->bind(graphicsCtx, vertexInputSlots);
+	pGeometry->bind(graphicsCtx, shaderLayoutMask);
 	pStep->bind(graphicsCtx);
 
 	if (pTransformCBuffer != nullptr) {

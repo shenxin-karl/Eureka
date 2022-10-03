@@ -29,18 +29,18 @@ public:
 	void resize(int width, int height);
 	bool isRunning() const;
 protected:
-	void onInitialize(dx12lib::DirectContextProxy pDirectCtx);
-	void onDestroy();
-	void onBeginTick(std::shared_ptr<GameTimer> pGameTimer);
-	void onTick(std::shared_ptr<GameTimer> pGameTimer);
-	void onEndTick(std::shared_ptr<GameTimer> pGameTimer);
-	void onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height);
+	virtual void onInitialize(dx12lib::DirectContextProxy pDirectCtx) {}
+	virtual void onDestroy() {}
+	virtual void onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {}
+	virtual void onTick(std::shared_ptr<GameTimer> pGameTimer) {}
+	virtual void onEndTick(std::shared_ptr<GameTimer> pGameTimer) {}
+	virtual void onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) {}
 protected:
-	int  _width    = 800;
-	int  _height   = 600;
+	int  _width    = 1280;
+	int  _height   = 760;
 	bool _canPause = true;
 	size_t _fps    = 120;
-	std::string _title = "Application";
+	std::string _title = "Eureka";
 	std::shared_ptr<dx12lib::Adapter>    _pAdapter;
 	std::shared_ptr<dx12lib::Device>     _pDevice;
 	std::shared_ptr<dx12lib::SwapChain>  _pSwapChain;

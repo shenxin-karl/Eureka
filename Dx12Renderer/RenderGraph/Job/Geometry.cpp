@@ -7,14 +7,15 @@ namespace rgph {
 
 using namespace Math;
 
-void Geometry::bind(dx12lib::IGraphicsContext &graphicsCtx, const ShaderLayoutMask &vertexInputSlot) const {
+void Geometry::bind(dx12lib::IGraphicsContext &graphicsCtx, const ShaderLayoutMask &vertexInputMask) const {
 	graphicsCtx.setPrimitiveTopology(_topology);
-	for (size_t slot = 0; slot < dx12lib::kVertexBufferSlotCount; ++slot) {
-		if (!vertexInputSlot.test(slot)) 
+	for (size_t i = 0; i < ShaderLayoutIndex::Max; ++i) {
+		ShaderLayoutIndex index(i);
+		if (!(vertexInputMask & index))
 			continue;
 
-		assert(_pVertexBufferList[slot] != nullptr);
-		graphicsCtx.setVertexBuffer(_pVertexBufferList[slot], static_cast<UINT>(slot));
+		assert(_pVertexBufferList[i] != nullptr);
+		graphicsCtx.setVertexBuffer(_pVertexBufferList[i], static_cast<UINT>(i));
 	}
 
 	if (_pIndexBuffer != nullptr)

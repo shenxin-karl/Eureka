@@ -265,6 +265,18 @@ bool RootSignature::isFinalized() const {
 	return _finalized;
 }
 
+void RootSignature::setShaderInputNameLocation(ShaderInputNameLocationMap &&map) {
+	_shaderInputNameLocation = std::move(map);
+}
+
+auto RootSignature::getShaderParamLocationByName(const std::string &name) const -> std::optional<ShaderInputNameLocation> {
+	auto iter = _shaderInputNameLocation.find(name);
+	if (iter != _shaderInputNameLocation.end())
+		return iter->second;
+	return std::nullopt;
+}
+
+
 size_t RootSignature::getPerTableIndexByRangeType(D3D12_DESCRIPTOR_RANGE_TYPE type) {
 	switch (type) {
 	case D3D12_DESCRIPTOR_RANGE_TYPE_CBV:

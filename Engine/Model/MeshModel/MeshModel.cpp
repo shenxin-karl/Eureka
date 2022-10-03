@@ -1,7 +1,7 @@
 #include "MeshModel.h"
 #include "MeshNode.h"
 
-namespace Eureak {
+namespace Eureka {
 
 using namespace Math;
 

@@ -1,5 +1,5 @@
 #include <Common.hlsli>
-#include <CookTorrance.hlsli>
+#include "CookTorrance.hlsli"
 
 cbuffer cbMaterial : register(b0) {
 	float4 gDiffuseAlbedo;

@@ -62,7 +62,7 @@ public:
 	void setRenderTargetFormat(DXGI_FORMAT RTVFormat, DXGI_FORMAT DSVFormat);
 	void setRenderTargetFormats(UINT numRTVFormat, const DXGI_FORMAT *pRTVFormat, DXGI_FORMAT DSVFormat);
 	void setRenderTargetFormats(const std::vector<DXGI_FORMAT> &RTVFormats, DXGI_FORMAT DSVFormat);
-	void setInputLayout(const std::vector<D3D12_INPUT_ELEMENT_DESC> &inputLayout);
+	void setInputLayout(std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout);
 	void setInputLayout(const std::initializer_list<D3D12_INPUT_ELEMENT_DESC> &inputLayout);
 	void setPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE IBProps);
 	
@@ -83,6 +83,14 @@ public:
 	void setGeometryShader(const D3D12_SHADER_BYTECODE &pByteCode);
 	void setHullShader(const D3D12_SHADER_BYTECODE &pByteCode);
 	void setDomainShader(const D3D12_SHADER_BYTECODE &pByteCode);
+
+	auto getVertexShader() const->WRL::ComPtr<ID3DBlob>;
+	auto getPixelShader() const->WRL::ComPtr<ID3DBlob>;
+	auto getGeometryShader() const->WRL::ComPtr<ID3DBlob>;
+	auto getHullShader() const->WRL::ComPtr<ID3DBlob>;
+	auto getDomainShader() const -> WRL::ComPtr<ID3DBlob>;
+	auto getInputLayout() const -> const std::vector<D3D12_INPUT_ELEMENT_DESC> &;
+
 	const D3D12_GRAPHICS_PIPELINE_STATE_DESC &getDesc() const;
 	virtual void finalize() override;
 	virtual std::shared_ptr<PSO> clone(const std::string &name) override; 
@@ -93,7 +101,7 @@ private:
 	D3D12_SHADER_BYTECODE cacheByteCode(const std::string &name, WRL::ComPtr<ID3DBlob> pByteCode);
 private:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC            _psoDesc;
-	std::shared_ptr<D3D12_INPUT_ELEMENT_DESC[]>   _pInputLayout;
+	std::vector<D3D12_INPUT_ELEMENT_DESC>		  _inputLayout;
 	std::map<std::string, WRL::ComPtr<ID3DBlob>>  _shaderByteCodeCache;
 };
 

@@ -1,14 +1,12 @@
 #pragma once
 #include <RenderGraph/Drawable/Drawable.h>
-#include "D3D/AssimpLoader/ALNode.h"
-#include "D3D/Model/RenderItem/VertexDataSemantic.h"
-#include "D3D/Model/Mesh/MeshManager.h"
+#include "AssimpLoader/ALNode.h"
 
 namespace rgph {
 class Material;
 }
 
-namespace d3d {
+namespace Eureka {
 
 struct INode;
 class RenderItem : protected rgph::Drawable {
@@ -17,7 +15,7 @@ public:
 	std::shared_ptr<rgph::Material> getMaterial() const;
 	void setMaterial(std::shared_ptr<rgph::Material> pMaterial);
 	void rebuildTechniqueFromMaterial(dx12lib::IDirectContext &directCtx);
-	bool buildVertexDataInput(dx12lib::IDirectContext &directCtx, const VertexDataSemantic &semantic);
+	bool buildVertexDataInput(dx12lib::IDirectContext &directCtx, const rgph::ShaderLayoutIndex &index);
 
 	using rgph::Drawable::submit;
 	const Math::BoundingBox &getWorldAABB() const;

@@ -58,6 +58,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 	Dx12lib
 	assimp
 	lua
+	RenderGraph
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

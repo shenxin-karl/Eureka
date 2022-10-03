@@ -105,7 +105,7 @@ void GraphicsPSO::setRenderTargetFormats(const std::vector<DXGI_FORMAT> &RTVForm
 	);
 }
 
-void GraphicsPSO::setInputLayout(const std::vector<D3D12_INPUT_ELEMENT_DESC> &inputLayout) {
+void GraphicsPSO::setInputLayout(std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout) {
 	_dirty = true;
 	if (inputLayout.empty()) {
 		_psoDesc.InputLayout.NumElements = 0;
@@ -113,12 +113,9 @@ void GraphicsPSO::setInputLayout(const std::vector<D3D12_INPUT_ELEMENT_DESC> &in
 		return;
 	}
 
-	_pInputLayout = std::shared_ptr<D3D12_INPUT_ELEMENT_DESC[]>(new D3D12_INPUT_ELEMENT_DESC[inputLayout.size()]);
-	for (std::size_t i = 0; i < inputLayout.size(); ++i)
-		_pInputLayout[i] = inputLayout[i];
-
-	_psoDesc.InputLayout.NumElements = static_cast<UINT>(inputLayout.size());
-	_psoDesc.InputLayout.pInputElementDescs = _pInputLayout ? _pInputLayout.get() : nullptr;
+	_inputLayout = std::move(inputLayout);
+	_psoDesc.InputLayout.NumElements = static_cast<UINT>(_inputLayout.size());
+	_psoDesc.InputLayout.pInputElementDescs = _inputLayout.data();
 }
 
 void GraphicsPSO::setInputLayout(const std::initializer_list<D3D12_INPUT_ELEMENT_DESC> &inputLayout) {
@@ -128,15 +125,10 @@ void GraphicsPSO::setInputLayout(const std::initializer_list<D3D12_INPUT_ELEMENT
 		_psoDesc.InputLayout.pInputElementDescs = nullptr;
 		return;
 	}
-	_pInputLayout = std::shared_ptr<D3D12_INPUT_ELEMENT_DESC[]>(new D3D12_INPUT_ELEMENT_DESC[inputLayout.size()]);
-	size_t idx = 0;
-	for (auto &desc : inputLayout) {
-		_pInputLayout[idx] = desc;
-		++idx;
-	}
 
-	_psoDesc.InputLayout.NumElements = static_cast<UINT>(inputLayout.size());
-	_psoDesc.InputLayout.pInputElementDescs = _pInputLayout ? _pInputLayout.get() : nullptr;
+	_inputLayout = std::vector<D3D12_INPUT_ELEMENT_DESC>(inputLayout.begin(), inputLayout.end());
+	_psoDesc.InputLayout.NumElements = static_cast<UINT>(_inputLayout.size());
+	_psoDesc.InputLayout.pInputElementDescs = _inputLayout.data();
 }
 
 void GraphicsPSO::setPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE IBProps) {
@@ -193,6 +185,41 @@ void GraphicsPSO::setHullShader(const D3D12_SHADER_BYTECODE &pByteCode) {
 }
 void GraphicsPSO::setDomainShader(const D3D12_SHADER_BYTECODE &pByteCode) {
 	setDomainShader(pByteCode.pShaderBytecode, pByteCode.BytecodeLength);
+}
+
+auto GraphicsPSO::getVertexShader() const -> WRL::ComPtr<ID3DBlob> {
+	auto iter = _shaderByteCodeCache.find("VS");
+	if (iter != _shaderByteCodeCache.end())
+		return iter->second;
+	return nullptr;
+}
+auto GraphicsPSO::getPixelShader() const -> WRL::ComPtr<ID3DBlob> {
+	auto iter = _shaderByteCodeCache.find("PS");
+	if (iter != _shaderByteCodeCache.end())
+		return iter->second;
+	return nullptr;
+}
+auto GraphicsPSO::getGeometryShader() const -> WRL::ComPtr<ID3DBlob> {
+	auto iter = _shaderByteCodeCache.find("GS");
+	if (iter != _shaderByteCodeCache.end())
+		return iter->second;
+	return nullptr;
+}
+auto GraphicsPSO::getHullShader() const -> WRL::ComPtr<ID3DBlob> {
+	auto iter = _shaderByteCodeCache.find("HS");
+	if (iter != _shaderByteCodeCache.end())
+		return iter->second;
+	return nullptr;
+}
+auto GraphicsPSO::getDomainShader() const -> WRL::ComPtr<ID3DBlob> {
+	auto iter = _shaderByteCodeCache.find("DS");
+	if (iter != _shaderByteCodeCache.end())
+		return iter->second;
+	return nullptr;
+}
+
+auto GraphicsPSO::getInputLayout() const -> const std::vector<D3D12_INPUT_ELEMENT_DESC> & {
+	return _inputLayout;
 }
 
 void GraphicsPSO::finalize() {

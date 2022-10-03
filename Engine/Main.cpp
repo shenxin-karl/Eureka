@@ -1,10 +1,10 @@
 #include <iostream>
 #include <sol/sol.hpp>
-#include "Application/Application.h"
+#include "Application/EurekaApplication.h"
 #include "GameTimer/GameTimer.h"
 
 int main() {
-	Eureka::Application app;
+	Eureka::EurekaApplication app;
 	try {
 		auto pGameTimer = std::make_shared<Eureka::GameTimer>();
 		app.initialize();

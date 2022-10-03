@@ -3,14 +3,14 @@
 #include "Model/IModel.hpp"
 #include "Model/RenderItem/RenderItem.h"
 
-namespace Eureak {
+namespace rpgh {
 
 class Material;
 class RenderGraph;
 
 }
 
-namespace d3d {
+namespace Eureka {
 
 class MeshNode;
 class MeshModel : public IModel {
