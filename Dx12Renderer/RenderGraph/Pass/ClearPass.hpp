@@ -1,8 +1,6 @@
 #pragma once
 #include <RenderGraph/Pass/ExecutablePass.h>
-#include <Dx12lib/Texture/RenderTargetTexture.h>
-
-#include "Dx12lib/Texture/DepthStencilTexture.h"
+#include <RenderGraph/Pass/GraphicsPass.h>
 
 namespace rgph {
 
@@ -26,7 +24,7 @@ public:
 
 	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
 		assert(pRenderTarget == nullptr);
-		auto clearValue = pDepthStencil->getClearValue();
+		const auto &clearValue = pDepthStencil->getClearValue();
 		pDirectCtx->clearDepthStencil(
 			getDSV(),
 			clearValue.DepthStencil.Depth,

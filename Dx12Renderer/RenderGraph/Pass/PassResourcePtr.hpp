@@ -109,7 +109,10 @@ void operator>>(PassResourcePtr<U0> &lhs, PassResourcePtr<U1> &rhs) {
 	assert(rhs.getResourceSource() == nullptr);
 	rhs.setResourceSource(&lhs);
 	rhs._linkResourceFunc = [&]() {
-		rhs._pResource = std::dynamic_pointer_cast<U1>(lhs._pResource);
+		if constexpr (std::is_same_v<U0, U1>)
+			rhs._pResource = lhs._pResource;
+		else
+			rhs._pResource = std::dynamic_pointer_cast<U1>(lhs._pResource);
 	};
 }
 

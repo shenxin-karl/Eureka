@@ -174,7 +174,7 @@ interface IGraphicsContext : virtual ICommonContext {
 	virtual void drawIndexedInstanced(size_t indexCountPerInstance, size_t instanceCount, size_t startIndexLocation, size_t baseVertexLocation, size_t startInstanceLocation) = 0;
 
 	virtual void clearColor(const RenderTargetView &rtv, Math::float4 color) = 0;
-	virtual void clearColor(const RenderTargetView &rtv, float colors[4]) = 0;
+	virtual void clearColor(const RenderTargetView &rtv, const float colors[4]) = 0;
 	virtual void clearDepth(const DepthStencilView &dsv, float depth) = 0;
 	virtual void clearStencil(const DepthStencilView &dsv, UINT stencil) = 0;
 	virtual void clearDepthStencil(const DepthStencilView &dsv, float depth, UINT stencil) = 0;

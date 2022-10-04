@@ -227,7 +227,7 @@ void GraphicsPSO::finalize() {
 		return;
 	
 	assert(_pRootSignature != nullptr && "No root signature is provided");
-	assert(_pInputLayout != nullptr && "No vertex input is provided");
+	assert(!_inputLayout.empty() && "No vertex input is provided");
 	_psoDesc.pRootSignature = _pRootSignature->getRootSignature().Get();
 	ThrowIfFailed(_pDevice.lock()->getD3DDevice()->CreateGraphicsPipelineState(
 		&_psoDesc,
@@ -244,7 +244,7 @@ std::shared_ptr<PSO> GraphicsPSO::clone(const std::string &name) {
 	pRes->_psoDesc = this->_psoDesc;
 	pRes->_pRootSignature = this->_pRootSignature;
 	pRes->_shaderByteCodeCache = this->_shaderByteCodeCache;
-	pRes->_pInputLayout = this->_pInputLayout;
+	pRes->_inputLayout = this->_inputLayout;
 	return std::static_pointer_cast<PSO>(pRes);
 }
 

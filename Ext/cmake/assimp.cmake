@@ -1,6 +1,5 @@
 set(ASSIMP_INSTALL OFF)
 set(BUILD_SHARED_LIBS OFF)
-set(ASSIMP_INSTALL OFF)
 add_subdirectory("assimp")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /EHsc /std:c++latest")

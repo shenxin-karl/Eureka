@@ -2,7 +2,7 @@
 
 namespace Eureka {
 
-Material::Material(MaterialDesc &&desc) : rgph::Material(std::move(desc.materialName)) {
+Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName) {
 
 }
 

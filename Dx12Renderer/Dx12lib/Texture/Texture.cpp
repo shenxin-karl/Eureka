@@ -537,6 +537,10 @@ auto Texture::getDepthOrArraySize() const -> size_t {
 	return _resourceDesc.DepthOrArraySize;
 }
 
+auto Texture::getClearValue() const -> const D3D12_CLEAR_VALUE & {
+	return _clearValue;
+}
+
 Texture::~Texture() {
 	if (auto pSharedDevice = getDevice().lock()) {
 		if (auto *pGlobalResource = pSharedDevice->getGlobalResourceState())

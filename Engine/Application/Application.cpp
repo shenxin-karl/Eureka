@@ -4,6 +4,7 @@
 #include <dx12lib/Device/DeviceStd.h>
 #include <dx12lib/Context/ContextStd.h>
 #include "GameTimer/GameTimer.h"
+#include "Defined/EngineDefined.h"
 
 using namespace Math;
 
@@ -21,7 +22,7 @@ void Application::initialize() {
 
 	dx12lib::DeviceInitDesc desc = {
 		DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_FORMAT_D24_UNORM_S8_UINT,
+		kSwapChainDepthStencilFormat,
 		_fps,
 	};
 	_pDevice->initialize(desc);
@@ -95,6 +96,18 @@ void Application::resize(int width, int height) {
 
 bool Application::isRunning() const {
 	return !_pInputSystem->shouldClose();
+}
+
+auto Application::getDevice() const -> std::shared_ptr<dx12lib::Device> {
+	return _pDevice;
+}
+
+auto Application::getSwapChain() const -> std::shared_ptr<dx12lib::SwapChain> {
+	return _pSwapChain;
+}
+
+auto Application::getInputSystem() const -> std::shared_ptr<InputSystem> {
+	return _pInputSystem;
 }
 
 }

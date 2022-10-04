@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <cassert>
 
 namespace Eureka {
 
@@ -11,9 +12,11 @@ public:
 	}
 	template<typename... Args>
 	static void SingletionEmplace(Args&& ...args) {
+		assert(_pInstance == nullptr);
 		_pInstance = std::make_unique<T>(std::forward<Args>(args)...);
 	}
 	static void SingletionDestory() {
+		assert(_pInstance != nullptr);
 		_pInstance = nullptr;
 	}
 private:

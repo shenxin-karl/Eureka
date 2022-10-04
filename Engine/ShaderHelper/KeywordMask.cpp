@@ -3,8 +3,8 @@
 
 namespace Eureka {
 
-void KeywordMask::addShaderFeatures(FeatureKeywords &&features) {
-
+void KeywordMask::addShaderFeatures(FeatureKeywords features) {
+	_featureKeywords.push_back(std::move(features));
 }
 
 void KeywordMask::setKeyWord(const std::string &keyword, bool enable) {

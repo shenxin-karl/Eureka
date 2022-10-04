@@ -391,7 +391,7 @@ void CommandList::clearColor(const RenderTargetView &rtv, Math::float4 color) {
 	);
 }
 
-void CommandList::clearColor(const RenderTargetView &rtv, float colors[4]) {
+void CommandList::clearColor(const RenderTargetView &rtv, const float colors[4]) {
 	_pCommandList->ClearRenderTargetView(
 		rtv,
 		colors,

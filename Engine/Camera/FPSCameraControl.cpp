@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "FPSCameraContorl.h"
+#include "FPSCameraControl.h"
 #include "InputSystem/InputSystem.h"
 #include "InputSystem/Mouse.h"
 #include "InputSystem/Keyboard.h"
@@ -11,6 +11,14 @@ using namespace Math;
 namespace Eureka {
 
 FPSCameraControl::FPSCameraControl(std::shared_ptr<Camera> pCamera) : _pCamera(std::move(pCamera)) {
+	Vector3 lookAt = Vector3(_pCamera->getLookAt());
+	Vector3 lookFrom = Vector3(_pCamera->getLookFrom());
+	Vector3 lookUp = Vector3(_pCamera->getLookUp());
+	Vector3 target = normalize(lookAt - lookFrom);
+	Vector3 upDir = normalize(lookUp);
+	_pitch = std::clamp(DirectX::XMConvertToDegrees(std::asin(target.y)), -89.9f, +89.9f);
+	_yaw = DirectX::XMConvertToDegrees(std::atan2(target.z, target.x));
+	_roll = DirectX::XMConvertToDegrees(std::asin(upDir.y));
 }
 
 void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::shared_ptr<GameTimer> pGameTimer) {

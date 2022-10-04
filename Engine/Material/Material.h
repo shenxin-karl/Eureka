@@ -12,7 +12,7 @@ struct MaterialDesc {
 
 class Material : public rgph::Material {
 public:
-	Material(MaterialDesc &&desc);
+	Material(const MaterialDesc &desc);
 };
 
 }

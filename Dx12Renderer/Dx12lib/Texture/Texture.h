@@ -39,6 +39,7 @@ public:
 	auto getArrayDSV(size_t mipSlice = 0) const -> const DepthStencilView &;
 	auto getMipLevels() const -> size_t;
 	auto getDepthOrArraySize() const -> size_t;
+	auto getClearValue() const -> const D3D12_CLEAR_VALUE &;
 	~Texture() override;
 	static D3D12_RESOURCE_DESC make2D(DXGI_FORMAT format, size_t width, size_t height,
 		D3D12_RESOURCE_FLAGS flags, size_t numMipMap = 1

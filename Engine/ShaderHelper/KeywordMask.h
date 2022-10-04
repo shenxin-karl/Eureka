@@ -19,7 +19,7 @@ public:
 	};
 public:
 	KeywordMask() = default;
-	void addShaderFeatures(FeatureKeywords &&features);
+	void addShaderFeatures(FeatureKeywords features);
 	void setKeyWord(const std::string &keyword, bool enable);
 	auto findKeywordIndex(const std::string &keyword) const->size_t;
 	auto getEnableKeywords() const->std::vector<std::string>;

@@ -242,9 +242,15 @@ void ShaderHelper::generateVertexInput(std::shared_ptr<dx12lib::GraphicsPSO> pGr
 }
 
 rgph::ShaderLayoutMask ShaderHelper::calcShaderLayoutMask(const std::vector<D3D12_INPUT_ELEMENT_DESC> &inputLayout) {
-
+	rgph::ShaderLayoutMask mask;
+	for (const auto &desc : inputLayout) {
+		std::string semantic = std::format("{}{}", desc.SemanticName, desc.SemanticIndex);
+		rgph::ShaderLayoutIndex index = rgph::ShaderLayoutIndex::stringToEnum(semantic);
+		assert(index != rgph::ShaderLayoutIndex::Nothing);
+		mask |= index;
+	}
+	return mask;
 }
-
 
 CD3DX12_STATIC_SAMPLER_DESC ShaderHelper::getPointWrapStaticSampler(UINT shaderRegister) {
 	return CD3DX12_STATIC_SAMPLER_DESC(
