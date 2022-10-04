@@ -47,6 +47,7 @@ public:
 	auto getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &;
 	auto getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE;
 	auto getPSO(const KeywordMask &keywordMask) const -> std::shared_ptr<dx12lib::GraphicsPSO>;
+	auto getKeywordMask() const -> const KeywordMask &;
 	bool hasShader(ShaderType shaderType) const;
 private:
 	DXGI_FORMAT _DSVFormat;

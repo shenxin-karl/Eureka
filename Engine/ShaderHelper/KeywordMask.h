@@ -3,6 +3,7 @@
 #include <string>
 #include <bitset>
 #include <optional>
+#include <memory>
 
 namespace Eureka {
 
@@ -18,8 +19,8 @@ public:
 		}
 	};
 public:
-	KeywordMask() = default;
-	void addShaderFeatures(FeatureKeywords features);
+	KeywordMask(const KeywordMask &) = default;
+	KeywordMask &operator=(const KeywordMask &) = default;
 	void setKeyWord(const std::string &keyword, bool enable);
 	auto findKeywordIndex(const std::string &keyword) const->size_t;
 	auto getEnableKeywords() const->std::vector<std::string>;
@@ -28,8 +29,12 @@ public:
 	friend bool operator==(const KeywordMask &lhs, const KeywordMask &rhs);
 	friend bool operator!=(const KeywordMask &lhs, const KeywordMask &rhs);
 private:
-	std::bitset<kMaxKeyword>	 _keywordMask;
-	std::vector<FeatureKeywords> _featureKeywords;
+	friend class GraphicsShader;
+	KeywordMask();
+	void addShaderFeatures(FeatureKeywords features);
+private:
+	std::bitset<kMaxKeyword> _keywordMask;
+	std::shared_ptr<std::vector<FeatureKeywords>> _pFeatureKeywords;
 };
 
 

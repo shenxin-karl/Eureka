@@ -173,6 +173,10 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 	return pGraphicsPSO;
 }
 
+auto GraphicsShader::getKeywordMask() const -> const KeywordMask & {
+	return _keywordMask;
+}
+
 bool GraphicsShader::hasShader(ShaderType shaderType) const {
 	for (auto &entry : _entryPoints) {
 		if (entry.shaderType == shaderType)
