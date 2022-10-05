@@ -18,6 +18,10 @@ void Step::addBindable(std::shared_ptr<Bindable> pBindable) {
 	_bindables.push_back(std::move(pBindable));
 }
 
+void Step::addBindables(std::vector<std::shared_ptr<Bindable>> bindables) {
+	_bindables = std::move(bindables);
+}
+
 void Step::submit(const Geometry *pGeometry, const TransformCBufferPtr *pTransformCBuffer) const {
 	assert(_pSubPass != nullptr);
 	_pSubPass->accept({ this, pGeometry, pTransformCBuffer });

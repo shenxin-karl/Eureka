@@ -2,7 +2,7 @@
 #include <RenderGraph/RenderGraph/RenderGraph.h>
 #include <RenderGraph/Pass/PresentPass.hpp>
 #include <Dx12lib/Device/SwapChain.h>
-#include "RenderGraph.h"
+#include "RenderGraphDefined/RenderGraphDefined.h"
 #include "Application/EurekaApplication.h"
 
 namespace Eureka {

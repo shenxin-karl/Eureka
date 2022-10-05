@@ -15,6 +15,8 @@ public:
 	std::string textureExtName;
 	std::shared_ptr<char[]> pTextureData;
 	size_t textureDataSize;
+public:
+	bool valid() const;
 };
 
 class ALMaterial {

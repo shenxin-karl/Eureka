@@ -13,6 +13,10 @@ public:
 	std::shared_ptr<Technique> getTechnique(size_t idx) const;
 	ShaderLayoutMask getShaderLayoutMask() const;
 	~Material() override;
+	void submit(const TechniqueFlag &techniqueFlag, 
+		const Geometry *pGeometry, 
+		const TransformCBufferPtr *pTransformCBuffer
+	);
 protected:
 	std::string _materialName;
 	ShaderLayoutMask _shaderLayoutMask;

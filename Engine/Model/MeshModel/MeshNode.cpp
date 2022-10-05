@@ -65,7 +65,7 @@ void MeshNode::setParentTransform(const Matrix4 &matWorld) {
 		pChildren->setParentTransform(applyTransform);
 
 	for (auto &pRenderItem : _renderItems)
-		pRenderItem->applyTransform(applyTransform);
+		pRenderItem->setTransform(applyTransform);
 }
 
 const rgph::TransformCBufferPtr &MeshNode::getNodeTransformCBuffer() const {
@@ -84,8 +84,7 @@ void MeshNode::createMaterial(rgph::RenderGraph &graph,
 	size_t idx = 0;
 	for (auto &pRenderItem : _renderItems) {
 		const auto *pALMaterial = _alMeshes[idx]->getMaterial();
-		pRenderItem->setMaterial(creator(pALMaterial));
-		pRenderItem->rebuildTechniqueFromMaterial(directCtx);
+		pRenderItem->setMaterial(directCtx, creator(pALMaterial));
 		++idx;
 	}
 	for (auto &pChild : _children)

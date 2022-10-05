@@ -4,6 +4,10 @@
 
 namespace Eureka {
 
+bool ALTexture::valid() const {
+	return !path.empty() || (pTextureData != nullptr && textureDataSize > 0);
+}
+
 void ALMaterial::init(const std::string &direction, const aiScene *pAiScene, const aiMaterial *pAiMaterial) {
 	processTexture(_diffuseMap, direction, pAiScene, pAiMaterial, aiTextureType_DIFFUSE);
 	processTexture(_normalMap, direction, pAiScene, pAiMaterial, aiTextureType_NORMALS);
@@ -113,5 +117,7 @@ void ALTree::saveToObj(const std::string &direction) const {
 	else
 		_pRootNode->saveToObj(direction + '/');
 }
+
+
 
 }

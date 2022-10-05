@@ -1,4 +1,5 @@
 #include "Material.h"
+#include <RenderGraph/Technique/Technique.h>
 
 namespace rgph {
 
@@ -24,6 +25,14 @@ ShaderLayoutMask Material::getShaderLayoutMask() const {
 }
 
 Material::~Material() {
+}
+
+void Material::submit(const TechniqueFlag &techniqueFlag,
+	const Geometry *pGeometry,
+	const TransformCBufferPtr *pTransformCBuffer)
+{
+	for (auto &pTechnique : _techniques)
+		pTechnique->submit(techniqueFlag, pGeometry, pTransformCBuffer);
 }
 
 }

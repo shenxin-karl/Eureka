@@ -8,13 +8,13 @@ namespace rgph {
 
 class ConstantBufferBindable : public Bindable {
 public:
-	static std::shared_ptr<ConstantBufferBindable> make(const dx12lib::ShaderRegister &sr,
+	static std::shared_ptr<ConstantBufferBindable> make(std::string shaderInputName,
 		std::shared_ptr<dx12lib::IConstantBuffer> pConstantBuffer
 	);
 	void bind(dx12lib::IGraphicsContext &graphicsCtx) const override;
 	ConstantBufferBindable() : Bindable(BindableType::ConstantBuffer) {}
 private:
-	dx12lib::ShaderRegister _shaderRegister;
+	std::string _shaderInputName;
 	std::shared_ptr<dx12lib::IConstantBuffer> _pConstantBuffer;
 };
 

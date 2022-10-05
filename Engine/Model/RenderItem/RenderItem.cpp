@@ -6,75 +6,6 @@
 #include "Model/MeshManager.h"
 
 using namespace Math;
-namespace Eureka {
-
-RenderItem::RenderItem(dx12lib::IDirectContext &directCtx, INode *pNode, size_t meshIdx) {
-	auto pALMesh = pNode->getMesh(meshIdx);
-	_pGeometry = std::make_shared<rgph::Geometry>();
-	_pGeometry->setMesh(pALMesh);
-	_pGeometry->genDrawArgs();
-	_pTransformCBuf = pNode->getNodeTransformCBuffer();
-
-	const auto &indices = pALMesh->getIndices();
-	if (indices.size() < 3)
-		return;
-
-	std::shared_ptr<dx12lib::IndexBuffer> pIndexBuffer;
-	if (pALMesh->getPositions().size() > std::numeric_limits<uint16_t>::max()) {
-		std::string key = pALMesh->getMeshName() + "_IndexBuffer_uint32";
-		pIndexBuffer = MeshManager::instance()->getIndexBuffer(key);
-		if (pIndexBuffer == nullptr) {
-			pIndexBuffer = directCtx.createIndexBuffer(
-				indices.data(), 
-				indices.size(), 
-				DXGI_FORMAT_R32_UINT
-			);
-			MeshManager::instance()->cacheIndexBuffer(key, pIndexBuffer);
-		}
-	} else {
-		std::string key = pALMesh->getMeshName() + "_IndexBuffer_uint16";
-		pIndexBuffer = MeshManager::instance()->getIndexBuffer(key);
-		if (pIndexBuffer == nullptr) {
-			std::vector<uint16_t> newIndices;
-			newIndices.resize(indices.size());
-			for (size_t i = 0; i < indices.size()-2; i += 3) {
-				newIndices[i+0] = static_cast<uint16_t>(indices[i+0]);
-				newIndices[i+1] = static_cast<uint16_t>(indices[i+1]);
-				newIndices[i+2] = static_cast<uint16_t>(indices[i+2]);
-			}
-
-			pIndexBuffer = directCtx.createIndexBuffer(
-				newIndices.data(), 
-				newIndices.size(), 
-				DXGI_FORMAT_R16_UINT
-			);
-			MeshManager::instance()->cacheIndexBuffer(key, pIndexBuffer);
-		}
-	}
-	_pGeometry->setIndexBuffer(pIndexBuffer);
-}
-
-std::shared_ptr<rgph::Material> RenderItem::getMaterial() const {
-	return _pMaterial;
-}
-
-void RenderItem::setMaterial(std::shared_ptr<rgph::Material> pMaterial) {
-	_pMaterial = std::move(pMaterial);
-}
-
-void RenderItem::rebuildTechniqueFromMaterial(dx12lib::IDirectContext &directCtx) {
-	clearTechnique();
-	assert(_pMaterial != nullptr);
-	for (size_t i = 0; i < _pMaterial->getNumTechnique(); ++i)
-		addTechnique(_pMaterial->getTechnique(i));
-
-	auto shaderLayoutMask = _pMaterial->getShaderLayoutMask();
-	for (size_t i = rgph::ShaderLayoutIndex::Position; i < rgph::ShaderLayoutIndex::Max; ++i) {
-		rgph::ShaderLayoutIndex index(i);
-		if (shaderLayoutMask & index)
-			buildVertexDataInput(directCtx, index);
-	}
-}
 
 template<typename T>
 static std::shared_ptr<dx12lib::VertexBuffer> buildVertexDataInputImpl(
@@ -85,20 +16,23 @@ static std::shared_ptr<dx12lib::VertexBuffer> buildVertexDataInputImpl(
 	if (data.empty())
 		return nullptr;
 
-	auto pVertexBuffer = MeshManager::instance()->getVertexBuffer(key);
+	auto pVertexBuffer = Eureka::MeshManager::instance()->getVertexBuffer(key);
 	if (pVertexBuffer == nullptr) {
 		pVertexBuffer = directCtx.createVertexBuffer(data.data(), data.size(), sizeof(T));
-		MeshManager::instance()->cacheVertexBuffer(key, pVertexBuffer);
+		Eureka::MeshManager::instance()->cacheVertexBuffer(key, pVertexBuffer);
 	}
 	return pVertexBuffer;
 }
 
-bool RenderItem::buildVertexDataInput(dx12lib::IDirectContext &directCtx, const rgph::ShaderLayoutIndex &index) {
-	if (_pGeometry->getVertexBuffer(index) != nullptr)
+static bool buildVertexDataInput(dx12lib::IDirectContext &directCtx, 
+	rgph::Geometry *pGeometry, 
+	const rgph::ShaderLayoutIndex &index) 
+{
+	if (pGeometry->getVertexBuffer(index) != nullptr)
 		return true;
-	
+
 	std::string name;
-	auto pMesh = _pGeometry->getMesh();
+	auto pMesh = pGeometry->getMesh();
 	std::shared_ptr<dx12lib::VertexBuffer> pVertexBuffer;
 	switch (index) {
 	case rgph::ShaderLayoutIndex::Position:
@@ -167,15 +101,83 @@ bool RenderItem::buildVertexDataInput(dx12lib::IDirectContext &directCtx, const 
 		return false;
 	}
 
-	_pGeometry->setVertexBuffer(index, pVertexBuffer);
+	pGeometry->setVertexBuffer(index, pVertexBuffer);
 	return true;
 }
 
-const BoundingBox & RenderItem::getWorldAABB() const {
+namespace Eureka {
+
+RenderItem::RenderItem(dx12lib::IDirectContext &directCtx, INode *pNode, size_t meshIdx) {
+	auto pALMesh = pNode->getMesh(meshIdx);
+	_pGeometry = std::make_shared<rgph::Geometry>();
+	_pGeometry->setMesh(pALMesh);
+	_pGeometry->genDrawArgs();
+	_pTransformCBuf = pNode->getNodeTransformCBuffer();
+
+	const auto &indices = pALMesh->getIndices();
+	if (indices.size() < 3)
+		return;
+
+	std::shared_ptr<dx12lib::IndexBuffer> pIndexBuffer;
+	if (pALMesh->getPositions().size() > std::numeric_limits<uint16_t>::max()) {
+		std::string key = pALMesh->getMeshName() + "_IndexBuffer_uint32";
+		pIndexBuffer = MeshManager::instance()->getIndexBuffer(key);
+		if (pIndexBuffer == nullptr) {
+			pIndexBuffer = directCtx.createIndexBuffer(
+				indices.data(), 
+				indices.size(), 
+				DXGI_FORMAT_R32_UINT
+			);
+			MeshManager::instance()->cacheIndexBuffer(key, pIndexBuffer);
+		}
+	} else {
+		std::string key = pALMesh->getMeshName() + "_IndexBuffer_uint16";
+		pIndexBuffer = MeshManager::instance()->getIndexBuffer(key);
+		if (pIndexBuffer == nullptr) {
+			std::vector<uint16_t> newIndices;
+			newIndices.resize(indices.size());
+			for (size_t i = 0; i < indices.size()-2; i += 3) {
+				newIndices[i+0] = static_cast<uint16_t>(indices[i+0]);
+				newIndices[i+1] = static_cast<uint16_t>(indices[i+1]);
+				newIndices[i+2] = static_cast<uint16_t>(indices[i+2]);
+			}
+
+			pIndexBuffer = directCtx.createIndexBuffer(
+				newIndices.data(), 
+				newIndices.size(), 
+				DXGI_FORMAT_R16_UINT
+			);
+			MeshManager::instance()->cacheIndexBuffer(key, pIndexBuffer);
+		}
+	}
+	_pGeometry->setIndexBuffer(pIndexBuffer);
+}
+
+auto RenderItem::getMaterial() const -> std::shared_ptr<rgph::Material> {
+	return _pMaterial;
+}
+
+void RenderItem::setMaterial(dx12lib::IDirectContext &directCtx, std::shared_ptr<rgph::Material> pMaterial) {
+	_pMaterial = std::move(pMaterial);
+	auto shaderLayoutMask = _pMaterial->getShaderLayoutMask();
+	for (size_t i = rgph::ShaderLayoutIndex::Position; i < rgph::ShaderLayoutIndex::Max; ++i) {
+		rgph::ShaderLayoutIndex index(i);
+		if (shaderLayoutMask & index)
+			buildVertexDataInput(directCtx, _pGeometry.get(), index);
+	}
+}
+
+void RenderItem::submit(const rgph::TechniqueFlag &techniqueFlag) const {
+	if (_pMaterial == nullptr)
+		return;
+	_pMaterial->submit(techniqueFlag, _pGeometry.get(), &_pTransformCBuf);
+}
+
+auto RenderItem::getWorldAABB() const -> const BoundingBox & {
 	return _pGeometry->getWorldAABB();
 }
 
-void RenderItem::applyTransform(const Matrix4 &matWorld) {
+void RenderItem::setTransform(const Matrix4 &matWorld) {
 	_pGeometry->applyTransform(matWorld);
 }
 

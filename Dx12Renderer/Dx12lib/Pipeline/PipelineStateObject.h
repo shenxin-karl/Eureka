@@ -40,12 +40,14 @@ public:
 	WRL::ComPtr<ID3D12PipelineState> getPipelineStateObject() const;
 	const std::string &getName() const;
 	bool isDirty() const;
+	auto getHashCode() const;
 	virtual void finalize() = 0;
 	virtual std::shared_ptr<PSO> clone(const std::string &name) = 0;
 	virtual ~PSO() = default;
 protected:
 	bool                             _dirty = true;
 	std::string                      _name;
+	std::size_t						 _hashCode;
 	std::shared_ptr<RootSignature>   _pRootSignature;
 	WRL::ComPtr<ID3D12PipelineState> _pPSO;
 	std::weak_ptr<Device>            _pDevice;

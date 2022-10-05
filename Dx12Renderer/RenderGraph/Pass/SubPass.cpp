@@ -49,8 +49,8 @@ const std::vector<Job> &SubPass::getJobs() const {
 	return _jobs;
 }
 
-void SubPass::setVertexDataInputSlots(const ShaderLayoutMask &inputSlot) {
-	_vertexDataSlots = inputSlot;
+void SubPass::setShaderLayoutMask(const ShaderLayoutMask &inputSlot) {
+	_shaderLayoutMask = inputSlot;
 }
 
 void SubPass::setTransformCBufferShaderRegister(const dx12lib::ShaderRegister &transShaderRegister) {
@@ -61,8 +61,8 @@ void SubPass::setPassCBufferShaderRegister(const dx12lib::ShaderRegister &passSh
 	_passCBufferShaderRegister = passShaderRegister;
 }
 
-const ShaderLayoutMask &SubPass::getVertexDataInputSlots() const {
-	return _vertexDataSlots;
+const ShaderLayoutMask &SubPass::getShaderLayoutMask() const {
+	return _shaderLayoutMask;
 }
 
 const dx12lib::ShaderRegister &SubPass::getTransformCBufferShaderRegister() const {
@@ -85,7 +85,7 @@ void SubPass::execute(dx12lib::IGraphicsContext &graphicsCtx, const std::vector<
 		pBindable->bind(graphicsCtx);
 
 	for (auto &job : jobs)
-		job.execute(graphicsCtx, _vertexDataSlots, _transformCBufferShaderRegister);
+		job.execute(graphicsCtx, _shaderLayoutMask, _transformCBufferShaderRegister);
 }
 
 void SubPass::setGraphicsPass(const GraphicsPass *pGraphicsPass) {

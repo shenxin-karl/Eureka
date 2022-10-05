@@ -6,22 +6,11 @@
 
 namespace rgph {
 
-void Drawable::submit(const TechniqueFlag &techniqueFlag) const {
-	assert(_pGeometry != nullptr);
-	for (auto &pTechnique : getTechniques()) {
-		pTechnique->submit(
-			techniqueFlag,
-			_pGeometry.get(),
-			&_pTransformCBuf
-		);
-	}
-}
-
-std::shared_ptr<Geometry> Drawable::getGeometry() const {
+auto Drawable::getGeometry() const -> std::shared_ptr<Geometry> {
 	return _pGeometry;
 }
 
-TransformCBufferPtr Drawable::getTransformCBuffer() const {
+auto Drawable::getTransformCBuffer() const -> TransformCBufferPtr {
 	return _pTransformCBuf;
 }
 

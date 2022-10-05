@@ -6,6 +6,8 @@
 namespace dx12lib {
 
 PSO::PSO(std::weak_ptr<Device> pDevice, const std::string &name) : _name(name) {
+	std::hash<std::string> hasher;
+	_hashCode = hasher(name);
 }
 
 void PSO::setRootSignature(std::shared_ptr<RootSignature> pRootSignature) {
@@ -28,6 +30,10 @@ const std::string &PSO::getName() const {
 
 bool PSO::isDirty() const {
 	return _dirty;
+}
+
+auto PSO::getHashCode() const {
+	return _hashCode;
 }
 
 GraphicsPSO::GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name) : PSO(pDevice, name) {

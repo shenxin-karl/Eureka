@@ -5,17 +5,16 @@
 #include <Dx12lib/Context/ContextStd.h>
 #include <RenderGraph/Technique/TechniqueType.hpp>
 #include <RenderGraph/Job/TransformCBufferPtr.h>
-#include "RenderGraph/Drawable/TechniqueBuffer.h"
 
 namespace rgph {
 
-class Drawable : public IDrawable, public TechniqueBuffer {
+class Drawable : public IDrawable {
 public:
 	Drawable() = default;
 	~Drawable() override = default;
-	void submit(const TechniqueFlag &techniqueFlag) const override;
-	std::shared_ptr<Geometry> getGeometry() const;
-	TransformCBufferPtr getTransformCBuffer() const;
+	void submit(const TechniqueFlag &techniqueFlag) const = 0;
+	auto getGeometry() const -> std::shared_ptr<Geometry>;
+	auto getTransformCBuffer() const -> TransformCBufferPtr;
 	void setGeometry(std::shared_ptr<Geometry> pGeometry);
 	void setTransformCBuffer(TransformCBufferPtr pTransformCBuffer);
 protected:

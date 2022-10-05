@@ -25,7 +25,9 @@ interface ICommonContext : IContext {
 
 	virtual	void setDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, WRL::ComPtr<ID3D12DescriptorHeap> pHeap) = 0;
 	virtual void setConstantBufferView(const ShaderRegister &sr, const ConstantBufferView &crv) = 0;
+	virtual void setConstantBufferView(const std::string &shaderInputName, const ConstantBufferView &cbv, size_t offset = 0, size_t numDescriptor = 0) = 0;
 	virtual void setShaderResourceView(const ShaderRegister &sr, const ShaderResourceView &srv) = 0;
+	virtual void setShaderResourceView(const std::string &shaderInputName, const ShaderResourceView &srv, size_t offset = 0, size_t numDescriptor = 0) = 0;
 	virtual void readBack(std::shared_ptr<ReadBackBuffer> pReadBackBuffer) = 0;
 
 	virtual void copyResourceImpl(std::shared_ptr<IResource> pDest, std::shared_ptr<IResource> pSrc) = 0;
