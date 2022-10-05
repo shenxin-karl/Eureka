@@ -35,22 +35,10 @@ public:
 	};
 };
 
-struct ShaderInputNameLocation {
-	ShaderInputNameLocation() = default;
-	ShaderInputNameLocation(D3D12_DESCRIPTOR_RANGE_TYPE viewType, size_t rootParamIndex, size_t offset, size_t count = 1)
-		: viewType(viewType), rootParamIndex(rootParamIndex), offset(offset), count(count) {}
-public:
-	D3D12_DESCRIPTOR_RANGE_TYPE viewType = D3D12_DESCRIPTOR_RANGE_TYPE(-1);
-	size_t rootParamIndex = -1;
-	size_t offset = -1;
-	size_t count = -1;
-};
-
 class RootSignature {
 	static size_t getPerTableIndexByRangeType(D3D12_DESCRIPTOR_RANGE_TYPE type);
 	using DescriptorsPerTable = std::array<uint8_t, kMaxDescriptorTables>;
 	using ShaderParamLocationMap = std::unordered_map<ShaderRegister, ShaderParamLocation, ShaderRegisterHasher>;
-	using ShaderInputNameLocationMap = std::unordered_map<std::string, ShaderInputNameLocation>;
 protected:
 	RootSignature(std::weak_ptr<Device> pDevice, size_t numRootParams, size_t numStaticSamplers = 0);
 public:
@@ -68,9 +56,6 @@ public:
 	std::optional<ShaderParamLocation> getShaderParamLocation(const ShaderRegister &sr) const;
 	const DescriptorsPerTable &getDescriptorPerTableByType(D3D12_DESCRIPTOR_HEAP_TYPE heapType) const;
 	bool isFinalized() const;
-
-	void setShaderInputNameLocation(ShaderInputNameLocationMap &&map);
-	auto getShaderParamLocationByName(const std::string &name) const-> std::optional<ShaderInputNameLocation>;
 private:
 	bool _finalized = false;
 	size_t _numRootParams;
@@ -78,7 +63,6 @@ private:
 	std::weak_ptr<Device> _pDevice;
 	
 	ShaderParamLocationMap _shaderParamLocation;
-	ShaderInputNameLocationMap _shaderInputNameLocation;
 
 	WRL::ComPtr<ID3D12RootSignature> _pRootSignature;
 	std::unique_ptr<RootParameter[]> _pRootParamArray;

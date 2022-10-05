@@ -1,9 +1,9 @@
 #pragma once
 #include <Dx12lib/dx12libStd.h>
+#include <Dx12lib/Pipeline/ShaderRegister.hpp>
+#include <optional>
 
 namespace dx12lib {
-
-
 
 template<D3D12_INPUT_CLASSIFICATION SlotClass>
 struct InputLayoutDescHelper : public D3D12_INPUT_ELEMENT_DESC {
@@ -30,7 +30,15 @@ public:
 using VInputLayoutDescHelper = InputLayoutDescHelper<D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA>;
 using IInputLayoutDescHelper = InputLayoutDescHelper<D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA>;
 
+struct BoundResource {
+	D3D12_DESCRIPTOR_RANGE_TYPE viewType;
+	ShaderRegister shaderRegister;
+	size_t count;
+};
+
 class PSO {
+public:
+	using BoundResourceMap	= std::unordered_map<std::string, BoundResource>;
 public:
 	explicit PSO(std::weak_ptr<Device> pDevice, const std::string &name);
 	PSO(const PSO &) = delete;
@@ -41,6 +49,8 @@ public:
 	const std::string &getName() const;
 	bool isDirty() const;
 	auto getHashCode() const;
+	auto getBoundResource(const std::string &name) const -> std::optional<BoundResource>;
+	auto getBoundResourceMap() const;
 	virtual void finalize() = 0;
 	virtual std::shared_ptr<PSO> clone(const std::string &name) = 0;
 	virtual ~PSO() = default;
@@ -51,6 +61,7 @@ protected:
 	std::shared_ptr<RootSignature>   _pRootSignature;
 	WRL::ComPtr<ID3D12PipelineState> _pPSO;
 	std::weak_ptr<Device>            _pDevice;
+	BoundResourceMap				 _boundResourceMap;
 };
 
 class GraphicsPSO : public PSO {
@@ -98,6 +109,7 @@ public:
 	virtual std::shared_ptr<PSO> clone(const std::string &name) override; 
 protected:
 	explicit GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name);
+	void generateBoundResourceMap();
 private:
 	D3D12_SHADER_BYTECODE cacheByteCode(const std::string &name, const void *pData, size_t size);
 	D3D12_SHADER_BYTECODE cacheByteCode(const std::string &name, WRL::ComPtr<ID3DBlob> pByteCode);

@@ -19,12 +19,7 @@ public:
 		size_t numDescripotrs,
 		const D3D12_CPU_DESCRIPTOR_HANDLE &srcDescriptor
 	);
-	void setView(const std::string &shaderInputName,
-		D3D12_DESCRIPTOR_RANGE_TYPE viewType,
-		const D3D12_CPU_DESCRIPTOR_HANDLE &srcDescriptor,
-		size_t offset = 0,
-		size_t numDescripotrs = 0
-	);
+	auto getDescriptorHandleIncrementSize() const -> std::size_t;
 private:
 	size_t computeStaleDescriptorCount() const;
 

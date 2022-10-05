@@ -160,7 +160,6 @@ void ShaderHelper::generateGraphicsRootSignature(std::shared_ptr<dx12lib::Device
 		}
 	}
 
-
 	auto sortViews = [&](std::vector<ShaderInput> &views) {
 		std::sort(views.begin(), views.end(), [](const ShaderInput &lhs, const ShaderInput &rhs) {
 			if (lhs.shaderRegister.space < lhs.shaderRegister.space)
@@ -169,7 +168,6 @@ void ShaderHelper::generateGraphicsRootSignature(std::shared_ptr<dx12lib::Device
 		});
 	};
 
-	std::unordered_map<std::string, dx12lib::ShaderInputNameLocation> shaderInputNameLocations;
 	auto pRootSignature = pDevice->createRootSignature(spaceViews.size(), kStaticSamplerCount);
 	pRootSignature->initStaticSampler(0, getStaticSamplers());
 	
@@ -186,31 +184,16 @@ void ShaderHelper::generateGraphicsRootSignature(std::shared_ptr<dx12lib::Device
 				views.cbvs[i].shaderRegister,
 				views.cbvs[i].bindCount
 			);
-			shaderInputNameLocations[views.cbvs[i].name] = dx12lib::ShaderInputNameLocation(
-				D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-				rootIndex,
-				rootParamOffset,
-				views.cbvs[i].bindCount
-			);
-			++rootParamOffset;
 		}
 		for (size_t i = 0; i < views.srvs.size(); ++i, ++tableIndex) {
 			pRootSignature->at(rootIndex).setTableRange(tableIndex,
 				views.srvs[i].shaderRegister,
 				views.srvs[i].bindCount
 			);
-			shaderInputNameLocations[views.srvs[i].name] = dx12lib::ShaderInputNameLocation(
-				D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-				rootIndex,
-				rootParamOffset,
-				views.srvs[i].bindCount
-			);
-			++rootParamOffset;
 		}
 		++rootIndex;
 	}
 
-	pRootSignature->setShaderInputNameLocation(std::move(shaderInputNameLocations));
 	pRootSignature->finalize();
 	pGraphicsPSO->setRootSignature(pRootSignature);
 }

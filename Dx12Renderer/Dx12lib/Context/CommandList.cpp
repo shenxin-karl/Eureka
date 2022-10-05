@@ -157,26 +157,17 @@ void CommandList::setConstantBufferView(const ShaderRegister &sr, const Constant
 	_pDynamicDescriptorHeaps[0]->stageDescriptor(sr, cbv);
 }
 
-void CommandList::setConstantBufferView(const std::string &shaderInputName, 
-	const ConstantBufferView &cbv,
-	size_t offset,
-	size_t numDescriptors)
-{
+void CommandList::setConstantBufferView(const std::string &boundResourceName, const ConstantBufferView &cbv) {
 	assert(cbv.valid());
-#ifdef DEBUG_MODE
-	WRL::ComPtr<ID3D12Resource> pD3DResource = cbv.getResource()->getD3DResource();
-	D3D12_RESOURCE_STATES state = _pResourceStateTracker->getResourceState(pD3DResource.Get());
-	assert(cbv.getResource()->checkCBVState(state));
-#endif
-	_pDynamicDescriptorHeaps[0]->setView(shaderInputName, 
-		D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 
-		cbv.getCPUDescriptorHandle(),
-		offset,
-		numDescriptors
-	);
+	assert(cbv.valid());
+	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
+	assert(boundResource != std::nullopt);
+	assert(boundResource->viewType == D3D12_DESCRIPTOR_RANGE_TYPE_CBV);
+	setConstantBufferView(boundResource->shaderRegister, cbv);
 }
 
-void CommandList::setShaderResourceView(const ShaderRegister &sr, const ShaderResourceView &srv) {
+void CommandList::setShaderResourceView(const ShaderRegister &sr, const ShaderResourceView &srv) 
+{
 	assert(_currentGPUState.pRootSignature != nullptr);
 	assert(sr.slot.isSRV());
 	assert(srv.valid());
@@ -188,23 +179,33 @@ void CommandList::setShaderResourceView(const ShaderRegister &sr, const ShaderRe
 	_pDynamicDescriptorHeaps[0]->stageDescriptor(sr, srv);
 }
 
-void CommandList::setShaderResourceView(const std::string &shaderInputName, 
+void CommandList::setShaderResourceView(const std::string &boundResourceName,
 	const ShaderResourceView &srv, 
 	size_t offset, 
 	size_t numDescriptors) 
 {
 	assert(srv.valid());
+	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
+	assert(boundResource != std::nullopt);
+	assert(boundResource->viewType == D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
+	assert((offset + numDescriptors) <= boundResource->count);
+	ShaderRegister shaderRegister = boundResource->shaderRegister;
+	shaderRegister += offset;
+
+	assert(_currentGPUState.pRootSignature != nullptr);
 #ifdef DEBUG_MODE
 	WRL::ComPtr<ID3D12Resource> pD3DResource = srv.getResource()->getD3DResource();
 	D3D12_RESOURCE_STATES state = _pResourceStateTracker->getResourceState(pD3DResource.Get());
 	assert(srv.getResource()->checkSRVState(state));
 #endif
-	_pDynamicDescriptorHeaps[0]->setView(shaderInputName,
-		D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-		srv.getCPUDescriptorHandle(),
-		offset,
-		numDescriptors
-	);
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(srv.getCPUDescriptorHandle());
+	UINT incrementSize = static_cast<UINT>(_pDynamicDescriptorHeaps[0]->getDescriptorHandleIncrementSize());
+	for (size_t i = 0; i < numDescriptors; ++i) {
+		_pDynamicDescriptorHeaps[0]->stageDescriptor(shaderRegister, handle);
+		handle.Offset(1, incrementSize);
+		shaderRegister += 1;
+	}
 }
 
 void CommandList::readBack(std::shared_ptr<ReadBackBuffer> pReadBackBuffer) {

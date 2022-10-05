@@ -119,21 +119,8 @@ void DynamicDescriptorHeap::stageDescriptors(size_t rootParameterIndex,
 		_staleDescriptorTableBitMask.set(rootParameterIndex, true);
 }
 
-void DynamicDescriptorHeap::setView(
-	const std::string &shaderInputName, 
-	D3D12_DESCRIPTOR_RANGE_TYPE viewType, 
-	const D3D12_CPU_DESCRIPTOR_HANDLE &srcDescriptor, 
-	size_t offset, 
-	size_t numDescripotrs) 
-{
-	auto shaderInputNameLocation = _pRootSignature->getShaderParamLocationByName(shaderInputName);
-	assert(shaderInputNameLocation != std::nullopt);
-	assert(viewType == shaderInputNameLocation->viewType);
-	stageDescriptors(shaderInputNameLocation->rootParamIndex, 
-		shaderInputNameLocation->offset, 
-		numDescripotrs, 
-		srcDescriptor
-	);
+auto DynamicDescriptorHeap::getDescriptorHandleIncrementSize() const -> std::size_t {
+	return _descriptorHandleIncrementSize;
 }
 
 size_t DynamicDescriptorHeap::computeStaleDescriptorCount() const {

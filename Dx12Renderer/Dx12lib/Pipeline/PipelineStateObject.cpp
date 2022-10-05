@@ -3,6 +3,9 @@
 #include <Dx12lib/Device/Device.h>
 #include <Dx12lib/Tool/MakeObejctTool.hpp>
 
+
+
+
 namespace dx12lib {
 
 PSO::PSO(std::weak_ptr<Device> pDevice, const std::string &name) : _name(name) {
@@ -36,6 +39,17 @@ auto PSO::getHashCode() const {
 	return _hashCode;
 }
 
+auto PSO::getBoundResource(const std::string &name) const -> std::optional<BoundResource> {
+	auto iter = _boundResourceMap.find(name);
+	if (iter != _boundResourceMap.end())
+		return iter->second;
+	return std::nullopt;
+}
+
+auto PSO::getBoundResourceMap() const {
+	return _boundResourceMap;
+}
+
 GraphicsPSO::GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name) : PSO(pDevice, name) {
 	_pDevice = pDevice;
 	/// graphics pipeline static object has default state
@@ -47,6 +61,66 @@ GraphicsPSO::GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name)
 	_psoDesc.SampleMask = 0xffffffff;
 	_psoDesc.SampleDesc.Count = 1;
 	_psoDesc.SampleDesc.Quality = 0;
+}
+
+void GraphicsPSO::generateBoundResourceMap() {
+	auto pDevice = _pDevice.lock();
+	_boundResourceMap.clear();
+
+	WRL::ComPtr<ID3D12ShaderReflection> shaderRefs[5];
+	WRL::ComPtr<ID3DBlob> shaders[5] = {
+		getVertexShader(),
+		getHullShader(),
+		getDomainShader(),
+		getGeometryShader(),
+		getPixelShader()
+	};
+
+	std::unordered_map<std::string, D3D12_SHADER_INPUT_BIND_DESC> boundResources;
+	for (size_t i = 0; i < 5; ++i) {
+		if (!shaders[i])
+			continue;
+
+		ThrowIfFailed(D3DReflect(shaders[i]->GetBufferPointer(),
+			shaders[i]->GetBufferSize(),
+			IID_PPV_ARGS(&shaderRefs[i])
+		));
+
+		if (!shaderRefs[i])
+			continue;
+
+		D3D12_SHADER_DESC desc;
+		shaderRefs[i]->GetDesc(&desc);
+		for (UINT j = 0; j < desc.BoundResources; j++) {
+			D3D12_SHADER_INPUT_BIND_DESC  resourceDesc;
+			shaderRefs[i]->GetResourceBindingDesc(j, &resourceDesc);
+			auto shaderVarName = resourceDesc.Name;
+			if (resourceDesc.Type == D3D_SIT_SAMPLER)
+				continue;
+			boundResources[shaderVarName] = resourceDesc;
+		}
+	}
+
+	dx12lib::ShaderRegister shaderRegister;
+	for (auto &&[name, desc] : boundResources) {
+		switch (desc.Type) {
+		case D3D_SIT_CBUFFER:
+			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::CBV0 + desc.BindPoint);
+			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
+			_boundResourceMap[name] = BoundResource{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, shaderRegister, desc.BindCount };
+			break;
+		case D3D_SIT_TEXTURE:
+		case D3D_SIT_STRUCTURED:
+			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::SRV0 + desc.BindPoint);
+			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
+			_boundResourceMap[name] = BoundResource{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, shaderRegister, desc.BindCount };
+			break;
+		case D3D_SIT_SAMPLER:
+		default:
+			assert(false);
+			break;
+		}
+	}
 }
 
 void GraphicsPSO::setBlendState(const D3D12_BLEND_DESC& blendDesc) {
@@ -232,6 +306,7 @@ void GraphicsPSO::finalize() {
 	if (!_dirty)
 		return;
 	
+	generateBoundResourceMap();
 	assert(_pRootSignature != nullptr && "No root signature is provided");
 	assert(!_inputLayout.empty() && "No vertex input is provided");
 	_psoDesc.pRootSignature = _pRootSignature->getRootSignature().Get();
