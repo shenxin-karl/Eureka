@@ -20,10 +20,10 @@ public:
 	~SubPass();
 	size_t getJobCount() const;
 	const std::vector<Job> &getJobs() const;
-	void setVertexDataInputSlots(const ShaderLayoutMask &inputSlot);
+	void setShaderLayoutMask(const ShaderLayoutMask &inputSlot);
 	void setTransformCBufferShaderRegister(const dx12lib::ShaderRegister &transShaderRegister);
 	void setPassCBufferShaderRegister(const dx12lib::ShaderRegister &passShaderRegister);
-	const ShaderLayoutMask &getVertexDataInputSlots() const;
+	const ShaderLayoutMask &getShaderLayoutMask() const;
 	const dx12lib::ShaderRegister &getTransformCBufferShaderRegister() const;
 	const dx12lib::ShaderRegister &getPassCBufferShaderRegister() const;
 	const std::vector<std::shared_ptr<Bindable>> &getBindables() const;
@@ -40,7 +40,7 @@ protected:
 	std::vector<Job> _jobs;
 	std::string _subPassName;
 	BindCallBackType _pOnBindCallback;
-	ShaderLayoutMask _vertexDataSlots;
+	ShaderLayoutMask _shaderLayoutMask;
 	const GraphicsPass *_pGraphicsPass = nullptr;
 	dx12lib::ShaderRegister _transformCBufferShaderRegister;
 	dx12lib::ShaderRegister _passCBufferShaderRegister;
