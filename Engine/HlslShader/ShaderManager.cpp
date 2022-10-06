@@ -6,11 +6,6 @@ namespace Eureka {
 
 void ShaderManager::loading(std::weak_ptr<dx12lib::Device> pDevice) {
 	auto pDeferredPBR = std::make_shared<GraphicsShader>(pDevice, "Engine/HlslShader/DeferredPBR.hlsl");
-	pDeferredPBR->addShaderFeatures({ "_ENALBE_DIFFUSE_MAP" });
-	pDeferredPBR->addShaderFeatures({ "_ENABLE_NORMAL_MAP" });
-	pDeferredPBR->addShaderFeatures({ "_ENABLE_ROUGHNESS_MAP" });
-	pDeferredPBR->addShaderFeatures({ "_ENALBE_METALLIC_MAP" });
-	pDeferredPBR->addShaderFeatures({ "_ENABLE_AO_MAP" });
 	pDeferredPBR->setVertexShader("VS");
 	pDeferredPBR->setPixelShader("PS");
 	pDeferredPBR->setRenderTargetFormats({ kGBuffer0Format, kGBuffer1Format, kGBuffer2Format });

@@ -44,17 +44,17 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp) {
 
 	auto pClearGBuffer0 = std::make_shared<rgph::ClearRtPass>("ClearGBuffer0");
 	{
-		pApp->_pGBuffer0 >> pClearGBuffer0->pRenderTarget2d;
+		pApp->pGBuffer0 >> pClearGBuffer0->pRenderTarget2d;
 		pRenderGraph->addPass(pClearGBuffer0);
 	}
 	auto pClearGBuffer1 = std::make_shared<rgph::ClearRtPass>("ClearGBuffer1");
 	{
-		pApp->_pGBuffer0 >> pClearGBuffer1->pRenderTarget2d;
+		pApp->pGBuffer0 >> pClearGBuffer1->pRenderTarget2d;
 		pRenderGraph->addPass(pClearGBuffer1);
 	}
 	auto pClearGBuffer2 = std::make_shared<rgph::ClearRtPass>("ClearGBuffer2");
 	{
-		pApp->_pGBuffer0 >> pClearGBuffer2->pRenderTarget2d;
+		pApp->pGBuffer0 >> pClearGBuffer2->pRenderTarget2d;
 		pRenderGraph->addPass(pClearGBuffer2);
 	}
 

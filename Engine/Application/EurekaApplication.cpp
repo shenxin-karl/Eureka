@@ -12,7 +12,9 @@
 #include "Camera/Camera.h"
 #include "Camera/FPSCameraControl.h"
 #include "Defined/EngineDefined.h"
+#include "Material/Material.h"
 #include "RenderGraphDefined/RenderGraphDefined.h"
+#include "TextureManager/TextureManager.h"
 
 using namespace Math;
 
@@ -23,7 +25,9 @@ EurekaApplication::~EurekaApplication() {
 
 void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	MeshManager::SingletionEmplace();
+	TextureManager::SingletionEmplace();
 	ShaderManager::SingletionEmplace();
+	
 
 	CameraDesc cameraDesc;
 	cameraDesc.lookAt = float3(0, 0, 0);
@@ -32,10 +36,11 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	cameraDesc.nearClip = 0.1f;
 	cameraDesc.farClip = 1000.f;
 	cameraDesc.fov = 45.f;
-	cameraDesc.aspect = float(_width) / float(_height);
+	cameraDesc.aspect = static_cast<float>(_width) / static_cast<float>(_height);
 	_pCamera = std::make_shared<Camera>(cameraDesc);
-	_pCameraContorl = std::make_shared<FPSCameraControl>(_pCamera);
+	_pCameraControl = std::make_shared<FPSCameraControl>(_pCamera);
 
+	pCbPrePass = pDirectCtx->createFRConstantBuffer<CbPrePass>();
 	initRenderGraph(pDirectCtx);
 
 	// loading
@@ -45,11 +50,12 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 
 void EurekaApplication::onDestroy() {
 	ShaderManager::SingletionDestory();
+	TextureManager::SingletionDestory();
 	MeshManager::SingletionDestory();
 }
 
 void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
-	_pCameraContorl->update(_pInputSystem, pGameTimer);
+	_pCameraControl->update(_pInputSystem, pGameTimer);
 }
 
 void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {
@@ -100,37 +106,42 @@ void EurekaApplication::onEndTick(std::shared_ptr<GameTimer> pGameTimer) {
 
 void EurekaApplication::onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) {
 	_pCamera->setAspect(static_cast<float>(width) / static_cast<float>(height));
-	pDirectCtx->trackResource(std::move(_pGBuffer0));
-	pDirectCtx->trackResource(std::move(_pGBuffer1));
-	pDirectCtx->trackResource(std::move(_pGBuffer2));
-	_pGBuffer0 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer0Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
-	));
-	_pGBuffer1 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer1Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
-	));
-	_pGBuffer2 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer2Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
-	));
+	resizeGBuffer(pDirectCtx, width, height);
 }
 
 void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	auto pSponzaPBR = std::make_shared<ALTree>("Assets/Models/SponzaPBR/Sponza.gltf");
 	auto pModel = std::make_unique<MeshModel>(*pDirectCtx, pSponzaPBR);
+
+	MaterialDesc materialDesc {
+		"DeferredPBR",
+		nullptr,
+		*pDirectCtx,
+		pRenderGraph
+	};
+	pModel->createMaterial(*pRenderGraph, *pDirectCtx, [&](const ALMaterial *pAlMaterial) {
+		materialDesc.pAlMaterial = pAlMaterial;
+		return std::make_shared<Material>(materialDesc);
+	});
+
 	_models.push_back(std::move(pModel));
 }
 
 void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {
-	_pGBuffer0 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer0Format, _width, _height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+	resizeGBuffer(pDirectCtx, _width, _height);
+	pRenderGraph = SetupRenderGraph(this);
+}
+
+void EurekaApplication::resizeGBuffer(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
+	pGBuffer0 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kGBuffer0Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
-	_pGBuffer1 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer1Format, _width, _height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+	pGBuffer1 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kGBuffer1Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
-	_pGBuffer2 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer2Format, _width, _height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+	pGBuffer2 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kGBuffer2Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
-	_pRenderGraph = SetupRenderGraph(this);
 }
 
 }

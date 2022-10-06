@@ -11,7 +11,7 @@
 namespace Eureka {
 
 GraphicsShader::GraphicsShader(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName) 
-: _pDevice(std::move(pDevice)), _shaderFileName(shaderFileName) 
+: _shaderFileName(shaderFileName), _pDevice(std::move(pDevice)) 
 {
 	char error[256];
 	std::filesystem::path path(shaderFileName);
@@ -28,6 +28,7 @@ GraphicsShader::GraphicsShader(std::weak_ptr<dx12lib::Device> pDevice, const std
 		assert(false);
 	}
 	_shaderContentLength = std::strlen(_pShaderContent.get());
+	_keywordMask.handleShaderContent(_pShaderContent.get());
 }
 
 GraphicsShader::~GraphicsShader() {
@@ -46,7 +47,7 @@ void GraphicsShader::setRenderTargetFormats(std::vector<DXGI_FORMAT> renderTarge
 	_RTVFormats = std::move(renderTargetFormats);
 }
 
-void GraphicsShader::addShaderFeatures(KeywordMask::FeatureKeywords &&featureKeywords) {
+void GraphicsShader::addShaderFeatures(KeywordMask::FeatureKeywords featureKeywords) {
 	_keywordMask.addShaderFeatures(std::move(featureKeywords));
 }
 
@@ -75,7 +76,7 @@ void GraphicsShader::setPixelShader(const std::string &entryPoint) {
 	_entryPoints.push_back({ ShaderType::PS, entryPoint });
 }
 
-void GraphicsShader::setBlnedDesc(const D3D12_BLEND_DESC &blendDesc) {
+void GraphicsShader::setBlendDesc(const D3D12_BLEND_DESC &blendDesc) {
 	_blendDesc = blendDesc;
 }
 
@@ -92,7 +93,7 @@ void GraphicsShader::setPrimitiveType(D3D12_PRIMITIVE_TOPOLOGY_TYPE type) {
 }
 
 auto GraphicsShader::getShaderContent() const -> std::string_view {
-	return std::string_view();
+	return std::string_view(_pShaderContent.get(), _shaderContentLength);
 }
 
 auto GraphicsShader::getEntryPoints() const -> const std::vector<ShaderEntryPoint> & {
@@ -125,7 +126,7 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 	for (size_t i = 0; i < kMaxKeyword; ++i) {
 		if (keywordMask.getBitMask().test(i)) {
 			auto pKeyword = keywordMask.getKeywordByIndex(i);
-			key += std::format("_{}", *pKeyword);
+			key += std::format("#{}", *pKeyword);
 			macros.push_back(D3D_SHADER_MACRO{
 				.Name = pKeyword->c_str(),
 				.Definition = nullptr

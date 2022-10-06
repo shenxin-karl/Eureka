@@ -1,6 +1,9 @@
 #include <cassert>
 #include "KeywordMask.h"
 
+#include <format>
+#include <unordered_set>
+
 namespace Eureka {
 
 void KeywordMask::setKeyWord(const std::string &keyword, bool enable) {
@@ -63,11 +66,10 @@ auto KeywordMask::getBitMask() const -> const std::bitset<kMaxKeyword> &{
 
 auto KeywordMask::getKeywordByIndex(size_t index) const -> const std::string * {
 	assert(index < kMaxKeyword);
-	size_t count = 0;
 	for (size_t i = 0; i < _pFeatureKeywords->size(); ++i) {
-		count += (*_pFeatureKeywords)[i].size();
-		if (count > index)
-			return &(*_pFeatureKeywords)[i][count - index];
+		if (index < (*_pFeatureKeywords)[i].size())
+			return &(*_pFeatureKeywords)[i][index];
+		index -= (*_pFeatureKeywords)[i].size();
 	}
 	return nullptr;
 }
@@ -83,6 +85,66 @@ bool operator!=(const KeywordMask &lhs, const KeywordMask &rhs) {
 
 KeywordMask::KeywordMask() {
 	_pFeatureKeywords = std::make_shared<std::vector<FeatureKeywords>>();
+}
+
+void KeywordMask::handleShaderContent(const char *pShaderContent) {
+		constexpr std::string_view pragmaKeyword = "#pragma";
+		constexpr std::string_view featureKeyword = "shader_feature";
+
+		std::unordered_set<std::string> featureKeywords;
+		auto handleFeature = [&](const char *pStart, const char *pLast) {
+			size_t length = pLast - pStart;
+			if (length < pragmaKeyword.length() || length < featureKeyword.length())
+				return;
+			if (std::strncmp(pStart, pragmaKeyword.data(), pragmaKeyword.length()) != 0)
+				return;
+			pStart += pragmaKeyword.length();
+			while (*pStart == ' ' && pStart < pLast)
+				++pStart;
+
+			length = pLast - pStart;
+			if (length < featureKeyword.length())
+				return;
+
+			pStart += featureKeyword.length();
+			FeatureKeywords keywords;
+			while (pStart < pLast) {
+				while (pStart < pLast && (*pStart == ' ' || *pStart == '\r' || *pStart == '\t'))
+					++pStart;
+
+				auto pEnd = pStart+1;
+				while (pEnd < pLast && *pEnd != ' ' && *pEnd != '\t' && *pEnd != '\r')
+					++pEnd;
+
+				if (!((pEnd - pStart) == 1 && *pStart == '_')) {
+					std::string keyword(pStart, pEnd);
+					auto iter = featureKeywords.find(keyword);
+					if (iter != featureKeywords.end())
+						throw std::format("Duplicate shader_feature keyword: {}", keyword);
+
+					featureKeywords.insert(keyword);
+					keywords.emplace_back(std::move(keyword));
+				}
+				pStart = pEnd+1;
+			}
+			_pFeatureKeywords->push_back(std::move(keywords));
+		};
+
+		const char *pStart = pShaderContent;
+		const char *pLast = nullptr;
+		while (*pStart != '\0') {
+			pLast = pStart + 1;
+			while (*pLast != '\0' && *pLast != '\n')
+				++pLast;
+
+			try {
+				handleFeature(pStart, pLast);
+			} catch (...) {
+				_pFeatureKeywords->clear();
+				throw;
+			}
+			pStart = pLast + 1;
+		}
 }
 
 void KeywordMask::addShaderFeatures(FeatureKeywords features) {

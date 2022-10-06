@@ -21,11 +21,10 @@ public:
 
 class ALMaterial {
 public:
-	void init(const std::string &direction, const aiScene *pAiScene, const aiMaterial *pAiMaterial);
+	void init(const std::string &directory, const aiScene *pAiScene, const aiMaterial *pAiMaterial);
 	const ALTexture &getDiffuseMap() const;
 	const ALTexture &getNormalMap() const;
-	const ALTexture &getSpecularMap() const;
-	const ALTexture &getSmoothnessMap() const;
+	const ALTexture &getRoughnessMap() const;
 	const ALTexture &getMetallicMap() const;
 	const ALTexture &getAmbientOcclusionMap() const;
 private:
@@ -36,10 +35,9 @@ private:
 		aiTextureType type
 	);
 private:
-	ALTexture _diffuseMap;
+	ALTexture _albedoMap;
 	ALTexture _normalMap;
-	ALTexture _specularMap;
-	ALTexture _smoothnessMap;
+	ALTexture _roughnessMap;
 	ALTexture _metallicMap;
 	ALTexture _ambientOcclusionMap;
 };

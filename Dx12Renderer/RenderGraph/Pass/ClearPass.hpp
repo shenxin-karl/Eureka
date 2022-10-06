@@ -8,7 +8,7 @@ class ClearRtPass : public ExecutablePass {
 public:
 	ClearRtPass(const std::string &passName)
 	: ExecutablePass(passName)
-	, pRenderTarget2d(this, "pRenderTarget2d") {
+	, pRenderTarget2d(this, "pBackBuffer") {
 	}
 
 	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
@@ -43,7 +43,7 @@ public:
 public:
 	ClearPass(const std::string &passName)
 	: ExecutablePass(passName)
-	, pRenderTarget2d(this, "pRenderTarget2d")
+	, pRenderTarget2d(this, "pBackBuffer")
 	, pDepthStencil2d(this, "pDepthStencil2d") {
 	}
 

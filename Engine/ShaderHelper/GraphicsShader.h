@@ -30,13 +30,13 @@ public:
 	void setDepthStencilFormat(DXGI_FORMAT depthStencilFormat);
 	void setRenderTargetFormat(DXGI_FORMAT renderTargetFormat);
 	void setRenderTargetFormats(std::vector<DXGI_FORMAT> renderTargetFormats);
-	void addShaderFeatures(KeywordMask::FeatureKeywords &&featureKeywords);
+	void addShaderFeatures(KeywordMask::FeatureKeywords featureKeywords);
 	void setVertexShader(const std::string &entryPoint);
 	void setHullShader(const std::string &entryPoint);
 	void setDomainShader(const std::string &entryPoint);
 	void setGeometryShader(const std::string &entryPoint);
 	void setPixelShader(const std::string &entryPoint);
-	void setBlnedDesc(const D3D12_BLEND_DESC &blendDesc);
+	void setBlendDesc(const D3D12_BLEND_DESC &blendDesc);
 	void setRasterizerDesc(const D3D12_RASTERIZER_DESC &rasterizerDesc);
 	void setDepthStencilDesc(const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc);
 	void setPrimitiveType(D3D12_PRIMITIVE_TOPOLOGY_TYPE type);

@@ -12,6 +12,7 @@
 #include <RenderGraph/Pass/RenderQueuePass.h>
 #include <RenderGraph/Pass/SubPass.h>
 #include "ShaderHelper/ShaderHelper.h"
+#include "TextureManager/TextureManager.h"
 
 namespace Eureka {
 
@@ -27,7 +28,11 @@ static std::shared_ptr<dx12lib::Texture> loadTexture(
 			alTexture.textureDataSize
 		);
 	} else {
+		if ((pTex = TextureManager::instance()->getTexture(alTexture.path)) != nullptr)
+			return pTex;
+
 		pTex = graphicsCtx.createTextureFromFile(dx12lib::to_wstring(alTexture.path), true);
+		TextureManager::instance()->setTexture(alTexture.path, pTex);
 	}
 	assert(pTex);
 	return pTex;
@@ -40,18 +45,18 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 	_pCbMaterial = graphicsCtx.createFRConstantBuffer<CbMaterial>(CbMaterial{});
 
 	auto pDeferredPBRShader = ShaderManager::instance()->getGraphicsShader("DeferredPBR");
-	auto pGBufferTecinique = std::make_shared<rgph::Technique>("GBuffer", kTechGBuffer);
+	auto pGBufferTechnique = std::make_shared<rgph::Technique>("GBuffer", kTechGBuffer);
 	{
 		auto keywordMask = pDeferredPBRShader->getKeywordMask();
 		std::vector<std::shared_ptr<rgph::Bindable>> bindables;
 
 		if (pALMaterial->getDiffuseMap().valid()) {
-			keywordMask.setKeyWord("_ENALBE_DIFFUSE_MAP", true);
-			auto pDiffseMap = loadTexture(graphicsCtx, pALMaterial->getDiffuseMap());
+			keywordMask.setKeyWord("_ENABLE_DIFFUSE_MAP", true);
+			auto pDiffuseMap = loadTexture(graphicsCtx, pALMaterial->getDiffuseMap());
 			bindables.push_back(rgph::SamplerTextureBindable::make(
 				"gDiffuseMap",
-				pDiffseMap->get2dSRV(),
-				pDiffseMap
+				pDiffuseMap->get2dSRV(),
+				pDiffuseMap
 			));
 		} 
 
@@ -65,9 +70,11 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 			));
 		}
 
-		if (pALMaterial->getSmoothnessMap().valid()) {
+		bool hasRoughnessMap = false;
+		if (pALMaterial->getRoughnessMap().valid()) {
+			hasRoughnessMap = true;
 			keywordMask.setKeyWord("_ENABLE_ROUGHNESS_MAP", true);
-			auto pRoughnessMap = loadTexture(graphicsCtx, pALMaterial->getSmoothnessMap());
+			auto pRoughnessMap = loadTexture(graphicsCtx, pALMaterial->getRoughnessMap());
 			bindables.push_back(rgph::SamplerTextureBindable::make(
 				"gRoughnessMap",
 				pRoughnessMap->get2dSRV(),
@@ -76,31 +83,35 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 		}
 
 		if (pALMaterial->getMetallicMap().valid()) {
-			keywordMask.setKeyWord("_ENALBE_METALLIC_MAP", true);
-			auto pMetallicMap = loadTexture(graphicsCtx, pALMaterial->getMetallicMap());
-			bindables.push_back(rgph::SamplerTextureBindable::make(
-				"gMetallicMap",
-				pMetallicMap->get2dSRV(),
-				pMetallicMap
-			));
+			if (hasRoughnessMap && pALMaterial->getMetallicMap().path == pALMaterial->getRoughnessMap().path) {
+				keywordMask.setKeyWord("_ENABLE_METALLIC_ROUGHNESS_MAP_G", true);
+			} else {
+				keywordMask.setKeyWord("_ENABLE_METALLIC_MAP", true);
+				auto pMetallicMap = loadTexture(graphicsCtx, pALMaterial->getMetallicMap());
+				bindables.push_back(rgph::SamplerTextureBindable::make(
+					"gMetallicMap",
+					pMetallicMap->get2dSRV(),
+					pMetallicMap
+				));
+			}
 		}
 
 		if (pALMaterial->getAmbientOcclusionMap().valid()) {
 			keywordMask.setKeyWord("_ENABLE_AO_MAP", true);
-			auto pAssimpOcclusion = loadTexture(graphicsCtx, pALMaterial->getAmbientOcclusionMap());
+			auto pAmbientOcclusionMap = loadTexture(graphicsCtx, pALMaterial->getAmbientOcclusionMap());
 			bindables.push_back(rgph::SamplerTextureBindable::make(
 				"gAoMap",
-				pAssimpOcclusion->get2dSRV(),
-				pAssimpOcclusion
+				pAmbientOcclusionMap->get2dSRV(),
+				pAmbientOcclusionMap
 			));
 		}
 
 		auto pSubPass = getGBufferSubPass(desc, pDeferredPBRShader->getPSO(keywordMask));
 		auto pStep = std::make_unique<rgph::Step>(pSubPass);
 		pStep->addBindables(std::move(bindables));
-		pGBufferTecinique->addStep(std::move(pStep));
+		pGBufferTechnique->addStep(std::move(pStep));
 	}
-	_techniques.push_back(pGBufferTecinique);
+	_techniques.push_back(pGBufferTechnique);
 }
 
 rgph::SubPass *Material::getGBufferSubPass(const MaterialDesc &desc, std::shared_ptr<dx12lib::GraphicsPSO> pso) {
@@ -112,6 +123,13 @@ rgph::SubPass *Material::getGBufferSubPass(const MaterialDesc &desc, std::shared
 	pSubPass = std::make_shared<rgph::SubPass>(pso);
 	rgph::ShaderLayoutMask shaderLayoutMask = ShaderHelper::calcShaderLayoutMask(pso->getInputLayout());
 	pSubPass->setShaderLayoutMask(shaderLayoutMask);
+
+	if (auto pCbPreObject = pso->getBoundResource("CbPreObject"))
+		pSubPass->setTransformCBufferShaderRegister(pCbPreObject->shaderRegister);
+	if (auto pCbPrePass = pso->getBoundResource("CbPrePass"))
+		pSubPass->setPassCBufferShaderRegister(pCbPrePass->shaderRegister);
+
+	pGBufferPass->addSubPass(pSubPass);
 	return pSubPass.get();
 }
 

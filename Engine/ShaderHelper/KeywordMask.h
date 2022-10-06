@@ -31,6 +31,7 @@ public:
 private:
 	friend class GraphicsShader;
 	KeywordMask();
+	void handleShaderContent(const char *pShaderContent);
 	void addShaderFeatures(FeatureKeywords features);
 private:
 	std::bitset<kMaxKeyword> _keywordMask;

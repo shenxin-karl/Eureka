@@ -8,29 +8,24 @@ bool ALTexture::valid() const {
 	return !path.empty() || (pTextureData != nullptr && textureDataSize > 0);
 }
 
-void ALMaterial::init(const std::string &direction, const aiScene *pAiScene, const aiMaterial *pAiMaterial) {
-	processTexture(_diffuseMap, direction, pAiScene, pAiMaterial, aiTextureType_DIFFUSE);
-	processTexture(_normalMap, direction, pAiScene, pAiMaterial, aiTextureType_NORMALS);
-	processTexture(_specularMap, direction, pAiScene, pAiMaterial, aiTextureType_SPECULAR);
-	processTexture(_smoothnessMap, direction, pAiScene, pAiMaterial, aiTextureType_SHININESS);
-	processTexture(_metallicMap, direction, pAiScene, pAiMaterial, aiTextureType_METALNESS);
-	processTexture(_ambientOcclusionMap, direction, pAiScene, pAiMaterial, aiTextureType_AMBIENT_OCCLUSION);
+void ALMaterial::init(const std::string &directory, const aiScene *pAiScene, const aiMaterial *pAiMaterial) {
+	processTexture(_albedoMap, directory, pAiScene, pAiMaterial, aiTextureType_BASE_COLOR);
+	processTexture(_normalMap, directory, pAiScene, pAiMaterial, aiTextureType_NORMALS);
+	processTexture(_roughnessMap, directory, pAiScene, pAiMaterial, aiTextureType_DIFFUSE_ROUGHNESS);
+	processTexture(_metallicMap, directory, pAiScene, pAiMaterial, aiTextureType_METALNESS);
+	processTexture(_ambientOcclusionMap, directory, pAiScene, pAiMaterial, aiTextureType_AMBIENT_OCCLUSION);
 }
 
 const ALTexture & ALMaterial::getDiffuseMap() const {
-	return _diffuseMap;
+	return _albedoMap;
 }
 
 const ALTexture & ALMaterial::getNormalMap() const {
 	return _normalMap;
 }
 
-const ALTexture & ALMaterial::getSpecularMap() const {
-	return _specularMap;
-}
-
-const ALTexture & ALMaterial::getSmoothnessMap() const {
-	return _smoothnessMap;
+const ALTexture & ALMaterial::getRoughnessMap() const {
+	return _roughnessMap;
 }
 
 const ALTexture & ALMaterial::getMetallicMap() const {
