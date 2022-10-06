@@ -12,6 +12,7 @@
 #include "Camera/Camera.h"
 #include "Camera/FPSCameraControl.h"
 #include "Defined/EngineDefined.h"
+#include "RenderGraphDefined/RenderGraphDefined.h"
 
 using namespace Math;
 
@@ -34,6 +35,8 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	cameraDesc.aspect = float(_width) / float(_height);
 	_pCamera = std::make_shared<Camera>(cameraDesc);
 	_pCameraContorl = std::make_shared<FPSCameraControl>(_pCamera);
+
+	initRenderGraph(pDirectCtx);
 
 	// loading
 	ShaderManager::instance()->loading(_pDevice);
@@ -115,6 +118,19 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	auto pSponzaPBR = std::make_shared<ALTree>("Assets/Models/SponzaPBR/Sponza.gltf");
 	auto pModel = std::make_unique<MeshModel>(*pDirectCtx, pSponzaPBR);
 	_models.push_back(std::move(pModel));
+}
+
+void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {
+	_pGBuffer0 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kGBuffer0Format, _width, _height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+	));
+	_pGBuffer1 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kGBuffer1Format, _width, _height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+	));
+	_pGBuffer2 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kGBuffer2Format, _width, _height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+	));
+	_pRenderGraph = SetupRenderGraph(this);
 }
 
 }

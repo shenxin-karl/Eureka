@@ -25,9 +25,15 @@ MeshNode::MeshNode(dx12lib::IDirectContext &directCtx, const ALNode *pALNode) {
 
 void MeshNode::submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const {
 	if (_transformDirty && _nodeTransformCBuffer != nullptr) {
+		Matrix4 matWorld(_applyTransform);
+		Matrix4 matInvWorld = inverse(matWorld);
+		Matrix4 matNormal = transpose(inverse(Matrix4(_applyTransform)));
+		Matrix4 matInvNormal = inverse(matNormal);
 		rgph::TransformStore store {
-			.matWorld = _applyTransform,
-			.matNormal = float4x4(transpose(inverse(Matrix4(_applyTransform))))
+			.matWorld = float4x4(matWorld),
+			.matInvWorld = float4x4(matInvWorld),
+			.matNormal = float4x4(matNormal),
+			.matInvNormal = float4x4(matInvNormal)
 		};
 		_nodeTransformCBuffer.setTransformStore(store);
 		_transformDirty = false;
@@ -35,7 +41,7 @@ void MeshNode::submit(const IBounding &bounding, const rgph::TechniqueFlag &tech
 
 	for (auto &pRenderItem : _renderItems) {
 		const auto &worldAABB = pRenderItem->getWorldAABB();
-		if (bounding.contains(worldAABB) == DX::ContainmentType::DISJOINT)
+		if (bounding.contains(worldAABB) == DirectX::ContainmentType::DISJOINT)
 			continue;
 		pRenderItem->submit(techniqueFlag);
 	}

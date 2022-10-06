@@ -541,6 +541,26 @@ auto Texture::getClearValue() const -> const D3D12_CLEAR_VALUE & {
 	return _clearValue;
 }
 
+auto Texture::getViewport(bool useReverseDepth) const -> D3D12_VIEWPORT {
+	D3D12_VIEWPORT viewport;
+	viewport.TopLeftX = 0.f;
+	viewport.TopLeftY = 0.f;
+	viewport.Width = static_cast<float>(_resourceDesc.Width);
+	viewport.Height = static_cast<float>(_resourceDesc.Height);
+	viewport.MinDepth = useReverseDepth ? 1.f : 0.f;
+	viewport.MaxDepth = useReverseDepth ? 0.f : 1.f;
+	return viewport;
+}
+
+auto Texture::getScissorRect() const -> D3D12_RECT {
+	D3D12_RECT rect;
+	rect.left = 0;
+	rect.top = 0;
+	rect.right = static_cast<LONG>(_resourceDesc.Width);
+	rect.bottom = static_cast<LONG>(_resourceDesc.Height);
+	return rect;
+}
+
 Texture::~Texture() {
 	if (auto pSharedDevice = getDevice().lock()) {
 		if (auto *pGlobalResource = pSharedDevice->getGlobalResourceState())

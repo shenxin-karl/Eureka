@@ -4,51 +4,62 @@
 
 namespace rgph {
 
-class ClearRtPass : public GraphicsPass {
+class ClearRtPass : public ExecutablePass {
 public:
-	ClearRtPass(const std::string &passName) : GraphicsPass(passName, true, false) {
-		pRenderTarget.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	ClearRtPass(const std::string &passName)
+	: ExecutablePass(passName)
+	, pRenderTarget2d(this, "pRenderTarget2d") {
 	}
 
 	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
-		assert(pDepthStencil == nullptr);
-		pDirectCtx->clearColor(getRTV(), pRenderTarget->getClearValue().Color);
+		const auto &clearValue = pRenderTarget2d->getClearValue();
+		pDirectCtx->clearColor(pRenderTarget2d->get2dRTV(), clearValue.Color);
 	}
+public:
+	PassResourcePtr<dx12lib::Texture> pRenderTarget2d;
 };
 
-class ClearDsPass : public GraphicsPass {
+class ClearDsPass : public ExecutablePass {
 public:
-	ClearDsPass(const std::string &passName) : GraphicsPass(passName, false, true) {
-		pDepthStencil.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+	ClearDsPass(const std::string &passName)
+	: ExecutablePass(passName)
+	, pDepthStencil2d(this, "pDepthStencil2d") {
 	}
 
 	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
-		assert(pRenderTarget == nullptr);
-		const auto &clearValue = pDepthStencil->getClearValue();
-		pDirectCtx->clearDepthStencil(
-			getDSV(),
-			clearValue.DepthStencil.Depth,
+		const auto &clearValue = pDepthStencil2d->getClearValue();
+		pDirectCtx->clearDepthStencil(pDepthStencil2d->get2dDSV(), 
+			clearValue.DepthStencil.Depth, 
 			clearValue.DepthStencil.Stencil
 		);
 	}
+public:
+	PassResourcePtr<dx12lib::Texture> pDepthStencil2d;
 };
 
-class ClearPass : public GraphicsPass {
+
+class ClearPass : public ExecutablePass {
 public:
-	ClearPass(const std::string &passName) : GraphicsPass(passName, true, true) {
-		pRenderTarget.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		pDepthStencil.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+public:
+	ClearPass(const std::string &passName)
+	: ExecutablePass(passName)
+	, pRenderTarget2d(this, "pRenderTarget2d")
+	, pDepthStencil2d(this, "pDepthStencil2d") {
 	}
 
 	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
-		auto clearValue = pDepthStencil->getClearValue();
-		pDirectCtx->clearColor(getRTV(), pRenderTarget->getClearValue().Color);
-		pDirectCtx->clearDepthStencil(
-			getDSV(),
-			clearValue.DepthStencil.Depth,
-			clearValue.DepthStencil.Stencil
+		const auto &rtClearValue = pRenderTarget2d->getClearValue();
+		pDirectCtx->clearColor(pRenderTarget2d->get2dRTV(), rtClearValue.Color);
+
+		const auto &dsClearValue = pDepthStencil2d->getClearValue();
+		pDirectCtx->clearDepthStencil(pDepthStencil2d->get2dDSV(),
+			dsClearValue.DepthStencil.Depth,
+			dsClearValue.DepthStencil.Stencil
 		);
 	}
+public:
+	PassResourcePtr<dx12lib::Texture> pRenderTarget2d;
+	PassResourcePtr<dx12lib::Texture> pDepthStencil2d;
 };
 
 }

@@ -40,6 +40,8 @@ public:
 	auto getMipLevels() const -> size_t;
 	auto getDepthOrArraySize() const -> size_t;
 	auto getClearValue() const -> const D3D12_CLEAR_VALUE &;
+	auto getViewport(bool useReverseDepth = false) const -> D3D12_VIEWPORT;
+	auto getScissorRect() const -> D3D12_RECT;
 	~Texture() override;
 	static D3D12_RESOURCE_DESC make2D(DXGI_FORMAT format, size_t width, size_t height,
 		D3D12_RESOURCE_FLAGS flags, size_t numMipMap = 1

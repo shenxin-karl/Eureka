@@ -14,10 +14,9 @@ namespace rgph {
 class ExecutablePass;
 class PassResourceBase {
 public:
-	PassResourceBase(ExecutablePass *pExecutablePass, std::string resourceName, bool activate = true);
+	PassResourceBase(ExecutablePass *pExecutablePass, std::string resourceName);
 	void setFinished(bool bCond);
 	bool isFinished() const;
-	bool isActivated() const;
 	void setResourceSource(const PassResourceBase *pResourceSource);
 	const std::string &getResourceName() const;
 	const PassResourceBase *getResourceSource() const;

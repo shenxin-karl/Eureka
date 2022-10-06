@@ -15,7 +15,7 @@ public:
 	virtual void execute(dx12lib::DirectContextProxy pDirectCtx);
 	virtual void postExecute(dx12lib::DirectContextProxy pDirectCtx);
 	virtual void reset();
-	virtual PassType getPassType() const;
+	virtual auto getPassType() const -> PassType;
 private:
 	friend class PassResourceBase;
 	friend class RenderGraph;

@@ -4,7 +4,7 @@
 namespace rgph {
 
 FullScreenPass::FullScreenPass(const std::string &passName, bool rtActive, bool dsActive)
-: GraphicsPass(passName, rtActive, dsActive)
+: GraphicsPass(passName)
 {
 }
 

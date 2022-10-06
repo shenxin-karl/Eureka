@@ -6,12 +6,11 @@
 
 namespace rgph {
 
-PassResourceBase::PassResourceBase(ExecutablePass *pExecutablePass, std::string resourceName, bool activate)
+PassResourceBase::PassResourceBase(ExecutablePass *pExecutablePass, std::string resourceName)
 : _resourceName(std::move(resourceName)), _pExecutablePass(pExecutablePass)
-, _finished(false), _activated(activate),  _pResourceSource(nullptr)
+, _finished(false), _pResourceSource(nullptr)
 {
-	if (activate)
-		pExecutablePass->addPassResource(this);
+	pExecutablePass->addPassResource(this);
 }
 
 void PassResourceBase::setFinished(bool bCond) {
@@ -20,10 +19,6 @@ void PassResourceBase::setFinished(bool bCond) {
 
 bool PassResourceBase::isFinished() const {
 	return _finished;
-}
-
-bool PassResourceBase::isActivated() const {
-	return _activated;
 }
 
 void PassResourceBase::setResourceSource(const PassResourceBase *pResourceSource) {

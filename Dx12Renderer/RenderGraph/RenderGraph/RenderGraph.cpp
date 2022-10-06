@@ -61,9 +61,6 @@ void RenderGraph::finalize() {
 			auto pPass = *iter;
 			bool shouldExecute = true;
 			for (auto *pPassResource : pPass->getPassResources()) {
-				if (!pPassResource->isActivated())
-					continue;
-
 				bool linkState = pPassResource->tryLink();
 				auto *pResourceSource = pPassResource->getResourceSource();
 				bool isFinished = pResourceSource == nullptr || pResourceSource->isFinished();
@@ -92,15 +89,12 @@ void RenderGraph::finalize() {
 					std::cerr << "\t{" << std::endl;
 					{
 						for (auto *pPassResource : pBindingPass->getPassResources()) {
-							if (!pPassResource->isActivated())
-								continue;
-
 							std::cerr << "\t\t{" << std::endl;
 							std::cerr << "\t\t\tPassResourceName: " << pPassResource->getResourceName() << std::endl;
 							auto *pResourceSource = pPassResource->getResourceSource();
 							std::string sourceState = "false";
 							std::string sourceName = "nil";
-							if (pPassResource != nullptr) {
+							if (pResourceSource != nullptr) {
 								sourceState = pPassResource->isFinished() ? "true" : "false";
 								sourceName = std::format(
 									"{}.{}",

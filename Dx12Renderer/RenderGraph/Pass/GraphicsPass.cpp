@@ -2,17 +2,7 @@
 
 namespace rgph {
 
-GraphicsPass::GraphicsPass(const std::string &passName, bool rtActive, bool dsActive)
-: ExecutablePass(passName)
-, pRenderTarget(this, "RenderTarget", rtActive)
-, pDepthStencil(this, "DepthStencil", dsActive)
-{
-	pGetRTVFunc = [](const dx12lib::Texture *ptr) -> const dx12lib::RenderTargetView & {
-		return ptr->get2dRTV();
-	};
-	pGetDSVFunc = [](const dx12lib::Texture *ptr) -> const dx12lib::DepthStencilView &{
-		return ptr->get2dDSV();
-	};
+GraphicsPass::GraphicsPass(const std::string &passName) : ExecutablePass(passName) {
 }
 
 void GraphicsPass::preExecute(dx12lib::DirectContextProxy pDirectCtx) {
@@ -21,7 +11,8 @@ void GraphicsPass::preExecute(dx12lib::DirectContextProxy pDirectCtx) {
 
 void GraphicsPass::execute(dx12lib::DirectContextProxy pDirectCtx) {
 	ExecutablePass::execute(pDirectCtx);
-	bindRenderTarget(*pDirectCtx);
+	setViewportScissorRect(*pDirectCtx);
+	setRenderTargets(*pDirectCtx);
 }
 
 void GraphicsPass::postExecute(dx12lib::DirectContextProxy pDirectCtx) {
@@ -30,60 +21,6 @@ void GraphicsPass::postExecute(dx12lib::DirectContextProxy pDirectCtx) {
 
 PassType GraphicsPass::getPassType() const {
 	return PassType::GraphicsPass;
-}
-
-void GraphicsPass::bindRenderTarget(dx12lib::IGraphicsContext &graphicsCtx) {
-	size_t width = pDepthStencil->getWidth();
-	size_t height = pDepthStencil->getHeight();
-	if (customViewport.has_value()) {
-		graphicsCtx.setViewport(*customViewport);
-	} else {
-		graphicsCtx.setViewport(D3D12_VIEWPORT{
-			.TopLeftX = 0.f,
-			.TopLeftY = 0.f,
-			.Width = static_cast<FLOAT>(width),
-			.Height = static_cast<FLOAT>(height),
-			.MinDepth = 0.f,
-			.MaxDepth = 1.f,
-		});
-	}
-
-	if (customScissorRect.has_value()) {
-		graphicsCtx.setScissorRect(*customScissorRect);
-	} else {
-		graphicsCtx.setScissorRect(D3D12_RECT{
-			.left = 0,
-			.top = 0,
-			.right = static_cast<LONG>(width),
-			.bottom = static_cast<LONG>(height)
-		});
-	}
-
-	if (pRenderTarget != nullptr) {
-		graphicsCtx.setRenderTarget(
-			pGetRTVFunc(pRenderTarget.get()),
-			pGetDSVFunc(pDepthStencil.get())
-		);
-	}
-	else {
-		graphicsCtx.setRenderTarget(pGetDSVFunc(pDepthStencil.get()));
-	}
-}
-
-DXGI_FORMAT GraphicsPass::getRtFormat() const {
-	return pRenderTarget->getFormat();
-}
-
-DXGI_FORMAT GraphicsPass::getDsFormat() const {
-	return pDepthStencil->getFormat();
-}
-
-const dx12lib::RenderTargetView & GraphicsPass::getRTV() const {
-	return pGetRTVFunc(pRenderTarget.get());
-}
-
-const dx12lib::DepthStencilView & GraphicsPass::getDSV() const {
-	return pGetDSVFunc(pDepthStencil.get());
 }
 
 }

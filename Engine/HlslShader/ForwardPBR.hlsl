@@ -1,4 +1,4 @@
-#include <Common.hlsli>
+#include "Common.hlsli"
 #include "CookTorrance.hlsli"
 
 cbuffer cbMaterial : register(b0) {

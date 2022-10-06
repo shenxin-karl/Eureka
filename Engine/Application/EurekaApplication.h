@@ -19,6 +19,7 @@ public:
 	void onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) override;
 private:
 	void loading(dx12lib::DirectContextProxy pDirectCtx);
+	void initRenderGraph(dx12lib::DirectContextProxy pDirectCtx);
 private:
 	std::vector<std::unique_ptr<IModel>> _models;
 	std::shared_ptr<Camera>				_pCamera;
