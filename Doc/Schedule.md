@@ -23,10 +23,11 @@
 
 - [ ] 好用的 枚举 包装类
 - [ ] mipmap 生成
+- [ ] 加入一个 GeometryGenerator 提供基本几何体
 
 ## PBR 
 
-- [x] 主应用定义好渲染渲染 RenderGraph
+- [x] 主应用定义好渲染 RenderGraph
 - [x] 定义好 GBuffer 的作用
 - [x] 渲染到 GBuffer
 - [ ] Compute Shader 计算方向光
@@ -37,12 +38,16 @@
 
 [光照 - LearnOpenGL CN (learnopengl-cn.github.io)](https://learnopengl-cn.github.io/07 PBR/02 Lighting/)
 
-## ACES 
+## ACES / ColorGrading / Gamma矫正
 
 https://zhuanlan.zhihu.com/p/21983679
 
-- [x] 增加一个后处理，将 Buffer 执行 gamma 矫正 和 aces 后， 写回到 backBuffer 中
+- [ ] Compute 后处理
 - [ ] 使用 mipmap 生成，计算出整个屏幕的亮度， 更准去的 aces 调整
+
+## FXAA
+
+- [ ] 做 FXAA 的同时，写回到 backBuffer 中
 
 ## Tile Based Deferred Rendering
 

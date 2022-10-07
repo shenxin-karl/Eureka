@@ -116,6 +116,10 @@ auto GraphicsShader::getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE {
 	return _primitiveType;
 }
 
+auto GraphicsShader::getPSO() const -> std::shared_ptr<dx12lib::GraphicsPSO> {
+	return getPSO(_keywordMask);
+}
+
 auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared_ptr<dx12lib::GraphicsPSO> {
 	auto iter = _psoMap.find(keywordMask);
 	if (iter != _psoMap.end())
@@ -161,7 +165,6 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 		(pGraphicsPSOPtr->*setterList[index])(pBinaryBlob);
 	}
 
-	assert(_DSVFormat != DXGI_FORMAT_UNKNOWN);
 	pGraphicsPSO->setRenderTargetFormats(_RTVFormats, _DSVFormat);
 	pGraphicsPSO->setDepthStencilState(_depthStencilDesc);
 	pGraphicsPSO->setBlendState(_blendDesc);

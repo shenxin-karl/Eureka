@@ -46,14 +46,15 @@ public:
 	auto getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &;
 	auto getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &;
 	auto getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE;
+	auto getPSO() const -> std::shared_ptr<dx12lib::GraphicsPSO>;
 	auto getPSO(const KeywordMask &keywordMask) const -> std::shared_ptr<dx12lib::GraphicsPSO>;
 	auto getKeywordMask() const -> const KeywordMask &;
 	bool hasShader(ShaderType shaderType) const;
 private:
-	DXGI_FORMAT _DSVFormat;
 	KeywordMask _keywordMask;
 	std::string _shaderFileName;
 	size_t _shaderContentLength;
+	DXGI_FORMAT _DSVFormat = DXGI_FORMAT_UNKNOWN;
 	std::vector<DXGI_FORMAT> _RTVFormats;
 	std::weak_ptr<dx12lib::Device> _pDevice;
 	std::unique_ptr<char[]> _pShaderContent;

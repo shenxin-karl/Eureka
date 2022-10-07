@@ -13,8 +13,10 @@ static std::shared_ptr<dx12lib::VertexBuffer> buildVertexDataInputImpl(
 	const std::string &key,
 	const std::vector<T> &data)
 {
-	if (data.empty())
+	if (data.empty()) {
+		assert(false);
 		return nullptr;
+	}
 
 	auto pVertexBuffer = Eureka::MeshManager::instance()->getVertexBuffer(key);
 	if (pVertexBuffer == nullptr) {
@@ -24,7 +26,7 @@ static std::shared_ptr<dx12lib::VertexBuffer> buildVertexDataInputImpl(
 	return pVertexBuffer;
 }
 
-static bool buildVertexDataInput(dx12lib::IDirectContext &directCtx, 
+bool Eureka::RenderItem::buildVertexDataInput(dx12lib::IDirectContext &directCtx,
 	rgph::Geometry *pGeometry, 
 	const rgph::ShaderLayoutIndex &shaderLayoutIndex) 
 {

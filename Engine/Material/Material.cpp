@@ -19,8 +19,9 @@ namespace Eureka {
 
 static std::shared_ptr<dx12lib::Texture> loadTexture(
 	dx12lib::IGraphicsContext &graphicsCtx,
-	const ALTexture &alTexture
-)
+	const ALTexture &alTexture,
+	bool sRGB,
+	bool genMipMap = true)
 {
 	std::shared_ptr<dx12lib::Texture> pTex;
 	if (alTexture.pTextureData != nullptr) {
@@ -32,7 +33,7 @@ static std::shared_ptr<dx12lib::Texture> loadTexture(
 		if ((pTex = TextureManager::instance()->getTexture(alTexture.path)) != nullptr)
 			return pTex;
 
-		pTex = graphicsCtx.createTextureFromFile(dx12lib::to_wstring(alTexture.path), true);
+		pTex = graphicsCtx.createTextureFromFile(dx12lib::to_wstring(alTexture.path), sRGB);
 		TextureManager::instance()->setTexture(alTexture.path, pTex);
 	}
 	assert(pTex);
@@ -55,7 +56,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 
 		if (pALMaterial->getDiffuseMap().valid()) {
 			keywordMask.setKeyWord("_ENABLE_DIFFUSE_MAP", true);
-			auto pDiffuseMap = loadTexture(graphicsCtx, pALMaterial->getDiffuseMap());
+			auto pDiffuseMap = loadTexture(graphicsCtx, pALMaterial->getDiffuseMap(), true);
 			bindables.push_back(rgph::SamplerTextureBindable::make(
 				"gDiffuseMap",
 				pDiffuseMap->get2dSRV(),
@@ -65,7 +66,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 
 		if (pALMaterial->getNormalMap().valid()) {
 			keywordMask.setKeyWord("_ENABLE_NORMAL_MAP", true);
-			auto pNormalMap = loadTexture(graphicsCtx, pALMaterial->getNormalMap());
+			auto pNormalMap = loadTexture(graphicsCtx, pALMaterial->getNormalMap(), false);
 			bindables.push_back(rgph::SamplerTextureBindable::make(
 				"gNormalMap",
 				pNormalMap->get2dSRV(),
@@ -77,7 +78,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 		if (pALMaterial->getRoughnessMap().valid()) {
 			hasRoughnessMap = true;
 			keywordMask.setKeyWord("_ENABLE_ROUGHNESS_MAP", true);
-			auto pRoughnessMap = loadTexture(graphicsCtx, pALMaterial->getRoughnessMap());
+			auto pRoughnessMap = loadTexture(graphicsCtx, pALMaterial->getRoughnessMap(), false);
 			bindables.push_back(rgph::SamplerTextureBindable::make(
 				"gRoughnessMap",
 				pRoughnessMap->get2dSRV(),
@@ -90,7 +91,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 				keywordMask.setKeyWord("_ENABLE_METALLIC_ROUGHNESS_MAP_G", true);
 			} else {
 				keywordMask.setKeyWord("_ENABLE_METALLIC_MAP", true);
-				auto pMetallicMap = loadTexture(graphicsCtx, pALMaterial->getMetallicMap());
+				auto pMetallicMap = loadTexture(graphicsCtx, pALMaterial->getMetallicMap(), false);
 				bindables.push_back(rgph::SamplerTextureBindable::make(
 					"gMetallicMap",
 					pMetallicMap->get2dSRV(),
@@ -101,7 +102,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 
 		if (pALMaterial->getAmbientOcclusionMap().valid()) {
 			keywordMask.setKeyWord("_ENABLE_AO_MAP", true);
-			auto pAmbientOcclusionMap = loadTexture(graphicsCtx, pALMaterial->getAmbientOcclusionMap());
+			auto pAmbientOcclusionMap = loadTexture(graphicsCtx, pALMaterial->getAmbientOcclusionMap(), false);
 			bindables.push_back(rgph::SamplerTextureBindable::make(
 				"gAoMap",
 				pAmbientOcclusionMap->get2dSRV(),

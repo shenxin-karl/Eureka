@@ -28,7 +28,9 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	MeshManager::SingletionEmplace();
 	TextureManager::SingletionEmplace();
 	ShaderManager::SingletionEmplace();
-	
+
+	MeshManager::instance()->loading(pDirectCtx);
+	ShaderManager::instance()->loading(_pDevice);
 
 	CameraDesc cameraDesc;
 	cameraDesc.lookAt = float3(0, 0, 0);
@@ -45,7 +47,6 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	initRenderGraph(pDirectCtx);
 
 	// loading
-	ShaderManager::instance()->loading(_pDevice);
 	loading(pDirectCtx);
 }
 
@@ -124,6 +125,10 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 
 void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {
 	resizeGBuffer(pDirectCtx, _width, _height);
+
+	FXAASetting setting;
+	pCbFXAASetting = pDirectCtx->createConstantBuffer(&setting, sizeof(setting));
+
 	pRenderGraph = SetupRenderGraph(this);
 }
 

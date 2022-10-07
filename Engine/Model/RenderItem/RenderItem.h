@@ -17,6 +17,10 @@ public:
 	void submit(const rgph::TechniqueFlag &techniqueFlag) const override;
 	auto getWorldAABB() const -> const Math::BoundingBox &;
 	void setTransform(const Math::Matrix4 &matWorld);
+	static bool buildVertexDataInput(dx12lib::IDirectContext &directCtx,
+		rgph::Geometry *pGeometry,
+		const rgph::ShaderLayoutIndex &shaderLayoutIndex
+	);
 private:
 	std::shared_ptr<rgph::Material> _pMaterial;
 };

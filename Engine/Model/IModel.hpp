@@ -25,7 +25,6 @@ interface INode : protected dx12lib::NonCopyable {
 
 interface IModel : protected dx12lib::NonCopyable {
 	virtual void submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const = 0;
-	virtual auto getRootNode() const -> INode * = 0;
 	virtual void setModelTransform(const Math::float4x4 &matWorld) = 0;
 };
 

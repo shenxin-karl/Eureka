@@ -47,6 +47,7 @@ public:
 	void setStencilRef(UINT stencilRef) override;
 	void setGraphics32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset) override;
 	void setRenderTarget(const RenderTargetView &rtv, const DepthStencilView &dsv) override;
+	void setRenderTarget(const RenderTargetView &rtv) override;
 	void setRenderTarget(const DepthStencilView &dsv) override;
 	void setRenderTargets(const std::vector<RenderTargetView> &rtvs, const DepthStencilView &dsv) override;
 

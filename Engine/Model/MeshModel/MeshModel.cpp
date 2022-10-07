@@ -22,7 +22,7 @@ void MeshModel::submit(const IBounding &bounding, const rgph::TechniqueFlag &tec
 	_pRootNode->submit(bounding, techniqueFlag);
 }
 
-INode * MeshModel::getRootNode() const {
+auto MeshModel::getRootNode() const -> MeshNode *{
 	return _pRootNode.get();
 }
 

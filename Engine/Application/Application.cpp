@@ -21,7 +21,7 @@ void Application::initialize() {
 	_pDevice = std::make_shared<dx12lib::Device>(_pAdapter);
 
 	dx12lib::DeviceInitDesc desc = {
-		DXGI_FORMAT_R8G8B8A8_UNORM,
+		kSwapChainRenderTargetFormat,
 		kSwapChainDepthStencilFormat,
 		_fps,
 	};

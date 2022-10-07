@@ -4,31 +4,11 @@
 #include <Dx12lib/Device/SwapChain.h>
 #include <RenderGraph/Pass/CopyPass.hpp>
 #include "RenderGraphDefined/RenderGraphDefined.h"
+
+#include "FXAAPass.h"
 #include "Application/EurekaApplication.h"
 
 namespace Eureka {
-
-GBufferPass::GBufferPass(const std::string &passName)
-: RenderQueuePass(passName)
-, pGBuffer0(this, "GBuffer0")
-, pGBuffer1(this, "GBuffer1")
-, pGBuffer2(this, "GBuffer2")
-, pDepthStencil(this, "DepthStencil")
-{
-}
-
-void GBufferPass::setViewportScissorRect(dx12lib::IGraphicsContext &graphicsCtx) {
-	graphicsCtx.setViewport(pGBuffer0->getViewport());
-	graphicsCtx.setScissorRect(pGBuffer0->getScissorRect());
-}
-
-void GBufferPass::setRenderTargets(dx12lib::IGraphicsContext &graphicsContext) {
-	std::vector<dx12lib::RenderTargetView> rtvs;
-	rtvs.push_back(pGBuffer0->get2dRTV());
-	rtvs.push_back(pGBuffer1->get2dRTV());
-	rtvs.push_back(pGBuffer2->get2dRTV());
-	graphicsContext.setRenderTargets(rtvs, pDepthStencil->get2dDSV());
-}
 
 std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp) {
 	auto pRenderGraph = std::make_shared<rgph::RenderGraph>();
@@ -73,16 +53,21 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp) {
 		pRenderGraph->addPass(pGBufferPass);
 	}
 
-	auto pCopyToBack = std::make_shared<rgph::CopyPass>("CopyToMainPass");
+	auto pFXAAPass = std::make_shared<FXAAPass>("FXAAPass");
 	{
-		pClearBackBuffer->pRenderTarget2d >> pCopyToBack->pDstResource;
-		pGBufferPass->pGBuffer0 >> pCopyToBack->pSrcResource;
-		pRenderGraph->addPass(pCopyToBack);
+		pGBufferPass->pGBuffer0 >> pFXAAPass->pScreenMap;
+		pFXAAPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+
+		pClearBackBuffer->pRenderTarget2d >> pFXAAPass->pBackBuffer;
+		pFXAAPass->pBackBuffer.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+		pFXAAPass->pCbFXAASetting = pApp->pCbFXAASetting;
+		pRenderGraph->addPass(pFXAAPass);
 	}
 
 	auto pPresentPass = std::make_shared<rgph::PresentPass>("PresentPass");
 	{
-		pCopyToBack->pDstResource >> pPresentPass->pBackBuffer;
+		pFXAAPass->pBackBuffer >> pPresentPass->pBackBuffer;
 		pRenderGraph->addPass(pPresentPass);
 	}
 

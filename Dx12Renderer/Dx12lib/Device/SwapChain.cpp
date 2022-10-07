@@ -124,7 +124,7 @@ void SwapChain::updateBuffer(DirectContextProxy pDirectContext) {
 			pBuffer, 
 			D3D12_RESOURCE_STATE_COMMON
 		);
-		_pSwapChainBuffer[i]->setResourceName(L"currentBackBuffer");
+		_pSwapChainBuffer[i]->setResourceName(name);
 	}
 
 	D3D12_CLEAR_VALUE optClear;

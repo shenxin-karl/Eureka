@@ -44,5 +44,12 @@ struct CbPreObject {
     Math::float4x4 matInvNormal;
 };
 
+struct FXAASetting {
+    float minThreshold          = 0.0312f;
+    float threshold             = 0.125f;
+    float consoleTangentScale   = 0.5f;
+    float sharpness             = 8.f;
+};
+
 }
 

@@ -361,6 +361,16 @@ void CommandList::setRenderTarget(const RenderTargetView &rtv, const DepthStenci
 	);
 }
 
+void CommandList::setRenderTarget(const RenderTargetView &rtv) {
+	assert(rtv.valid());
+	_pCommandList->OMSetRenderTargets(
+		1,
+		RVPtr(rtv.getCPUDescriptorHandle()),
+		false,
+		nullptr
+	);
+}
+
 void CommandList::setRenderTarget(const DepthStencilView &dsv) {
 	assert(dsv.valid());
 	_pCommandList->OMSetRenderTargets(

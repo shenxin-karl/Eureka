@@ -3,7 +3,6 @@
 #include "Model/MeshModel/MeshModel.h"
 #include "ShaderHelper/CBufferStruct.h"
 
-
 namespace Eureka {
 
 class Camera;
@@ -32,6 +31,7 @@ public:
 	std::shared_ptr<dx12lib::Texture>	pGBuffer2;
 	std::shared_ptr<rgph::RenderGraph>	pRenderGraph;
 	FRConstantBufferPtr<CbPrePass>		pCbPrePass;
+	std::shared_ptr<dx12lib::ConstantBuffer> pCbFXAASetting;
 };
 
 }

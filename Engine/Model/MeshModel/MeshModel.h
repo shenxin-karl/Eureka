@@ -18,7 +18,7 @@ public:
 	MeshModel(dx12lib::IDirectContext &directCtx, std::shared_ptr<ALTree> pALTree);
 	~MeshModel() override;
 	void submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const override ;
-	auto getRootNode() const -> INode * override;
+	auto getRootNode() const -> MeshNode *;
 	void setModelTransform(const Math::float4x4 &matWorld) override;
 
 	using MaterialCreator = std::function<std::shared_ptr<rgph::Material>(const ALMaterial *)>;
