@@ -9,13 +9,14 @@ using namespace Math;
 
 void Geometry::bind(dx12lib::IGraphicsContext &graphicsCtx, const ShaderLayoutMask &vertexInputMask) const {
 	graphicsCtx.setPrimitiveTopology(_topology);
-	for (size_t i = 0; i < ShaderLayoutIndex::Max; ++i) {
-		ShaderLayoutIndex index(i);
-		if (!(vertexInputMask & index))
+	for (size_t i = ShaderLayoutIndex::Position; i < ShaderLayoutIndex::Max; ++i) {
+		ShaderLayoutIndex shaderLayoutIndex(i);
+		if (!(vertexInputMask & shaderLayoutIndex))
 			continue;
 
-		assert(_pVertexBufferList[i] != nullptr);
-		graphicsCtx.setVertexBuffer(_pVertexBufferList[i], static_cast<UINT>(i));
+		size_t index = i - 1;
+		assert(_pVertexBufferList[index] != nullptr);
+		graphicsCtx.setVertexBuffer(_pVertexBufferList[index], static_cast<UINT>(index));
 	}
 
 	if (_pIndexBuffer != nullptr)

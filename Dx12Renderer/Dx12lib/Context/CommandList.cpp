@@ -378,7 +378,7 @@ void CommandList::setRenderTargets(const std::vector<RenderTargetView> &rtvs, co
 
 	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> handles(rtvs.begin(), rtvs.end());
 	_pCommandList->OMSetRenderTargets(
-		1,
+		static_cast<UINT>(rtvs.size()),
 		handles.data(),
 		false,
 		RVPtr(dsv.getCPUDescriptorHandle())

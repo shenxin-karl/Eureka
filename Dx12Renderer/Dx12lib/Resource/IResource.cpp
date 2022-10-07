@@ -13,6 +13,7 @@ void IResource::setResourceName(const std::string &name) {
 void IResource::setResourceName(const std::wstring &name) {
 	WRL::ComPtr<ID3D12Resource> pResource = getD3DResource();
 	assert(pResource != nullptr);
+	_resourceName = name;
 	pResource->SetName(name.c_str());
 }
 

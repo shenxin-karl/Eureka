@@ -138,6 +138,14 @@ auto Camera::getLookAt() const -> const Math::float3 & {
 	return _lookAt;
 }
 
+auto Camera::getNearClip() const -> float {
+	return _nearClip;
+}
+
+auto Camera::getFarClip() const -> float {
+	return _farClip;
+}
+
 float Camera::getFov() const {
 	return _fov;
 }

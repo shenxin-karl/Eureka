@@ -35,8 +35,8 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp) {
 	
 	auto pClearBackBuffer = std::make_shared<rgph::ClearPass>("ClearBackBuffer");
 	{
-		auto getRenderTarget = [&]() { return pApp->getSwapChain()->getRenderTarget2D(); };
-		auto getDepthStencil = [&]() { return pApp->getSwapChain()->getDepthStencil2D(); };
+		auto getRenderTarget = [=]() { return pApp->getSwapChain()->getRenderTarget2D(); };
+		auto getDepthStencil = [=]() { return pApp->getSwapChain()->getDepthStencil2D(); };
 		getRenderTarget >> pClearBackBuffer->pRenderTarget2d;
 		getDepthStencil >> pClearBackBuffer->pDepthStencil2d;
 		pRenderGraph->addPass(pClearBackBuffer);
@@ -49,16 +49,18 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp) {
 	}
 	auto pClearGBuffer1 = std::make_shared<rgph::ClearRtPass>("ClearGBuffer1");
 	{
-		pApp->pGBuffer0 >> pClearGBuffer1->pRenderTarget2d;
+		pApp->pGBuffer1 >> pClearGBuffer1->pRenderTarget2d;
 		pRenderGraph->addPass(pClearGBuffer1);
 	}
 	auto pClearGBuffer2 = std::make_shared<rgph::ClearRtPass>("ClearGBuffer2");
 	{
-		pApp->pGBuffer0 >> pClearGBuffer2->pRenderTarget2d;
+		pApp->pGBuffer2 >> pClearGBuffer2->pRenderTarget2d;
 		pRenderGraph->addPass(pClearGBuffer2);
 	}
 
+	
 	auto pGBufferPass = std::make_shared<GBufferPass>(kGBufferPassName);
+	pGBufferPass->setPassCBuffer(pApp->pCbPrePass);
 	{
 		pClearGBuffer0->pRenderTarget2d >> pGBufferPass->pGBuffer0;
 		pGBufferPass->pGBuffer0.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;

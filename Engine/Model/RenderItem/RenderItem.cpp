@@ -26,15 +26,15 @@ static std::shared_ptr<dx12lib::VertexBuffer> buildVertexDataInputImpl(
 
 static bool buildVertexDataInput(dx12lib::IDirectContext &directCtx, 
 	rgph::Geometry *pGeometry, 
-	const rgph::ShaderLayoutIndex &index) 
+	const rgph::ShaderLayoutIndex &shaderLayoutIndex) 
 {
-	if (pGeometry->getVertexBuffer(index) != nullptr)
+	if (pGeometry->getVertexBuffer(shaderLayoutIndex) != nullptr)
 		return true;
 
 	std::string name;
 	auto pMesh = pGeometry->getMesh();
 	std::shared_ptr<dx12lib::VertexBuffer> pVertexBuffer;
-	switch (index) {
+	switch (shaderLayoutIndex) {
 	case rgph::ShaderLayoutIndex::Position:
 		name = std::format("{}_{}", pMesh->getMeshName(), "POSITION");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getPositions());
@@ -101,7 +101,8 @@ static bool buildVertexDataInput(dx12lib::IDirectContext &directCtx,
 		return false;
 	}
 
-	pGeometry->setVertexBuffer(index, pVertexBuffer);
+	size_t index = shaderLayoutIndex;
+	pGeometry->setVertexBuffer(index-1, pVertexBuffer);
 	return true;
 }
 
@@ -160,10 +161,11 @@ auto RenderItem::getMaterial() const -> std::shared_ptr<rgph::Material> {
 void RenderItem::setMaterial(dx12lib::IDirectContext &directCtx, std::shared_ptr<rgph::Material> pMaterial) {
 	_pMaterial = std::move(pMaterial);
 	auto shaderLayoutMask = _pMaterial->getShaderLayoutMask();
+	//assert(shaderLayoutMask != rgph::ShaderLayoutMask::Nothing);
 	for (size_t i = rgph::ShaderLayoutIndex::Position; i < rgph::ShaderLayoutIndex::Max; ++i) {
-		rgph::ShaderLayoutIndex index(i);
-		if (shaderLayoutMask & index)
-			buildVertexDataInput(directCtx, _pGeometry.get(), index);
+		rgph::ShaderLayoutIndex shaderLayoutIndex(i);
+		if (shaderLayoutMask & shaderLayoutIndex)
+			buildVertexDataInput(directCtx, _pGeometry.get(), shaderLayoutIndex);
 	}
 }
 

@@ -23,6 +23,7 @@ interface IResource : NonCopyable {
 	virtual bool checkSRVState(D3D12_RESOURCE_STATES state) const;
 	virtual bool checkUAVState(D3D12_RESOURCE_STATES state) const;
 protected:
+	std::wstring		  _resourceName;
 	std::weak_ptr<Device> _pDevice;
 };
 

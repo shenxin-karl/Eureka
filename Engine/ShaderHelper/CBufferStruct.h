@@ -19,7 +19,8 @@ struct CbPrePass {
 	float		   nearClip;
     Math::float3   cameraLookUp;
 	float		   farClip;
-    Math::float4   cameraLookAt;
+    Math::float3   cameraLookAt;
+	float		   cbPrePassPadding0;
 
     /// RenderTarget
 	Math::float2   renderTargetSize;
@@ -33,7 +34,7 @@ struct CbPrePass {
     Math::float4   fogColor;						
 	float          fogStart;
     float          fogEnd;
-    Math::float2   cbPerPassPad1;
+    Math::float2   cbPrePassPadding1;
 };
 
 struct CbPreObject {

@@ -97,65 +97,65 @@ public:
 };
 
 struct ShaderLayoutMask {
-enum LayoutType {
-	Nothing		= (0),
-	Position	= (1 << (ShaderLayoutIndex::Position	-1)),
-	Normal		= (1 << (ShaderLayoutIndex::Normal		-1)),
-	Tangent		= (1 << (ShaderLayoutIndex::Tangent		-1)),
-	Color		= (1 << (ShaderLayoutIndex::Color		-1)),
-	TexCoord0	= (1 << (ShaderLayoutIndex::TexCoord0	-1)),
-	TexCoord1	= (1 << (ShaderLayoutIndex::TexCoord1	-1)),
-	TexCoord2	= (1 << (ShaderLayoutIndex::TexCoord2	-1)),
-	TexCoord3	= (1 << (ShaderLayoutIndex::TexCoord3	-1)),
-	TexCoord4	= (1 << (ShaderLayoutIndex::TexCoord4	-1)),
-	TexCoord5	= (1 << (ShaderLayoutIndex::TexCoord5	-1)),
-	TexCoord6	= (1 << (ShaderLayoutIndex::TexCoord6	-1)),
-	TexCoord7	= (1 << (ShaderLayoutIndex::TexCoord7	-1)),
-	BoneIndices = (1 << (ShaderLayoutIndex::BoneIndices	-1)),
-	BoneWeights = (1 << (ShaderLayoutIndex::BoneWeights	-1)),
-};
+	enum LayoutType {
+		Nothing		= (0),
+		Position	= (1 << (ShaderLayoutIndex::Position	-1)),
+		Normal		= (1 << (ShaderLayoutIndex::Normal		-1)),
+		Tangent		= (1 << (ShaderLayoutIndex::Tangent		-1)),
+		Color		= (1 << (ShaderLayoutIndex::Color		-1)),
+		TexCoord0	= (1 << (ShaderLayoutIndex::TexCoord0	-1)),
+		TexCoord1	= (1 << (ShaderLayoutIndex::TexCoord1	-1)),
+		TexCoord2	= (1 << (ShaderLayoutIndex::TexCoord2	-1)),
+		TexCoord3	= (1 << (ShaderLayoutIndex::TexCoord3	-1)),
+		TexCoord4	= (1 << (ShaderLayoutIndex::TexCoord4	-1)),
+		TexCoord5	= (1 << (ShaderLayoutIndex::TexCoord5	-1)),
+		TexCoord6	= (1 << (ShaderLayoutIndex::TexCoord6	-1)),
+		TexCoord7	= (1 << (ShaderLayoutIndex::TexCoord7	-1)),
+		BoneIndices = (1 << (ShaderLayoutIndex::BoneIndices	-1)),
+		BoneWeights = (1 << (ShaderLayoutIndex::BoneWeights	-1)),
+	};
 public:
-constexpr ShaderLayoutMask() noexcept = default;
-constexpr ShaderLayoutMask(const ShaderLayoutMask &) noexcept = default;
-ShaderLayoutMask &operator=(const ShaderLayoutMask &) noexcept = default;
-constexpr ShaderLayoutMask(LayoutType layoutType) noexcept : layoutMask(layoutType) {
-}
-constexpr ShaderLayoutMask(const ShaderLayoutIndex &index) noexcept {
-	layoutMask = ShaderLayoutMask(static_cast<LayoutType>(1 << (index.indexType-1)));
-}
-constexpr operator LayoutType() const noexcept {
-	return layoutMask;
-}
-constexpr explicit operator bool() const noexcept {
-	return static_cast<bool>(layoutMask);
-}
-constexpr friend bool operator==(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
-	return lhs.layoutMask == rhs.layoutMask;
-}
-constexpr friend bool operator!=(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
-	return lhs.layoutMask == rhs.layoutMask;
-}
-constexpr friend ShaderLayoutMask operator|(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
-	return LayoutType(lhs.layoutMask | rhs.layoutMask);
-}
-constexpr friend ShaderLayoutMask &operator|=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
-	return (lhs = lhs | rhs);
-}
-constexpr friend ShaderLayoutMask operator&(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
-	return LayoutType(lhs.layoutMask & rhs.layoutMask);
-}
-constexpr friend ShaderLayoutMask &operator&=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
-	return (lhs = lhs & rhs);
-}
-constexpr friend ShaderLayoutMask operator^(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
-	return LayoutType(lhs.layoutMask ^ rhs.layoutMask);
-}
-constexpr friend ShaderLayoutMask &operator^=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
-	return (lhs = lhs ^ rhs);
-}
-constexpr friend ShaderLayoutMask operator~(ShaderLayoutMask lhs) noexcept {
-	return LayoutType(~lhs.layoutMask);
-}
+	constexpr ShaderLayoutMask() noexcept = default;
+	constexpr ShaderLayoutMask(const ShaderLayoutMask &) noexcept = default;
+	ShaderLayoutMask &operator=(const ShaderLayoutMask &) noexcept = default;
+	constexpr ShaderLayoutMask(LayoutType layoutType) noexcept : layoutMask(layoutType) {
+	}
+	constexpr ShaderLayoutMask(const ShaderLayoutIndex &index) noexcept {
+		layoutMask = ShaderLayoutMask(static_cast<LayoutType>(1 << (index.indexType-1)));
+	}
+	constexpr operator LayoutType() const noexcept {
+		return layoutMask;
+	}
+	constexpr explicit operator bool() const noexcept {
+		return static_cast<bool>(layoutMask);
+	}
+	constexpr friend bool operator==(const ShaderLayoutMask &lhs, const ShaderLayoutMask &rhs) noexcept {
+		return lhs.layoutMask == rhs.layoutMask;
+	}
+	constexpr friend bool operator!=(const ShaderLayoutMask &lhs, const ShaderLayoutMask &rhs) noexcept {
+		return lhs.layoutMask == rhs.layoutMask;
+	}
+	constexpr friend ShaderLayoutMask operator|(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
+		return LayoutType(lhs.layoutMask | rhs.layoutMask);
+	}
+	constexpr friend ShaderLayoutMask &operator|=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
+		return (lhs = lhs | rhs);
+	}
+	constexpr friend ShaderLayoutMask operator&(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
+		return LayoutType(lhs.layoutMask & rhs.layoutMask);
+	}
+	constexpr friend ShaderLayoutMask &operator&=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
+		return (lhs = lhs & rhs);
+	}
+	constexpr friend ShaderLayoutMask operator^(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
+		return LayoutType(lhs.layoutMask ^ rhs.layoutMask);
+	}
+	constexpr friend ShaderLayoutMask &operator^=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
+		return (lhs = lhs ^ rhs);
+	}
+	constexpr friend ShaderLayoutMask operator~(ShaderLayoutMask lhs) noexcept {
+		return LayoutType(~lhs.layoutMask);
+	}
 private:
 	LayoutType layoutMask = Nothing;
 };

@@ -13,6 +13,7 @@
 #include "Camera/FPSCameraControl.h"
 #include "Defined/EngineDefined.h"
 #include "Material/Material.h"
+#include "RenderGraph/RenderGraph/RenderGraph.h"
 #include "RenderGraphDefined/RenderGraphDefined.h"
 #include "TextureManager/TextureManager.h"
 
@@ -56,52 +57,46 @@ void EurekaApplication::onDestroy() {
 
 void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	_pCameraControl->update(_pInputSystem, pGameTimer);
+
+	auto pCbPrePassVisitor = pCbPrePass->visit();
+	pCbPrePassVisitor->matView = _pCamera->getView();
+	pCbPrePassVisitor->matInvView = _pCamera->getInvView();
+	pCbPrePassVisitor->matProj = _pCamera->getProj();
+	pCbPrePassVisitor->matInvProj = _pCamera->getInvProj();
+	pCbPrePassVisitor->matViewProj = _pCamera->getViewProj();
+	pCbPrePassVisitor->matInvViewProj = _pCamera->getInvViewProj();
+	pCbPrePassVisitor->cameraPos = _pCamera->getLookFrom();
+	pCbPrePassVisitor->nearClip = _pCamera->getNearClip();
+	pCbPrePassVisitor->cameraLookUp = _pCamera->getLookUp();
+	pCbPrePassVisitor->farClip = _pCamera->getFarClip();
+	pCbPrePassVisitor->cameraLookAt = _pCamera->getLookAt();
+	pCbPrePassVisitor->cbPrePassPadding0 = 0.f;
+	pCbPrePassVisitor->renderTargetSize = _pSwapChain->getRenderTargetSize();
+	pCbPrePassVisitor->invRenderTargetSize = _pSwapChain->getInvRenderTargetSize();
+	pCbPrePassVisitor->totalTime = pGameTimer->getTotalTime();
+	pCbPrePassVisitor->deltaTime = pGameTimer->getDeltaTime();
+	pCbPrePassVisitor->fogColor = float4(0.f);
+	pCbPrePassVisitor->fogStart = 0.f;
+	pCbPrePassVisitor->fogEnd = 0.f;
+	pCbPrePassVisitor->cbPrePassPadding1 = float2(0.f);
 }
 
 void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {
 	auto pCmdQueue = _pDevice->getCommandQueue();
 	auto pDirectProxy = pCmdQueue->createDirectContextProxy();
-	float cosine = std::cos(pGameTimer->getTotalTime());
-	float sine = std::sin(pGameTimer->getTotalTime());
-	float4 color = {
-		cosine * 0.5f + 0.5f,
-		sine * 0.5f + 0.5f,
-		0.6f,
-		1.f
-	};
 
-	D3D12_VIEWPORT viewport = {
-		.TopLeftX = 0.f,
-		.TopLeftY = 0.f,
-		.Width = static_cast<float>(_width),
-		.Height = static_cast<float>(_height),
-		.MinDepth = 0.f,
-		.MaxDepth = 1.f
-	};
+	auto boundWrap = MakeBoundingWrap(_pCamera->getViewSpaceFrustum());
+	for (auto &pModel : _models)
+		pModel->submit(boundWrap, kTechGBuffer);
 
-	D3D12_RECT scissorRect{
-		.left = 0,
-		.top = 0,
-		.right = static_cast<LONG>(_width),
-		.bottom = static_cast<LONG>(_height),
-	};
-	auto pRenderTarget2D = _pSwapChain->getRenderTarget2D();
-	auto pDepthStencil2D = _pSwapChain->getDepthStencil2D();
-
-	pDirectProxy->setViewport(viewport);
-	pDirectProxy->setScissorRect(scissorRect);
-	pDirectProxy->transitionBarrier(_pSwapChain->getRenderTarget2D(), D3D12_RESOURCE_STATE_RENDER_TARGET);
-	{
-		pDirectProxy->setRenderTarget(pRenderTarget2D->get2dRTV(), pDepthStencil2D->get2dDSV());
-		pDirectProxy->clearColor(pRenderTarget2D->get2dRTV(), color);
-	}
-	pDirectProxy->transitionBarrier(pRenderTarget2D, D3D12_RESOURCE_STATE_PRESENT);
+	pRenderGraph->execute(pDirectProxy);
 	pCmdQueue->executeCommandList(pDirectProxy);
 }
 
 void EurekaApplication::onEndTick(std::shared_ptr<GameTimer> pGameTimer) {
 	auto pCmdQueue = _pDevice->getCommandQueue();
 	pCmdQueue->signal(_pSwapChain);
+	pRenderGraph->reset();
 }
 
 void EurekaApplication::onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) {
@@ -134,14 +129,29 @@ void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) 
 
 void EurekaApplication::resizeGBuffer(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
 	pGBuffer0 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer0Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+		kGBuffer0Format, 
+		width, 
+		height, 
+		D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
+	pGBuffer0->setResourceName("GBuffer0");
+
 	pGBuffer1 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer1Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+		kGBuffer1Format, 
+		width,
+		height, 
+		D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
+	pGBuffer1->setResourceName("GBuffer1");
+
+
 	pGBuffer2 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
-		kGBuffer2Format, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+		kGBuffer2Format,
+		width, 
+		height, 
+		D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
+	pGBuffer2->setResourceName("GBuffer2");
 }
 
 }

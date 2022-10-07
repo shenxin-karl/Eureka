@@ -6,38 +6,38 @@
 
 cbuffer CbPrePass : register(b8, PRE_PASS_SPACE) {
     // camera
-	float4x4 matView;
-	float4x4 matInvView;
-	float4x4 matProj;
-	float4x4 matInvProj;
-	float4x4 matViewProj;
-	float4x4 matInvViewProj;
-	float3   cameraPos;
-	float	 nearClip;
-    float3   cameraLookUp;
-	float	 farClip;
-	float4   cameraLookAt;
+	float4x4 gMatView;
+	float4x4 gMatInvView;
+	float4x4 gMatProj;
+	float4x4 gMatInvProj;
+	float4x4 gMatViewProj;
+	float4x4 gMatInvViewProj;
+	float3   gCameraPos;
+	float	 gNearClip;
+    float3   gCameraLookUp;
+	float	 gFarClip;
+	float4   gCameraLookAt;
 
     // RenderTarget
-	float2   renderTargetSize;
-	float2   invRenderTargetSize;
+	float2   gRenderTargetSize;
+	float2   gInvRenderTargetSize;
 
     /// time
-	float	totalTime;
-	float	deltaTime;
+	float	gTotalTime;
+	float	gDeltaTime;
 
     /// fog
-    float4   fogColor;						
-	float    fogStart;
-    float    fogEnd;
-    float2   cbPerPassPad1;
+    float4   gFogColor;						
+	float    gFogStart;
+    float    gFogEnd;
+    float2   gCbPerPassPad1;
 };
 
 cbuffer CbPreObject : register(b8, PRE_OBJ_SPACE) {
-    float4x4 matWorld;
-    float4x4 matInvWorld;
-    float4x4 matNormal;
-    float4x4 matInvNormal;
+    float4x4 gMatWorld;
+    float4x4 gMatInvWorld;
+    float4x4 gMatNormal;
+    float4x4 gMatInvNormal;
 };
 
 SamplerState gSamPointWrap					   : register(s0, space0);

@@ -26,10 +26,10 @@ struct VertexOut {
 
 VertexOut VS(VertexIn vin) {
 	VertexOut vout;
-	float4 worldPosition = mul(matWorld, float4(vin.position, 1.0));
-	vout.SVPosition = mul(matViewProj, worldPosition);
+	float4 worldPosition = mul(gMatWorld, float4(vin.position, 1.0));
+	vout.SVPosition = mul(gMatViewProj, worldPosition);
 	vout.position = worldPosition.xyz;
-	vout.normal = mul((float3x3)matNormal, vin.normal);
+	vout.normal = mul((float3x3)gMatNormal, vin.normal);
 	vout.texCoord0 = vin.texCoord0;
 	return vout;
 }

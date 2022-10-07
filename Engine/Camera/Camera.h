@@ -40,6 +40,8 @@ public:
 	auto getLookFrom() const -> const Math::float3 &;
 	auto getLookUp() const -> const Math::float3 &;
 	auto getLookAt() const -> const Math::float3 &;
+	auto getNearClip() const -> float;
+	auto getFarClip() const -> float;
 	float getFov() const;
 	float getAspect() const;
 	const Math::BoundingFrustum &getProjSpaceFrustum() const;

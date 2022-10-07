@@ -11,6 +11,7 @@
 #include <RenderGraph/RenderGraph/RenderGraph.h>
 #include <RenderGraph/Pass/RenderQueuePass.h>
 #include <RenderGraph/Pass/SubPass.h>
+#include <RenderGraph/Bindable/ConstantBufferBindable.h>
 #include "ShaderHelper/ShaderHelper.h"
 #include "TextureManager/TextureManager.h"
 
@@ -49,6 +50,8 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 	{
 		auto keywordMask = pDeferredPBRShader->getKeywordMask();
 		std::vector<std::shared_ptr<rgph::Bindable>> bindables;
+
+		bindables.push_back(rgph::ConstantBufferBindable::make("cbMaterial", _pCbMaterial));
 
 		if (pALMaterial->getDiffuseMap().valid()) {
 			keywordMask.setKeyWord("_ENABLE_DIFFUSE_MAP", true);
@@ -106,12 +109,16 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 			));
 		}
 
-		auto pSubPass = getGBufferSubPass(desc, pDeferredPBRShader->getPSO(keywordMask));
+		auto pso = pDeferredPBRShader->getPSO(keywordMask);
+		_shaderLayoutMask |= ShaderHelper::calcShaderLayoutMask(pso->getInputLayout());
+
+		auto pSubPass = getGBufferSubPass(desc, pso);
 		auto pStep = std::make_unique<rgph::Step>(pSubPass);
 		pStep->addBindables(std::move(bindables));
 		pGBufferTechnique->addStep(std::move(pStep));
 	}
 	_techniques.push_back(pGBufferTechnique);
+
 }
 
 rgph::SubPass *Material::getGBufferSubPass(const MaterialDesc &desc, std::shared_ptr<dx12lib::GraphicsPSO> pso) {

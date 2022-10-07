@@ -27,7 +27,7 @@ void MeshNode::submit(const IBounding &bounding, const rgph::TechniqueFlag &tech
 	if (_transformDirty && _nodeTransformCBuffer != nullptr) {
 		Matrix4 matWorld(_applyTransform);
 		Matrix4 matInvWorld = inverse(matWorld);
-		Matrix4 matNormal = transpose(inverse(Matrix4(_applyTransform)));
+		Matrix4 matNormal = transpose(inverse(matWorld));
 		Matrix4 matInvNormal = inverse(matNormal);
 		rgph::TransformStore store {
 			.matWorld = float4x4(matWorld),
