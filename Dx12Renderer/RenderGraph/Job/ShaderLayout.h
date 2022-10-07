@@ -1,9 +1,10 @@
 #pragma once
+#include <d3d12.h>
 
 namespace rgph {
 
 struct ShaderLayoutIndex {
-	enum IndexType {
+	enum : size_t {
 		Nothing		= 0,
 		Position	= 1,	// Vector3
 		Normal		= 2,	// Vector3
@@ -23,30 +24,13 @@ struct ShaderLayoutIndex {
 	};
 public:
 	constexpr ShaderLayoutIndex() noexcept = default;
-	constexpr ShaderLayoutIndex(const ShaderLayoutIndex &) noexcept = default;
-	ShaderLayoutIndex &operator=(const ShaderLayoutIndex &) noexcept = default;
-	constexpr ShaderLayoutIndex(const IndexType &indexType) noexcept : indexType(indexType) {
-	}
-	ShaderLayoutIndex(size_t index) noexcept : indexType(static_cast<IndexType>(index)) {
-		assert(index < Max);
-	}
-	constexpr operator IndexType() const noexcept {
-		return indexType;
-	}
-	constexpr explicit operator bool() const noexcept {
-		return static_cast<bool>(indexType);
-	}
-	constexpr friend auto operator<=>(const ShaderLayoutIndex &, const ShaderLayoutIndex &) = default;
-
-	constexpr friend bool operator==(const ShaderLayoutIndex &lhs, const IndexType &rhs) {
-		return lhs.indexType == rhs;
-	}
-	constexpr friend bool operator!=(const ShaderLayoutIndex &lhs, const IndexType &rhs) {
-		return lhs.indexType != rhs;
+	constexpr ShaderLayoutIndex(size_t v) : _value(v) {}
+	constexpr operator size_t() const noexcept {
+		return _value;
 	}
 
 	static ShaderLayoutIndex stringToEnum(const std::string &str) {
-		static std::unordered_map<std::string, IndexType> map {
+		static std::unordered_map<std::string, int> map = {
 			{ "POSITION0",		Position    },
 			{ "NORMAL0",		Normal	    },
 			{ "TANGENT0",		Tangent     },
@@ -69,7 +53,7 @@ public:
 	}
 
 	static D3D12_INPUT_ELEMENT_DESC getInputLayoutByEnum(const ShaderLayoutIndex &layoutIndex) {
-	#define DEF_DESC(sem, idx, fmt, slot) \
+#define DEF_DESC(sem, idx, fmt, slot) \
 		D3D12_INPUT_ELEMENT_DESC { sem, idx, fmt, slot, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 		static D3D12_INPUT_ELEMENT_DESC descMap[] = {
 			DEF_DESC("POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		 0),
@@ -87,78 +71,71 @@ public:
 			DEF_DESC("BONEINDICES", 0, DXGI_FORMAT_R8G8B8A8_UINT,		12),
 			DEF_DESC("BONEINDICES", 0, DXGI_FORMAT_R32G32B32_FLOAT,		13),
 		};
-	#undef DEF_DESC
+#undef DEF_DESC
 		size_t index = (size_t)layoutIndex - 1;
 		assert(index < std::size(descMap));
 		return descMap[index];
 	}
-public:
-	IndexType indexType = Nothing;
+private:
+	size_t _value = Nothing;
 };
 
+
 struct ShaderLayoutMask {
-	enum LayoutType {
-		Nothing		= (0),
-		Position	= (1 << (ShaderLayoutIndex::Position	-1)),
-		Normal		= (1 << (ShaderLayoutIndex::Normal		-1)),
-		Tangent		= (1 << (ShaderLayoutIndex::Tangent		-1)),
-		Color		= (1 << (ShaderLayoutIndex::Color		-1)),
-		TexCoord0	= (1 << (ShaderLayoutIndex::TexCoord0	-1)),
-		TexCoord1	= (1 << (ShaderLayoutIndex::TexCoord1	-1)),
-		TexCoord2	= (1 << (ShaderLayoutIndex::TexCoord2	-1)),
-		TexCoord3	= (1 << (ShaderLayoutIndex::TexCoord3	-1)),
-		TexCoord4	= (1 << (ShaderLayoutIndex::TexCoord4	-1)),
-		TexCoord5	= (1 << (ShaderLayoutIndex::TexCoord5	-1)),
-		TexCoord6	= (1 << (ShaderLayoutIndex::TexCoord6	-1)),
-		TexCoord7	= (1 << (ShaderLayoutIndex::TexCoord7	-1)),
-		BoneIndices = (1 << (ShaderLayoutIndex::BoneIndices	-1)),
-		BoneWeights = (1 << (ShaderLayoutIndex::BoneWeights	-1)),
+	enum : size_t {
+		Nothing	     = (0),
+		Position	 = (1 << (ShaderLayoutIndex::Position	 -1)),
+		Normal		 = (1 << (ShaderLayoutIndex::Normal		 -1)),
+		Tangent	     = (1 << (ShaderLayoutIndex::Tangent	 -1)),
+		Color		 = (1 << (ShaderLayoutIndex::Color		 -1)),
+		TexCoord0	 = (1 << (ShaderLayoutIndex::TexCoord0	 -1)),
+		TexCoord1	 = (1 << (ShaderLayoutIndex::TexCoord1	 -1)),
+		TexCoord2	 = (1 << (ShaderLayoutIndex::TexCoord2	 -1)),
+		TexCoord3	 = (1 << (ShaderLayoutIndex::TexCoord3	 -1)),
+		TexCoord4	 = (1 << (ShaderLayoutIndex::TexCoord4	 -1)),
+		TexCoord5	 = (1 << (ShaderLayoutIndex::TexCoord5	 -1)),
+		TexCoord6	 = (1 << (ShaderLayoutIndex::TexCoord6	 -1)),
+		TexCoord7	 = (1 << (ShaderLayoutIndex::TexCoord7	 -1)),
+		BoneIndices  = (1 << (ShaderLayoutIndex::BoneIndices -1)),
+		BoneWeights  = (1 << (ShaderLayoutIndex::BoneWeights -1)),
 	};
 public:
 	constexpr ShaderLayoutMask() noexcept = default;
-	constexpr ShaderLayoutMask(const ShaderLayoutMask &) noexcept = default;
-	ShaderLayoutMask &operator=(const ShaderLayoutMask &) noexcept = default;
-	constexpr ShaderLayoutMask(LayoutType layoutType) noexcept : layoutMask(layoutType) {
-	}
-	constexpr ShaderLayoutMask(const ShaderLayoutIndex &index) noexcept {
-		layoutMask = ShaderLayoutMask(static_cast<LayoutType>(1 << (index.indexType-1)));
-	}
-	constexpr operator LayoutType() const noexcept {
-		return layoutMask;
-	}
-	constexpr explicit operator bool() const noexcept {
-		return static_cast<bool>(layoutMask);
+	constexpr ShaderLayoutMask(size_t v) : _value(v) {}
+	constexpr ShaderLayoutMask(const ShaderLayoutIndex &index)
+		: _value(static_cast<size_t>(1) << static_cast<size_t>(index - 1)) {}
+	constexpr operator size_t() const noexcept {
+		return _value;
 	}
 	constexpr friend bool operator==(const ShaderLayoutMask &lhs, const ShaderLayoutMask &rhs) noexcept {
-		return lhs.layoutMask == rhs.layoutMask;
+		return lhs._value == rhs._value;
 	}
 	constexpr friend bool operator!=(const ShaderLayoutMask &lhs, const ShaderLayoutMask &rhs) noexcept {
-		return lhs.layoutMask == rhs.layoutMask;
+		return lhs._value == rhs._value;
 	}
 	constexpr friend ShaderLayoutMask operator|(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
-		return LayoutType(lhs.layoutMask | rhs.layoutMask);
+		return { lhs._value | rhs._value };
 	}
 	constexpr friend ShaderLayoutMask &operator|=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
 		return (lhs = lhs | rhs);
 	}
 	constexpr friend ShaderLayoutMask operator&(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
-		return LayoutType(lhs.layoutMask & rhs.layoutMask);
+		return { lhs._value & rhs._value };
 	}
 	constexpr friend ShaderLayoutMask &operator&=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
 		return (lhs = lhs & rhs);
 	}
 	constexpr friend ShaderLayoutMask operator^(ShaderLayoutMask lhs, ShaderLayoutMask rhs) noexcept {
-		return LayoutType(lhs.layoutMask ^ rhs.layoutMask);
+		return { lhs._value ^ rhs._value };
 	}
 	constexpr friend ShaderLayoutMask &operator^=(ShaderLayoutMask &lhs, ShaderLayoutMask rhs) noexcept {
 		return (lhs = lhs ^ rhs);
 	}
 	constexpr friend ShaderLayoutMask operator~(ShaderLayoutMask lhs) noexcept {
-		return LayoutType(~lhs.layoutMask);
+		return { ~lhs._value };
 	}
 private:
-	LayoutType layoutMask = Nothing;
+	size_t _value = Nothing;
 };
-
 
 }

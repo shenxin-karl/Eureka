@@ -24,6 +24,7 @@ void DynamicDescriptorHeap::parseRootSignature(std::shared_ptr<RootSignature> pR
 	const auto &descriptorPerTable = pRootSignature->getDescriptorPerTableByType(_heapType);
 	const auto descriptorTableBitMask = pRootSignature->getDescriptorTableBitMask(_heapType);
 	_descriptorTableBitMask = descriptorTableBitMask;
+	_staleDescriptorTableBitMask = descriptorTableBitMask;
 
 	for (std::size_t i = 0; i < kMaxDescriptorTables; ++i) {
 		if (!descriptorTableBitMask.test(i))

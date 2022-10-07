@@ -231,6 +231,7 @@ auto GeometryGenerator::createCylinder(float bottomRadius, float topRadius, floa
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
 	pPartMesh->_tangents = std::move(tangents);
+	pPartMesh->_indices = std::move(indices);
 	float halfWidth = std::max(bottomRadius, topRadius);
 	float halfHeight = height * 0.5f;
 	float x = halfWidth;
@@ -304,6 +305,7 @@ auto GeometryGenerator::createBox(float width, float height, float depth,
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
 	pPartMesh->_tangents = std::move(tangents);
+	pPartMesh->_indices = std::move(indices);
 	pPartMesh->_boundingBox = BoundingBox(Vector3(-x, -y, -z), Vector3(x, y, z));
 	return pPartMesh;
 }
@@ -359,6 +361,7 @@ auto GeometryGenerator::createSphere(float radius, uint32 numSubdivisions) const
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
 	pPartMesh->_tangents = std::move(tangents);
+	pPartMesh->_indices = std::move(indices);
 	pPartMesh->_boundingBox = BoundingBox(Vector3(-radius), Vector3(radius));
 	return pPartMesh;
 }
@@ -406,6 +409,7 @@ auto GeometryGenerator::createGrid(float width, float depth, uint32 m, uint32 n)
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
 	pPartMesh->_tangents = std::move(tangents);
+	pPartMesh->_indices = std::move(indices);
 	pPartMesh->_boundingBox = BoundingBox(Vector3(left, -1.f, depthNear), Vector3(right, 1.f, depthFar));
 	return pPartMesh;
 }
@@ -443,6 +447,7 @@ auto GeometryGenerator::createQuad(float x, float y, float w, float h, float dep
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
 	pPartMesh->_tangents = std::move(tangents);
+	pPartMesh->_indices = std::move(indices);
 	pPartMesh->_boundingBox = BoundingBox(Vector3(x, y, depth), Vector3(x+w, y+h, depth+0.5f));
 	return pPartMesh;
 }
@@ -484,11 +489,13 @@ auto GeometryGenerator::createGeometry(dx12lib::IDirectContext &directCtx, rgph:
 	auto pGeometry = std::make_shared<rgph::Geometry>();
 	pGeometry->setMesh(pPartMesh);
 	pGeometry->genDrawArgs();
+
 	for (size_t i = rgph::ShaderLayoutIndex::Position; i < rgph::ShaderLayoutIndex::Max; ++i) {
 		rgph::ShaderLayoutIndex shaderLayoutIndex(i);
 		if (mask & shaderLayoutIndex)
 			RenderItem::buildVertexDataInput(directCtx, pGeometry.get(), shaderLayoutIndex);
 	}
+	RenderItem::buildIndexDataInput(directCtx, pGeometry.get());
 	return pGeometry;
 }
 

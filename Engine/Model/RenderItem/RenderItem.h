@@ -17,6 +17,7 @@ public:
 	void submit(const rgph::TechniqueFlag &techniqueFlag) const override;
 	auto getWorldAABB() const -> const Math::BoundingBox &;
 	void setTransform(const Math::Matrix4 &matWorld);
+	static bool buildIndexDataInput(dx12lib::IDirectContext &directCtx, rgph::Geometry *pGeometry);
 	static bool buildVertexDataInput(dx12lib::IDirectContext &directCtx,
 		rgph::Geometry *pGeometry,
 		const rgph::ShaderLayoutIndex &shaderLayoutIndex

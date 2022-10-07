@@ -11,42 +11,6 @@ MeshManager::MeshManager() {
 MeshManager::~MeshManager() {
 }
 
-void MeshManager::loading(dx12lib::DirectContextProxy pDirectCtx) {
-    // positions   
-	float quadPositions[] = { 
-        -1.0f,  1.0f, 0.0f,
-        -1.0f, -1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-         1.0f,  1.0f, 0.0f
-    };
-
-	auto pVertexBuffer = pDirectCtx->createVertexBuffer(
-		quadPositions,
-		6, 
-		sizeof(float) * 3
-	);
-	_vertexBufferCache[kEurekaFullScreen_POSITION] = pVertexBuffer;
-
-	// texCoords
-	float quadTexcoord[] = { 
-		0.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 1.0f,
-		1.0f, 0.0f
-	};
-
-	pVertexBuffer = pDirectCtx->createVertexBuffer(
-		quadTexcoord,
-		6,
-		sizeof(float) * 2
-	);
-	_vertexBufferCache[kEurekaFullScreen_TEXCOORD] = pVertexBuffer;
-}
-
 std::shared_ptr<dx12lib::VertexBuffer> MeshManager::getVertexBuffer(const std::string &key) const {
 	auto iter = _vertexBufferCache.find(key);
 	if (iter != _vertexBufferCache.end())

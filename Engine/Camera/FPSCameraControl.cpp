@@ -23,12 +23,15 @@ FPSCameraControl::FPSCameraControl(std::shared_ptr<Camera> pCamera) : _pCamera(s
 
 void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::shared_ptr<GameTimer> pGameTimer) {
 	while (auto event = pInputSystem->pMouse->getEvent()) {
-		if (event.isLPress()) {
-			_mouseLeftPress = true;
+		if (event.isRPress()) {
+			_mouseRightPress = true;
 			_lastMousePosition = POINT(event.x, event.y);
-		} else if (event.isLRelease()) {
-			_mouseLeftPress = false;
+		} else if (event.isRRelease()) {
+			_mouseRightPress = false;
 		}
+
+		if (!_mouseRightPress)
+			continue;
 
 		if (_lastMousePosition.x == -1 && _lastMousePosition.y == -1)
 			_lastMousePosition = POINT(event.x, event.y);

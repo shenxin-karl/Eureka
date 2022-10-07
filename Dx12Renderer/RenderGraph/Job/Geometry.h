@@ -38,6 +38,7 @@ struct DrawArgs {
 
 class Geometry {
 public:
+
 	void bind(dx12lib::IGraphicsContext &graphicsCtx, const ShaderLayoutMask &vertexInputSlot) const;
 	void setVertexBuffer(size_t idx, std::shared_ptr<dx12lib::VertexBuffer> pVertexBuffer);
 	void setIndexBuffer(std::shared_ptr<dx12lib::IndexBuffer> pIndexBuffer);

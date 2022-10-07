@@ -10,7 +10,7 @@
 
 namespace Eureka {
 
-std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp) {
+std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx12lib::IDirectContext &directCtx) {
 	auto pRenderGraph = std::make_shared<rgph::RenderGraph>();
 	
 	auto pClearBackBuffer = std::make_shared<rgph::ClearPass>("ClearBackBuffer");
@@ -53,7 +53,7 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp) {
 		pRenderGraph->addPass(pGBufferPass);
 	}
 
-	auto pFXAAPass = std::make_shared<FXAAPass>("FXAAPass");
+	auto pFXAAPass = std::make_shared<FXAAPass>("FXAAPass", directCtx);
 	{
 		pGBufferPass->pGBuffer0 >> pFXAAPass->pScreenMap;
 		pFXAAPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;

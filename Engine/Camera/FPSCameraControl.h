@@ -35,7 +35,7 @@ private:
 	float _yaw;
 	float _roll;
 	bool  _moveState[6] = { false };
-	bool  _mouseLeftPress = false;
+	bool  _mouseRightPress = false;
 	POINT _lastMousePosition = POINT(-1, -1);
 	std::shared_ptr<Camera> _pCamera;
 };

@@ -116,44 +116,7 @@ RenderItem::RenderItem(dx12lib::IDirectContext &directCtx, INode *pNode, size_t 
 	_pGeometry->setMesh(pALMesh);
 	_pGeometry->genDrawArgs();
 	_pTransformCBuf = pNode->getNodeTransformCBuffer();
-
-	const auto &indices = pALMesh->getIndices();
-	if (indices.size() < 3)
-		return;
-
-	std::shared_ptr<dx12lib::IndexBuffer> pIndexBuffer;
-	if (pALMesh->getPositions().size() > std::numeric_limits<uint16_t>::max()) {
-		std::string key = pALMesh->getMeshName() + "_IndexBuffer_uint32";
-		pIndexBuffer = MeshManager::instance()->getIndexBuffer(key);
-		if (pIndexBuffer == nullptr) {
-			pIndexBuffer = directCtx.createIndexBuffer(
-				indices.data(), 
-				indices.size(), 
-				DXGI_FORMAT_R32_UINT
-			);
-			MeshManager::instance()->cacheIndexBuffer(key, pIndexBuffer);
-		}
-	} else {
-		std::string key = pALMesh->getMeshName() + "_IndexBuffer_uint16";
-		pIndexBuffer = MeshManager::instance()->getIndexBuffer(key);
-		if (pIndexBuffer == nullptr) {
-			std::vector<uint16_t> newIndices;
-			newIndices.resize(indices.size());
-			for (size_t i = 0; i < indices.size()-2; i += 3) {
-				newIndices[i+0] = static_cast<uint16_t>(indices[i+0]);
-				newIndices[i+1] = static_cast<uint16_t>(indices[i+1]);
-				newIndices[i+2] = static_cast<uint16_t>(indices[i+2]);
-			}
-
-			pIndexBuffer = directCtx.createIndexBuffer(
-				newIndices.data(), 
-				newIndices.size(), 
-				DXGI_FORMAT_R16_UINT
-			);
-			MeshManager::instance()->cacheIndexBuffer(key, pIndexBuffer);
-		}
-	}
-	_pGeometry->setIndexBuffer(pIndexBuffer);
+	buildIndexDataInput(directCtx, _pGeometry.get());
 }
 
 auto RenderItem::getMaterial() const -> std::shared_ptr<rgph::Material> {
@@ -183,6 +146,51 @@ auto RenderItem::getWorldAABB() const -> const BoundingBox & {
 
 void RenderItem::setTransform(const Matrix4 &matWorld) {
 	_pGeometry->applyTransform(matWorld);
+}
+
+bool RenderItem::buildIndexDataInput(dx12lib::IDirectContext &directCtx, rgph::Geometry *pGeometry) {
+	auto pMesh = pGeometry->getMesh();
+	const auto &indices = pMesh->getIndices();
+	if (indices.size() < 3) {
+		assert(false);
+		return false;
+	}
+
+	std::shared_ptr<dx12lib::IndexBuffer> pIndexBuffer;
+	if (pMesh->getPositions().size() > std::numeric_limits<uint16_t>::max()) {
+		std::string key = pMesh->getMeshName() + "_IndexBuffer_uint32";
+		pIndexBuffer = MeshManager::instance()->getIndexBuffer(key);
+		if (pIndexBuffer == nullptr) {
+			pIndexBuffer = directCtx.createIndexBuffer(
+				indices.data(),
+				indices.size(),
+				DXGI_FORMAT_R32_UINT
+			);
+			MeshManager::instance()->cacheIndexBuffer(key, pIndexBuffer);
+		}
+	}
+	else {
+		std::string key = pMesh->getMeshName() + "_IndexBuffer_uint16";
+		pIndexBuffer = MeshManager::instance()->getIndexBuffer(key);
+		if (pIndexBuffer == nullptr) {
+			std::vector<uint16_t> newIndices;
+			newIndices.resize(indices.size());
+			for (size_t i = 0; i < indices.size()-2; i += 3) {
+				newIndices[i+0] = static_cast<uint16_t>(indices[i+0]);
+				newIndices[i+1] = static_cast<uint16_t>(indices[i+1]);
+				newIndices[i+2] = static_cast<uint16_t>(indices[i+2]);
+			}
+
+			pIndexBuffer = directCtx.createIndexBuffer(
+				newIndices.data(),
+				newIndices.size(),
+				DXGI_FORMAT_R16_UINT
+			);
+			MeshManager::instance()->cacheIndexBuffer(key, pIndexBuffer);
+		}
+	}
+	pGeometry->setIndexBuffer(pIndexBuffer);
+	return true;
 }
 
 }

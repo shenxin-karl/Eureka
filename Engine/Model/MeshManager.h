@@ -10,7 +10,6 @@ class MeshManager : public Singletion<MeshManager> {
 public:
 	MeshManager();
 	~MeshManager();
-	void loading(dx12lib::DirectContextProxy pDirectCtx);
 	std::shared_ptr<dx12lib::VertexBuffer>  getVertexBuffer(const std::string &key) const;
 	std::shared_ptr<dx12lib::IndexBuffer> getIndexBuffer(const std::string &key) const;
 	void cacheVertexBuffer(const std::string &key, std::weak_ptr<dx12lib::VertexBuffer> pVertexBuffer);

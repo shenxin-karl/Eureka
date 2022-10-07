@@ -21,9 +21,9 @@
     * step 是否加入 linkPass 方法
 
 
-- [ ] 好用的 枚举 包装类
+- [x] 好用的 ShaderLayout 枚举 包装类
 - [ ] mipmap 生成
-- [ ] 加入一个 GeometryGenerator 提供基本几何体
+- [x] 加入一个 GeometryGenerator 提供基本几何体
 
 ## PBR 
 
@@ -43,11 +43,11 @@
 https://zhuanlan.zhihu.com/p/21983679
 
 - [ ] Compute 后处理
-- [ ] 使用 mipmap 生成，计算出整个屏幕的亮度， 更准去的 aces 调整
+- [ ] 使用 mipmap 生成，计算出整个屏幕的亮度， 更准确的 aces 调整
 
 ## FXAA
 
-- [ ] 做 FXAA 的同时，写回到 backBuffer 中
+- [x] 做 FXAA 的同时，写回到 backBuffer 中
 
 ## Tile Based Deferred Rendering
 

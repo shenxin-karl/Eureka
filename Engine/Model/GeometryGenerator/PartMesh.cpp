@@ -22,6 +22,10 @@ const std::vector<Math::float2> & PartMesh::getTexCoord0() const {
 	return _texcoord0;
 }
 
+const std::vector<uint32_t> & PartMesh::getIndices() const {
+	return _indices;
+}
+
 const Math::BoundingBox & PartMesh::getBoundingBox() const {
 	return _boundingBox;
 }

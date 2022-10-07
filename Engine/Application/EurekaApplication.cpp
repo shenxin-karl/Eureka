@@ -13,6 +13,7 @@
 #include "Camera/FPSCameraControl.h"
 #include "Defined/EngineDefined.h"
 #include "Material/Material.h"
+#include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "RenderGraph/RenderGraph/RenderGraph.h"
 #include "RenderGraphDefined/RenderGraphDefined.h"
 #include "TextureManager/TextureManager.h"
@@ -28,9 +29,10 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	MeshManager::SingletionEmplace();
 	TextureManager::SingletionEmplace();
 	ShaderManager::SingletionEmplace();
+	GeometryGenerator::SingletionEmplace();
 
-	MeshManager::instance()->loading(pDirectCtx);
 	ShaderManager::instance()->loading(_pDevice);
+	GeometryGenerator::instance()->loading();
 
 	CameraDesc cameraDesc;
 	cameraDesc.lookAt = float3(0, 0, 0);
@@ -51,6 +53,7 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 }
 
 void EurekaApplication::onDestroy() {
+	GeometryGenerator::SingletionDestory();
 	ShaderManager::SingletionDestory();
 	TextureManager::SingletionDestory();
 	MeshManager::SingletionDestory();
@@ -129,7 +132,7 @@ void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) 
 	FXAASetting setting;
 	pCbFXAASetting = pDirectCtx->createConstantBuffer(&setting, sizeof(setting));
 
-	pRenderGraph = SetupRenderGraph(this);
+	pRenderGraph = SetupRenderGraph(this, *pDirectCtx);
 }
 
 void EurekaApplication::resizeGBuffer(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
