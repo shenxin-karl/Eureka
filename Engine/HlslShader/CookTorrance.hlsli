@@ -75,16 +75,21 @@ float GeometrySmith(float3 N, float3 V, float3 L, float roughness) {
 
 // ----------------------------------------------------------------------------
 float3 FresnelSchlick(float cosTheta, float3 F0) {
-    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    return F0 + (1.0 - F0) * pow(saturate(1.0 - cosTheta), 5.0);
+}
+
+float3 BRDFLambert(float3 diffuse)
+{
+    return diffuse / PI;
 }
 
 // ----------------------------------------------------------------------------
-float3 CookTorrance(float3 lightStrength, float3 L, float3 N, float3 V, MaterialData mat) {
+float3 CookTorrance(float3 radiance, float3 L, float3 N, float3 V, MaterialData mat) {
     // Cook-Torrance BRDF
     float3 H = normalize(V + L);
     float NDF = DistributionGGX(N, H, mat.roughness);
     float G = GeometrySmith(N, V, L, mat.roughness);
-    float3 F = FresnelSchlick(clamp(dot(H, V), 0.0, 1.0), mat.fresnelFactor);
+    float3 F = FresnelSchlick(saturate(dot(H, V)), mat.fresnelFactor);
 
     float3 numerator = NDF * G * F;
     float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
@@ -94,7 +99,7 @@ float3 CookTorrance(float3 lightStrength, float3 L, float3 N, float3 V, Material
     float3 kS = F;
     float3 kD = 1.0 - kS;
     kD *= 1.0 - mat.metallic;
-    return (kD * mat.diffuseAlbedo / PI + specular) * lightStrength;
+    return (BRDFLambert(kD * mat.diffuseAlbedo) + specular) * radiance;
 }
 
 // ----------------------------------------------------------------------------
