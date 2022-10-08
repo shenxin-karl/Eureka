@@ -89,6 +89,10 @@ void ResourceStateTracker::aliasBarrier(const IResource *pBefore, const IResourc
 	resourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(pD3DBeforeResource, pD3DAfterResource));
 }
 
+void ResourceStateTracker::aliasBarrier(ID3D12Resource *pBefore, ID3D12Resource *pAfter) {
+	resourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(pBefore, pAfter));
+}
+
 uint32 ResourceStateTracker::flushResourceBarriers(CommandList *pCmdList) {
 	UINT numBarrier = static_cast<UINT>(_resourceBarriers.size());
 	if (numBarrier > 0) {

@@ -19,6 +19,7 @@ public:
 	);
 	void UAVBarrier(const IResource *resource = nullptr);
 	void aliasBarrier(const IResource *pBefore, const IResource *pAfter);
+	void aliasBarrier(ID3D12Resource *pBefore, ID3D12Resource *pAfter);
 	uint32 flushResourceBarriers(CommandList *pCmdList);
 	void commitFinalResourceStates();
 	UINT flushPendingResourceBarriers(std::shared_ptr<CommandList> pCmdList);

@@ -77,7 +77,7 @@ float4 getNormal(VertexOut pin) {
 			B * sampleNormal.y +
 			N * sampleNormal.z ;
 	#endif
-	return float4(N, 1.0);
+	return float4(N * 0.5f + 0.5f, 1.0);
 }
 
 float4 getAoRoughnessMetallic(VertexOut pin) {

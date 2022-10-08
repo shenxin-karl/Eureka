@@ -519,6 +519,123 @@ void CommandList::setCompute32BitConstants(const ShaderRegister &sr, size_t numC
 		static_cast<UINT>(destOffset));
 }
 
+void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
+	if (pTexture == nullptr)
+		return;
+
+	auto pD3d12Resource = pTexture->getD3DResource();
+	if (pD3d12Resource == nullptr)
+		return;
+
+	const auto &resourceDesc = pTexture->getDesc();
+	if (resourceDesc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D) {
+		assert(false);
+		return;
+	}
+
+	if (resourceDesc.MipLevels == 1)
+		return;
+
+	auto pShardDevice = _pDevice.lock();
+	auto pD3d12Device = pShardDevice->getD3DDevice();
+	WRL::ComPtr<ID3D12Resource> pD3DUAVResource = pD3d12Resource;
+	// Create an alias of the original resource.
+	// This is done to perform a GPU copy of resources with different formats.
+	// BGR -> RGB texture copies will fail GPU validation unless performed
+	// through an alias of the BRG resource in a placed heap.
+	WRL::ComPtr<ID3D12Resource> pD3DAliasResource;
+
+	// 如果传入的资源不允许 UAV 访问
+	// 创建一个堆, 堆的同一个位置上创建两个资源, pD3DAliasResource 和需要生成 mipmap 的资源格式相同
+	// pD3DUAVResource 和原来的资源格式相同. 但是支持 UAV 访问, 使用 pD3DUAVResource 生成 mipmap. 因为是相同位置,
+	// 所以 pD3DAliasResource 的内容已经改变, 拷贝回到 需要生成 mipmap 的资源上即可
+	if (!pTexture->checkUAVSupport() || (resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) == 0) {
+		// Describe an alias resource that is used to copy the original texture.
+		auto aliasDesc = resourceDesc;
+		// Placed resources can't be render targets or depth-stencil views.
+		aliasDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+		aliasDesc.Flags &= ~(D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+		// Describe a UAV compatible resource that is used to perform
+		// mipmapping of the original texture.
+		auto uavDesc = aliasDesc;  // The flags for the UAV description must match that of the alias description.
+		uavDesc.Format = getUAVCompatableFormat(resourceDesc.Format);
+		D3D12_RESOURCE_DESC resourceDescs[] = { aliasDesc, uavDesc };
+		// 创建一个足够大的堆，以存储原始资源的副本。
+		auto allocationInfo = pD3d12Device->GetResourceAllocationInfo(
+			0, 
+			_countof(resourceDescs), 
+			resourceDescs
+		);
+
+		D3D12_HEAP_DESC heapDesc = {};
+		heapDesc.SizeInBytes = allocationInfo.SizeInBytes;
+		heapDesc.Alignment = allocationInfo.Alignment;
+		heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
+		heapDesc.Properties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		heapDesc.Properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+		WRL::ComPtr<ID3D12Heap> heap;
+		ThrowIfFailed(pD3d12Device->CreateHeap(&heapDesc, IID_PPV_ARGS(&heap)));
+		//确保堆在命令列表之前不会超出作用域 在命令队列上执行完毕。
+		trackResource(heap);
+		//创建一个符合原始资源。此资源用于复制原始文件, 纹理 UAV 兼容的资源。
+		ThrowIfFailed(pD3d12Device->CreatePlacedResource(
+			heap.Get(), 
+			0, 
+			&aliasDesc, 
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr, 
+			IID_PPV_ARGS(&pD3DAliasResource)
+		));
+
+		pShardDevice->getGlobalResourceState()->addGlobalResourceState(
+			pD3DAliasResource.Get(), 
+			D3D12_RESOURCE_STATE_COMMON
+		);
+
+		// 保证 pD3DAliasResource 的声明周期 
+		trackResource(pD3DAliasResource);
+
+		// 在与 alias 资源相同的堆中创建一个UAV兼容的资源。
+		ThrowIfFailed(pD3d12Device->CreatePlacedResource(
+			heap.Get(), 
+			0, 
+			&uavDesc, 
+			D3D12_RESOURCE_STATE_COMMON, 
+			nullptr,
+			IID_PPV_ARGS(&pD3DUAVResource)
+		));
+
+		pShardDevice->getGlobalResourceState()->addGlobalResourceState(
+			pD3DUAVResource.Get(), 
+			D3D12_RESOURCE_STATE_COMMON
+		);
+
+		// 保证 pD3DUAVResource 声明周期
+		trackResource(pD3DUAVResource);
+
+		// Add an aliasing barrier for the alias resource.
+		_pResourceStateTracker->aliasBarrier(nullptr, pD3DAliasResource.Get());
+
+		// Copy the original resource to the alias resource.
+		// This ensures GPU validation.
+		copyResource(pD3DAliasResource, pD3d12Resource);
+
+		// Add an aliasing barrier for the UAV compatible resource.
+		_pResourceStateTracker->aliasBarrier(pD3DAliasResource.Get(), pD3DUAVResource.Get());
+	}
+
+	auto pUAVTexture = createTexture(pD3DUAVResource, D3D12_RESOURCE_STATE_COMMON);
+	GenerateMips_UAV(pUAVTexture, isSRGBFormat(resourceDesc.Format));
+
+	if (pD3DAliasResource != nullptr) {
+		_pResourceStateTracker->aliasBarrier(pD3DUAVResource.Get(), pD3DAliasResource.Get());
+		// Copy the alias resource back to the original resource.
+		copyResource(pD3d12Resource, pD3DAliasResource);
+	}
+}
+
 void CommandList::dispatch(size_t GroupCountX, size_t GroupCountY, size_t GroupCountZ) {
 	assert(GroupCountX >= 1);
 	assert(GroupCountY >= 1);
@@ -713,8 +830,67 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 	return nullptr;
 }
 
-void CommandList::trackResource(WRL::ComPtr<ID3D12Resource> &&pResource) {
+void CommandList::trackResource(WRL::ComPtr<ID3D12Object> pResource) {
 	_staleRawResourceBuffers.push_back(std::move(pResource));
+}
+
+void CommandList::copyResource(WRL::ComPtr<ID3D12Resource> dstRes, WRL::ComPtr<ID3D12Resource> srcRes) {
+	assert(dstRes);
+	assert(srcRes);
+
+	_pResourceStateTracker->transitionResource(dstRes.Get(), D3D12_RESOURCE_STATE_COPY_DEST);
+	_pResourceStateTracker->transitionResource(srcRes.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE);
+	flushResourceBarriers();
+	_pCommandList->CopyResource(dstRes.Get(), srcRes.Get());
+
+	trackResource(dstRes);
+	trackResource(srcRes);
+}
+
+struct alignas(16) GenerateMipsCB {
+	uint32_t          SrcMipLevel;   // Texture level of source mip
+	uint32_t          NumMipLevels;  // Number of OutMips to write: [1-4]
+	uint32_t          SrcDimension;  // Width and height of the source texture are even or odd.
+	uint32_t          IsSRGB;        // Must apply gamma correction to sRGB textures.
+	Math::float2	  TexelSize;     // 1.0 / OutMip1.Dimensions
+};
+
+void CommandList::generateMips_UAV(const std::shared_ptr<Texture> &pTexture, bool isSRGB) {
+	GenerateMipsCB generateMipsCb;
+	generateMipsCb.IsSRGB = isSRGB;
+	const auto &resourceDesc = pTexture->getDesc();
+	for (size_t srcMip = 0; srcMip < resourceDesc.MipLevels; ) {
+		std::memset(this, 0, sizeof(*this));
+		uint64_t srcWidth = resourceDesc.Width >> srcMip;
+		uint32_t srcHeight = resourceDesc.Height >> srcMip;
+		uint32_t dstWidth = static_cast<uint32_t>(srcWidth >> 1);
+		uint32_t dstHeight = srcHeight >> 1;
+
+		// 0b00(0): Both width and height are even.
+		// 0b01(1): Width is odd, height is even.
+		// 0b10(2): Width is even, height is odd.
+		// 0b11(3): Both width and height are odd.
+		generateMipsCb.SrcDimension = (srcHeight & 1) << 1 | (srcWidth & 1);
+
+		DWORD mipCount;
+		auto mask = (dstWidth == 1 ? dstHeight : dstWidth) | (dstHeight == 1 ? dstWidth : dstHeight);
+		_BitScanForward(&mipCount, mask);
+		mipCount = std::min<DWORD>(4, mipCount + 1);
+		mipCount = (srcMip + mipCount) >= resourceDesc.MipLevels ? resourceDesc.MipLevels - srcMip - 1 : mipCount;
+		dstWidth = std::max<DWORD>(1, dstWidth);
+		dstHeight = std::max<DWORD>(1, dstHeight);
+
+		generateMipsCb.SrcMipLevel = srcMip;
+		generateMipsCb.NumMipLevels = mipCount;
+		generateMipsCb.TexelSize.x = 1.0f / static_cast<float>(dstWidth);
+		generateMipsCb.TexelSize.y = 1.0f / static_cast<float>(dstHeight);
+		setCompute32BitConstants(
+			RegisterSlot::CBV0, 
+			6, 
+			&generateMipsCb, 
+			0
+		);
+	}
 }
 
 #define CheckState(ret, message)			\

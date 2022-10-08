@@ -63,14 +63,14 @@ public:
 	void setComputePSO(std::shared_ptr<ComputePSO> pPipelineStateObject) override;
 	void setUnorderedAccessView(const ShaderRegister &sr, const UnorderedAccessView &uav) override;
 	void setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset) override;
-
+	void generateMips(std::shared_ptr<Texture> pTexture) override;
 	void dispatch(size_t GroupCountX, size_t GroupCountY, size_t GroupCountZ) override;
 private:
 	friend class CommandQueue;
 	friend class FrameResourceItem;
 	using ReadBackBufferPool = std::vector<std::shared_ptr<ReadBackBuffer>>;
 	using StaleResourcePool = std::vector<std::shared_ptr<IResource>>;
-	using StaleRawResourcePool = std::vector<WRL::ComPtr<ID3D12Resource>>;
+	using StaleRawResourcePool = std::vector<WRL::ComPtr<ID3D12Object>>;
 	using StaleD3DResourcePool = std::vector<WRL::ComPtr<ID3D12Resource>>;
 	void setGraphicsRootSignature(std::shared_ptr<RootSignature> pRootSignature);
 	void setComputeRootSignature(std::shared_ptr<RootSignature> pRootSignature);
@@ -88,7 +88,9 @@ private:
 		D3D12_SUBRESOURCE_DATA *pSubResourceData
 	);
 	std::shared_ptr<Texture> createTextureImpl(const DX::TexMetadata &metadata, const DX::ScratchImage &scratchImage);
-	void trackResource(WRL::ComPtr<ID3D12Resource> &&pResource);
+	void trackResource(WRL::ComPtr<ID3D12Object> pResource);
+	void copyResource(WRL::ComPtr<ID3D12Resource> dstRes, WRL::ComPtr<ID3D12Resource> srcRes);
+	void generateMips_UAV(const std::shared_ptr<Texture> &pTexture, bool isSRGB);
 private:
 	bool								   _shouldReset = false;
 	D3D12_COMMAND_LIST_TYPE                _cmdListType;

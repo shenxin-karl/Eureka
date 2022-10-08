@@ -187,6 +187,7 @@ interface IComputeContext : virtual ICommonContext {
 	virtual void setComputePSO(std::shared_ptr<ComputePSO> pPipelineStateObject) = 0;
 	virtual void setUnorderedAccessView(const ShaderRegister &sr, const UnorderedAccessView &uav) = 0;
 	virtual void setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset = 0) = 0;
+	virtual void generateMips(std::shared_ptr<Texture> pTexture) = 0;
 	virtual void dispatch(size_t GroupCountX = 1, size_t GroupCountY = 1, size_t GroupCountZ = 1) = 0;
 
 	/////////////////////////////////// UAStructuredBuffer //////////////////////////////////

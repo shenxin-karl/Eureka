@@ -22,10 +22,14 @@
 
 
 - [x] 好用的 ShaderLayout 枚举 包装类
+
 - [ ] mipmap 生成
+
+  参考资料: [Learning DirectX 12 – Lesson 4 – Textures | 3D Game Engine Programming (3dgep.com)](https://www.3dgep.com/learning-directx-12-4/#Generate_Mipmaps_Compute_Shader)
+
 - [x] 加入一个 GeometryGenerator 提供基本几何体
 
-## PBR 
+## PBR
 
 - [x] 主应用定义好渲染 RenderGraph
 - [x] 定义好 GBuffer 的作用
