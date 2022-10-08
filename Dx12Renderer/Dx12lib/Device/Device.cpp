@@ -9,6 +9,8 @@
 #include <Dx12lib/Pipeline/RootSignature.h>
 #include <Dx12lib/Resource/ResourceStateTracker.h>
 
+#include "Dx12lib/Texture/GenerateMipsPSO.h"
+
 namespace dx12lib {
 	
 Device::Device(std::shared_ptr<Adapter> pAdapter)
@@ -49,6 +51,7 @@ void Device::initialize(const DeviceInitDesc &desc) {
 			50
 		);
 	}
+	_pGenerateMipsPSO = std::make_shared<GenerateMipsPSO>(weak_from_this());
 }
 
 void Device::destroy() {
@@ -105,6 +108,10 @@ ID3D12Device *Device::getD3DDevice() const {
 
 GlobalResourceState * Device::getGlobalResourceState() const {
 	return _pGlobalResourceState.get();
+}
+
+auto Device::getGenerateMipsPSO() const -> std::shared_ptr<GenerateMipsPSO> {
+	return _pGenerateMipsPSO;
 }
 
 }

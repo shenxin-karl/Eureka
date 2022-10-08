@@ -189,6 +189,7 @@ interface IComputeContext : virtual ICommonContext {
 	virtual void setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset = 0) = 0;
 	virtual void generateMips(std::shared_ptr<Texture> pTexture) = 0;
 	virtual void dispatch(size_t GroupCountX = 1, size_t GroupCountY = 1, size_t GroupCountZ = 1) = 0;
+	virtual void UAVBarrier(const std::shared_ptr<IResource> &pResource, bool flushBarriers) = 0;
 
 	/////////////////////////////////// UAStructuredBuffer //////////////////////////////////
 #if 1

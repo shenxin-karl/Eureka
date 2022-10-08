@@ -3,7 +3,8 @@ project(Dx12lib)
 
 file(GLOB_RECURSE HEADER_FILES *.h *.hpp *.ini)
 file(GLOB_RECURSE SOURCE_FILES *.c *.cpp)
-SET(AllFile ${HEADER_FILES} ${SOURCE_FILES})
+file(GLOB_RECURSE SHADER_FILES *.hlsli *.hlsl)
+SET(AllFile ${HEADER_FILES} ${SOURCE_FILES} ${SHADER_FILES})
 
 if (MSVC)
 	add_definitions(-D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)	## enable wstring_convert
@@ -23,7 +24,7 @@ endforeach()
 
 add_library(${PROJECT_NAME} STATIC ${AllFile})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Dx12Renderer")
-
+set_property(SOURCE ${SHADER_FILES} PROPERTY VS_TOOL_OVERRIDE "shader")		# 设置 hlsl 为 shader 资源文件
 target_include_directories(${PROJECT_NAME} PUBLIC 
 	${DX12RENDERER_DIR}/
 	${DX12RENDERER_DIR}/Ext
@@ -41,3 +42,34 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 # 开启多线程编译 和 使用 c++latest 版本
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /std:c++latest")
+
+
+# Build HLSL shaders
+add_custom_target(shaders)
+
+set(HLSL_SHADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Texture/GenerateMips_CS.hlsl")
+
+
+set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/Texture/GenerateMips_CS.hlsl" PROPERTIES ShaderType "cs")
+set_source_files_properties(${HLSL_SHADER_FILES} PROPERTIES ShaderModel "5_1")
+
+# 创建一个目录
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/shaders/")
+
+foreach(FILE ${HLSL_SHADER_FILES})
+  get_filename_component(FILE_WE ${FILE} NAME_WE)
+  get_source_file_property(shadertype ${FILE} ShaderType)
+  get_source_file_property(shadermodel ${FILE} ShaderModel)
+  add_custom_command(TARGET shaders
+                     COMMAND fxc.exe /nologo /Emain /T${shadertype}_${shadermodel} $<IF:$<CONFIG:DEBUG>,/Od,/O1> /Zi /Fo ${CMAKE_BINARY_DIR}/${FILE_WE}.cso /Fd ${CMAKE_BINARY_DIR}/${FILE_WE}.pdb ${FILE} /Vn g_${FILE_WE} /Fh ${CMAKE_BINARY_DIR}/shaders/${FILE_WE}.h 
+                     MAIN_DEPENDENCY ${FILE}
+                     COMMENT "HLSL ${FILE}"
+                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                     VERBATIM)
+endforeach(FILE)
+
+target_include_directories(${PROJECT_NAME} PRIVATE 
+	${CMAKE_BINARY_DIR}/shaders/
+)
+
+set_target_properties(shaders PROPERTIES FOLDER "Dx12Renderer")

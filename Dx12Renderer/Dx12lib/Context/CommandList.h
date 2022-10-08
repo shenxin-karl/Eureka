@@ -65,6 +65,8 @@ public:
 	void setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset) override;
 	void generateMips(std::shared_ptr<Texture> pTexture) override;
 	void dispatch(size_t GroupCountX, size_t GroupCountY, size_t GroupCountZ) override;
+	void UAVBarrier(const std::shared_ptr<IResource> &pResource, bool flushBarriers) override;
+
 private:
 	friend class CommandQueue;
 	friend class FrameResourceItem;
@@ -90,6 +92,7 @@ private:
 	std::shared_ptr<Texture> createTextureImpl(const DX::TexMetadata &metadata, const DX::ScratchImage &scratchImage);
 	void trackResource(WRL::ComPtr<ID3D12Object> pResource);
 	void copyResource(WRL::ComPtr<ID3D12Resource> dstRes, WRL::ComPtr<ID3D12Resource> srcRes);
+	void UAVBarrier(WRL::ComPtr<ID3D12Resource> pResource, bool flushBarriers);
 	void generateMips_UAV(const std::shared_ptr<Texture> &pTexture, bool isSRGB);
 private:
 	bool								   _shouldReset = false;

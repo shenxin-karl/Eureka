@@ -17,6 +17,8 @@
 #include <Dx12lib/Texture/Texture.h>
 #include <iostream>
 
+#include "Dx12lib/Texture/GenerateMipsPSO.h"
+
 #if defined(_DEBUG) || defined(DEBUG)
 	#define DBG_CALL(f) f;
 	#define DEBUG_MODE
@@ -560,7 +562,7 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 		auto uavDesc = aliasDesc;  // The flags for the UAV description must match that of the alias description.
 		uavDesc.Format = getUAVCompatableFormat(resourceDesc.Format);
 		D3D12_RESOURCE_DESC resourceDescs[] = { aliasDesc, uavDesc };
-		// 创建一个足够大的堆，以存储原始资源的副本。
+		// 创建一个足够大的堆, 以存储原始资源的副本。
 		auto allocationInfo = pD3d12Device->GetResourceAllocationInfo(
 			0, 
 			_countof(resourceDescs), 
@@ -648,6 +650,10 @@ void CommandList::dispatch(size_t GroupCountX, size_t GroupCountY, size_t GroupC
 		static_cast<UINT>(GroupCountY), 
 		static_cast<UINT>(GroupCountZ)
 	);
+}
+
+void CommandList::UAVBarrier(const std::shared_ptr<IResource> &pResource, bool flushBarriers) {
+	UAVBarrier(pResource->getD3DResource(), flushBarriers);
 }
 
 void CommandList::setGraphicsRootSignature(std::shared_ptr<RootSignature> pRootSignature) {
@@ -847,20 +853,22 @@ void CommandList::copyResource(WRL::ComPtr<ID3D12Resource> dstRes, WRL::ComPtr<I
 	trackResource(srcRes);
 }
 
-struct alignas(16) GenerateMipsCB {
-	uint32_t          SrcMipLevel;   // Texture level of source mip
-	uint32_t          NumMipLevels;  // Number of OutMips to write: [1-4]
-	uint32_t          SrcDimension;  // Width and height of the source texture are even or odd.
-	uint32_t          IsSRGB;        // Must apply gamma correction to sRGB textures.
-	Math::float2	  TexelSize;     // 1.0 / OutMip1.Dimensions
-};
+void CommandList::UAVBarrier(WRL::ComPtr<ID3D12Resource> pResource, bool flushBarriers) {
+	auto barrier = CD3DX12_RESOURCE_BARRIER::UAV(pResource.Get());
+	_pResourceStateTracker->resourceBarrier(barrier);
+	if (flushBarriers)
+		flushResourceBarriers();
+}
 
 void CommandList::generateMips_UAV(const std::shared_ptr<Texture> &pTexture, bool isSRGB) {
+	auto pGenerateMipsPSO = _pDevice.lock()->getGenerateMipsPSO();
+
 	GenerateMipsCB generateMipsCb;
 	generateMipsCb.IsSRGB = isSRGB;
 	const auto &resourceDesc = pTexture->getDesc();
+	setComputePSO(pGenerateMipsPSO->getPipelineState());
+
 	for (size_t srcMip = 0; srcMip < resourceDesc.MipLevels; ) {
-		std::memset(this, 0, sizeof(*this));
 		uint64_t srcWidth = resourceDesc.Width >> srcMip;
 		uint32_t srcHeight = resourceDesc.Height >> srcMip;
 		uint32_t dstWidth = static_cast<uint32_t>(srcWidth >> 1);
@@ -885,12 +893,32 @@ void CommandList::generateMips_UAV(const std::shared_ptr<Texture> &pTexture, boo
 		generateMipsCb.TexelSize.x = 1.0f / static_cast<float>(dstWidth);
 		generateMipsCb.TexelSize.y = 1.0f / static_cast<float>(dstHeight);
 		setCompute32BitConstants(
-			RegisterSlot::CBV0, 
-			6, 
-			&generateMipsCb, 
+			RegisterSlot::CBV0,
+			6,
+			&generateMipsCb,
 			0
 		);
+
+		UINT subResourceIndex = srcMip;
+		transitionBarrier(pTexture, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, subResourceIndex);
+		_pDynamicDescriptorHeaps[0]->stageDescriptor(RegisterSlot::SRV0, pTexture->get2dSRV(srcMip));
+		ShaderRegister sr = RegisterSlot::UAV0;
+		for (size_t mip = 0; mip < mipCount; ++mip) {
+			auto uav = pTexture->get2dUAV(srcMip + mip);
+			transitionBarrier(pTexture, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, subResourceIndex + mip);
+			_pDynamicDescriptorHeaps[0]->stageDescriptor(sr + mip, pTexture->get2dSRV(srcMip));
+		}
+		for (size_t mip = mipCount; mip < 4; ++mip) 
+			_pDynamicDescriptorHeaps[0]->stageDescriptor(sr + mip, pGenerateMipsPSO->getDefaultUVA(mip));
+
+		UINT groupX = ((dstWidth + 8 - 1) / 8);
+		UINT groupY = ((dstHeight + 8 - 1) / 8);
+		dispatch(groupX, groupY, 1);
+
+		UAVBarrier(pTexture, false);
+		srcMip += mipCount;
 	}
+
 }
 
 #define CheckState(ret, message)			\

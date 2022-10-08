@@ -1,0 +1,53 @@
+#include "GenerateMipsPSO.h"
+#include "GenerateMips_CS.h"
+#include "Dx12lib/Device/Device.h"
+#include "Dx12lib/Pipeline/PipelineStateObject.h"
+#include "Dx12lib/Pipeline/RootSignature.h"
+
+namespace dx12lib {
+
+GenerateMipsPSO::GenerateMipsPSO(std::weak_ptr<Device> pDevice) {
+	auto pSharedDevice = pDevice.lock();
+	auto pRootSignature = pSharedDevice->createRootSignature(3, 1);
+	pRootSignature->at(0).initAsConstants(RegisterSlot::CBV0, 6);
+	pRootSignature->at(1).initAsDescriptorTable({ { RegisterSlot::SRV0, 1 } });
+	pRootSignature->at(2).initAsDescriptorTable({ { RegisterSlot::UAV0, 4 } });
+	CD3DX12_STATIC_SAMPLER_DESC sampler(
+		0, D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP, D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP
+	);
+	pRootSignature->initStaticSampler(0, sampler);
+	pRootSignature->finalize();
+
+	_pPipelineState = pSharedDevice->createComputePSO("GenerateMipsPSO");
+	_pPipelineState->setComputeShader(g_GenerateMips_CS, sizeof(g_GenerateMips_CS));
+	_pPipelineState->setRootSignature(pRootSignature);
+	_pPipelineState->finalize();
+
+	auto pd3dDevice = pSharedDevice->getD3DDevice();
+	_defaultUAV = pSharedDevice->allocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 4);
+	for (UINT i = 0; i < 4; ++i) {
+		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+		uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		uavDesc.Texture2D.MipSlice = i;
+		uavDesc.Texture2D.PlaneSlice = 0;
+		pd3dDevice->CreateUnorderedAccessView(
+			nullptr, 
+			nullptr, 
+			&uavDesc, 
+			_defaultUAV.getCPUHandle(i)
+		);
+	}
+}
+
+auto GenerateMipsPSO::getPipelineState() const -> std::shared_ptr<dx12lib::ComputePSO> {
+	return _pPipelineState;
+}
+
+auto GenerateMipsPSO::getDefaultUVA(size_t i) const -> D3D12_CPU_DESCRIPTOR_HANDLE {
+	return _defaultUAV.getCPUHandle(i);
+}
+
+}

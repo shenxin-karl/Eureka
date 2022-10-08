@@ -5,6 +5,7 @@
 
 namespace dx12lib {
 
+class GenerateMipsPSO;
 class GlobalResourceState;
 
 struct DeviceInitDesc {
@@ -32,6 +33,7 @@ public:
 	std::shared_ptr<CommandQueue> getCommandQueue() const;
 	ID3D12Device *getD3DDevice() const;
 	GlobalResourceState *getGlobalResourceState() const;
+	auto getGenerateMipsPSO() const -> std::shared_ptr<GenerateMipsPSO>;
 private:
 	WRL::ComPtr<ID3D12Device>            _pDevice;
 	std::shared_ptr<Adapter>             _pAdapter;
@@ -39,6 +41,7 @@ private:
 	std::unique_ptr<DescriptorAllocator> _pDescriptorAllocators[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];
 	DeviceInitDesc				         _initDesc;
 	std::unique_ptr<GlobalResourceState> _pGlobalResourceState;
+	std::shared_ptr<GenerateMipsPSO>	 _pGenerateMipsPSO;
 };
 
 }
