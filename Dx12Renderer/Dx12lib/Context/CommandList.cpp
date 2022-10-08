@@ -627,7 +627,7 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 	}
 
 	auto pUAVTexture = createTexture(pD3DUAVResource, D3D12_RESOURCE_STATE_COMMON);
-	GenerateMips_UAV(pUAVTexture, isSRGBFormat(resourceDesc.Format));
+	generateMips_UAV(pUAVTexture, isSRGBFormat(resourceDesc.Format));
 
 	if (pD3DAliasResource != nullptr) {
 		_pResourceStateTracker->aliasBarrier(pD3DUAVResource.Get(), pD3DAliasResource.Get());
