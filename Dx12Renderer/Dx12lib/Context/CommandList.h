@@ -72,8 +72,8 @@ private:
 	friend class FrameResourceItem;
 	using ReadBackBufferPool = std::vector<std::shared_ptr<ReadBackBuffer>>;
 	using StaleResourcePool = std::vector<std::shared_ptr<IResource>>;
-	using StaleRawResourcePool = std::vector<WRL::ComPtr<ID3D12Object>>;
-	using StaleD3DResourcePool = std::vector<WRL::ComPtr<ID3D12Resource>>;
+	using StaleRawObjectPool = std::vector<WRL::ComPtr<ID3D12Object>>;
+	using StaleRawResourcePool = std::vector<WRL::ComPtr<ID3D12Resource>>;
 	void setGraphicsRootSignature(std::shared_ptr<RootSignature> pRootSignature);
 	void setComputeRootSignature(std::shared_ptr<RootSignature> pRootSignature);
 	void close();
@@ -90,7 +90,8 @@ private:
 		D3D12_SUBRESOURCE_DATA *pSubResourceData
 	);
 	std::shared_ptr<Texture> createTextureImpl(const DX::TexMetadata &metadata, const DX::ScratchImage &scratchImage, size_t genMip);
-	void trackResource(WRL::ComPtr<ID3D12Object> pResource);
+	void trackObject(WRL::ComPtr<ID3D12Object> &&pObject);
+	void trackResource(WRL::ComPtr<ID3D12Resource> &&pResource);
 	void copyResource(WRL::ComPtr<ID3D12Resource> dstRes, WRL::ComPtr<ID3D12Resource> srcRes);
 	void UAVBarrier(WRL::ComPtr<ID3D12Resource> pResource, bool flushBarriers);
 	void generateMips_UAV(const std::shared_ptr<Texture> &pTexture, bool isSRGB);
@@ -104,6 +105,7 @@ private:
 	std::unique_ptr<DynamicDescriptorHeap> _pDynamicDescriptorHeaps[kDynamicDescriptorHeapCount];
 	ReadBackBufferPool                     _readBackBuffers;
 	StaleResourcePool					   _staleResourceBuffers;
+	StaleRawObjectPool					   _staleRawObjectBuffers;
 	StaleRawResourcePool				   _staleRawResourceBuffers;
 private:
 	struct CommandListState {

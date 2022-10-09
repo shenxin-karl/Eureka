@@ -531,7 +531,7 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 		return;
 
 	const auto &resourceDesc = pTexture->getDesc();
-	if (resourceDesc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D) {
+	if (resourceDesc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D && resourceDesc.DepthOrArraySize != 1) {
 		assert(false);
 		return;
 	}
@@ -541,12 +541,8 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 
 	auto pShardDevice = _pDevice.lock();
 	auto pD3d12Device = pShardDevice->getD3DDevice();
-	WRL::ComPtr<ID3D12Resource> pD3DUAVResource = pD3d12Resource;
-	// Create an alias of the original resource.
-	// This is done to perform a GPU copy of resources with different formats.
-	// BGR -> RGB texture copies will fail GPU validation unless performed
-	// through an alias of the BRG resource in a placed heap.
-	WRL::ComPtr<ID3D12Resource> pD3DAliasResource;
+	WRL::ComPtr<ID3D12Resource> pd3dUAVResource = pD3d12Resource;
+	WRL::ComPtr<ID3D12Resource> pd3dAliasResource;
 
 	// 如果传入的资源不允许 UAV 访问
 	// 创建一个堆, 堆的同一个位置上创建两个资源, pD3DAliasResource 和需要生成 mipmap 的资源格式相同
@@ -581,7 +577,6 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 		WRL::ComPtr<ID3D12Heap> heap;
 		ThrowIfFailed(pD3d12Device->CreateHeap(&heapDesc, IID_PPV_ARGS(&heap)));
 		//确保堆在命令列表之前不会超出作用域 在命令队列上执行完毕。
-		trackResource(heap);
 		//创建一个符合原始资源。此资源用于复制原始文件, 纹理 UAV 兼容的资源。
 		ThrowIfFailed(pD3d12Device->CreatePlacedResource(
 			heap.Get(), 
@@ -589,16 +584,13 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 			&aliasDesc, 
 			D3D12_RESOURCE_STATE_COMMON,
 			nullptr, 
-			IID_PPV_ARGS(&pD3DAliasResource)
+			IID_PPV_ARGS(&pd3dAliasResource)
 		));
 
 		pShardDevice->getGlobalResourceState()->addGlobalResourceState(
-			pD3DAliasResource.Get(), 
+			pd3dAliasResource.Get(), 
 			D3D12_RESOURCE_STATE_COMMON
 		);
-
-		// 保证 pD3DAliasResource 的声明周期 
-		trackResource(pD3DAliasResource);
 
 		// 在与 alias 资源相同的堆中创建一个UAV兼容的资源。
 		ThrowIfFailed(pD3d12Device->CreatePlacedResource(
@@ -607,39 +599,38 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 			&uavDesc, 
 			D3D12_RESOURCE_STATE_COMMON, 
 			nullptr,
-			IID_PPV_ARGS(&pD3DUAVResource)
+			IID_PPV_ARGS(&pd3dUAVResource)
 		));
 
 		pShardDevice->getGlobalResourceState()->addGlobalResourceState(
-			pD3DUAVResource.Get(), 
+			pd3dUAVResource.Get(), 
 			D3D12_RESOURCE_STATE_COMMON
 		);
 
-		// 保证 pD3DUAVResource 声明周期
-		trackResource(pD3DUAVResource);
-
 		// Add an aliasing barrier for the alias resource.
-		_pResourceStateTracker->aliasBarrier(nullptr, pD3DAliasResource.Get());
+		_pResourceStateTracker->aliasBarrier(nullptr, pd3dAliasResource.Get());
 
 		// Copy the original resource to the alias resource.
 		// This ensures GPU validation.
-		copyResource(pD3DAliasResource, pD3d12Resource);
+		copyResource(pd3dAliasResource, pD3d12Resource);
+		trackObject(std::move(heap));
 
 		// Add an aliasing barrier for the UAV compatible resource.
-		_pResourceStateTracker->aliasBarrier(pD3DAliasResource.Get(), pD3DUAVResource.Get());
+		_pResourceStateTracker->aliasBarrier(pd3dAliasResource.Get(), pd3dUAVResource.Get());
 	}
 
-	auto pUAVTexture = createTexture(pD3DUAVResource, D3D12_RESOURCE_STATE_COMMON);
+	auto pUAVTexture = createTexture(pd3dUAVResource, D3D12_RESOURCE_STATE_COMMON);
 	generateMips_UAV(pUAVTexture, isSRGBFormat(resourceDesc.Format));
 	trackResource(pUAVTexture);
 
-	if (pD3DAliasResource != nullptr) {
-		_pResourceStateTracker->aliasBarrier(pD3DUAVResource.Get(), pD3DAliasResource.Get());
-		// Copy the alias resource back to the original resource.
-		copyResource(pD3d12Resource, pD3DAliasResource);
+	if (pd3dAliasResource != nullptr) {
+		_pResourceStateTracker->aliasBarrier(pd3dUAVResource.Get(), pd3dAliasResource.Get());
+		copyResource(pD3d12Resource, pd3dAliasResource);
 	}
 
 	transitionBarrier(pTexture, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+	trackResource(std::move(pd3dAliasResource));
+	trackResource(std::move(pd3dUAVResource));
 }
 
 void CommandList::dispatch(size_t GroupCountX, size_t GroupCountY, size_t GroupCountZ) {
@@ -694,8 +685,14 @@ void CommandList::reset() {
 
 	for (auto &pReadBackBuffer : _readBackBuffers)
 		pReadBackBuffer->setCompleted(true);
+
 	_readBackBuffers.clear();
 	_staleResourceBuffers.clear();
+	_staleRawObjectBuffers.clear();
+
+	auto pGlobalResourceState = _pDevice.lock()->getGlobalResourceState();
+	for (auto &pResource : _staleRawResourceBuffers) 
+		pGlobalResourceState->removeGlobalResourceState(pResource.Get());
 	_staleRawResourceBuffers.clear();
 }
 
@@ -787,7 +784,6 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 	_BitScanForward(&maxMipMapLevel, static_cast<DWORD>(resolution));
 	maxMipMapLevel += 1;
 
-	genMip = 15;
 	UINT16 mapLevels = std::max<UINT16>(metadata.mipLevels, std::min<UINT16>(maxMipMapLevel, static_cast<UINT16>(genMip)));
 
 	D3D12_RESOURCE_DESC textureDesc{};
@@ -835,7 +831,7 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 		subResources.data()
 	);
 
-	trackResource(std::move(pUploader));
+	trackObject(std::move(pUploader));
 
 	std::shared_ptr<dx12lib::Texture> pTexture = nullptr;
 	switch (metadata.dimension) {
@@ -854,8 +850,14 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 	return pTexture;
 }
 
-void CommandList::trackResource(WRL::ComPtr<ID3D12Object> pResource) {
-	_staleRawResourceBuffers.push_back(std::move(pResource));
+void CommandList::trackObject(WRL::ComPtr<ID3D12Object> &&pObject) {
+	if (pObject != nullptr)
+		_staleRawObjectBuffers.push_back(std::move(pObject));
+}
+
+void CommandList::trackResource(WRL::ComPtr<ID3D12Resource> &&pResource) {
+	if (pResource != nullptr)
+		_staleRawResourceBuffers.push_back(std::move(pResource));
 }
 
 void CommandList::copyResource(WRL::ComPtr<ID3D12Resource> dstRes, WRL::ComPtr<ID3D12Resource> srcRes) {
@@ -866,9 +868,6 @@ void CommandList::copyResource(WRL::ComPtr<ID3D12Resource> dstRes, WRL::ComPtr<I
 	_pResourceStateTracker->transitionResource(srcRes.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE);
 	flushResourceBarriers();
 	_pCommandList->CopyResource(dstRes.Get(), srcRes.Get());
-
-	trackResource(dstRes);
-	trackResource(srcRes);
 }
 
 void CommandList::UAVBarrier(WRL::ComPtr<ID3D12Resource> pResource, bool flushBarriers) {

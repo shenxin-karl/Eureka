@@ -34,6 +34,8 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	ShaderManager::SingletionEmplace();
 	GeometryGenerator::SingletionEmplace();
 
+	_pSwapChain->setVerticalSync(false);
+
 	ShaderManager::instance()->loading(_pDevice);
 	GeometryGenerator::instance()->loading();
 
