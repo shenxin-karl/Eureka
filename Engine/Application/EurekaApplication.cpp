@@ -2,6 +2,9 @@
 #include <Dx12lib/Context/ContextStd.h>
 #include <Dx12lib/Texture/Texture.h>
 #include "EurekaApplication.h"
+
+#include <iostream>
+
 #include "InputSystem/InputSystem.h"
 #include "InputSystem/window.h"
 #include "GameTimer/GameTimer.h"
@@ -83,6 +86,12 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	pCbPrePassVisitor->fogStart = 0.f;
 	pCbPrePassVisitor->fogEnd = 0.f;
 	pCbPrePassVisitor->cbPrePassPadding1 = float2(0.f);
+
+	if (pGameTimer->oneSecondTrigger()) {
+		std::cout << _title << ' ';
+		std::cout << "fps: " << pGameTimer->FPS() << ' ';
+		std::cout << "mspf: " << pGameTimer->mspf() << "ms" << std::endl;
+	}
 }
 
 void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {

@@ -20,8 +20,8 @@ interface IContext {
 
 interface ICommonContext : IContext {
 	virtual void trackResource(std::shared_ptr<IResource> &&pResource) = 0;
-	virtual std::shared_ptr<Texture> createTextureFromFile(const std::wstring &fileName, bool sRGB = false) = 0;
-	virtual std::shared_ptr<Texture> createTextureFromMemory(const std::string &extension, const void *pData, size_t sizeInByte, bool sRGB = false) = 0;
+	virtual std::shared_ptr<Texture> createTextureFromFile(const std::wstring &fileName, bool sRGB = false, size_t genMip = 0) = 0;
+	virtual std::shared_ptr<Texture> createTextureFromMemory(const std::string &extension, const void *pData, size_t sizeInByte, bool sRGB = false, size_t genMip = 0) = 0;
 
 	virtual	void setDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, WRL::ComPtr<ID3D12DescriptorHeap> pHeap) = 0;
 	virtual void setConstantBufferView(const ShaderRegister &sr, const ConstantBufferView &crv) = 0;

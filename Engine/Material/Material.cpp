@@ -20,8 +20,7 @@ namespace Eureka {
 static std::shared_ptr<dx12lib::Texture> loadTexture(
 	dx12lib::IGraphicsContext &graphicsCtx,
 	const ALTexture &alTexture,
-	bool sRGB,
-	bool genMipMap = true)
+	bool sRGB)
 {
 	std::shared_ptr<dx12lib::Texture> pTex;
 	if (alTexture.pTextureData != nullptr) {
@@ -33,7 +32,7 @@ static std::shared_ptr<dx12lib::Texture> loadTexture(
 		if ((pTex = TextureManager::instance()->getTexture(alTexture.path)) != nullptr)
 			return pTex;
 
-		pTex = graphicsCtx.createTextureFromFile(dx12lib::to_wstring(alTexture.path), sRGB);
+		pTex = graphicsCtx.createTextureFromFile(dx12lib::to_wstring(alTexture.path), sRGB, -1);
 		TextureManager::instance()->setTexture(alTexture.path, pTex);
 	}
 	assert(pTex);

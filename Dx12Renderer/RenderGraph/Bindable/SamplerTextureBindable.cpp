@@ -17,7 +17,6 @@ std::shared_ptr<SamplerTextureBindable> SamplerTextureBindable::make(
 	pBindable->_srv = std::move(srv);
 	pBindable->_pTexture = std::move(pTexture);
 	return pBindable;
-
 }
 
 }

@@ -110,15 +110,6 @@ void Window::beginTick(std::shared_ptr<GameTimer> pGameTimer) {
 
 	if (!_pInputSystem->pMouse->getShowCursor())
 		_pInputSystem->pMouse->adjustCursorPosition();
-
-	//if (pGameTimer->oneSecondTrigger()) {
-	//	std::stringstream sbuf;
-	//	sbuf << _title << ' ';
-	//	sbuf << "fps: " << pGameTimer->FPS() << ' ';
-	//	sbuf << "mspf: " << pGameTimer->mspf() << "ms";
-	//	auto title = sbuf.str();
-	//	SetWindowText(_hwnd, title.c_str());
-	//}
 }
 
 void Window::setCanPause(bool bPause) {

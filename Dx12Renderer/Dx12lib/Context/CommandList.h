@@ -19,8 +19,8 @@ public:
 
 /// CommonContext api
 	void trackResource(std::shared_ptr<IResource> &&pResource) override;
-	std::shared_ptr<Texture> createTextureFromFile(const std::wstring &fileName, bool sRGB) override;
-	std::shared_ptr<Texture> createTextureFromMemory(const std::string &extension, const void *pData, size_t sizeInByte, bool sRGB) override;
+	std::shared_ptr<Texture> createTextureFromFile(const std::wstring &fileName, bool sRGB, size_t genMip) override;
+	std::shared_ptr<Texture> createTextureFromMemory(const std::string &extension, const void *pData, size_t sizeInByte, bool sRGB, size_t genMip) override;
 
 	void setDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, WRL::ComPtr<ID3D12DescriptorHeap> pHeap) override;
 	void setConstantBufferView(const ShaderRegister &sr, const ConstantBufferView &cbv) override;
@@ -89,7 +89,7 @@ private:
 		size_t numSubResource, 
 		D3D12_SUBRESOURCE_DATA *pSubResourceData
 	);
-	std::shared_ptr<Texture> createTextureImpl(const DX::TexMetadata &metadata, const DX::ScratchImage &scratchImage);
+	std::shared_ptr<Texture> createTextureImpl(const DX::TexMetadata &metadata, const DX::ScratchImage &scratchImage, size_t genMip);
 	void trackResource(WRL::ComPtr<ID3D12Object> pResource);
 	void copyResource(WRL::ComPtr<ID3D12Resource> dstRes, WRL::ComPtr<ID3D12Resource> srcRes);
 	void UAVBarrier(WRL::ComPtr<ID3D12Resource> pResource, bool flushBarriers);
