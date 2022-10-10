@@ -84,7 +84,10 @@ const std::string & Window::getTitle() const {
 }
 
 void Window::setShowTitle(const std::string &title) {
-	_title = title;
+	if (_title != title) {
+		_title = title;
+		SetWindowText(_hwnd, title.c_str());
+	}
 }
 
 bool Window::isPause() const {

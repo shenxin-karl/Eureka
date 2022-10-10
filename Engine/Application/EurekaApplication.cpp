@@ -90,9 +90,8 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	pCbPrePassVisitor->cbPrePassPadding1 = float2(0.f);
 
 	if (pGameTimer->oneSecondTrigger()) {
-		std::cout << _title << ' ';
-		std::cout << "fps: " << pGameTimer->FPS() << ' ';
-		std::cout << "mspf: " << pGameTimer->mspf() << "ms" << std::endl;
+		std::string titleName = std::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());
+		_pInputSystem->pWindow->setShowTitle(titleName);
 	}
 }
 

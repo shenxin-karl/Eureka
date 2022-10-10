@@ -166,7 +166,17 @@ void CommandList::setConstantBufferView(const std::string &boundResourceName, co
 	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
 	assert(boundResource != std::nullopt);
 	assert(boundResource->viewType == D3D12_DESCRIPTOR_RANGE_TYPE_CBV);
-	setConstantBufferView(boundResource->shaderRegister, cbv);
+#ifdef DEBUG_MODE
+	WRL::ComPtr<ID3D12Resource> pD3DResource = cbv.getResource()->getD3DResource();
+	D3D12_RESOURCE_STATES state = _pResourceStateTracker->getResourceState(pD3DResource.Get());
+	assert(cbv.getResource()->checkCBVState(state));
+#endif
+	_pDynamicDescriptorHeaps[0]->stageDescriptors(
+		boundResource->rootParamIndex,
+		boundResource->offset,
+		1,
+		cbv.getCPUDescriptorHandle()
+	);
 }
 
 void CommandList::setShaderResourceView(const ShaderRegister &sr, const ShaderResourceView &srv) 
@@ -205,9 +215,13 @@ void CommandList::setShaderResourceView(const std::string &boundResourceName,
 	CD3DX12_CPU_DESCRIPTOR_HANDLE handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(srv.getCPUDescriptorHandle());
 	UINT incrementSize = static_cast<UINT>(_pDynamicDescriptorHeaps[0]->getDescriptorHandleIncrementSize());
 	for (size_t i = 0; i < numDescriptors; ++i) {
-		_pDynamicDescriptorHeaps[0]->stageDescriptor(shaderRegister, handle);
+		_pDynamicDescriptorHeaps[0]->stageDescriptors(
+			boundResource->rootParamIndex,
+			boundResource->offset + i + offset,
+			1,
+			handle
+		);
 		handle.Offset(1, incrementSize);
-		shaderRegister += 1;
 	}
 }
 

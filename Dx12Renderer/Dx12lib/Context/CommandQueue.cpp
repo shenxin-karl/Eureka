@@ -49,7 +49,7 @@ void CommandQueue::delayExecuted(ContextProxy pContext) {
 void CommandQueue::executeCommandList(ContextProxy pContext) {
 	std::vector<ContextProxy> cmdLists;
 	cmdLists.push_back(pContext);
-	executeCommandList(cmdLists);
+	executeCommandList(std::move(cmdLists));
 }
 
 void CommandQueue::executeCommandList(std::vector<ContextProxy> contextList) {

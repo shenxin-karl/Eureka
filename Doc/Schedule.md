@@ -23,11 +23,15 @@
 
 - [x] 好用的 ShaderLayout 枚举 包装类
 
-- [ ] mipmap 生成
+- [x] mipmap 生成
 
   参考资料: [Learning DirectX 12 – Lesson 4 – Textures | 3D Game Engine Programming (3dgep.com)](https://www.3dgep.com/learning-directx-12-4/#Generate_Mipmaps_Compute_Shader)
 
 - [x] 加入一个 GeometryGenerator 提供基本几何体
+
+- [x] PSO 反射保存根参数偏移, 直接设置
+
+- [ ] ComputeShader 支持变体
 
 ## PBR
 

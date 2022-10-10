@@ -34,6 +34,8 @@ struct BoundResource {
 	D3D12_DESCRIPTOR_RANGE_TYPE viewType;
 	ShaderRegister shaderRegister;
 	size_t count;
+	size_t rootParamIndex;
+	size_t offset;
 };
 
 class PSO {
@@ -50,7 +52,7 @@ public:
 	bool isDirty() const;
 	auto getHashCode() const;
 	auto getBoundResource(const std::string &name) const -> std::optional<BoundResource>;
-	auto getBoundResourceMap() const;
+	auto getBoundResourceMap() const -> const BoundResourceMap &;
 	virtual void finalize() = 0;
 	virtual std::shared_ptr<PSO> clone(const std::string &name) = 0;
 	virtual ~PSO() = default;

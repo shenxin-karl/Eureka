@@ -46,7 +46,7 @@ auto PSO::getBoundResource(const std::string &name) const -> std::optional<Bound
 	return std::nullopt;
 }
 
-auto PSO::getBoundResourceMap() const {
+auto PSO::getBoundResourceMap() const -> const BoundResourceMap & {
 	return _boundResourceMap;
 }
 
@@ -102,18 +102,34 @@ void GraphicsPSO::generateBoundResourceMap() {
 	}
 
 	dx12lib::ShaderRegister shaderRegister;
+	std::optional<ShaderParamLocation> pLocation;
+
 	for (auto &&[name, desc] : boundResources) {
 		switch (desc.Type) {
 		case D3D_SIT_CBUFFER:
 			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::CBV0 + desc.BindPoint);
 			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
-			_boundResourceMap[name] = BoundResource{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, shaderRegister, desc.BindCount };
+			pLocation = _pRootSignature->getShaderParamLocation(shaderRegister);
+			_boundResourceMap[name] = BoundResource{
+				D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+				shaderRegister,
+				desc.BindCount,
+				pLocation->rootParamIndex,
+				pLocation->offset
+			};
 			break;
 		case D3D_SIT_TEXTURE:
 		case D3D_SIT_STRUCTURED:
 			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::SRV0 + desc.BindPoint);
 			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
-			_boundResourceMap[name] = BoundResource{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, shaderRegister, desc.BindCount };
+			pLocation = _pRootSignature->getShaderParamLocation(shaderRegister);
+			_boundResourceMap[name] = BoundResource{
+				D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+				shaderRegister,
+				desc.BindCount,
+				pLocation->rootParamIndex,
+				pLocation->offset,
+			};
 			break;
 		case D3D_SIT_SAMPLER:
 		default:
