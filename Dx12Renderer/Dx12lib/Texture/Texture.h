@@ -13,13 +13,13 @@ enum class TextureDimension {
 };
 
 class Texture : public IResource {
-public:
+protected:
 	Texture(std::weak_ptr<Device> pDevice, const D3D12_RESOURCE_DESC &desc, const D3D12_CLEAR_VALUE *pClearValue = nullptr);
 	Texture(std::weak_ptr<Device> pDevice, 
 		WRL::ComPtr<ID3D12Resource> pResource, 
-		D3D12_RESOURCE_STATES state,  
 		const D3D12_CLEAR_VALUE *pClearValue = nullptr
 	);
+public:
 	auto getD3DResource() const ->WRL::ComPtr<ID3D12Resource> override;
 	auto getDimension() const -> TextureDimension;
 	auto getDesc() const -> const D3D12_RESOURCE_DESC &;

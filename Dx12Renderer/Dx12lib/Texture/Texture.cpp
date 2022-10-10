@@ -41,7 +41,6 @@ Texture::Texture(std::weak_ptr<Device> pDevice, const D3D12_RESOURCE_DESC &desc,
 
 Texture::Texture(std::weak_ptr<Device> pDevice, 
 	WRL::ComPtr<ID3D12Resource> pResource,
-	D3D12_RESOURCE_STATES state,
 	const D3D12_CLEAR_VALUE *pClearValue)
 : _pResource(pResource)
 {
@@ -49,7 +48,6 @@ Texture::Texture(std::weak_ptr<Device> pDevice,
 	_resourceDesc = pResource->GetDesc();
 	initClearValue(pClearValue);
 	auto pSharedDevice = pDevice.lock();
-	pSharedDevice->getGlobalResourceState()->addGlobalResourceState(_pResource.Get(), state);
 	initFeatureSupport(pSharedDevice->getD3DDevice(), _resourceDesc.Format);
 }
 

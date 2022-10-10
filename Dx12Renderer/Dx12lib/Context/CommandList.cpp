@@ -1,4 +1,4 @@
-#include <Dx12lib/Context/CommandList.h>
+﻿#include <Dx12lib/Context/CommandList.h>
 #include <Dx12lib/Device/Device.h>
 #include <Dx12lib/Context/FrameResourceQueue.h>
 #include <Dx12lib/Context/CommandQueue.h>
@@ -559,7 +559,7 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 		auto uavDesc = aliasDesc;  // The flags for the UAV description must match that of the alias description.
 		uavDesc.Format = getUAVCompatableFormat(resourceDesc.Format);
 		D3D12_RESOURCE_DESC resourceDescs[] = { aliasDesc, uavDesc };
-		// 创建一个足够大的堆, 以存储原始资源的副本。
+		// 创建一个足够大的堆, 以存储原始资源的副本. 
 		auto allocationInfo = pD3d12Device->GetResourceAllocationInfo(
 			0, 
 			_countof(resourceDescs), 
@@ -576,8 +576,8 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 
 		WRL::ComPtr<ID3D12Heap> heap;
 		ThrowIfFailed(pD3d12Device->CreateHeap(&heapDesc, IID_PPV_ARGS(&heap)));
-		//确保堆在命令列表之前不会超出作用域 在命令队列上执行完毕。
-		//创建一个符合原始资源。此资源用于复制原始文件, 纹理 UAV 兼容的资源。
+		//确保堆在命令列表之前不会超出作用域 在命令队列上执行完毕. 
+		//创建一个符合原始资源. 此资源用于复制原始文件, 纹理 UAV 兼容的资源. 
 		ThrowIfFailed(pD3d12Device->CreatePlacedResource(
 			heap.Get(), 
 			0, 
@@ -592,7 +592,7 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 			D3D12_RESOURCE_STATE_COMMON
 		);
 
-		// 在与 alias 资源相同的堆中创建一个UAV兼容的资源。
+		// 在与 alias 资源相同的堆中创建一个UAV兼容的资源. 
 		ThrowIfFailed(pD3d12Device->CreatePlacedResource(
 			heap.Get(), 
 			0, 
@@ -619,18 +619,16 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 		_pResourceStateTracker->aliasBarrier(pd3dAliasResource.Get(), pd3dUAVResource.Get());
 	}
 
-	auto pUAVTexture = createTexture(pd3dUAVResource, D3D12_RESOURCE_STATE_COMMON);
+	auto pUAVTexture = createTexture(pd3dUAVResource);
 	generateMips_UAV(pUAVTexture, isSRGBFormat(resourceDesc.Format));
 	trackResource(pUAVTexture);
 
 	if (pd3dAliasResource != nullptr) {
 		_pResourceStateTracker->aliasBarrier(pd3dUAVResource.Get(), pd3dAliasResource.Get());
 		copyResource(pD3d12Resource, pd3dAliasResource);
+		trackResource(std::move(pd3dAliasResource));
+		trackResource(std::move(pd3dUAVResource));
 	}
-
-	transitionBarrier(pTexture, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
-	trackResource(std::move(pd3dAliasResource));
-	trackResource(std::move(pd3dUAVResource));
 }
 
 void CommandList::dispatch(size_t GroupCountX, size_t GroupCountY, size_t GroupCountZ) {
@@ -736,11 +734,7 @@ WRL::ComPtr<ID3D12Resource> CommandList::copyTextureSubResource(WRL::ComPtr<ID3D
 	if (pDestResource == nullptr) 
 		return nullptr;
 
-	_pCommandList->ResourceBarrier(1, RVPtr(CD3DX12_RESOURCE_BARRIER::Transition(
-		pDestResource.Get(),
-		D3D12_RESOURCE_STATE_COMMON,
-		D3D12_RESOURCE_STATE_COPY_DEST
-	)));
+	_pResourceStateTracker->transitionResource(pDestResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST);
 
 	size_t requiredSize = GetRequiredIntermediateSize(
 		pDestResource.Get(), 
@@ -766,12 +760,6 @@ WRL::ComPtr<ID3D12Resource> CommandList::copyTextureSubResource(WRL::ComPtr<ID3D
 		pSubResourceData
 	);
 
-	_pCommandList->ResourceBarrier(1, RVPtr(CD3DX12_RESOURCE_BARRIER::Transition(
-		pDestResource.Get(),
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		D3D12_RESOURCE_STATE_GENERIC_READ
-	)));
-
 	return pSrcResource;
 }
 
@@ -784,7 +772,10 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 	_BitScanForward(&maxMipMapLevel, static_cast<DWORD>(resolution));
 	maxMipMapLevel += 1;
 
-	UINT16 mapLevels = std::max<UINT16>(metadata.mipLevels, std::min<UINT16>(maxMipMapLevel, static_cast<UINT16>(genMip)));
+	UINT16 mapLevels = std::max(
+		static_cast<UINT16>(metadata.mipLevels),
+		std::min(static_cast<UINT16>(maxMipMapLevel), static_cast<UINT16>(genMip))
+	);
 
 	D3D12_RESOURCE_DESC textureDesc{};
 	switch (metadata.dimension) {
@@ -814,6 +805,8 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 		nullptr,
 		IID_PPV_ARGS(&pTextureResource)
 	));
+	auto pGlobalResourceState = _pDevice.lock()->getGlobalResourceState();
+	pGlobalResourceState->addGlobalResourceState(pTextureResource.Get(), D3D12_RESOURCE_STATE_COMMON);
 
 	std::vector<D3D12_SUBRESOURCE_DATA> subResources{ scratchImage.GetImageCount() };
 	const DX::Image *pImages = scratchImage.GetImages();
@@ -836,7 +829,7 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 	std::shared_ptr<dx12lib::Texture> pTexture = nullptr;
 	switch (metadata.dimension) {
 	case DirectX::TEX_DIMENSION_TEXTURE2D:
-		pTexture = std::make_shared<dx12libTool::MakeTexture>(_pDevice, pTextureResource, D3D12_RESOURCE_STATE_GENERIC_READ);
+		pTexture = std::make_shared<dx12libTool::MakeTexture>(_pDevice, pTextureResource);
 		break;
 	case DirectX::TEX_DIMENSION_TEXTURE3D:
 	case DirectX::TEX_DIMENSION_TEXTURE1D:
@@ -847,6 +840,7 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 	if (pTexture != nullptr && metadata.mipLevels < mapLevels)
 		generateMips(pTexture);
 
+	transitionBarrier(pTexture, D3D12_RESOURCE_STATE_GENERIC_READ);
 	return pTexture;
 }
 
@@ -895,7 +889,7 @@ void CommandList::generateMips_UAV(const std::shared_ptr<Texture> &pTexture, boo
 		// 0b01(1): Width is odd, height is even.
 		// 0b10(2): Width is even, height is odd.
 		// 0b11(3): Both width and height are odd.
-		generateMipsCb.SrcDimension = (srcHeight & 1) << 1 | (srcWidth & 1);
+		 generateMipsCb.SrcDimension = (srcHeight & 1) << 1 | (srcWidth & 1);
 
 		DWORD mipCount;
 		auto mask = (dstWidth == 1 ? dstHeight : dstWidth) | (dstHeight == 1 ? dstWidth : dstHeight);

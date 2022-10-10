@@ -6,6 +6,7 @@
 #include <Dx12lib/Tool/MakeObejctTool.hpp>
 #include <string>
 
+#include "Dx12lib/Resource/ResourceStateTracker.h"
 #include "Dx12lib/Texture/Texture.h"
 
 namespace dx12lib {
@@ -112,6 +113,7 @@ Math::float2 SwapChain::getInvRenderTargetSize() const {
 }
 
 void SwapChain::updateBuffer(DirectContextProxy pDirectContext) {
+	auto pGlobalResourceMap = _pDevice.lock()->getGlobalResourceState();
 	for (std::size_t i = 0; i < kSwapChainBufferCount; ++i) {
 		WRL::ComPtr<ID3D12Resource> pBuffer;
 		ThrowIfFailed(_pSwapChain->GetBuffer(static_cast<UINT>(i), IID_PPV_ARGS(&pBuffer)));
@@ -119,11 +121,8 @@ void SwapChain::updateBuffer(DirectContextProxy pDirectContext) {
 		name.append(std::to_wstring(i));
 		name.append(L"]");
 		pBuffer->SetName(name.c_str());
-		_pSwapChainBuffer[i] = std::make_shared<dx12libTool::MakeTexture>(
-			_pDevice,
-			pBuffer, 
-			D3D12_RESOURCE_STATE_COMMON
-		);
+		pGlobalResourceMap->addGlobalResourceState(pBuffer.Get(), D3D12_RESOURCE_STATE_COMMON);
+		_pSwapChainBuffer[i] = pDirectContext->createTexture(pBuffer);
 		_pSwapChainBuffer[i]->setResourceName(name);
 	}
 
