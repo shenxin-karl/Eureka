@@ -15,9 +15,9 @@
 #include <Dx12lib/Buffer/IndexBuffer.h>
 #include <Dx12lib/Buffer/VertexBuffer.h>
 #include <Dx12lib/Texture/Texture.h>
+#include <Dx12lib/Texture/GenerateMipsPSO.h>
 #include <iostream>
 
-#include "Dx12lib/Texture/GenerateMipsPSO.h"
 
 #if defined(_DEBUG) || defined(DEBUG)
 	#define DBG_CALL(f) f;
@@ -78,6 +78,10 @@ ID3D12GraphicsCommandList *CommandList::getD3DCommandList() const noexcept {
 
 std::shared_ptr<CommandList> CommandList::getCommandList() noexcept {
 	return shared_from_this();
+}
+
+const RenderProfiler & CommandList::getRenderProfiler() const noexcept {
+	return _renderProfiler;
 }
 
 void CommandList::trackResource(std::shared_ptr<IResource> &&pResource) {
@@ -158,6 +162,7 @@ void CommandList::setConstantBufferView(const ShaderRegister &sr, const Constant
 	assert(cbv.getResource()->checkCBVState(state));
 #endif
 	_pDynamicDescriptorHeaps[0]->stageDescriptor(sr, cbv);
+	++_renderProfiler.setCBVCall;
 }
 
 void CommandList::setConstantBufferView(const std::string &boundResourceName, const ConstantBufferView &cbv) {
@@ -177,6 +182,7 @@ void CommandList::setConstantBufferView(const std::string &boundResourceName, co
 		1,
 		cbv.getCPUDescriptorHandle()
 	);
+	++_renderProfiler.setCBVCall;
 }
 
 void CommandList::setShaderResourceView(const ShaderRegister &sr, const ShaderResourceView &srv) 
@@ -190,6 +196,7 @@ void CommandList::setShaderResourceView(const ShaderRegister &sr, const ShaderRe
 	assert(srv.getResource()->checkSRVState(state));
 #endif
 	_pDynamicDescriptorHeaps[0]->stageDescriptor(sr, srv);
+	++_renderProfiler.setUAVCall;
 }
 
 void CommandList::setShaderResourceView(const std::string &boundResourceName,
@@ -223,6 +230,7 @@ void CommandList::setShaderResourceView(const std::string &boundResourceName,
 		);
 		handle.Offset(1, incrementSize);
 	}
+	_renderProfiler.setSRVCall += numDescriptors;
 }
 
 void CommandList::readBack(std::shared_ptr<ReadBackBuffer> pReadBackBuffer) {
@@ -313,6 +321,7 @@ void CommandList::setVertexBuffer(const std::shared_ptr<VertexBuffer> &pVertBuff
 	assert(slot < kVertexBufferSlotCount);
 	assert(_currentGPUState.pPSO != nullptr);
 	if (StateCMove(_currentGPUState.pVertexBuffers[slot], pVertBuffer.get())) {
+		++_renderProfiler.setVertexBufferCall;
 		_pCommandList->IASetVertexBuffers(
 			slot,
 			1,
@@ -324,8 +333,10 @@ void CommandList::setVertexBuffer(const std::shared_ptr<VertexBuffer> &pVertBuff
 void CommandList::setIndexBuffer(const std::shared_ptr<IndexBuffer> &pIndexBuffer) {
 	assert(pIndexBuffer != nullptr);
 	assert(_currentGPUState.pPSO != nullptr);
-	if (StateCMove(_currentGPUState.pIndexBuffer, pIndexBuffer.get()))
+	if (StateCMove(_currentGPUState.pIndexBuffer, pIndexBuffer.get())) {
+		++_renderProfiler.setIndexBufferCall;
 		_pCommandList->IASetIndexBuffer(RVPtr(pIndexBuffer->getIndexBufferView()));
+	}
 }
 
 
@@ -334,6 +345,7 @@ void CommandList::setGraphicsPSO(std::shared_ptr<GraphicsPSO> pPipelineStateObje
 	assert(!pPipelineStateObject->isDirty());
 	if (StateCMove(_currentGPUState.pPSO, pPipelineStateObject.get())) {
 		setGraphicsRootSignature(pPipelineStateObject->getRootSignature());
+		++_renderProfiler.setPSOCall;
 		_pCommandList->SetPipelineState(pPipelineStateObject->getPipelineStateObject().Get());
 	}
 }
@@ -359,6 +371,7 @@ void CommandList::setGraphics32BitConstants(const ShaderRegister &sr, size_t num
 		return;
 	}
 	assert(destOffset + numConstants <= location->num32BitValues);
+	++_renderProfiler.setConstant32BitCall;
 	_pCommandList->SetGraphicsRoot32BitConstants(
 		static_cast<UINT>(location->rootParamIndex),
 		static_cast<UINT>(numConstants), 
@@ -421,12 +434,16 @@ void CommandList::drawInstanced(size_t vertCount,
 	flushResourceBarriers();
 	for (auto &pDynamicHeap : _pDynamicDescriptorHeaps)
 		pDynamicHeap->commitStagedDescriptorForDraw(this);
+
 	_pCommandList->DrawInstanced(
 		static_cast<UINT>(vertCount), 
 		static_cast<UINT>(instanceCount),
 		static_cast<UINT>(baseVertexLocation),
 		static_cast<UINT>(startInstanceLocation)
 	);
+
+	++_renderProfiler.drawCall;
+	_renderProfiler.triangles += vertCount / 3;
 }
 
 void CommandList::drawIndexedInstanced(size_t indexCountPerInstance,
@@ -446,6 +463,9 @@ void CommandList::drawIndexedInstanced(size_t indexCountPerInstance,
 		static_cast<UINT>(baseVertexLocation),
 		static_cast<UINT>(startIndexLocation)
 	);
+
+	++_renderProfiler.drawCall;
+	_renderProfiler.triangles += indexCountPerInstance / 3;
 }
 
 void CommandList::clearColor(const RenderTargetView &rtv, Math::float4 color) {
@@ -508,6 +528,7 @@ void CommandList::setComputePSO(std::shared_ptr<ComputePSO> pPipelineStateObject
 	if (StateCMove(_currentGPUState.pPSO, pPipelineStateObject.get())) {
 		setComputeRootSignature(pPipelineStateObject->getRootSignature());
 		_pCommandList->SetPipelineState(pPipelineStateObject->getPipelineStateObject().Get());
+		++_renderProfiler.setPSOCall;
 	}
 }
 
@@ -520,6 +541,7 @@ void CommandList::setUnorderedAccessView(const ShaderRegister &sr, const Unorder
 	assert(uav.getResource()->checkUAVState(state));
 #endif
 	_pDynamicDescriptorHeaps[0]->stageDescriptor(sr, uav);
+	++_renderProfiler.setUAVCall;
 }
 
 void CommandList::setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset) {
@@ -534,6 +556,7 @@ void CommandList::setCompute32BitConstants(const ShaderRegister &sr, size_t numC
 		static_cast<UINT>(numConstants),
 		pData, 
 		static_cast<UINT>(destOffset));
+	++_renderProfiler.setConstant32BitCall;
 }
 
 void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
@@ -657,6 +680,7 @@ void CommandList::dispatch(size_t GroupCountX, size_t GroupCountY, size_t GroupC
 		static_cast<UINT>(GroupCountY), 
 		static_cast<UINT>(GroupCountZ)
 	);
+	++_renderProfiler.dispatchCall;
 }
 
 void CommandList::UAVBarrier(const std::shared_ptr<IResource> &pResource, bool flushBarriers) {
@@ -706,6 +730,8 @@ void CommandList::reset() {
 	for (auto &pResource : _staleRawResourceBuffers) 
 		pGlobalResourceState->removeGlobalResourceState(pResource.Get());
 	_staleRawResourceBuffers.clear();
+
+	_renderProfiler = RenderProfiler{};
 }
 
 void CommandList::setRootSignature(std::shared_ptr<RootSignature> pRootSignature, 

@@ -390,6 +390,10 @@ void ComputePSO::setComputeShader(WRL::ComPtr<ID3DBlob> pBytecode) {
 	_pCSShaderBytecode = pBytecode;
 }
 
+auto ComputePSO::getComputeShader() const -> WRL::ComPtr<ID3DBlob> {
+	return _pCSShaderBytecode;
+}
+
 std::shared_ptr<PSO> ComputePSO::clone(const std::string &name) {
 	auto pRes = std::make_shared<dx12libTool::MakeComputePSO>(_pDevice, name);
 	pRes->_psoDesc = _psoDesc;

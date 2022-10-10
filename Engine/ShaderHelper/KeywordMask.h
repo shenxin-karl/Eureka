@@ -30,6 +30,7 @@ public:
 	friend bool operator!=(const KeywordMask &lhs, const KeywordMask &rhs);
 private:
 	friend class GraphicsShader;
+	friend class ComputeShader;
 	KeywordMask();
 	void handleShaderContent(const char *pShaderContent);
 	void addShaderFeatures(FeatureKeywords features);

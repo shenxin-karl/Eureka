@@ -7,6 +7,12 @@
 
 namespace rgph {
 
+enum class SortComparisonFunc {
+	None = 0,		// 不排序
+	Near = 1,		// 从近到远渲染
+	Far  = 2,		// 从远到近渲染
+};
+
 class GraphicsPass;
 class SubPass {
 public:

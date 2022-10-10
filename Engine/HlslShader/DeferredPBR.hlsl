@@ -87,15 +87,17 @@ float4 getAoRoughnessMetallic(VertexOut pin) {
 	#endif
 
 	float roughness = gRoughness;
+	float2 roughnessMapColor = 1.0;
 	#if defined(_ENABLE_ROUGHNESS_MAP)
-		roughness *= gRoughnessMap.Sample(gSamLinearWrap, pin.texcoord).r;
+		roughnessMapColor = gRoughnessMap.Sample(gSamLinearWrap, pin.texcoord).rg;
+		roughness *= roughnessMapColor.r;
 	#endif
 
 	float metallic = gMetallic;
 	#if defined(_ENABLE_METALLIC_MAP)
 		metallic *= gMetallicMap.Sample(gSamLinearWrap, pin.texcoord).r;
 	#elif defined(_ENABLE_METALLIC_ROUGHNESS_MAP_G)
-		metallic *= gRoughnessMap.Sample(gSamLinearWrap, pin.texcoord).g;
+		metallic *= roughnessMapColor.g;
 	#endif
 
 	return float4(ao, roughness, metallic, 1.0);

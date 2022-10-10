@@ -127,6 +127,7 @@ public:
 	void setComputeShader(const void *pBinary, size_t size);
 	void setComputeShader(const D3D12_SHADER_BYTECODE &Binary);
 	void setComputeShader(WRL::ComPtr<ID3DBlob> pBytecode);
+	auto getComputeShader() const -> WRL::ComPtr<ID3DBlob>;
 	std::shared_ptr<PSO> clone(const std::string &name) override;
 	void finalize() override;
 protected:

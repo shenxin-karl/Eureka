@@ -11,12 +11,12 @@ class FPSCameraControl;
 class EurekaApplication : public Application {
 public:
 	~EurekaApplication() override;
-	void onInitialize(dx12lib::DirectContextProxy pDirectCtx) override;
-	void onDestroy() override;
-	void onBeginTick(std::shared_ptr<GameTimer> pGameTimer) override;
-	void onTick(std::shared_ptr<GameTimer> pGameTimer) override;
-	void onEndTick(std::shared_ptr<GameTimer> pGameTimer) override;
-	void onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) override;
+	void onInitialize(dx12lib::DirectContextProxy pDirectCtx) final;
+	void onDestroy() final;
+	void onBeginTick(std::shared_ptr<GameTimer> pGameTimer) final;
+	void onTick(std::shared_ptr<GameTimer> pGameTimer) final;
+	void onEndTick(std::shared_ptr<GameTimer> pGameTimer) final;
+	void onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) final;
 private:
 	void loading(dx12lib::DirectContextProxy pDirectCtx);
 	void initRenderGraph(dx12lib::DirectContextProxy pDirectCtx);

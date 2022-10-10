@@ -27,8 +27,9 @@ public:
 		const std::string &target
 	);
 
-	static void generateGraphicsRootSignature(std::shared_ptr<dx12lib::Device> pDevice,
-		std::shared_ptr<dx12lib::GraphicsPSO> pGraphicsPSO
+	static void generateRootSignature(std::shared_ptr<dx12lib::Device> pDevice,
+		std::vector<WRL::ComPtr<ID3DBlob>> shaders,
+		std::shared_ptr<dx12lib::PSO> pso
 	);
 
 	static void generateVertexInput(std::shared_ptr<dx12lib::GraphicsPSO> pGraphicsPSO);

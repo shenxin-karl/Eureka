@@ -82,18 +82,11 @@ WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
 	return byteCode;
 }
 
-void ShaderHelper::generateGraphicsRootSignature(std::shared_ptr<dx12lib::Device> pDevice, 
-	std::shared_ptr<dx12lib::GraphicsPSO> pGraphicsPSO) 
+void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevice,
+	std::vector<WRL::ComPtr<ID3DBlob>> shaders,
+	std::shared_ptr<dx12lib::PSO> pso) 
 {
-	WRL::ComPtr<ID3D12ShaderReflection> shaderRefs[5];
-	WRL::ComPtr<ID3DBlob> shaders[5] = {
-		pGraphicsPSO->getVertexShader(),
-		pGraphicsPSO->getHullShader(),
-		pGraphicsPSO->getDomainShader(),
-		pGraphicsPSO->getGeometryShader(),
-		pGraphicsPSO->getPixelShader()
-	};
-
+	std::vector<WRL::ComPtr<ID3D12ShaderReflection>> shaderRefs(shaders.size(), nullptr);
 	std::unordered_map<std::string, D3D12_SHADER_INPUT_BIND_DESC> boundResources;
 	for (size_t i = 0; i < 5; ++i) {
 		if (!shaders[i])
@@ -128,6 +121,7 @@ void ShaderHelper::generateGraphicsRootSignature(std::shared_ptr<dx12lib::Device
 	struct SpaceViews {
 		std::vector<ShaderInput> cbvs;
 		std::vector<ShaderInput> srvs;
+		std::vector<ShaderInput> uavs;
 	};
 
 	std::map<size_t, SpaceViews> spaceViews;
@@ -153,6 +147,15 @@ void ShaderHelper::generateGraphicsRootSignature(std::shared_ptr<dx12lib::Device
 			spaceViews[desc.Space].srvs.push_back(shaderInput);
 			break;
 		}
+		case D3D_SIT_UAV_RWTYPED:
+		case D3D_SIT_UAV_RWSTRUCTURED:
+		{
+			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::UAV0 + desc.BindPoint);
+			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
+			ShaderInput shaderInput = { desc.Name, desc.BindCount, shaderRegister };
+			spaceViews[desc.Space].uavs.push_back(shaderInput);
+			break;
+		}
 		case D3D_SIT_SAMPLER:
 		default:
 			assert(false);
@@ -173,29 +176,30 @@ void ShaderHelper::generateGraphicsRootSignature(std::shared_ptr<dx12lib::Device
 	
 	size_t rootIndex = 0;
 	for (auto &&[space, views] : spaceViews) {
-		size_t rootParamOffset = 0;
 		sortViews(views.cbvs);
 		sortViews(views.srvs);
-		pRootSignature->at(rootIndex).initAsDescriptorTable(views.cbvs.size() + views.srvs.size());
-		
+		sortViews(views.uavs);
+
+		pRootSignature->at(rootIndex).initAsDescriptorTable(views.cbvs.size() + views.srvs.size() + views.uavs.size());
+
 		size_t tableIndex = 0;
-		for (size_t i = 0; i < views.cbvs.size(); ++i, ++tableIndex) {
-			pRootSignature->at(rootIndex).setTableRange(tableIndex,
-				views.cbvs[i].shaderRegister,
-				views.cbvs[i].bindCount
-			);
-		}
-		for (size_t i = 0; i < views.srvs.size(); ++i, ++tableIndex) {
-			pRootSignature->at(rootIndex).setTableRange(tableIndex,
-				views.srvs[i].shaderRegister,
-				views.srvs[i].bindCount
-			);
-		}
+		auto setupTableRange = [&](const std::vector<ShaderInput> &inputs) mutable {
+			for (size_t i = 0; i < inputs.size(); ++i, ++tableIndex) {
+				pRootSignature->at(rootIndex).setTableRange(tableIndex,
+					inputs[i].shaderRegister,
+					inputs[i].bindCount
+				);
+			}
+		};
+
+		setupTableRange(views.cbvs);
+		setupTableRange(views.srvs);
+		setupTableRange(views.uavs);
 		++rootIndex;
 	}
 
 	pRootSignature->finalize();
-	pGraphicsPSO->setRootSignature(pRootSignature);
+	pso->setRootSignature(pRootSignature);
 }
 
 void ShaderHelper::generateVertexInput(std::shared_ptr<dx12lib::GraphicsPSO> pGraphicsPSO) {

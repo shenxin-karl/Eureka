@@ -22,10 +22,9 @@ void KeywordMask::setKeyWord(const std::string &keyword, bool enable) {
 	size_t featureIndex;
 	size_t baseIndex = 0;
 	for (featureIndex = 0; featureIndex < _pFeatureKeywords->size(); ++featureIndex) {
-		if ((*_pFeatureKeywords)[featureIndex].size() > tmp) {
-			baseIndex += (*_pFeatureKeywords)[featureIndex].size();
+		if ((*_pFeatureKeywords)[featureIndex].size() > tmp)
 			break;
-		}
+		baseIndex += (*_pFeatureKeywords)[featureIndex].size();
 		tmp -= (*_pFeatureKeywords)[featureIndex].size();
 	}
 
@@ -88,8 +87,8 @@ KeywordMask::KeywordMask() {
 }
 
 void KeywordMask::handleShaderContent(const char *pShaderContent) {
-		constexpr std::string_view pragmaKeyword = "#pragma";
-		constexpr std::string_view featureKeyword = "shader_feature";
+		std::string_view pragmaKeyword = "#pragma";
+		std::string_view featureKeyword = "shader_feature";
 
 		std::unordered_set<std::string> featureKeywords;
 		auto handleFeature = [&](const char *pStart, const char *pLast) {

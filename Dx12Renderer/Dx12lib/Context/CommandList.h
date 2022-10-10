@@ -16,6 +16,7 @@ public:
 	std::weak_ptr<Device> getDevice() const override;
 	ID3D12GraphicsCommandList *getD3DCommandList() const noexcept override;
 	std::shared_ptr<CommandList> getCommandList() noexcept override;
+	const RenderProfiler &getRenderProfiler() const noexcept override;
 
 /// CommonContext api
 	void trackResource(std::shared_ptr<IResource> &&pResource) override;
@@ -107,6 +108,7 @@ private:
 	StaleResourcePool					   _staleResourceBuffers;
 	StaleRawObjectPool					   _staleRawObjectBuffers;
 	StaleRawResourcePool				   _staleRawResourceBuffers;
+	RenderProfiler						   _renderProfiler;	
 private:
 	struct CommandListState {
 		PSO           *pPSO;

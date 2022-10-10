@@ -5,6 +5,8 @@
 #include <Dx12lib/Resource/IResource.h>
 #include <Dx12lib/Tool/MakeObejctTool.hpp>
 #include <Dx12lib/Buffer/FRConstantBuffer.hpp>
+#include <Dx12lib/Tool/RenderProfiler.hpp>
+
 
 namespace dx12lib {
 
@@ -15,6 +17,7 @@ interface IContext {
 	virtual std::weak_ptr<Device> getDevice() const = 0;
 	virtual ID3D12GraphicsCommandList *getD3DCommandList() const noexcept = 0;
 	virtual std::shared_ptr<CommandList> getCommandList() noexcept = 0;
+	virtual const RenderProfiler &getRenderProfiler() const noexcept = 0;
 	virtual ~IContext() = default;
 };
 
