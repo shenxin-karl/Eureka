@@ -3,6 +3,7 @@
 #include <RenderGraph/RenderGraphStd.h>
 #include <Dx12lib/Context/ContextProxy.hpp>
 #include <RenderGraph/Pass/PassResourcePtr.hpp>
+#include <RenderGraph/Utility/Utility.h>
 
 namespace rgph {
 
@@ -11,9 +12,9 @@ public:
 	explicit ExecutablePass(const std::string &passName);
 	PassResourceBase *getPassResource(const std::string &resourceName) const;
 	const std::string &getPassName() const;
-	virtual void preExecute(dx12lib::DirectContextProxy pDirectCtx);
-	virtual void execute(dx12lib::DirectContextProxy pDirectCtx);
-	virtual void postExecute(dx12lib::DirectContextProxy pDirectCtx);
+	virtual void preExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
+	virtual void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
+	virtual void postExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
 	virtual void reset();
 	virtual auto getPassType() const -> PassType;
 private:

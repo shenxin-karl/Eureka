@@ -19,8 +19,8 @@ FXAAPass::FXAAPass(const std::string &passName, dx12lib::IDirectContext &directC
 	pFullScreenGeometry = GeometryGenerator::instance()->createGeometry(directCtx, mask, pMesh);
 }
 
-void FXAAPass::execute(dx12lib::DirectContextProxy pDirectCtx) {
-	GraphicsPass::execute(pDirectCtx);
+void FXAAPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
+	GraphicsPass::execute(pDirectCtx, view);
 
 	pDirectCtx->setGraphicsPSO(pFXAAPso);
 	pDirectCtx->setConstantBufferView("FXAASetting", pCbFXAASetting->getCBV());

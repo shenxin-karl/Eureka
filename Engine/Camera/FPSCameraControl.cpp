@@ -64,10 +64,10 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 			_moveState[Right] = isPressed;
 			break;
 		case 'Q':
-			_moveState[LeftRotate] = isPressed;
+			_moveState[Down] = isPressed;
 			break;
 		case 'E':
-			_moveState[RightRotate] = isPressed;
+			_moveState[Up] = isPressed;
 			break;
 		}
 	}
@@ -75,13 +75,13 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 	float deltaTime = pGameTimer->getDeltaTime();
 	float advance = 0.f;
 	float deviation = 0.f;
-	float rotate = 0.f;
+	float elevationRise = 0.f;
 	advance += static_cast<float>(_moveState[Forward]);
 	advance -= static_cast<float>(_moveState[backward]);
 	deviation += static_cast<float>(_moveState[Right]);
 	deviation -= static_cast<float>(_moveState[Left]);
-	rotate += static_cast<float>(_moveState[RightRotate]);
-	rotate -= static_cast<float>(_moveState[LeftRotate]);
+	elevationRise += static_cast<float>(_moveState[Up]);
+	elevationRise -= static_cast<float>(_moveState[Down]);
 
 	Vector3 lookFrom = Vector3(_pCamera->getLookFrom());
 	if (advance != 0.f || deviation != 0.f) {
@@ -91,12 +91,12 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 		Vector3 u = cross(lookUp, w);
 		Vector3 motor = normalize(w * advance + u * deviation) * (deltaTime * cameraMoveSpeed);
 		lookFrom += motor;
-		_pCamera->setLookFrom(lookFrom.xyz);
 	}
 
-	if (rotate != 0.f)
-		_roll += rotate * rollSensitivity * deltaTime;
+	if (elevationRise != 0.f) 
+		lookFrom.y = lookFrom.y + elevationRise * cameraMoveSpeed * deltaTime;
 
+	_pCamera->setLookFrom(lookFrom.xyz);
 	float radianPitch = DirectX::XMConvertToRadians(_pitch);
 	float radianYaw = DirectX::XMConvertToRadians(_yaw);
 	float sinPitch = std::sin(radianPitch);

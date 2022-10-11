@@ -18,15 +18,15 @@ const std::string &ExecutablePass::getPassName() const {
 	return _passName;
 }
 
-void ExecutablePass::preExecute(dx12lib::DirectContextProxy pDirectCtx) {
+void ExecutablePass::preExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) {
 	for (auto *pPassResource : _passResources) 
 			pPassResource->link(*pDirectCtx);
 }
 
-void ExecutablePass::execute(dx12lib::DirectContextProxy pDirectCtx) {
+void ExecutablePass::execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) {
 }
 
-void ExecutablePass::postExecute(dx12lib::DirectContextProxy pDirectCtx) {
+void ExecutablePass::postExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) {
 	for (auto *pPassResource : _passResources)
 		pPassResource->setFinished(true);
 }

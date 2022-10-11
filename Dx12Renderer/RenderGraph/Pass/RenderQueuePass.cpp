@@ -30,7 +30,7 @@ void RenderQueuePass::addSubPass(std::shared_ptr<SubPass> pSubPass) {
 }
 
 
-void RenderQueuePass::execute(dx12lib::DirectContextProxy pDirectCtx) {
+void RenderQueuePass::execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) {
 	bool hasJob = false;
 	for (auto &pSubPass : _subPasses) {
 		if (pSubPass->getJobCount() > 0) {
@@ -42,7 +42,7 @@ void RenderQueuePass::execute(dx12lib::DirectContextProxy pDirectCtx) {
 	if (!hasJob)
 		return;
 
-	GraphicsPass::execute(pDirectCtx);
+	GraphicsPass::execute(pDirectCtx, view);
 	auto iter = _subPasses.begin();
 	while (iter != _subPasses.end()) {
 		auto pSubPass = *iter;

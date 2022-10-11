@@ -12,7 +12,7 @@ public:
 		pBackBuffer.preExecuteState = D3D12_RESOURCE_STATE_PRESENT;
 	}
 
-	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
+	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override {
 		// Nothing to do
 	}
 public:

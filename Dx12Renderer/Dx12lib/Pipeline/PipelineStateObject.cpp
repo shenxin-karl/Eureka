@@ -50,34 +50,13 @@ auto PSO::getBoundResourceMap() const -> const BoundResourceMap & {
 	return _boundResourceMap;
 }
 
-GraphicsPSO::GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name) : PSO(pDevice, name) {
-	_pDevice = pDevice;
-	/// graphics pipeline static object has default state
-	std::memset(&_psoDesc, 0, sizeof(_psoDesc));
-	_psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	_psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	_psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	_psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	_psoDesc.SampleMask = 0xffffffff;
-	_psoDesc.SampleDesc.Count = 1;
-	_psoDesc.SampleDesc.Quality = 0;
-}
-
-void GraphicsPSO::generateBoundResourceMap() {
+void PSO::generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders) {
 	auto pDevice = _pDevice.lock();
 	_boundResourceMap.clear();
 
-	WRL::ComPtr<ID3D12ShaderReflection> shaderRefs[5];
-	WRL::ComPtr<ID3DBlob> shaders[5] = {
-		getVertexShader(),
-		getHullShader(),
-		getDomainShader(),
-		getGeometryShader(),
-		getPixelShader()
-	};
-
+	std::vector<WRL::ComPtr<ID3D12ShaderReflection>> shaderRefs(shaders.size(), nullptr);
 	std::unordered_map<std::string, D3D12_SHADER_INPUT_BIND_DESC> boundResources;
-	for (size_t i = 0; i < 5; ++i) {
+	for (size_t i = 0; i < shaders.size(); ++i) {
 		if (!shaders[i])
 			continue;
 
@@ -131,12 +110,38 @@ void GraphicsPSO::generateBoundResourceMap() {
 				pLocation->offset,
 			};
 			break;
+		case D3D_SIT_UAV_RWTYPED:
+		case D3D_SIT_UAV_RWSTRUCTURED:
+			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::UAV0 + desc.BindPoint);
+			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
+			pLocation = _pRootSignature->getShaderParamLocation(shaderRegister);
+			_boundResourceMap[name] = BoundResource{
+				D3D12_DESCRIPTOR_RANGE_TYPE_UAV,
+				shaderRegister,
+				desc.BindCount,
+				pLocation->rootParamIndex,
+				pLocation->offset,
+			};
+			break;
 		case D3D_SIT_SAMPLER:
 		default:
 			assert(false);
 			break;
 		}
 	}
+}
+
+GraphicsPSO::GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name) : PSO(pDevice, name) {
+	_pDevice = pDevice;
+	/// graphics pipeline static object has default state
+	std::memset(&_psoDesc, 0, sizeof(_psoDesc));
+	_psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	_psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	_psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	_psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	_psoDesc.SampleMask = 0xffffffff;
+	_psoDesc.SampleDesc.Count = 1;
+	_psoDesc.SampleDesc.Quality = 0;
 }
 
 void GraphicsPSO::setBlendState(const D3D12_BLEND_DESC& blendDesc) {
@@ -321,8 +326,17 @@ auto GraphicsPSO::getInputLayout() const -> const std::vector<D3D12_INPUT_ELEMEN
 void GraphicsPSO::finalize() {
 	if (!_dirty)
 		return;
-	
-	generateBoundResourceMap();
+
+	std::vector<WRL::ComPtr<ID3DBlob>> shaders {
+		getVertexShader(),
+		getHullShader(),
+		getDomainShader(),
+		getGeometryShader(),
+		getPixelShader()
+	};
+
+	generateBoundResourceMap(shaders);
+
 	assert(_pRootSignature != nullptr && "No root signature is provided");
 	assert(!_inputLayout.empty() && "No vertex input is provided");
 	_psoDesc.pRootSignature = _pRootSignature->getRootSignature().Get();
@@ -404,6 +418,9 @@ std::shared_ptr<PSO> ComputePSO::clone(const std::string &name) {
 void ComputePSO::finalize() {
 	auto pDevice = _pDevice.lock()->getD3DDevice();
 	_psoDesc.pRootSignature = _pRootSignature->getRootSignature().Get();
+
+	generateBoundResourceMap({ getComputeShader() });
+
 	ThrowIfFailed(pDevice->CreateComputePipelineState(&_psoDesc, IID_PPV_ARGS(&_pPSO)));
 	_pPSO->SetName(to_wstring(getName()).c_str());
 	_dirty = false;

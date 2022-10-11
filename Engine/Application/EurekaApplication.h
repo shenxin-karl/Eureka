@@ -30,7 +30,9 @@ public:
 	std::shared_ptr<dx12lib::Texture>	pGBuffer1;
 	std::shared_ptr<dx12lib::Texture>	pGBuffer2;
 	std::shared_ptr<rgph::RenderGraph>	pRenderGraph;
+
 	FRConstantBufferPtr<CbPrePass>		pCbPrePass;
+	FRConstantBufferPtr<CbLighting>		pCbLighting;
 	std::shared_ptr<dx12lib::ConstantBuffer> pCbFXAASetting;
 };
 

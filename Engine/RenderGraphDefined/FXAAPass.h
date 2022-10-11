@@ -6,7 +6,7 @@ namespace Eureka {
 class FXAAPass : public rgph::GraphicsPass {
 public:
     FXAAPass(const std::string &passName, dx12lib::IDirectContext &directCtx);
-    void execute(dx12lib::DirectContextProxy pDirectCtx) override;
+    void execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) override;
     void setViewportScissorRect(dx12lib::IGraphicsContext &graphicsCtx) override;
     void setRenderTargets(dx12lib::IGraphicsContext &graphicsContext) override;
 public:

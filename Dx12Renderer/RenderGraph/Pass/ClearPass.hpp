@@ -11,7 +11,7 @@ public:
 	, pRenderTarget2d(this, "pBackBuffer") {
 	}
 
-	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
+	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override {
 		const auto &clearValue = pRenderTarget2d->getClearValue();
 		pDirectCtx->clearColor(pRenderTarget2d->get2dRTV(), clearValue.Color);
 	}
@@ -26,7 +26,7 @@ public:
 	, pDepthStencil2d(this, "pDepthStencil2d") {
 	}
 
-	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
+	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override {
 		const auto &clearValue = pDepthStencil2d->getClearValue();
 		pDirectCtx->clearDepthStencil(pDepthStencil2d->get2dDSV(), 
 			clearValue.DepthStencil.Depth, 
@@ -47,7 +47,7 @@ public:
 	, pDepthStencil2d(this, "pDepthStencil2d") {
 	}
 
-	void execute(dx12lib::DirectContextProxy pDirectCtx) override {
+	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override {
 		const auto &rtClearValue = pRenderTarget2d->getClearValue();
 		pDirectCtx->clearColor(pRenderTarget2d->get2dRTV(), rtClearValue.Color);
 

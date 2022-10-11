@@ -57,6 +57,8 @@ public:
 	virtual std::shared_ptr<PSO> clone(const std::string &name) = 0;
 	virtual ~PSO() = default;
 protected:
+	void generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders);
+protected:
 	bool                             _dirty = true;
 	std::string                      _name;
 	std::size_t						 _hashCode;
@@ -111,7 +113,6 @@ public:
 	virtual std::shared_ptr<PSO> clone(const std::string &name) override; 
 protected:
 	explicit GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name);
-	void generateBoundResourceMap();
 private:
 	D3D12_SHADER_BYTECODE cacheByteCode(const std::string &name, const void *pData, size_t size);
 	D3D12_SHADER_BYTECODE cacheByteCode(const std::string &name, WRL::ComPtr<ID3DBlob> pByteCode);

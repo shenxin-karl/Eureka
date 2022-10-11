@@ -23,8 +23,8 @@ public:
 		backward	= 1,
 		Left		= 2,
 		Right		= 3,
-		LeftRotate	= 4,
-		RightRotate = 5,
+		Down		= 4,
+		Up			= 5,
 	};
 	float mouseWheelSensitivity = 1.f;
 	float mouseMoveSensitivity = 0.2f;		// degrees

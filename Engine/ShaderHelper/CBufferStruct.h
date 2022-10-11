@@ -51,5 +51,15 @@ struct FXAASetting {
     float sharpness             = 8.f;
 };
 
+struct CbLighting {
+	Math::float4   gLightDirection;
+	Math::float4   gLightRadiance;
+	Math::float4x4 gProj;
+	Math::float4   gCameraPosition;
+	Math::float4   gViewLeftTop;
+	Math::float4   gViewDownDir;
+	Math::float4   gViewRightDir;
+};
+
 }
 

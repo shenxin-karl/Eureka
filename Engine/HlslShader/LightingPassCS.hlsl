@@ -37,9 +37,9 @@ float NdcDepthToViewDepth(float zNdc) {
 }
 
 float3 CalcWorldPosition(float2 uv) {
-	float zNdc = gDepthMap.Sample(gSamLinearClamp, uv).x;
+	float zNdc = gDepthMap.SampleLevel(gSamLinearClamp, uv, 0).x;
     float zView = NdcDepthToViewDepth(zNdc);
-    float3 direction = normalize(gViewLeftTop.xyz + uv.x * gViewRightDir + uv.y * gViewDownDir);
+    float3 direction = normalize(gViewLeftTop.xyz + uv.x * gViewRightDir.xyz + uv.y * gViewDownDir.xyz); 
     float3 worldPosition = gCameraPosition.xyz + zView * direction;
     return worldPosition;
 }

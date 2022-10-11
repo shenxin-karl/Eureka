@@ -114,7 +114,7 @@ float4 PackColor(float4 x)
 
 [RootSignature( GenerateMips_RootSignature )]
 [numthreads( BLOCK_SIZE, BLOCK_SIZE, 1 )]
-void main( ComputeShaderInput IN )
+void CS( ComputeShaderInput IN )
 {
     float4 Src1 = (float4)0;
 

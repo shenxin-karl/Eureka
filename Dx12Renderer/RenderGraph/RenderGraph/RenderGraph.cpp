@@ -30,14 +30,16 @@ RenderQueuePass * RenderGraph::getRenderQueuePass(const std::string &passName) c
 	return nullptr;
 }
 
-void RenderGraph::execute(dx12lib::DirectContextProxy pDirectCtx) {
+void RenderGraph::execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) {
 	assert(_finalized);
 	assert(!_executeList.empty());
 	for (auto &pPass : _executeList) {
-		pPass->preExecute(pDirectCtx);
-		pPass->execute(pDirectCtx);
-		pPass->postExecute(pDirectCtx);
+		pPass->preExecute(pDirectCtx, view);
+		pPass->execute(pDirectCtx, view);
+		pPass->postExecute(pDirectCtx, view);
 	}
+	if (view.pProfiler)
+		*view.pProfiler += pDirectCtx->getRenderProfiler();
 }
 
 void RenderGraph::reset() {

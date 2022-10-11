@@ -103,7 +103,12 @@ void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {
 	for (auto &pModel : _models)
 		pModel->submit(boundWrap, kTechGBuffer);
 
-	pRenderGraph->execute(pDirectProxy);
+	dx12lib::RenderProfiler profiler;
+	rgph::RenderView view;
+	view.cameraData = _pCamera->getCameraData();
+	view.pProfiler = &profiler;
+
+	pRenderGraph->execute(pDirectProxy, view);
 	pCmdQueue->executeCommandList(pDirectProxy);
 }
 
