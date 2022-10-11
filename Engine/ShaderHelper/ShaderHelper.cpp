@@ -202,6 +202,22 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevic
 	pso->setRootSignature(pRootSignature);
 }
 
+void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::GraphicsPSO> pso) {
+	std::vector<WRL::ComPtr<ID3DBlob>> shaders {
+		pso->getVertexShader(),
+		pso->getHullShader(),
+		pso->getHullShader(),
+		pso->getGeometryShader(),
+		pso->getPixelShader()
+	};
+	generateRootSignature(pso->getDevice().lock(), shaders, pso);
+}
+
+void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::ComputePSO> pso) {
+	std::vector<WRL::ComPtr<ID3DBlob>> shaders{ pso->getComputeShader() };
+	generateRootSignature(pso->getDevice().lock(), shaders, pso);
+}
+
 void ShaderHelper::generateVertexInput(std::shared_ptr<dx12lib::GraphicsPSO> pGraphicsPSO) {
 	WRL::ComPtr<ID3D12ShaderReflection> pShaderRef;
 	auto pVertexBuffer = pGraphicsPSO->getVertexShader();

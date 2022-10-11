@@ -24,11 +24,11 @@ Camera::Camera(const CameraDesc &desc) {
 	_cameraData.fov = desc.fov;
 	_cameraData.aspect = desc.aspect;
 
-	assert(lengthSquare(Vector3(_lookUp)) > 0.f);
+	assert(lengthSquare(Vector3(_cameraData.lookUp)) > 0.f);
 	assert(lengthSquare(w) > 0.f);
-	assert(_fov > 1.f);
-	assert(_nearClip > 0.f);
-	assert(_farClip > _nearClip);
+	assert(_cameraData.fov > 1.f);
+	assert(_cameraData.zNear> 0.f);
+	assert(_cameraData.zFar > _cameraData.zNear);
 }
 
 const Math::float4x4 &Camera::getView() const {

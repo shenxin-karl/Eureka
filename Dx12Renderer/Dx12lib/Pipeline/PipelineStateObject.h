@@ -53,6 +53,7 @@ public:
 	auto getHashCode() const;
 	auto getBoundResource(const std::string &name) const -> std::optional<BoundResource>;
 	auto getBoundResourceMap() const -> const BoundResourceMap &;
+	auto getDevice() const -> std::weak_ptr<Device>;
 	virtual void finalize() = 0;
 	virtual std::shared_ptr<PSO> clone(const std::string &name) = 0;
 	virtual ~PSO() = default;
@@ -127,15 +128,17 @@ class ComputePSO : public PSO {
 public:
 	void setComputeShader(const void *pBinary, size_t size);
 	void setComputeShader(const D3D12_SHADER_BYTECODE &Binary);
-	void setComputeShader(WRL::ComPtr<ID3DBlob> pBytecode);
+	void setComputeShader(WRL::ComPtr<ID3DBlob> pByteCode);
 	auto getComputeShader() const -> WRL::ComPtr<ID3DBlob>;
+	auto getThreadGroup() const -> std::array<UINT, 3>;
+	auto calcDispatchArgs(size_t x, size_t y = 1, size_t z = 1) const -> std::array<size_t, 3>;
 	std::shared_ptr<PSO> clone(const std::string &name) override;
 	void finalize() override;
 protected:
 	ComputePSO(std::weak_ptr<Device> pDevice, const std::string &name);
 private:
-	std::weak_ptr<Device>             _pDevice;
-	WRL::ComPtr<ID3DBlob>             _pCSShaderBytecode;
+	WRL::ComPtr<ID3DBlob> _pCSShaderByteCode;
+	std::array<UINT, 3> _threadGroup = { 1, 1, 1 };
 	D3D12_COMPUTE_PIPELINE_STATE_DESC _psoDesc;
 };
 

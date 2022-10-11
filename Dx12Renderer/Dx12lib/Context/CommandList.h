@@ -63,6 +63,7 @@ public:
 /// ComputeContext api 
 	void setComputePSO(std::shared_ptr<ComputePSO> pPipelineStateObject) override;
 	void setUnorderedAccessView(const ShaderRegister &sr, const UnorderedAccessView &uav) override;
+	void setUnorderedAccessView(const std::string &boundResourceName, const UnorderedAccessView &uav, size_t offset = 0, size_t numDescriptors = 1) override;
 	void setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset) override;
 	void generateMips(std::shared_ptr<Texture> pTexture) override;
 	void dispatch(size_t GroupCountX, size_t GroupCountY, size_t GroupCountZ) override;

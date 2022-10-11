@@ -32,6 +32,9 @@ public:
 		std::shared_ptr<dx12lib::PSO> pso
 	);
 
+	static void generateRootSignature(std::shared_ptr<dx12lib::GraphicsPSO> pso);
+	static void generateRootSignature(std::shared_ptr<dx12lib::ComputePSO> pso);
+
 	static void generateVertexInput(std::shared_ptr<dx12lib::GraphicsPSO> pGraphicsPSO);
 
 	static rgph::ShaderLayoutMask calcShaderLayoutMask(const std::vector<D3D12_INPUT_ELEMENT_DESC> &inputLayout);

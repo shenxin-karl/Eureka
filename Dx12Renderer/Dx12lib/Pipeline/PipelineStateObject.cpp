@@ -3,12 +3,9 @@
 #include <Dx12lib/Device/Device.h>
 #include <Dx12lib/Tool/MakeObejctTool.hpp>
 
-
-
-
 namespace dx12lib {
 
-PSO::PSO(std::weak_ptr<Device> pDevice, const std::string &name) : _name(name) {
+PSO::PSO(std::weak_ptr<Device> pDevice, const std::string &name) : _name(name), _pDevice(std::move(pDevice)) {
 	std::hash<std::string> hasher;
 	_hashCode = hasher(name);
 }
@@ -48,6 +45,10 @@ auto PSO::getBoundResource(const std::string &name) const -> std::optional<Bound
 
 auto PSO::getBoundResourceMap() const -> const BoundResourceMap & {
 	return _boundResourceMap;
+}
+
+auto PSO::getDevice() const -> std::weak_ptr<Device> {
+	return _pDevice;
 }
 
 void PSO::generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders) {
@@ -398,20 +399,40 @@ void ComputePSO::setComputeShader(const D3D12_SHADER_BYTECODE &Binary) {
 	setComputeShader(pBuffer);
 }
 
-void ComputePSO::setComputeShader(WRL::ComPtr<ID3DBlob> pBytecode) {
+void ComputePSO::setComputeShader(WRL::ComPtr<ID3DBlob> pByteCode) {
 	_dirty = true;
-	_psoDesc.CS = { pBytecode->GetBufferPointer(), pBytecode->GetBufferSize() };
-	_pCSShaderBytecode = pBytecode;
+	_psoDesc.CS = { pByteCode->GetBufferPointer(), pByteCode->GetBufferSize() };
+	_pCSShaderByteCode = pByteCode;
 }
 
 auto ComputePSO::getComputeShader() const -> WRL::ComPtr<ID3DBlob> {
-	return _pCSShaderBytecode;
+	return _pCSShaderByteCode;
+}
+
+auto ComputePSO::getThreadGroup() const -> std::array<UINT, 3> {
+	return _threadGroup;
+}
+
+
+static size_t divideByMultiple(size_t value, size_t alignment) {
+	return ((value + alignment - 1) / alignment);
+}
+
+auto ComputePSO::calcDispatchArgs(size_t x, size_t y, size_t z) const -> std::array<size_t, 3> {
+	assert(x >= _threadGroup[0]);
+	assert(y >= _threadGroup[1]);
+	assert(z >= _threadGroup[2]);
+	return {
+		divideByMultiple(x, _threadGroup[0]),
+		divideByMultiple(y, _threadGroup[1]),
+		divideByMultiple(z, _threadGroup[2]),
+	};
 }
 
 std::shared_ptr<PSO> ComputePSO::clone(const std::string &name) {
 	auto pRes = std::make_shared<dx12libTool::MakeComputePSO>(_pDevice, name);
 	pRes->_psoDesc = _psoDesc;
-	pRes->_pCSShaderBytecode = _pCSShaderBytecode;
+	pRes->_pCSShaderByteCode = _pCSShaderByteCode;
 	return pRes;
 }
 
@@ -419,7 +440,17 @@ void ComputePSO::finalize() {
 	auto pDevice = _pDevice.lock()->getD3DDevice();
 	_psoDesc.pRootSignature = _pRootSignature->getRootSignature().Get();
 
-	generateBoundResourceMap({ getComputeShader() });
+	auto pComputeShader = getComputeShader();
+	generateBoundResourceMap({ pComputeShader });
+
+	WRL::ComPtr<ID3D12ShaderReflection> pShaderRef = nullptr;
+	ThrowIfFailed(D3DReflect(pComputeShader->GetBufferPointer(),
+		pComputeShader->GetBufferSize(),
+		IID_PPV_ARGS(&pShaderRef)
+	));
+
+	assert(pShaderRef != nullptr);
+	pShaderRef->GetThreadGroupSize(&_threadGroup[0], &_threadGroup[1], &_threadGroup[2]);
 
 	ThrowIfFailed(pDevice->CreateComputePipelineState(&_psoDesc, IID_PPV_ARGS(&_pPSO)));
 	_pPSO->SetName(to_wstring(getName()).c_str());
@@ -427,7 +458,7 @@ void ComputePSO::finalize() {
 }
 
 ComputePSO::ComputePSO(std::weak_ptr<Device> pDevice, const std::string &name)
-: PSO(pDevice, name), _pDevice(pDevice), _psoDesc({})
+: PSO(pDevice, name), _psoDesc({})
 {
 	_psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 	_psoDesc.NodeMask = 0;

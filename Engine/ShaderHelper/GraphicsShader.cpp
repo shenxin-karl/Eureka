@@ -170,14 +170,7 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 	pGraphicsPSO->setBlendState(_blendDesc);
 	pGraphicsPSO->setRasterizerState(_rasterizerDesc);
 	pGraphicsPSO->setPrimitiveTopologyType(_primitiveType);
-	std::vector<WRL::ComPtr<ID3DBlob>> shaders = {
-		pGraphicsPSO->getVertexShader(),
-		pGraphicsPSO->getDomainShader(),
-		pGraphicsPSO->getHullShader(),
-		pGraphicsPSO->getGeometryShader(),
-		pGraphicsPSO->getPixelShader(),
-	};
-	ShaderHelper::generateRootSignature(_pDevice.lock(), shaders, pGraphicsPSO);
+	ShaderHelper::generateRootSignature(pGraphicsPSO);
 	ShaderHelper::generateVertexInput(pGraphicsPSO);
 	pGraphicsPSO->finalize();
 	_psoMap[keywordMask] = pGraphicsPSO;

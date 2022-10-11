@@ -544,6 +544,39 @@ void CommandList::setUnorderedAccessView(const ShaderRegister &sr, const Unorder
 	++_renderProfiler.setUAVCall;
 }
 
+void CommandList::setUnorderedAccessView(const std::string &boundResourceName, 
+	const UnorderedAccessView &uav,
+	size_t offset, size_t numDescriptors)
+{
+	assert(uav.valid());
+	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
+	assert(boundResource != std::nullopt);
+	assert(boundResource->viewType == D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
+	assert((offset + numDescriptors) <= boundResource->count);
+	ShaderRegister shaderRegister = boundResource->shaderRegister;
+	shaderRegister += offset;
+
+	assert(_currentGPUState.pRootSignature != nullptr);
+#ifdef DEBUG_MODE
+	WRL::ComPtr<ID3D12Resource> pD3DResource = uav.getResource()->getD3DResource();
+	D3D12_RESOURCE_STATES state = _pResourceStateTracker->getResourceState(pD3DResource.Get());
+	assert(uav.getResource()->checkSRVState(state));
+#endif
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(uav.getCPUDescriptorHandle());
+	UINT incrementSize = static_cast<UINT>(_pDynamicDescriptorHeaps[0]->getDescriptorHandleIncrementSize());
+	for (size_t i = 0; i < numDescriptors; ++i) {
+		_pDynamicDescriptorHeaps[0]->stageDescriptors(
+			boundResource->rootParamIndex,
+			boundResource->offset + i + offset,
+			1,
+			handle
+		);
+		handle.Offset(1, incrementSize);
+	}
+	_renderProfiler.setSRVCall += numDescriptors;
+}
+
 void CommandList::setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset) {
 	auto location = _currentGPUState.pRootSignature->getShaderParamLocation(sr);
 	if (!location.has_value()) {

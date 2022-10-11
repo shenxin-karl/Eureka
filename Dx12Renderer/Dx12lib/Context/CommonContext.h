@@ -189,10 +189,15 @@ interface IGraphicsContext : virtual ICommonContext {
 interface IComputeContext : virtual ICommonContext {
 	virtual void setComputePSO(std::shared_ptr<ComputePSO> pPipelineStateObject) = 0;
 	virtual void setUnorderedAccessView(const ShaderRegister &sr, const UnorderedAccessView &uav) = 0;
-	virtual void setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset = 0) = 0;
+	virtual void setUnorderedAccessView(const std::string &boundResourceName, const UnorderedAccessView &uav, size_t offset = 0, size_t numDescriptors = 1) = 0;
 	virtual void generateMips(std::shared_ptr<Texture> pTexture) = 0;
+	virtual void setCompute32BitConstants(const ShaderRegister &sr, size_t numConstants, const void *pData, size_t destOffset = 0) = 0;
 	virtual void dispatch(size_t GroupCountX = 1, size_t GroupCountY = 1, size_t GroupCountZ = 1) = 0;
 	virtual void UAVBarrier(const std::shared_ptr<IResource> &pResource, bool flushBarriers) = 0;
+
+	void dispatch(std::array<size_t, 3> dispatchArgs) noexcept {
+		dispatch(dispatchArgs[0], dispatchArgs[1], dispatchArgs[2]);
+	}
 
 	/////////////////////////////////// UAStructuredBuffer //////////////////////////////////
 #if 1

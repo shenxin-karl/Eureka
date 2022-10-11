@@ -13,6 +13,11 @@ public:
 	static T lerp(const T &lhs, const T &rhs, float t) {
 		return lhs + (rhs - lhs) * t;
 	}
+
+	template <typename T>
+	static T divideByMultiple(T value, size_t alignment) {
+		return (T)((value + alignment - 1) / alignment);
+	}
 };
 
 

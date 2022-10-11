@@ -71,9 +71,8 @@ auto ComputeShader::getPSO(const KeywordMask &keywordMask) const -> std::shared_
 	auto pSharedDevice = _pDevice.lock();
 	auto pComputePSO = pSharedDevice->createComputePSO(key);
 	pComputePSO->setComputeShader(pBinaryBlob);
-	ShaderHelper::generateRootSignature(_pDevice.lock(), { pComputePSO->getComputeShader() }, pComputePSO);
+	ShaderHelper::generateRootSignature(pComputePSO);
 	pComputePSO->finalize();
-
 
 	_psoMap[keywordMask] = pComputePSO;
 	return pComputePSO;
