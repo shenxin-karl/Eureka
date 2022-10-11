@@ -2,6 +2,7 @@
 #include <DirectXCollision.h>
 #include "Math/MathHelper.h"
 #include "Math/MathStd.hpp"
+#include "RenderGraph/Utility/Utility.h"
 
 namespace Eureka {
 
@@ -46,23 +47,9 @@ public:
 	float getAspect() const;
 	const Math::BoundingFrustum &getProjSpaceFrustum() const;
 	const Math::BoundingFrustum &getViewSpaceFrustum() const;
-protected:
+	auto getCameraData() const -> const rgph::CameraData &;
 private:
-	float  _fov;
-	float  _aspect;
-	Math::float3   _lookFrom;
-	Math::float3   _lookUp;
-	Math::float3   _lookAt;
-	float          _nearClip;
-	float          _farClip;
-	Math::float4x4 _matView;
-	Math::float4x4 _matInvView;
-	Math::float4x4 _matProj;
-	Math::float4x4 _matInvProj;
-	Math::float4x4 _matViewProj;
-	Math::float4x4 _matInvViewProj;
-	Math::BoundingFrustum _viewSpaceFrustum;
-	Math::BoundingFrustum _projSpaceFrustum;
+	rgph::CameraData _cameraData;
 };
 
 }
