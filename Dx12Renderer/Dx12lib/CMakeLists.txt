@@ -59,7 +59,7 @@ AddShader("Texture/GenerateMips_CS.hlsl" "CS" "cs_5_1")
 
 
 # 创建一个目录
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/EngineShaders/")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Dx12libShaders/")
 
 foreach(FILE ${HLSL_SHADER_FILES})
   get_filename_component(FILE_WE ${FILE} NAME_WE)
@@ -78,7 +78,7 @@ foreach(FILE ${HLSL_SHADER_FILES})
 								/Fd ${CMAKE_BINARY_DIR}/${FILE_WE}.pdb 
 								${FILE} 
 								/Vn g_${FILE_WE} 
-								/Fh ${CMAKE_BINARY_DIR}/shaders/${FILE_WE}.h 
+								/Fh ${CMAKE_BINARY_DIR}/Dx12libShaders/${FILE_WE}.h 
                      MAIN_DEPENDENCY ${FILE}
                      COMMENT "HLSL ${FILE}"
                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -87,5 +87,5 @@ endforeach(FILE)
 
 # 添加头文件目录
 target_include_directories(${PROJECT_NAME} PRIVATE 
-	${CMAKE_BINARY_DIR}/shaders/
+	${CMAKE_BINARY_DIR}/Dx12libShaders/
 )
