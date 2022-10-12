@@ -22,9 +22,9 @@ foreach(FILE ${HLSL_SHADER_FILES})
   get_filename_component(FILE_WE ${FILE} NAME_WE)
   get_source_file_property(entryPoint ${FILE} EntryPoint)
   get_source_file_property(version ${FILE} Version)
-  add_custom_command(TARGET Engine		# 指定在 Engine 编译前自动构建						
-  					 PRE_BUILD
+  add_custom_command(TARGET ${PROJECT_NAME}		# 指定在 Engine 编译前自动构建						
                      COMMAND fxc.exe 
+					 PRE_BUILD
 								/nologo 
 								/Qstrip_rootsignature
 								/E${entryPoint} 					# 进入点

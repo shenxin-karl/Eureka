@@ -51,6 +51,7 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	_pCameraControl = std::make_shared<FPSCameraControl>(_pCamera);
 
 	pCbPrePass = pDirectCtx->createFRConstantBuffer<CbPrePass>();
+	pCbLighting = pDirectCtx->createFRConstantBuffer<CbLighting>();
 	initRenderGraph(pDirectCtx);
 
 	// loading
@@ -167,7 +168,6 @@ void EurekaApplication::resizeGBuffer(dx12lib::DirectContextProxy pDirectCtx, si
 	));
 	pGBuffer1->setResourceName("GBuffer1");
 
-
 	pGBuffer2 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
 		kGBuffer2Format,
 		width, 
@@ -175,6 +175,13 @@ void EurekaApplication::resizeGBuffer(dx12lib::DirectContextProxy pDirectCtx, si
 		D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
 	pGBuffer2->setResourceName("GBuffer2");
+
+	pLightingBuffer = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kLightingBufferFormat,
+		width,
+		height,
+		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
+	));
 }
 
 }

@@ -88,7 +88,7 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevic
 {
 	std::vector<WRL::ComPtr<ID3D12ShaderReflection>> shaderRefs(shaders.size(), nullptr);
 	std::unordered_map<std::string, D3D12_SHADER_INPUT_BIND_DESC> boundResources;
-	for (size_t i = 0; i < 5; ++i) {
+	for (size_t i = 0; i < shaders.size(); ++i) {
 		if (!shaders[i])
 			continue;
 

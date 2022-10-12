@@ -1,6 +1,7 @@
 #include "ShaderManager.h"
 #include "ShaderHelper/GraphicsShader.h"
 #include "Defined/EngineDefined.h"
+#include "ShaderHelper/ComputeShader.h"
 
 namespace Eureka {
 
@@ -28,6 +29,19 @@ void ShaderManager::loading(std::weak_ptr<dx12lib::Device> pDevice) {
 		pFXAAShader->setRasterizerDesc(rasterizerDesc);
 		_graphicsShaders["FXAA"] = pFXAAShader;
 	}
+
+	auto pLightingShader = std::make_shared<ComputeShader>(pDevice, "Engine/HlslShader/LightingPassCS.hlsl");
+	{
+		pLightingShader->setComputeShader("CS");
+		_computeShaders["Lighting"] = pLightingShader;
+	}
+}
+
+auto ShaderManager::getComputeShader(const std::string &key) const -> std::shared_ptr<ComputeShader> {
+	auto iter = _computeShaders.find(key);
+	if (iter != _computeShaders.end())
+		return iter->second;
+	return nullptr;
 }
 
 auto ShaderManager::getGraphicsShader(const std::string &key) const -> std::shared_ptr<GraphicsShader> {

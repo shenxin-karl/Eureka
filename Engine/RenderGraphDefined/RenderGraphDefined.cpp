@@ -6,6 +6,7 @@
 #include "RenderGraphDefined/RenderGraphDefined.h"
 
 #include "FXAAPass.h"
+#include "LightingPass.h"
 #include "Application/EurekaApplication.h"
 
 namespace Eureka {
@@ -38,7 +39,6 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pRenderGraph->addPass(pClearGBuffer2);
 	}
 
-	
 	auto pGBufferPass = std::make_shared<GBufferPass>(kGBufferPassName);
 	pGBufferPass->setPassCBuffer(pApp->pCbPrePass);
 	{
@@ -53,9 +53,33 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pRenderGraph->addPass(pGBufferPass);
 	}
 
+	auto pLightingPass = std::make_shared<LightingPass>(kLightingPassName, pApp->getDevice());
+	{
+		pLightingPass->pGBuffer0.preExecuteState = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+		pGBufferPass->pGBuffer0 >> pLightingPass->pGBuffer0;
+
+		pLightingPass->pGBuffer1.preExecuteState = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+		pGBufferPass->pGBuffer1 >> pLightingPass->pGBuffer1;
+
+		pLightingPass->pGBuffer2.preExecuteState = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+		pGBufferPass->pGBuffer2 >> pLightingPass->pGBuffer2;
+
+		pLightingPass->pDepthMap.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_READ;
+		pGBufferPass->pDepthStencil >> pLightingPass->pDepthMap;
+		auto getLightingBuffer = [=]() {
+			return pApp->pLightingBuffer;
+		};
+		pLightingPass->pLightingBuffer.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		getLightingBuffer >> pLightingPass->pLightingBuffer;
+
+		pLightingPass->pCbLighting = pApp->pCbLighting;
+
+		pRenderGraph->addPass(pLightingPass);
+	}
+
 	auto pFXAAPass = std::make_shared<FXAAPass>("FXAAPass", directCtx);
 	{
-		pGBufferPass->pGBuffer0 >> pFXAAPass->pScreenMap;
+		pLightingPass->pLightingBuffer >> pFXAAPass->pScreenMap;
 		pFXAAPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
 		pClearBackBuffer->pRenderTarget2d >> pFXAAPass->pBackBuffer;

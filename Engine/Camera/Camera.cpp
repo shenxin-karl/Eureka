@@ -17,14 +17,14 @@ Camera::Camera(const CameraDesc &desc) {
 	Vector3 v = cross(w, u);
 
 	_cameraData.lookFrom = desc.lookFrom;
-	_cameraData.lookUp = v.xyz;
-	_cameraData.lookAt = desc.lookAt;
+	_cameraData.lookUpDir = v.xyz;
+	_cameraData.lookAtDir = desc.lookAt;
 	_cameraData.zNear = desc.nearClip;
 	_cameraData.zFar = desc.farClip;
 	_cameraData.fov = desc.fov;
 	_cameraData.aspect = desc.aspect;
 
-	assert(lengthSquare(Vector3(_cameraData.lookUp)) > 0.f);
+	assert(lengthSquare(Vector3(_cameraData.lookUpDir)) > 0.f);
 	assert(lengthSquare(w) > 0.f);
 	assert(_cameraData.fov > 1.f);
 	assert(_cameraData.zNear> 0.f);
@@ -57,9 +57,9 @@ const Math::float4x4 &Camera::getInvViewProj() const {
 
 void Camera::update() {
 	Vector3 lookFrom(_cameraData.lookFrom);
-	Vector3 lookAt(_cameraData.lookAt);
-	Vector3 lookUp(_cameraData.lookUp);
-	Matrix4 view = DirectX::XMMatrixLookAtLH(lookFrom, lookAt, lookUp);
+	Vector3 lookAt(_cameraData.lookAtDir);
+	Vector3 lookUp(_cameraData.lookUpDir);
+	Matrix4 view = DirectX::XMMatrixLookAtLH(lookFrom, lookFrom + lookAt, lookUp);
 	Matrix4 proj = DirectX::XMMatrixPerspectiveFovLH(
 		DirectX::XMConvertToRadians(_cameraData.fov),
 		_cameraData.aspect,
@@ -111,11 +111,11 @@ void Camera::setLookFrom(const Math::float3 &lookFrom) {
 }
 
 void Camera::setLookUp(const Math::float3 &lookUp) {
-	_cameraData.lookUp = lookUp;
+	_cameraData.lookUpDir = lookUp;
 }
 
 void Camera::setLookAt(const Math::float3 &lookAt) {
-	_cameraData.lookAt = lookAt;
+	_cameraData.lookAtDir = lookAt;
 }
 
 void Camera::setFov(float fov) {
@@ -131,11 +131,11 @@ auto Camera::getLookFrom() const -> const Math::float3 & {
 }
 
 auto Camera::getLookUp() const -> const Math::float3 & {
-	return _cameraData.lookUp;
+	return _cameraData.lookUpDir;
 }
 
 auto Camera::getLookAt() const -> const Math::float3 & {
-	return _cameraData.lookAt;
+	return _cameraData.lookAtDir;
 }
 
 auto Camera::getNearClip() const -> float {

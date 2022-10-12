@@ -7,7 +7,7 @@ namespace Eureka {
 constexpr dx12lib::RegisterSpace kPrePassSpace = dx12lib::RegisterSpace::Space8;
 constexpr dx12lib::RegisterSpace kPreObjectSpace = dx12lib::RegisterSpace::Space0;
 
-struct CbPrePass {
+struct alignas(16) CbPrePass {
     /// camera
 	Math::float4x4 matView;
 	Math::float4x4 matInvView;
@@ -37,28 +37,32 @@ struct CbPrePass {
     Math::float2   cbPrePassPadding1;
 };
 
-struct CbPreObject {
+struct alignas(16) CbPreObject {
     Math::float4x4 matWorld;
     Math::float4x4 matInvWorld;
     Math::float4x4 matNormal;
     Math::float4x4 matInvNormal;
 };
 
-struct FXAASetting {
+struct alignas(16) FXAASetting {
     float minThreshold          = 0.0312f;
     float threshold             = 0.125f;
     float consoleTangentScale   = 0.5f;
     float sharpness             = 8.f;
 };
 
-struct CbLighting {
+struct alignas(16) CbLighting {
 	Math::float4   gLightDirection;
 	Math::float4   gLightRadiance;
 	Math::float4x4 gProj;
-	Math::float4   gCameraPosition;
-	Math::float4   gViewLeftTop;
-	Math::float4   gViewDownDir;
-	Math::float4   gViewRightDir;
+	Math::float3   gCameraPosition;
+	float		   gWidth;
+	Math::float3   gViewLeftTop;
+	float		   gHeight;
+	Math::float3   gViewDownDir;
+	float		   padding0;
+	Math::float3   gViewRightDir;
+	float		   padding1;
 };
 
 }

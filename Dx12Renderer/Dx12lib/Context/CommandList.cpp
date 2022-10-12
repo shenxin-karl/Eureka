@@ -560,7 +560,7 @@ void CommandList::setUnorderedAccessView(const std::string &boundResourceName,
 #ifdef DEBUG_MODE
 	WRL::ComPtr<ID3D12Resource> pD3DResource = uav.getResource()->getD3DResource();
 	D3D12_RESOURCE_STATES state = _pResourceStateTracker->getResourceState(pD3DResource.Get());
-	assert(uav.getResource()->checkSRVState(state));
+	assert(uav.getResource()->checkUAVState(state));
 #endif
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(uav.getCPUDescriptorHandle());

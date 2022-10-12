@@ -115,7 +115,7 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 	float cosRoll = std::cos(radianRoll);
 	Vector3 lookUp = Vector3(cosRoll, sinRoll, 0.f);
 
-	_pCamera->setLookAt(lookAt.xyz);
+	_pCamera->setLookAt(target.xyz);
 	_pCamera->setLookUp(lookUp.xyz);
 	_pCamera->update();
 }

@@ -10,9 +10,8 @@ struct CameraData {
 	float zNear;
 	float zFar;
 	Math::float3 lookFrom;
-	Math::float3 lookRight;			// x
-	Math::float3 lookUp;			// y
-	Math::float3 lookAt;			// z
+	Math::float3 lookUpDir;			// y
+	Math::float3 lookAtDir;			// z
 	Math::float4x4	matView;
 	Math::float4x4	matInvView;
 	Math::float4x4  matProj;

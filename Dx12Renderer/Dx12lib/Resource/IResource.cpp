@@ -51,6 +51,7 @@ bool IResource::checkCBVState(D3D12_RESOURCE_STATES state) const {
 
 bool IResource::checkSRVState(D3D12_RESOURCE_STATES state) const {
 	return state == D3D12_RESOURCE_STATE_COMMON					  ||
+		   state & D3D12_RESOURCE_STATE_DEPTH_READ				  ||
 		   state & D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE ||
 		   state & D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 }
