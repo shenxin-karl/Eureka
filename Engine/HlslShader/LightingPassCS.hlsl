@@ -9,9 +9,9 @@ cbuffer CbLighting : register(b0) {
     float3   gViewLeftTop;
     float    gHeight;
     float3   gViewDownDir;
-    float    padding0;
+    float    gNear;
     float3   gViewRightDir;
-    float    padding1; 
+    float    gFar; 
 };
 
 Texture2D<float3> gBuffer0  : register(t0);
@@ -33,15 +33,14 @@ float2 CalcTexcoord(ComputeIn cin) {
 }
 
 float NdcDepthToViewDepth(float zNdc) {
-    // 龙书上是, gProj[3][2] / (zNdc - gProj[2][2]), 因为我们传过来的矩阵没有转置, 所以 32 变成 23
-	float viewZ = gProj[2][3] / (zNdc - gProj[2][2]);
-    return viewZ;
+	float magic = (gFar - gNear) / gNear;
+    return 1.0 / (magic * zNdc + 1.0);
 }
 
 float3 CalcWorldPosition(float2 uv) {
 	float zNdc = gDepthMap.SampleLevel(gSamLinearClamp, uv, 0).x;
     float zView = NdcDepthToViewDepth(zNdc);
-    return zView / 1000.f;
+    return zView;
 
 #if 0
     float3 direction = normalize(gViewLeftTop.xyz + uv.x * gViewRightDir.xyz + uv.y * gViewDownDir.xyz); 
@@ -55,5 +54,9 @@ void CS(ComputeIn cin) {
     float2 uv = CalcTexcoord(cin);
     // float3 worldPosition = normalize(CalcWorldPosition(uv));
     // gLightingBuffer[cin.DispatchThreadID.xy] = float4(worldPosition * 0.5 + 0.5, 1.0);
-    gLightingBuffer[cin.DispatchThreadID.xy] = float4(CalcWorldPosition(uv), 1.0);
+    //gLightingBuffer[cin.DispatchThreadID.xy] = float4(CalcWorldPosition(uv), 1.0);
+
+    float3 color = gBuffer0.SampleLevel(gSamLinearClamp, uv, 0);
+    gLightingBuffer[cin.DispatchThreadID.xy] = float4(color, 1.0);
+
 }

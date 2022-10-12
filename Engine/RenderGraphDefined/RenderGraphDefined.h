@@ -6,8 +6,9 @@
 namespace Eureka {
 
 constexpr rgph::TechniqueType kTechGBuffer = rgph::TechniqueType(1);
-inline const std::string kGBufferPassName = "GBuffer";
-inline const std::string kLightingPassName = "Lighting";
+inline const std::string kGBufferPassName			= "GBuffer";
+inline const std::string kLightingPassName			= "Lighting";
+inline const std::string kPostProcessingPassName	= "PostProcessingPass";
 
 class EurekaApplication;
 std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx12lib::IDirectContext &directCtx);

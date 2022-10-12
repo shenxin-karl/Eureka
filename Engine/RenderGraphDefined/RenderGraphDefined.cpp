@@ -2,11 +2,11 @@
 #include <RenderGraph/RenderGraph/RenderGraph.h>
 #include <RenderGraph/Pass/PresentPass.hpp>
 #include <Dx12lib/Device/SwapChain.h>
-#include <RenderGraph/Pass/CopyPass.hpp>
 #include "RenderGraphDefined/RenderGraphDefined.h"
 
 #include "FXAAPass.h"
 #include "LightingPass.h"
+#include "PostProcessingPass.h"
 #include "Application/EurekaApplication.h"
 
 namespace Eureka {
@@ -77,13 +77,26 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pRenderGraph->addPass(pLightingPass);
 	}
 
+	auto pPostProcessingPass = std::make_shared<PostProcessingPass>(kPostProcessingPassName);
+	{
+		pPostProcessingPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+		pLightingPass->pLightingBuffer >> pPostProcessingPass->pScreenMap;
+
+		auto getBuffer = [=]() { return pApp->pPostProcessingBuffer; };
+		pPostProcessingPass->pOutputMap.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		getBuffer >> pPostProcessingPass->pOutputMap;
+
+		pPostProcessingPass->setColorLutMap(pApp->pColorLutMap);
+		pRenderGraph->addPass(pPostProcessingPass);
+	}
+
 	auto pFXAAPass = std::make_shared<FXAAPass>("FXAAPass", directCtx);
 	{
-		pLightingPass->pLightingBuffer >> pFXAAPass->pScreenMap;
 		pFXAAPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		pPostProcessingPass->pOutputMap >> pFXAAPass->pScreenMap;
 
-		pClearBackBuffer->pRenderTarget2d >> pFXAAPass->pBackBuffer;
 		pFXAAPass->pBackBuffer.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		pClearBackBuffer->pRenderTarget2d >> pFXAAPass->pBackBuffer;
 
 		pFXAAPass->pCbFXAASetting = pApp->pCbFXAASetting;
 		pRenderGraph->addPass(pFXAAPass);

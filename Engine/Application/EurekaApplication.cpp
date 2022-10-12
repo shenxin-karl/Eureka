@@ -52,6 +52,7 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 
 	pCbPrePass = pDirectCtx->createFRConstantBuffer<CbPrePass>();
 	pCbLighting = pDirectCtx->createFRConstantBuffer<CbLighting>();
+
 	initRenderGraph(pDirectCtx);
 
 	// loading
@@ -121,7 +122,7 @@ void EurekaApplication::onEndTick(std::shared_ptr<GameTimer> pGameTimer) {
 
 void EurekaApplication::onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) {
 	_pCamera->setAspect(static_cast<float>(width) / static_cast<float>(height));
-	resizeGBuffer(pDirectCtx, width, height);
+	resizeBuffers(pDirectCtx, width, height);
 }
 
 void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
@@ -140,18 +141,19 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	});
 
 	_models.push_back(std::move(pModel));
+
 }
 
 void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {
-	resizeGBuffer(pDirectCtx, _width, _height);
+	resizeBuffers(pDirectCtx, _width, _height);
 
 	FXAASetting setting;
 	pCbFXAASetting = pDirectCtx->createConstantBuffer(&setting, sizeof(setting));
-
+	pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_04.png", false);
 	pRenderGraph = SetupRenderGraph(this, *pDirectCtx);
 }
 
-void EurekaApplication::resizeGBuffer(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
+void EurekaApplication::resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
 	pGBuffer0 = pDirectCtx->createTexture(dx12lib::Texture::make2D(
 		kGBuffer0Format, 
 		width, 
@@ -178,6 +180,13 @@ void EurekaApplication::resizeGBuffer(dx12lib::DirectContextProxy pDirectCtx, si
 
 	pLightingBuffer = pDirectCtx->createTexture(dx12lib::Texture::make2D(
 		kLightingBufferFormat,
+		width,
+		height,
+		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
+	));
+
+	pPostProcessingBuffer = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kPostProcessingBufferFormat,
 		width,
 		height,
 		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS

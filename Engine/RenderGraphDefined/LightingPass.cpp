@@ -51,15 +51,15 @@ void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::R
 	visitor->gViewRightDir = right.xyz;
 	visitor->gWidth = static_cast<float>(desc.Width);
 	visitor->gHeight = static_cast<float>(desc.Height);
-	visitor->padding0 = 0.f;
-	visitor->padding1 = 0.f;
+	visitor->gNear = cameraData.zNear;
+	visitor->gFar = cameraData.zFar;
 
 	pDirectCtx->setComputePSO(_pLightingPSO);
 	pDirectCtx->setConstantBufferView("CbLighting", pCbLighting->getCBV());
-	//pDirectCtx->setShaderResourceView("gBuffer0", pGBuffer0->get2dSRV());
+	pDirectCtx->setShaderResourceView("gBuffer0", pGBuffer0->get2dSRV());
 	//pDirectCtx->setShaderResourceView("gBuffer1", pGBuffer1->get2dSRV());
 	//pDirectCtx->setShaderResourceView("gBuffer2", pGBuffer2->get2dSRV());
-	pDirectCtx->setShaderResourceView("gDepthMap", pDepthMap->get2dSRV());
+	//pDirectCtx->setShaderResourceView("gDepthMap", pDepthMap->get2dSRV());
 	pDirectCtx->setUnorderedAccessView("gLightingBuffer", pLightingBuffer->get2dUAV());
 	auto dispatchArgs = _pLightingPSO->calcDispatchArgs(desc.Width, desc.Height);
 	pDirectCtx->dispatch(dispatchArgs);

@@ -60,9 +60,9 @@ struct alignas(16) CbLighting {
 	Math::float3   gViewLeftTop;
 	float		   gHeight;
 	Math::float3   gViewDownDir;
-	float		   padding0;
+	float		   gNear;
 	Math::float3   gViewRightDir;
-	float		   padding1;
+	float		   gFar;
 };
 
 }

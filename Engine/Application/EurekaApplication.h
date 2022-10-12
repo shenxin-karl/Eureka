@@ -20,7 +20,7 @@ public:
 private:
 	void loading(dx12lib::DirectContextProxy pDirectCtx);
 	void initRenderGraph(dx12lib::DirectContextProxy pDirectCtx);
-	void resizeGBuffer(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height);
+	void resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height);
 private:
 	std::vector<std::unique_ptr<IModel>> _models;
 	std::shared_ptr<Camera>				_pCamera;
@@ -30,6 +30,8 @@ public:
 	std::shared_ptr<dx12lib::Texture>	pGBuffer1;
 	std::shared_ptr<dx12lib::Texture>	pGBuffer2;
 	std::shared_ptr<dx12lib::Texture>	pLightingBuffer;
+	std::shared_ptr<dx12lib::Texture>	pPostProcessingBuffer;
+	std::shared_ptr<dx12lib::Texture>	pColorLutMap;
 	std::shared_ptr<rgph::RenderGraph>	pRenderGraph;
 
 	FRConstantBufferPtr<CbPrePass>		pCbPrePass;

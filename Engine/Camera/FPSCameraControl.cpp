@@ -87,9 +87,8 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 	if (advance != 0.f || deviation != 0.f) {
 		Vector3 lookAt = Vector3(_pCamera->getLookAt());
 		Vector3 lookUp = Vector3(_pCamera->getLookUp());
-		Vector3 w = normalize(lookAt - lookFrom);
-		Vector3 u = cross(lookUp, w);
-		Vector3 motor = normalize(w * advance + u * deviation) * (deltaTime * cameraMoveSpeed);
+		Vector3 right = cross(lookUp, lookAt);
+		Vector3 motor = normalize(lookAt * advance + right * deviation) * (deltaTime * cameraMoveSpeed);
 		lookFrom += motor;
 	}
 
