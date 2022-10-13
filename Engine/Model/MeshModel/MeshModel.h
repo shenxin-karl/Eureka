@@ -13,7 +13,7 @@ class RenderGraph;
 namespace Eureka {
 
 class MeshNode;
-class MeshModel : public IModel {
+class MeshModel final : public IModel {
 public:
 	MeshModel(dx12lib::IDirectContext &directCtx, std::shared_ptr<ALTree> pALTree);
 	~MeshModel() override;
@@ -21,7 +21,6 @@ public:
 	auto getRootNode() const -> MeshNode *;
 	void setModelTransform(const Math::float4x4 &matWorld) override;
 
-	using MaterialCreator = std::function<std::shared_ptr<rgph::Material>(const ALMaterial *)>;
 	void createMaterial(rgph::RenderGraph &graph, 
 		dx12lib::IDirectContext &directCtx, 
 		const MaterialCreator &creator

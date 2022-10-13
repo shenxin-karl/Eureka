@@ -48,9 +48,15 @@
 
 [光照 - LearnOpenGL CN (learnopengl-cn.github.io)](https://learnopengl-cn.github.io/07 PBR/02 Lighting/)
 
+[深度还原到世界坐标](https://stackoverflow.com/questions/32227283/getting-world-position-from-depth-buffer-value)
+
 ## ACES / ColorGrading / Gamma矫正
 
+
+
 https://zhuanlan.zhihu.com/p/21983679
+
+[HDR Tone Mapping - xiaOp的博客 (xiaoiver.github.io)](https://xiaoiver.github.io/coding/2019/02/05/HDR-Tone-Mapping.html)
 
 - [x] Compute 后处理
 - [ ] 使用 mipmap 生成，计算出整个屏幕的亮度， 更准确的 aces 调整

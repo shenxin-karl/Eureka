@@ -2,9 +2,12 @@
 #include <RenderGraph/Drawable/Drawable.h>
 #include <RenderGraph/Bindable/ConstantBufferBindable.h>
 #include "Model/IBound.hpp"
+#include <memory>
+#include <functional>
 
 namespace rgph {
 
+class Material;
 struct IMesh;
 class TransformCBufferPtr;
 
@@ -13,6 +16,9 @@ class TransformCBufferPtr;
 namespace Eureka {
 
 class RenderItem;
+class ALMaterial;
+
+using MaterialCreator = std::function< std::shared_ptr<rgph::Material>(const ALMaterial *)>;
 
 interface INode : protected dx12lib::NonCopyable {
 	virtual void submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const = 0;

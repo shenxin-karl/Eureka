@@ -21,7 +21,7 @@ struct CbMaterial {
 	float padding0				= 0.f;
 };
 
-class Material : public rgph::Material {
+class Material final : public rgph::Material {
 public:
 	Material(const MaterialDesc &desc);
 	FRConstantBufferPtr<CbMaterial> _pCbMaterial;

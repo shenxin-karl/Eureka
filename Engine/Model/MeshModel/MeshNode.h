@@ -5,7 +5,7 @@
 namespace Eureka {
 
 class ALNode;
-class MeshNode : public INode {
+class MeshNode final : public INode {
 public:
 	MeshNode(dx12lib::IDirectContext &directCtx, const ALNode *pALNode);
 	void submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const override;
@@ -16,7 +16,7 @@ public:
 	std::shared_ptr<rgph::IMesh> getMesh(size_t idx) const override;
 	void createMaterial(rgph::RenderGraph &graph, 
 		dx12lib::IDirectContext &directCtx, 
-		const MeshModel::MaterialCreator &creator
+		const MaterialCreator &creator
 	);
 private:
 	mutable bool _transformDirty = true;

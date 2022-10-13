@@ -85,7 +85,7 @@ std::shared_ptr<rgph::IMesh> MeshNode::getMesh(size_t idx) const {
 
 void MeshNode::createMaterial(rgph::RenderGraph &graph, 
 	dx12lib::IDirectContext &directCtx, 
-	const MeshModel::MaterialCreator &creator)
+	const MaterialCreator &creator)
 {
 	size_t idx = 0;
 	for (auto &pRenderItem : _renderItems) {

@@ -9,7 +9,7 @@ namespace Eureka {
 
 class ALMaterial;
 class ALTree;
-struct ALMesh : public rgph::IMesh {
+struct ALMesh final : public rgph::IMesh {
 	using BoneIndex = std::array<uint8_t, 4>;
 	ALMesh(ALTree *pTree, std::string_view modelPath, size_t nodeIdx, size_t meshIdx, const aiMesh *pAiMesh);
 	const ALMaterial *getMaterial() const;
