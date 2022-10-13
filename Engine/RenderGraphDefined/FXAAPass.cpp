@@ -1,9 +1,13 @@
 #include "FXAAPass.h"
+#include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "HlslShader/ShaderManager.h"
 #include "ShaderHelper/GraphicsShader.h"
 #include "Model/MeshManager.h"
-#include "Defined/EngineDefined.h"
 #include "Model/GeometryGenerator/GeometryGenerator.h"
+#include "ShaderHelper/ShaderHelper.h"
+
+#include "EngineShaders/FXAA_PS.h"
+#include "EngineShaders/FXAA_VS.h"
 
 namespace Eureka {
 
@@ -12,22 +16,37 @@ FXAAPass::FXAAPass(const std::string &passName, dx12lib::IDirectContext &directC
 , pBackBuffer(this, "BackBuffer")
 , pScreenMap(this, "ScreenMap")
 {
-	pFXAAPso = ShaderManager::instance()->getGraphicsShader("FXAA")->getPSO();
-	rgph::ShaderLayoutMask mask = rgph::ShaderLayoutMask::Position | rgph::ShaderLayoutMask::TexCoord0;
+	auto pShaderDevice = directCtx.getDevice().lock();
+
+	_pPipeline = pShaderDevice->createGraphicsPSO("FXAA");
+	_pPipeline->setVertexShader(g_FXAA_VS, sizeof(g_FXAA_VS));
+	_pPipeline->setPixelShader(g_FXAA_PS, sizeof(g_FXAA_PS));
+	_pPipeline->setRenderTargetFormat(kSwapChainRenderTargetFormat, kSwapChainDepthStencilFormat);
+	CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc(D3D12_DEFAULT);
+	depthStencilDesc.DepthEnable = false; 
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	_pPipeline->setDepthStencilState(depthStencilDesc);
+	CD3DX12_RASTERIZER_DESC rasterizerDesc(D3D12_DEFAULT);
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE; 
+	_pPipeline->setRasterizerState(rasterizerDesc); 
+	ShaderHelper::generateVertexInput(_pPipeline);
+	ShaderHelper::generateRootSignature(_pPipeline);
+	_pPipeline->finalize();
 
 	auto pMesh = GeometryGenerator::instance()->createQuad(-1.f, -1.f, 2.f, 2.f, 0.f);
-	pFullScreenGeometry = GeometryGenerator::instance()->createGeometry(directCtx, mask, pMesh);
+	rgph::ShaderLayoutMask mask = rgph::ShaderLayoutMask::Position | rgph::ShaderLayoutMask::TexCoord0;
+	_pFullScreenGeometry = GeometryGenerator::instance()->createGeometry(directCtx, mask, pMesh);
 }
 
 void FXAAPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
 	GraphicsPass::execute(pDirectCtx, view);
 
-	pDirectCtx->setGraphicsPSO(pFXAAPso);
+	pDirectCtx->setGraphicsPSO(_pPipeline);
 	pDirectCtx->setConstantBufferView("FXAASetting", pCbFXAASetting->getCBV());
 	pDirectCtx->setShaderResourceView("gScreenMap", pScreenMap->get2dSRV());
 	auto mask = rgph::ShaderLayoutMask::Position | rgph::ShaderLayoutMask::TexCoord0;
-	pFullScreenGeometry->bind(*pDirectCtx, mask);
-	pFullScreenGeometry->draw(*pDirectCtx);
+	_pFullScreenGeometry->bind(*pDirectCtx, mask);
+	_pFullScreenGeometry->draw(*pDirectCtx);
 }
 
 void FXAAPass::setViewportScissorRect(dx12lib::IGraphicsContext &graphicsCtx) {

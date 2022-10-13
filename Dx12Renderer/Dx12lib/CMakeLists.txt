@@ -53,20 +53,20 @@ macro(AddShader shaderPath entryPoint version)
 	set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/${shaderPath}" PROPERTIES Version "${version}")
 endmacro()
 
-
 # 这里添加 shader
 AddShader("Texture/GenerateMips_CS.hlsl" "CS" "cs_5_1")
 
+add_custom_target(Dx12libShaders)
 
 # 创建一个目录
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Dx12libShaders/")
 
 foreach(FILE ${HLSL_SHADER_FILES})
   get_filename_component(FILE_WE ${FILE} NAME_WE)
+  get_filename_component(FILE_DIR ${FILE} DIRECTORY)
   get_source_file_property(entryPoint ${FILE} EntryPoint)
   get_source_file_property(version ${FILE} Version)
-  add_custom_command(TARGET Dx12lib		# 指定在 Dx12lib 编译前自动构建						
-  					 PRE_BUILD
+  add_custom_command(TARGET Dx12libShaders						
                      COMMAND fxc.exe 
 								/nologo 
 								/Qstrip_rootsignature
@@ -77,15 +77,18 @@ foreach(FILE ${HLSL_SHADER_FILES})
 								/Fo ${CMAKE_BINARY_DIR}/${FILE_WE}.cso 
 								/Fd ${CMAKE_BINARY_DIR}/${FILE_WE}.pdb 
 								${FILE} 
-								/Vn g_${FILE_WE} 
-								/Fh ${CMAKE_BINARY_DIR}/Dx12libShaders/${FILE_WE}.h 
+								/Vn "g_${FILE_WE}"
+								/Fh "${CMAKE_BINARY_DIR}/Dx12libShaders/${FILE_WE}.h" 
                      MAIN_DEPENDENCY ${FILE}
                      COMMENT "HLSL ${FILE}"
                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                      VERBATIM)
 endforeach(FILE)
 
+add_dependencies(${PROJECT_NAME} Dx12libShaders)
+set_target_properties(Dx12libShaders PROPERTIES FOLDER "Dx12Renderer")
+
 # 添加头文件目录
 target_include_directories(${PROJECT_NAME} PRIVATE 
-	${CMAKE_BINARY_DIR}/Dx12libShaders/
+	${CMAKE_BINARY_DIR}/Dx12libShaders
 )

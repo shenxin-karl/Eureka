@@ -13,8 +13,9 @@ public:
     rgph::PassResourcePtr<dx12lib::Texture>  pBackBuffer;
     rgph::PassResourcePtr<dx12lib::Texture>  pScreenMap;
     std::shared_ptr<dx12lib::ConstantBuffer> pCbFXAASetting;
-    std::shared_ptr<dx12lib::GraphicsPSO>    pFXAAPso;
-    std::shared_ptr<rgph::Geometry>          pFullScreenGeometry;
+private:
+    std::shared_ptr<rgph::Geometry>         _pFullScreenGeometry;
+    std::shared_ptr<dx12lib::GraphicsPSO>   _pPipeline;
 };
 
 }

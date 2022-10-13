@@ -336,9 +336,9 @@ void GraphicsPSO::finalize() {
 		getPixelShader()
 	};
 
+	assert(_pRootSignature != nullptr && "No root signature is provided");
 	generateBoundResourceMap(shaders);
 
-	assert(_pRootSignature != nullptr && "No root signature is provided");
 	assert(!_inputLayout.empty() && "No vertex input is provided");
 	_psoDesc.pRootSignature = _pRootSignature->getRootSignature().Get();
 	ThrowIfFailed(_pDevice.lock()->getD3DDevice()->CreateGraphicsPipelineState(

@@ -1,5 +1,5 @@
 #include "LightingPass.h"
-#include "LightingPassCS.h"
+#include "EngineShaders/LightingPassCS.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "HlslShader/ShaderManager.h"
 #include "ShaderHelper/ComputeShader.h"

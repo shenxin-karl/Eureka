@@ -31,7 +31,9 @@
 
 - [x] PSO 反射保存根参数偏移, 直接设置
 
-- [ ] ComputeShader 支持变体
+- [x] ComputeShader 支持变体
+
+- [ ] 新增 PartModel 用来渲染基础的几何体物体
 
 ## PBR
 
@@ -50,7 +52,7 @@
 
 https://zhuanlan.zhihu.com/p/21983679
 
-- [ ] Compute 后处理
+- [x] Compute 后处理
 - [ ] 使用 mipmap 生成，计算出整个屏幕的亮度， 更准确的 aces 调整
 
 ## FXAA
@@ -68,6 +70,10 @@ https://www.cnblogs.com/X-Jun/p/16023346.html
 https://zhuanlan.zhihu.com/p/71932575
 
 https://zhuanlan.zhihu.com/p/339109155
+
+- [ ] 生成大量的点光源
+- [ ] 屏幕光源空间划分
+- [ ] compute 计算点光源
 
 ## TAA 
 
