@@ -67,7 +67,7 @@ static void subDivisions(std::vector<SubDivVertex> &inOutVertices, std::vector<u
 		return idx;
 	};
 
-	for (uint32 i = 0; i < numSubDivisions; ++i) {
+	for (uint32 i = 1; i < numSubDivisions; ++i) {
 		newVert.clear();
 		std::vector<uint32> newIndices;
 		newIndices.swap(inOutIndices);

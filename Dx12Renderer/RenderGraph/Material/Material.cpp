@@ -29,7 +29,7 @@ Material::~Material() {
 
 void Material::submit(const TechniqueFlag &techniqueFlag,
 	const Geometry *pGeometry,
-	const TransformCBufferPtr *pTransformCBuffer)
+	const TransformCBufferPtr *pTransformCBuffer) const
 {
 	for (auto &pTechnique : _techniques)
 		pTechnique->submit(techniqueFlag, pGeometry, pTransformCBuffer);

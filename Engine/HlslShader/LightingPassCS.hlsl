@@ -29,7 +29,7 @@ struct ComputeIn {
 };
 
 float2 CalcTexcoord(ComputeIn cin) {
-	return (cin.DispatchThreadID.xy + 0.5) / float2(gWidth, gHeight);
+	return (cin.DispatchThreadID.xy) / (float2(gWidth, gHeight) - 1.0);
 }
 
 float NdcDepthToViewDepth(float zNdc) {
@@ -55,8 +55,7 @@ void CS(ComputeIn cin) {
     // float3 worldPosition = normalize(CalcWorldPosition(uv));
     // gLightingBuffer[cin.DispatchThreadID.xy] = float4(worldPosition * 0.5 + 0.5, 1.0);
     //gLightingBuffer[cin.DispatchThreadID.xy] = float4(CalcWorldPosition(uv), 1.0);
-
-    float3 color = gBuffer0.SampleLevel(gSamLinearClamp, uv, 0);
-    gLightingBuffer[cin.DispatchThreadID.xy] = float4(color, 1.0);
+    float3 Color = gBuffer0.SampleLevel(gSamPointClamp, uv, 0);
+    gLightingBuffer[cin.DispatchThreadID.xy] = float4(Color, 1.0);
 
 }

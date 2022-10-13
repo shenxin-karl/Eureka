@@ -17,6 +17,7 @@
 #include "Defined/EngineDefined.h"
 #include "Material/Material.h"
 #include "Model/GeometryGenerator/GeometryGenerator.h"
+#include "Model/PartModel/PartModel.h"
 #include "RenderGraph/RenderGraph/RenderGraph.h"
 #include "RenderGraphDefined/RenderGraphDefined.h"
 #include "TextureManager/TextureManager.h"
@@ -135,13 +136,41 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 		*pDirectCtx,
 		pRenderGraph
 	};
-	pModel->createMaterial(*pRenderGraph, *pDirectCtx, [&](const ALMaterial *pAlMaterial) {
+	auto materialCreator = [&](const ALMaterial *pAlMaterial) {
 		materialDesc.pAlMaterial = pAlMaterial;
 		return std::make_shared<Material>(materialDesc);
-	});
+	};
 
+	pModel->createMaterial(*pDirectCtx, materialCreator);
+	pModel->setModelTransform(static_cast<float4x4>(Matrix4::makeScale(2.f)));
 	_models.push_back(std::move(pModel));
 
+
+	auto pCubeMesh = GeometryGenerator::instance()->createBox(0.5, 0.5, 0.5f, 1);
+	auto pCubeModel = std::make_unique<PartModel>(*pDirectCtx, pCubeMesh);
+	pCubeModel->createMaterial(*pDirectCtx, materialCreator);
+	pCubeModel->setModelTransform(static_cast<float4x4>(Matrix4::makeTranslation(-3, 2, 1)));
+	_models.push_back(std::move(pCubeModel));
+
+	auto pCylinderMesh = GeometryGenerator::instance()->createCylinder(
+		1.f, 
+		0.f, 
+		2.5, 20, 20
+	);
+	auto pCylinderModel = std::make_unique<PartModel>(*pDirectCtx, pCylinderMesh);
+	pCylinderModel->createMaterial(*pDirectCtx, materialCreator);
+	pCylinderModel->setModelTransform(static_cast<float4x4>(Matrix4::makeTranslation(0, 1, 1)));
+	auto pCylinderMaterial = pCylinderModel->getMaterial();
+	auto visitor = pCylinderMaterial->pCbMaterial->visit();
+	visitor->diffuseAlbedo = float4(DirectX::Colors::DarkRed);
+	_models.push_back(std::move(pCylinderModel));
+
+
+	auto pSphereMesh = GeometryGenerator::instance()->createSphere(1.f, 5);
+	auto pSphereModel = std::make_unique<PartModel>(*pDirectCtx, pSphereMesh);
+	pSphereModel->createMaterial(*pDirectCtx, materialCreator);
+	pSphereModel->setModelTransform(static_cast<float4x4>(Matrix4::makeTranslation(-5, 1, 0)));
+	_models.push_back(std::move(pSphereModel));
 }
 
 void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {

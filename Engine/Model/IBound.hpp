@@ -11,7 +11,7 @@ struct IBounding {
 template<typename T>
 struct BoundingWrap : public IBounding {
 	BoundingWrap(const T &bound) : bound(bound) {}
-	DX::ContainmentType contains(const Math::BoundingBox &box) const override {
+	DX::ContainmentType contains(const Math::BoundingBox &box) const final {
 		return bound.contains(box);
 	}
 public:

@@ -6,12 +6,12 @@ namespace dx12lib {
 
 class UAStructuredBuffer : public IUAStructuredBuffer {
 public:
-	WRL::ComPtr<ID3D12Resource> getD3DResource() const override;
-	size_t getBufferSize() const override;
-	size_t getElementCount() const override;
-	size_t getElementStride() const override;
-	const UnorderedAccessView & getUAV() const override;
-	const ShaderResourceView & getSRV() const override;
+	WRL::ComPtr<ID3D12Resource> getD3DResource() const final;
+	size_t getBufferSize() const final;
+	size_t getElementCount() const final;
+	size_t getElementStride() const final;
+	const UnorderedAccessView & getUAV() const final;
+	const ShaderResourceView & getSRV() const final;
 protected:
 	UAStructuredBuffer(std::weak_ptr<Device> pDevice, 
 		std::shared_ptr<CommandList> pCmdList,

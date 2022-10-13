@@ -12,10 +12,9 @@ public:
 	size_t getNumRenderItem() const override;
 	RenderItem *getRenderItem(size_t idx) const override;
 	void setParentTransform(const Math::Matrix4 &matWorld) override;
-	const rgph::TransformCBufferPtr &getNodeTransformCBuffer() const override;
+	const rgph::TransformCBufferPtr &getTransformCBuffer() const override;
 	std::shared_ptr<rgph::IMesh> getMesh(size_t idx) const override;
-	void createMaterial(rgph::RenderGraph &graph, 
-		dx12lib::IDirectContext &directCtx, 
+	void createMaterial(dx12lib::IDirectContext &directCtx, 
 		const MaterialCreator &creator
 	);
 private:
@@ -25,7 +24,7 @@ private:
 	std::vector<std::shared_ptr<ALMesh>> _alMeshes;
 	std::vector<std::unique_ptr<RenderItem>> _renderItems;
 	std::vector<std::unique_ptr<MeshNode>> _children;
-	mutable rgph::TransformCBufferPtr _nodeTransformCBuffer;
+	mutable rgph::TransformCBufferPtr _pTransformCBuffer;
 };
 
 }

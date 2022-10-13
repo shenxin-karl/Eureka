@@ -12,11 +12,12 @@ MeshNode::MeshNode(dx12lib::IDirectContext &directCtx, const ALNode *pALNode) {
 	_nodeLocalTransform = pALNode->getNodeTransform();
 
 	if (pALNode->getNumMesh() > 0)
-		_nodeTransformCBuffer.setTransformCBuffer(directCtx.createFRConstantBuffer<rgph::TransformStore>());
+		_pTransformCBuffer.setTransformCBuffer(directCtx.createFRConstantBuffer<rgph::TransformStore>());
 
 	for (size_t i = 0; i < pALNode->getNumMesh(); ++i) {
+		auto pMesh = pALNode->getMesh(i);
 		_alMeshes.push_back(pALNode->getMesh(i));
-		_renderItems.emplace_back(std::make_unique<RenderItem>(directCtx, this, i));
+		_renderItems.emplace_back(std::make_unique<RenderItem>(directCtx, _pTransformCBuffer, pMesh));
 	}
 
 	for (size_t i = 0; i < pALNode->getNumChildren(); ++i)
@@ -24,7 +25,7 @@ MeshNode::MeshNode(dx12lib::IDirectContext &directCtx, const ALNode *pALNode) {
 }
 
 void MeshNode::submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const {
-	if (_transformDirty && _nodeTransformCBuffer != nullptr) {
+	if (_transformDirty && _pTransformCBuffer != nullptr) {
 		Matrix4 matWorld(_applyTransform);
 		Matrix4 matInvWorld = inverse(matWorld);
 		Matrix4 matNormal = transpose(inverse(matWorld));
@@ -35,7 +36,7 @@ void MeshNode::submit(const IBounding &bounding, const rgph::TechniqueFlag &tech
 			.matNormal = float4x4(matNormal),
 			.matInvNormal = float4x4(matInvNormal)
 		};
-		_nodeTransformCBuffer.setTransformStore(store);
+		_pTransformCBuffer.setTransformStore(store);
 		_transformDirty = false;
 	}
 
@@ -74,8 +75,8 @@ void MeshNode::setParentTransform(const Matrix4 &matWorld) {
 		pRenderItem->setTransform(applyTransform);
 }
 
-const rgph::TransformCBufferPtr &MeshNode::getNodeTransformCBuffer() const {
-	return _nodeTransformCBuffer;
+const rgph::TransformCBufferPtr &MeshNode::getTransformCBuffer() const {
+	return _pTransformCBuffer;
 }
 
 std::shared_ptr<rgph::IMesh> MeshNode::getMesh(size_t idx) const {
@@ -83,8 +84,7 @@ std::shared_ptr<rgph::IMesh> MeshNode::getMesh(size_t idx) const {
 	return _alMeshes[idx];
 }
 
-void MeshNode::createMaterial(rgph::RenderGraph &graph, 
-	dx12lib::IDirectContext &directCtx, 
+void MeshNode::createMaterial(dx12lib::IDirectContext &directCtx, 
 	const MaterialCreator &creator)
 {
 	size_t idx = 0;
@@ -94,7 +94,7 @@ void MeshNode::createMaterial(rgph::RenderGraph &graph,
 		++idx;
 	}
 	for (auto &pChild : _children)
-		pChild->createMaterial(graph, directCtx, creator);
+		pChild->createMaterial(directCtx, creator);
 }
 
 }

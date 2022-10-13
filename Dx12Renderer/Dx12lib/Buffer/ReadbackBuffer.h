@@ -7,14 +7,14 @@ namespace dx12lib {
 
 class ReadBackBuffer : public IReadBackBuffer {
 public:
-	WRL::ComPtr<ID3D12Resource> getD3DResource() const override;
-	size_t getBufferSize() const override;
-	bool isCompleted() const override;
-	const void *getMappedPtr() const override;
-	size_t getElementCount() const override;
-	size_t getElementStride() const override;
-	void setCompletedCallback(const std::function<void(IReadBackBuffer *)> &callback) override;
-	~ReadBackBuffer() override;
+	WRL::ComPtr<ID3D12Resource> getD3DResource() const final;
+	size_t getBufferSize() const final;
+	bool isCompleted() const final;
+	const void *getMappedPtr() const final;
+	size_t getElementCount() const final;
+	size_t getElementStride() const final;
+	void setCompletedCallback(const std::function<void(IReadBackBuffer *)> &callback) final;
+	~ReadBackBuffer() final;
 
 	template<typename T>
 	std::span<const T> visit() const {

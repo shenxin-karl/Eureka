@@ -76,6 +76,7 @@ float4 getNormal(VertexOut pin) {
 		N = T * sampleNormal.x +
 			B * sampleNormal.y +
 			N * sampleNormal.z ;
+		N = normalize(N);
 	#endif
 	return float4(N * 0.5f + 0.5f, 1.0);
 }

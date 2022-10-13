@@ -20,7 +20,7 @@ protected:
 		const D3D12_CLEAR_VALUE *pClearValue = nullptr
 	);
 public:
-	auto getD3DResource() const ->WRL::ComPtr<ID3D12Resource> override;
+	auto getD3DResource() const ->WRL::ComPtr<ID3D12Resource> final;
 	auto getDimension() const -> TextureDimension;
 	auto getDesc() const -> const D3D12_RESOURCE_DESC &;
 	auto getArraySize() const -> size_t;

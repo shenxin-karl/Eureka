@@ -27,6 +27,7 @@ public:
 	const ALTexture &getRoughnessMap() const;
 	const ALTexture &getMetallicMap() const;
 	const ALTexture &getAmbientOcclusionMap() const;
+	static ALMaterial sDefaultMaterial;
 private:
 	static void processTexture(ALTexture &texture, 
 		const std::string &direction,

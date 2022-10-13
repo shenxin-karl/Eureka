@@ -43,7 +43,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 	auto *pALMaterial = desc.pAlMaterial;
 	auto &graphicsCtx = desc.graphicsCtx;
 
-	_pCbMaterial = graphicsCtx.createFRConstantBuffer<CbMaterial>(CbMaterial{});
+	pCbMaterial = graphicsCtx.createFRConstantBuffer<CbMaterial>(CbMaterial{});
 
 	auto pDeferredPBRShader = ShaderManager::instance()->getGraphicsShader("DeferredPBR");
 	auto pGBufferTechnique = std::make_shared<rgph::Technique>("GBuffer", kTechGBuffer);
@@ -51,7 +51,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 		auto keywordMask = pDeferredPBRShader->getKeywordMask();
 		std::vector<std::shared_ptr<rgph::Bindable>> bindables;
 
-		bindables.push_back(rgph::ConstantBufferBindable::make("cbMaterial", _pCbMaterial));
+		bindables.push_back(rgph::ConstantBufferBindable::make("cbMaterial", pCbMaterial));
 
 		if (pALMaterial->getDiffuseMap().valid()) {
 			keywordMask.setKeyWord("_ENABLE_DIFFUSE_MAP", true);

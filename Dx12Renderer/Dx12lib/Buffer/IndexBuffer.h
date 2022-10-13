@@ -12,12 +12,12 @@ protected:
 		DXGI_FORMAT format
 	);
 public:
-	WRL::ComPtr<ID3D12Resource> getD3DResource() const override;
-	size_t getBufferSize() const override;
-	size_t getIndexCount() const override;
-	size_t getIndexStride() const override;
-	DXGI_FORMAT getIndexFormat() const override;
-	const IndexBufferView &getIndexBufferView() const override;
+	WRL::ComPtr<ID3D12Resource> getD3DResource() const final;
+	size_t getBufferSize() const final;
+	size_t getIndexCount() const final;
+	size_t getIndexStride() const final;
+	DXGI_FORMAT getIndexFormat() const final;
+	const IndexBufferView &getIndexBufferView() const final;
 	static size_t getIndexStrideByFormat(DXGI_FORMAT format);
 private:
 	DXGI_FORMAT                    _indexFormat;

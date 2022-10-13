@@ -1,6 +1,8 @@
 #include <format>
 #include <iostream>
 #include "RenderItem.h"
+
+#include "Material/Material.h"
 #include "Model/IModel.hpp"
 #include "RenderGraph/Material/Material.h"
 #include "Model/MeshManager.h"
@@ -110,23 +112,24 @@ bool Eureka::RenderItem::buildVertexDataInput(dx12lib::IDirectContext &directCtx
 
 namespace Eureka {
 
-RenderItem::RenderItem(dx12lib::IDirectContext &directCtx, INode *pNode, size_t meshIdx) {
-	auto pALMesh = pNode->getMesh(meshIdx);
+RenderItem::RenderItem(dx12lib::IDirectContext &directCtc, 
+	const rgph::TransformCBufferPtr &trans,
+	std::shared_ptr<rgph::IMesh> pMesh)
+{
 	_pGeometry = std::make_shared<rgph::Geometry>();
-	_pGeometry->setMesh(pALMesh);
+	_pGeometry->setMesh(std::move(pMesh));
 	_pGeometry->genDrawArgs();
-	_pTransformCBuf = pNode->getNodeTransformCBuffer();
-	buildIndexDataInput(directCtx, _pGeometry.get());
+	_pTransformCBuf = trans;
+	buildIndexDataInput(directCtc, _pGeometry.get());
 }
 
-auto RenderItem::getMaterial() const -> std::shared_ptr<rgph::Material> {
+auto RenderItem::getMaterial() const -> std::shared_ptr<Material> {
 	return _pMaterial;
 }
 
-void RenderItem::setMaterial(dx12lib::IDirectContext &directCtx, std::shared_ptr<rgph::Material> pMaterial) {
+void RenderItem::setMaterial(dx12lib::IDirectContext &directCtx, std::shared_ptr<Material> pMaterial) {
 	_pMaterial = std::move(pMaterial);
 	auto shaderLayoutMask = _pMaterial->getShaderLayoutMask();
-	//assert(shaderLayoutMask != rgph::ShaderLayoutMask::Nothing);
 	for (size_t i = rgph::ShaderLayoutIndex::Position; i < rgph::ShaderLayoutIndex::Max; ++i) {
 		rgph::ShaderLayoutIndex shaderLayoutIndex(i);
 		if (shaderLayoutMask & shaderLayoutIndex)

@@ -24,7 +24,7 @@ struct CbMaterial {
 class Material final : public rgph::Material {
 public:
 	Material(const MaterialDesc &desc);
-	FRConstantBufferPtr<CbMaterial> _pCbMaterial;
+	FRConstantBufferPtr<CbMaterial> pCbMaterial;
 private:
 	static rgph::SubPass *getGBufferSubPass(const MaterialDesc &desc, std::shared_ptr<dx12lib::GraphicsPSO> pso);
 };

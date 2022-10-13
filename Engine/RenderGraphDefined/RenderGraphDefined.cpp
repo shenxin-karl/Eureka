@@ -86,7 +86,8 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pPostProcessingPass->pOutputMap.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 		getBuffer >> pPostProcessingPass->pOutputMap;
 
-		pPostProcessingPass->setColorLutMap(pApp->pColorLutMap);
+		if (pApp->pColorLutMap != nullptr)
+			pPostProcessingPass->setColorLutMap(pApp->pColorLutMap);
 		pRenderGraph->addPass(pPostProcessingPass);
 	}
 

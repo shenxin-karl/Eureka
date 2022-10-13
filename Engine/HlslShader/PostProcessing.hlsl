@@ -30,7 +30,7 @@ struct ComputeIn {
 float2 CalcTexcoord(ComputeIn cin) {
 	float2 texDimes;
 	gScreenTexture.GetDimensions(texDimes.x, texDimes.y);
-	return (cin.DispatchThreadID.xy + 0.5) / texDimes;
+	return (cin.DispatchThreadID.xy) / (texDimes - 1.0);
 }
 
 
@@ -77,7 +77,7 @@ float3 ColorLut(float3 color) {
 [numthreads(16, 16, 1)]
 void CS(ComputeIn cin) {
 	float2 uv = CalcTexcoord(cin);
-	float4 sampleColor = gScreenTexture.SampleLevel(gSamLinearClamp, uv, 0);
+	float4 sampleColor = gScreenTexture.SampleLevel(gSamPointClamp, uv, 0);
 	float3 screenColor = sampleColor.rgb;
 	float alpha = sampleColor.a;
 	screenColor = ACESToneMapping(screenColor, 1.0);

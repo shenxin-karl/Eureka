@@ -36,6 +36,8 @@ const ALTexture & ALMaterial::getAmbientOcclusionMap() const {
 	return _ambientOcclusionMap;
 }
 
+ALMaterial ALMaterial::sDefaultMaterial {};
+
 void ALMaterial::processTexture(ALTexture &texture,
 	const std::string &direction,
 	const aiScene *pAiScene, 

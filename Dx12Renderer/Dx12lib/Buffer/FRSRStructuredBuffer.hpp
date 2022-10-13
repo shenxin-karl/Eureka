@@ -15,12 +15,12 @@ class FRSRStructuredBuffer<RawData> : public ISRStructuredBuffer {
 protected:
 	FRSRStructuredBuffer(std::weak_ptr<Device> pDevice, const void *pData, size_t numElements, size_t stride);
 public:
-	WRL::ComPtr<ID3D12Resource> getD3DResource() const override;
-	size_t getBufferSize() const override;
-	size_t getElementCount() const override;
-	size_t getElementStride() const override;
-	void updateBuffer(const void *pData, size_t sizeInByte, size_t offset = 0) override;
-	const ShaderResourceView & getSRV() const override;
+	WRL::ComPtr<ID3D12Resource> getD3DResource() const final;
+	size_t getBufferSize() const final;
+	size_t getElementCount() const final;
+	size_t getElementStride() const final;
+	void updateBuffer(const void *pData, size_t sizeInByte, size_t offset = 0) final;
+	const ShaderResourceView & getSRV() const final;
 
 	template<typename T>
 	std::span<T> visit() {
@@ -46,12 +46,12 @@ protected:
 	FRSRStructuredBuffer(std::weak_ptr<Device> pDevice, const T *pData, size_t numElements);
 	FRSRStructuredBuffer(std::weak_ptr<Device> pDevice, size_t numElements);
 public:
-	WRL::ComPtr<ID3D12Resource> getD3DResource() const override;
-	size_t getBufferSize() const override;
-	size_t getElementCount() const override;
-	size_t getElementStride() const override;
-	void updateBuffer(const void *pData, size_t sizeInByte, size_t offset = 0) override;
-	const ShaderResourceView & getSRV() const override;
+	WRL::ComPtr<ID3D12Resource> getD3DResource() const final;
+	size_t getBufferSize() const final;
+	size_t getElementCount() const final;
+	size_t getElementStride() const final;
+	void updateBuffer(const void *pData, size_t sizeInByte, size_t offset = 0) final;
+	const ShaderResourceView & getSRV() const final;
 	std::span<T> visit();
 private:
 	ShaderResourceView _srvs[kFrameResourceCount];

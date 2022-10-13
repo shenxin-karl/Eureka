@@ -20,9 +20,7 @@ public:
 	void submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const override ;
 	auto getRootNode() const -> MeshNode *;
 	void setModelTransform(const Math::float4x4 &matWorld) override;
-
-	void createMaterial(rgph::RenderGraph &graph, 
-		dx12lib::IDirectContext &directCtx, 
+	void createMaterial(dx12lib::IDirectContext &directCtx, 
 		const MaterialCreator &creator
 	);
 private:

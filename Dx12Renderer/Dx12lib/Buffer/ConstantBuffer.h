@@ -12,13 +12,13 @@ class ConstantBuffer : public IConstantBuffer {
 protected:
 	ConstantBuffer(std::weak_ptr<Device> pDevice, const void *pData, std::size_t sizeInByte);
 public:
-	WRL::ComPtr<ID3D12Resource> getD3DResource() const override;
-	size_t getBufferSize() const override;
-	size_t getElementStride() const override;
-	BYTE *getMappedPtr() override;
-	const BYTE *getMappedPtr() const override;
-	void updateBuffer(const void *pData, size_t sizeInByte, size_t offset = 0) override;
-	const ConstantBufferView & getCBV() const override;
+	WRL::ComPtr<ID3D12Resource> getD3DResource() const final;
+	size_t getBufferSize() const final;
+	size_t getElementStride() const final;
+	BYTE *getMappedPtr() final;
+	const BYTE *getMappedPtr() const final;
+	void updateBuffer(const void *pData, size_t sizeInByte, size_t offset = 0) final;
+	const ConstantBufferView & getCBV() const final;
 
 	template<typename T>
 	CBufferVisitor<T> visit() {

@@ -16,7 +16,7 @@ public:
 	void submit(const TechniqueFlag &techniqueFlag, 
 		const Geometry *pGeometry, 
 		const TransformCBufferPtr *pTransformCBuffer
-	);
+	) const;
 protected:
 	std::string _materialName;
 	ShaderLayoutMask _shaderLayoutMask;
