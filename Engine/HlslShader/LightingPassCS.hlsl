@@ -37,10 +37,15 @@ float NdcDepthToViewDepth(float zNdc) {
     return 1.0 / (magic * zNdc + 1.0);
 }
 
-float3 CalcWorldPosition(float2 uv) {
+float4 CalcWorldPosition(float2 uv)
+{
 	float zNdc = gDepthMap.SampleLevel(gSamLinearClamp, uv, 0).x;
-    float zView = NdcDepthToViewDepth(zNdc);
-    return zView;
+    float4 pos = float4(uv.x * 2.0 - 1.0, uv.y * 2.0 - 1.0, zNdc * 2.0 - 1.0, 1.0);
+    //float4 pos = float4(uv.x * 2.0 - 1.0, uv.y * 2.0 - 1.0, zNdc, 1.0);
+ 
+    float4 WorldPos = mul(gMatInvViewProj, pos);
+    WorldPos.xyz /= WorldPos.w;
+    return (WorldPos);
 
 #if 0
     float3 direction = normalize(gViewLeftTop.xyz + uv.x * gViewRightDir.xyz + uv.y * gViewDownDir.xyz); 
@@ -52,9 +57,8 @@ float3 CalcWorldPosition(float2 uv) {
 [numthreads(16, 16, 1)]
 void CS(ComputeIn cin) {
     float2 uv = CalcTexcoord(cin);
-    // float3 worldPosition = normalize(CalcWorldPosition(uv));
-    // gLightingBuffer[cin.DispatchThreadID.xy] = float4(worldPosition * 0.5 + 0.5, 1.0);
-    //gLightingBuffer[cin.DispatchThreadID.xy] = float4(CalcWorldPosition(uv), 1.0);
+    gLightingBuffer[cin.DispatchThreadID.xy] = float4(CalcWorldPosition(uv));
+
     float3 Color = gBuffer0.SampleLevel(gSamPointClamp, uv, 0);
     gLightingBuffer[cin.DispatchThreadID.xy] = float4(Color, 1.0);
 

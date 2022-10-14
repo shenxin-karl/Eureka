@@ -59,7 +59,7 @@ void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::R
 	pDirectCtx->setShaderResourceView("gBuffer0", pGBuffer0->get2dSRV());
 	//pDirectCtx->setShaderResourceView("gBuffer1", pGBuffer1->get2dSRV());
 	//pDirectCtx->setShaderResourceView("gBuffer2", pGBuffer2->get2dSRV());
-	//pDirectCtx->setShaderResourceView("gDepthMap", pDepthMap->get2dSRV());
+	pDirectCtx->setShaderResourceView("gDepthMap", pDepthMap->get2dSRV());
 	pDirectCtx->setUnorderedAccessView("gLightingBuffer", pLightingBuffer->get2dUAV());
 	auto dispatchArgs = _pLightingPSO->calcDispatchArgs(desc.Width, desc.Height);
 	pDirectCtx->dispatch(dispatchArgs);
