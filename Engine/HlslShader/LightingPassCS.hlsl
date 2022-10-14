@@ -1,17 +1,14 @@
 #include "Common.hlsli"
+#include "CookTorrance.hlsli"
 
 cbuffer CbLighting : register(b0) {
-	float4   gLightDirection;
-    float4   gLightRadiance;
-    float4x4 gProj;
+	float3   gLightDirection;
+    float    gClosedIntervalOfWidth;        // width - 1
+    float3   gLightRadiance;
+    float    gClosedIntervalOfHeight;       // height - 1
+    float4x4 gInvViewProj;
     float3   gCameraPosition;
-    float    gWidth;
-    float3   gViewLeftTop;
-    float    gHeight;
-    float3   gViewDownDir;
-    float    gNear;
-    float3   gViewRightDir;
-    float    gFar; 
+    float    padding0;
 };
 
 Texture2D<float3> gBuffer0  : register(t0);
@@ -29,37 +26,45 @@ struct ComputeIn {
 };
 
 float2 CalcTexcoord(ComputeIn cin) {
-	return (cin.DispatchThreadID.xy) / (float2(gWidth, gHeight) - 1.0);
-}
-
-float NdcDepthToViewDepth(float zNdc) {
-	float magic = (gFar - gNear) / gNear;
-    return 1.0 / (magic * zNdc + 1.0);
+	return (cin.DispatchThreadID.xy) / float2(gClosedIntervalOfWidth, gClosedIntervalOfHeight);
 }
 
 float4 CalcWorldPosition(float2 uv)
 {
 	float zNdc = gDepthMap.SampleLevel(gSamLinearClamp, uv, 0).x;
     float4 pos = float4(uv.x * 2.0 - 1.0, uv.y * 2.0 - 1.0, zNdc * 2.0 - 1.0, 1.0);
-    //float4 pos = float4(uv.x * 2.0 - 1.0, uv.y * 2.0 - 1.0, zNdc, 1.0);
- 
-    float4 WorldPos = mul(gMatInvViewProj, pos);
-    WorldPos.xyz /= WorldPos.w;
-    return (WorldPos);
+    float4 worldPos = mul(gInvViewProj, pos);
+    worldPos.xyz /= worldPos.w;
+    return worldPos;
+}
 
-#if 0
-    float3 direction = normalize(gViewLeftTop.xyz + uv.x * gViewRightDir.xyz + uv.y * gViewDownDir.xyz); 
-    float3 worldPosition = gCameraPosition.xyz + zView * direction;
-    return worldPosition;
-#endif
+void SampleAoRoughnessMetallic(float2 uv, inout float ao, inout float roughness, inout float metallic) {
+	float3 sampleColor = gBuffer2.SampleLevel(gSamPointClamp, uv, 0).rgb;
+    ao = sampleColor.x;
+    roughness = sampleColor.g;
+    metallic = sampleColor.b;
 }
 
 [numthreads(16, 16, 1)]
 void CS(ComputeIn cin) {
     float2 uv = CalcTexcoord(cin);
-    gLightingBuffer[cin.DispatchThreadID.xy] = float4(CalcWorldPosition(uv));
+    float3 worldPosition = CalcWorldPosition(uv);
+    float4 diffuseAlbedo = float4(gBuffer0.SampleLevel(gSamPointClamp, uv, 0), 1.0);
 
-    float3 Color = gBuffer0.SampleLevel(gSamPointClamp, uv, 0);
-    gLightingBuffer[cin.DispatchThreadID.xy] = float4(Color, 1.0);
+    float3 N = gBuffer1.SampleLevel(gSamPointClamp, uv, 0) * 2.0 - 1.0;
+    float3 V = normalize(gCameraPosition - worldPosition);
 
+    float ao = 1.0, roughness = 1.0, metallic = 1.0;
+    SampleAoRoughnessMetallic(uv, ao, roughness, metallic);
+
+    MaterialData materialData = calcMaterialData(diffuseAlbedo, roughness, metallic);
+
+    LightData light = (LightData)0;
+    light.strength = gLightRadiance;
+    light.direction = gLightDirection;
+
+    float3 ambient = 0.1 * diffuseAlbedo;
+	float3 radiance = ComputeDirectionLight(light, materialData, N, V);
+    //radiance += ambient;
+    gLightingBuffer[cin.DispatchThreadID.xy] = float4(radiance, 1.0);
 }

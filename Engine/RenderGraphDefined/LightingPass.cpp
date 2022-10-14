@@ -29,30 +29,13 @@ LightingPass::LightingPass(const std::string &passName, std::shared_ptr<dx12lib:
 void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
 	ExecutablePass::execute(pDirectCtx, view);
 
-	const rgph::CameraData &cameraData = view.cameraData;
-	float h = 2.f * std::tan(DirectX::XMConvertToRadians(cameraData.fov)) * cameraData.zNear;
-	float w = h * cameraData.aspect;
-
-	auto visitor = pCbLighting->visit();
-	Vector3 lookUp(cameraData.lookUpDir);
-	Vector3 lookAt(cameraData.lookAtDir);
-	Vector3 lookRight = normalize(cross(lookAt, lookUp));
-
 	const auto &desc = pDepthMap->getDesc();
-
-	Vector3 down = h * -lookUp; 
-	Vector3 right = w * lookRight;
-	Vector3 center = lookAt * cameraData.zNear;
-	Vector3 viewLeftTop = center - right / 2.f - down / 2.f;
-	visitor->gProj = cameraData.matProj;
+	const rgph::CameraData &cameraData = view.cameraData;
+	auto visitor = pCbLighting->visit();
+	visitor->gClosedIntervalOfWidth = static_cast<float>(desc.Width) - 1.f;
+	visitor->gClosedIntervalOfHeight = static_cast<float>(desc.Height) - 1.f;
+	visitor->gInvViewProj = cameraData.matInvViewProj;
 	visitor->gCameraPosition = cameraData.lookFrom;
-	visitor->gViewLeftTop = viewLeftTop.xyz;
-	visitor->gViewDownDir = down.xyz;
-	visitor->gViewRightDir = right.xyz;
-	visitor->gWidth = static_cast<float>(desc.Width);
-	visitor->gHeight = static_cast<float>(desc.Height);
-	visitor->gNear = cameraData.zNear;
-	visitor->gFar = cameraData.zFar;
 
 	pDirectCtx->setComputePSO(_pLightingPSO);
 	pDirectCtx->setConstantBufferView("CbLighting", pCbLighting->getCBV());

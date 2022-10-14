@@ -53,6 +53,9 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 
 	pCbPrePass = pDirectCtx->createFRConstantBuffer<CbPrePass>();
 	pCbLighting = pDirectCtx->createFRConstantBuffer<CbLighting>();
+	auto visitor = pCbLighting->visit();
+	visitor->gLightDirection = normalize(Vector3(0.1f, 0.7f, 0.3f)).xyz;
+	visitor->gLightRadiance = float3(5.f);
 
 	initRenderGraph(pDirectCtx);
 
@@ -163,6 +166,7 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	auto pCylinderMaterial = pCylinderModel->getMaterial();
 	auto visitor = pCylinderMaterial->pCbMaterial->visit();
 	visitor->diffuseAlbedo = float4(DirectX::Colors::DarkRed);
+
 	_models.push_back(std::move(pCylinderModel));
 
 
@@ -178,7 +182,7 @@ void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) 
 
 	FXAASetting setting;
 	pCbFXAASetting = pDirectCtx->createConstantBuffer(&setting, sizeof(setting));
-	pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_04.png", false);
+	//pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_04.png", false);
 	pRenderGraph = SetupRenderGraph(this, *pDirectCtx);
 }
 

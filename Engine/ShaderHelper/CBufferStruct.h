@@ -52,17 +52,13 @@ struct alignas(16) FXAASetting {
 };
 
 struct alignas(16) CbLighting {
-	Math::float4   gLightDirection;
-	Math::float4   gLightRadiance;
-	Math::float4x4 gProj;
-	Math::float3   gCameraPosition;
-	float		   gWidth;
-	Math::float3   gViewLeftTop;
-	float		   gHeight;
-	Math::float3   gViewDownDir;
-	float		   gNear;
-	Math::float3   gViewRightDir;
-	float		   gFar;
+	Math::float3    gLightDirection;                // 向着光源
+    float           gClosedIntervalOfWidth;         // width - 1
+	Math::float3    gLightRadiance;
+    float           gClosedIntervalOfHeight;        // height - 1
+	Math::float4x4  gInvViewProj;
+	Math::float3    gCameraPosition;
+    float           padding0;
 };
 
 }
