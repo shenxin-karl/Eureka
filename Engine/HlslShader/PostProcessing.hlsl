@@ -35,11 +35,11 @@ float2 CalcTexcoord(ComputeIn cin) {
 
 
 
-// Ã¿¸ö lut ¶¼ÊÇ 256x16 ÄÚ²¿ÓÐ 16 ¸ö 16x16 µÄ¿é.
-// ´Ó×óµ½µÄ¿é, ÓÉ b Í¨µÀ¾ö¶¨. ¿éÄÚ u ×ø±êÓÉ r Í¨µÀ¾ö¶¨
-// ¿éÄÚ v ×ø±êÓÉ g Í¨µÀ¾ö¶¨.
-// floor(c * 15.0) / 15.0 ÏòÏÂÈ¡Õûµ½ 0~15 Ö®¼ä
-// 240ÊÇ×îºóÒ»¿éµÄÆðÊ¼Î»ÖÃ, ×îºó³ýÒÔ 256 ¹éÒ»»¯µ½ 0~1
+// Ã¿ï¿½ï¿½ lut ï¿½ï¿½ï¿½ï¿½ 256x16 ï¿½Ú²ï¿½ï¿½ï¿½ 16 ï¿½ï¿½ 16x16 ï¿½Ä¿ï¿½.
+// ï¿½ï¿½ï¿½óµ½µÄ¿ï¿½, ï¿½ï¿½ b Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ u ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ r Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½ v ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ g Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+// floor(c * 15.0) / 15.0 ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ 0~15 Ö®ï¿½ï¿½
+// 240ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼Î»ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 256 ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ 0~1
 #define S_NORMALIZE_FACTOR (1.0 / 255.0)
 #define T_NORMALIZE_FACTOR (1.0 / 15.0)
 float FloorPixel(float c) {
@@ -80,6 +80,8 @@ void CS(ComputeIn cin) {
 	float4 sampleColor = gScreenTexture.SampleLevel(gSamPointClamp, uv, 0);
 	float3 screenColor = sampleColor.rgb;
 	float alpha = sampleColor.a;
+
+#if !defined(DO_NOTHING)
 	screenColor = ACESToneMapping(screenColor, 1.0);
 
 	#if defined(_COLOR_GRADING)
@@ -87,5 +89,6 @@ void CS(ComputeIn cin) {
 	#endif
 
 	screenColor = GammaCorrection(screenColor);
+#endif
 	gOutputMap[cin.DispatchThreadID.xy] = float4(screenColor, alpha);
 }

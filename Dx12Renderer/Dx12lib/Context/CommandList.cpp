@@ -169,7 +169,16 @@ void CommandList::setConstantBufferView(const std::string &boundResourceName, co
 	assert(cbv.valid());
 	assert(cbv.valid());
 	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
-	assert(boundResource != std::nullopt);
+#if defined(_DEBUG) || defined(DEBUG)
+	if (boundResource == std::nullopt) {
+		std::cerr << std::format(
+			"PSO Name: {} There is no {} bound resource\n",
+			_currentGPUState.pPSO->getName(),
+			boundResourceName
+		);
+		return;
+	}
+#endif
 	assert(boundResource->viewType == D3D12_DESCRIPTOR_RANGE_TYPE_CBV);
 #ifdef DEBUG_MODE
 	WRL::ComPtr<ID3D12Resource> pD3DResource = cbv.getResource()->getD3DResource();
@@ -206,7 +215,16 @@ void CommandList::setShaderResourceView(const std::string &boundResourceName,
 {
 	assert(srv.valid());
 	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
-	assert(boundResource != std::nullopt);
+#if defined(_DEBUG) || defined(DEBUG)
+	if (boundResource == std::nullopt) {
+		std::cerr << std::format(
+			"PSO Name: {} There is no {} bound resource\n",
+			_currentGPUState.pPSO->getName(),
+			boundResourceName
+		);
+		return;
+	}
+#endif
 	assert(boundResource->viewType == D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 	assert((offset + numDescriptors) <= boundResource->count);
 	ShaderRegister shaderRegister = boundResource->shaderRegister;
@@ -550,7 +568,16 @@ void CommandList::setUnorderedAccessView(const std::string &boundResourceName,
 {
 	assert(uav.valid());
 	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
-	assert(boundResource != std::nullopt);
+#if defined(_DEBUG) || defined(DEBUG)
+	if (boundResource == std::nullopt) {
+		std::cerr << std::format(
+			"PSO Name: {} There is no {} bound resource\n",
+			_currentGPUState.pPSO->getName(),
+			boundResourceName
+		);
+		return;
+	}
+#endif
 	assert(boundResource->viewType == D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
 	assert((offset + numDescriptors) <= boundResource->count);
 	ShaderRegister shaderRegister = boundResource->shaderRegister;

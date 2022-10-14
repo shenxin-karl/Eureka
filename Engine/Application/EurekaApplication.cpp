@@ -45,7 +45,7 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	cameraDesc.lookFrom = float3(5, 0, 0);
 	cameraDesc.lookUp = float3(0, 1, 0);
 	cameraDesc.nearClip = 0.1f;
-	cameraDesc.farClip = 1000.f;
+	cameraDesc.farClip = 100.f;
 	cameraDesc.fov = 45.f;
 	cameraDesc.aspect = static_cast<float>(_width) / static_cast<float>(_height);
 	_pCamera = std::make_shared<Camera>(cameraDesc);
