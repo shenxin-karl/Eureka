@@ -25,7 +25,7 @@ struct MaterialData {
 MaterialData calcMaterialData(float4 diffuseAlbedo, float roughness, float metallic) {
     MaterialData mat;
     mat.diffuseAlbedo = diffuseAlbedo.xyz;
-    mat.roughness = roughness;
+    mat.roughness = max(roughness, 0.00001);
     mat.fresnelFactor = lerp(float3(0.04, 0.04, 0.04), diffuseAlbedo.rgb, metallic);
     mat.metallic = metallic;
     return mat;
