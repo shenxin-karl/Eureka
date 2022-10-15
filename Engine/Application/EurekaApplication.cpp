@@ -114,6 +114,12 @@ void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {
 	view.cameraData = _pCamera->getCameraData();
 	view.pProfiler = &profiler;
 
+	float radian = DirectX::XMConvertToRadians(pGameTimer->getTotalTime() * 20.f);
+	Quaternion q(Vector3(0, 1, 0), radian);
+
+	auto visitor = pCbLighting->visit();
+	visitor->gLightDirection = normalize(q * Vector3(0.1f, 0.7f, 0.3f)).xyz;
+
 	pRenderGraph->execute(pDirectProxy, view);
 	pCmdQueue->executeCommandList(pDirectProxy);
 }
@@ -182,7 +188,7 @@ void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) 
 
 	FXAASetting setting;
 	pCbFXAASetting = pDirectCtx->createConstantBuffer(&setting, sizeof(setting));
-	//pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_04.png", false);
+	//pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_02.png", false);
 	pRenderGraph = SetupRenderGraph(this, *pDirectCtx);
 }
 

@@ -40,7 +40,9 @@
 - [x] 主应用定义好渲染 RenderGraph
 - [x] 定义好 GBuffer 的作用
 - [x] 渲染到 GBuffer
-- [ ] Compute Shader 计算方向光
+- [x] Compute Shader 计算方向光
+
+
 
 参考资料:
 
@@ -49,6 +51,26 @@
 [光照 - LearnOpenGL CN (learnopengl-cn.github.io)](https://learnopengl-cn.github.io/07 PBR/02 Lighting/)
 
 [深度还原到世界坐标](https://stackoverflow.com/questions/32227283/getting-world-position-from-depth-buffer-value)
+
+
+
+dx 中使用逆矩阵深度图还原到世界空间的方法
+
+```cc
+// uv 是屏幕空间的 uv
+float4 CalcWorldPosition(float2 uv)
+{
+    // 特别注意, zNdc 保持 0~1 即可
+	float zNdc = gDepthMap.SampleLevel(gSamLinearClamp, uv, 0).x;
+    float4 pos = float4(uv * 2.0 - 1.0, zNdc, 1.0);
+    pos.y *= -1.0;										// 这里要乘上 -1.0
+    float4 worldPos = mul(gInvViewProj, pos);
+    worldPos.xyz /= worldPos.w;
+    return worldPos;
+}
+```
+
+
 
 ## ACES / ColorGrading / Gamma矫正
 

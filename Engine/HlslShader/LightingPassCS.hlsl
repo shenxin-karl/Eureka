@@ -29,10 +29,20 @@ float2 CalcTexcoord(ComputeIn cin) {
 	return (cin.DispatchThreadID.xy) / float2(gClosedIntervalOfWidth, gClosedIntervalOfHeight);
 }
 
+/*
+	from: https://www.gamedev.net/forums/topic/703933-world-position-from-depth/5413262/
+	float3 get_world_position_from_depth( float2 uv, float depth ) {
+		float4 ndc = float4( uv * 2.0f - 1.0f, depth, 1.0f );
+		ndc.y *= -1.0f;
+		float4 wp = mul( ndc, PM_INVERSE_VIEW_PROJECTION );
+		return ( wp / wp.w ).xyz;
+	}
+ */
 float4 CalcWorldPosition(float2 uv)
 {
 	float zNdc = gDepthMap.SampleLevel(gSamLinearClamp, uv, 0).x;
-    float4 pos = float4(uv.x * 2.0 - 1.0, uv.y * 2.0 - 1.0, zNdc * 2.0 - 1.0, 1.0);
+    float4 pos = float4(uv * 2.0 - 1.0, zNdc, 1.0);
+    pos.y *= -1.0;
     float4 worldPos = mul(gInvViewProj, pos);
     worldPos.xyz /= worldPos.w;
     return worldPos;
@@ -63,8 +73,8 @@ void CS(ComputeIn cin) {
     light.strength = gLightRadiance;
     light.direction = gLightDirection;
 
-    float3 ambient = 0.1 * diffuseAlbedo;
+    float3 ambient = 0.1 * diffuseAlbedo * ao;
 	float3 radiance = ComputeDirectionLight(light, materialData, N, V);
-    //radiance += ambient;
+    radiance += ambient;
     gLightingBuffer[cin.DispatchThreadID.xy] = float4(radiance, 1.0);
 }

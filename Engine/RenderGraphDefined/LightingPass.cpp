@@ -37,6 +37,7 @@ void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::R
 	visitor->gInvViewProj = cameraData.matInvViewProj;
 	visitor->gCameraPosition = cameraData.lookFrom;
 
+
 	pDirectCtx->setComputePSO(_pLightingPSO);
 	pDirectCtx->setConstantBufferView("CbLighting", pCbLighting->getCBV());
 	pDirectCtx->setShaderResourceView("gBuffer0", pGBuffer0->get2dSRV());
