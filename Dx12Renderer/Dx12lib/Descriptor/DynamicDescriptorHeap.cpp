@@ -39,6 +39,7 @@ void DynamicDescriptorHeap::parseRootSignature(std::shared_ptr<RootSignature> pR
 
 	/// out of cache range
 	assert(currentOffset < kMaxDescriptorTables);
+	_skipSubmit = _descriptorTableBitMask.count() > 0;
 }
 
 void DynamicDescriptorHeap::commitStagedDescriptorForDraw(CommandList *pCmdList) {
@@ -137,6 +138,9 @@ size_t DynamicDescriptorHeap::computeStaleDescriptorCount() const {
 }
 
 void DynamicDescriptorHeap::commitDescriptorTables(CommandList *pCmdList, const CommitFunc &setFunc) {
+	if (!_skipSubmit)
+		return;
+
 	size_t numDescriptors = computeStaleDescriptorCount();
 	if (numDescriptors == 0)
 		return;
@@ -168,8 +172,8 @@ void DynamicDescriptorHeap::commitDescriptorTables(CommandList *pCmdList, const 
 		);
 
 		// Bind to the Command list 
-		(pD3DCommandList->*setFunc)(static_cast<UINT>(rootIndex), _currentGPUDescriptorHandle);
 		_numFreeHandles -= numDescriptors;
+		(pD3DCommandList->*setFunc)(static_cast<UINT>(rootIndex), _currentGPUDescriptorHandle);
 		_currentCPUDescriptorHandle.Offset(static_cast<INT>(numDescriptors), static_cast<UINT>(_descriptorHandleIncrementSize));
 		_currentGPUDescriptorHandle.Offset(static_cast<INT>(numDescriptors), static_cast<UINT>(_descriptorHandleIncrementSize));
 	}

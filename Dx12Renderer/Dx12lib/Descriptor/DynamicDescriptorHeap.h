@@ -45,6 +45,7 @@ private:
 	DescriptorTableCache              _descriptorTableCache[kMaxDescriptorTables];
 	std::weak_ptr<Device>             _pDevice;
 	ID3D12Device					 *_pD3DDevice;
+	bool							  _skipSubmit = false;
 	std::bitset<kMaxDescriptorTables> _descriptorTableBitMask;
 	std::bitset<kMaxDescriptorTables> _staleDescriptorTableBitMask;
 	DescriptorHandleCache             _descriptorHandleCache;
