@@ -559,6 +559,10 @@ auto Texture::getScissorRect() const -> D3D12_RECT {
 	return rect;
 }
 
+auto Texture::hasAlpha() const -> bool {
+	return dx12lib::hasAlpha(_resourceDesc.Format);
+}
+
 Texture::~Texture() {
 	if (auto pSharedDevice = getDevice().lock()) {
 		if (auto *pGlobalResource = pSharedDevice->getGlobalResourceState())

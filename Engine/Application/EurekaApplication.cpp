@@ -136,9 +136,6 @@ void EurekaApplication::onResize(dx12lib::DirectContextProxy pDirectCtx, int wid
 }
 
 void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
-	auto pSponzaPBR = std::make_shared<ALTree>("Assets/Models/SponzaPBR/Sponza.gltf");
-	auto pModel = std::make_unique<MeshModel>(*pDirectCtx, pSponzaPBR);
-
 	MaterialDesc materialDesc {
 		"DeferredPBR",
 		nullptr,
@@ -150,6 +147,8 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 		return std::make_shared<Material>(materialDesc);
 	};
 
+	auto pSponzaPBR = std::make_shared<ALTree>("Assets/Models/SponzaPBR/Sponza.gltf");
+	auto pModel = std::make_unique<MeshModel>(*pDirectCtx, pSponzaPBR);
 	pModel->createMaterial(*pDirectCtx, materialCreator);
 	pModel->setModelTransform(static_cast<float4x4>(Matrix4::makeScale(2.f)));
 	_models.push_back(std::move(pModel));
@@ -172,7 +171,6 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	auto pCylinderMaterial = pCylinderModel->getMaterial();
 	auto visitor = pCylinderMaterial->pCbMaterial->visit();
 	visitor->diffuseAlbedo = float4(DirectX::Colors::DarkRed);
-
 	_models.push_back(std::move(pCylinderModel));
 
 
@@ -181,6 +179,15 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	pSphereModel->createMaterial(*pDirectCtx, materialCreator);
 	pSphereModel->setModelTransform(static_cast<float4x4>(Matrix4::makeTranslation(-5, 1, 0)));
 	_models.push_back(std::move(pSphereModel));
+
+	auto pSkullTree = std::make_shared<ALTree>("Assets/Models/Human skull.glb");
+	auto pSkullModel = std::make_unique<MeshModel>(*pDirectCtx, pSkullTree);
+	auto scale = Matrix4::makeScale(50.f);
+	auto rotate = Matrix4::makeYRotationByDegree(-90.f);
+
+	pSkullModel->setModelTransform(static_cast<float4x4>(scale * rotate));
+	pSkullModel->createMaterial(*pDirectCtx, materialCreator);
+	_models.push_back(std::move(pSkullModel));
 }
 
 void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {

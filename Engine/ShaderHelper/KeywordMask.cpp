@@ -73,6 +73,13 @@ auto KeywordMask::getKeywordByIndex(size_t index) const -> const std::string * {
 	return nullptr;
 }
 
+auto KeywordMask::hasKeyword(const std::string &keyword) const -> bool {
+	auto index = findKeywordIndex(keyword);
+	if (index == -1)
+		return false;
+	return _keywordMask.test(index);
+}
+
 bool operator==(const KeywordMask &lhs, const KeywordMask &rhs) {
 	return lhs.getBitMask() == rhs.getBitMask()		     &&
 		   lhs._pFeatureKeywords == rhs._pFeatureKeywords;

@@ -1,10 +1,11 @@
 #include "Common.hlsli"
 
+#pragma shader_feature _ _ENABLE_ALPHA_CUTOFF
 #pragma shader_feature _ _ENABLE_DIFFUSE_MAP
 #pragma shader_feature _ _ENABLE_NORMAL_MAP
-#pragma shader_feature _ _ENABLE_ROUGHNESS_MAP
-#pragma shader_feature _ _ENABLE_METALLIC_MAP _ENABLE_METALLIC_ROUGHNESS_MAP_G
-#pragma shader_feature _ _ENABLE_AO_MAP
+#pragma shader_feature _ _ENABLE_ROUGHNESS_MAP _ENABLE_SPECULAR_MAP
+#pragma shader_feature _ _ENABLE_METALLIC_MAP _ENABLE_METALLIC_ROUGHNESS_MAP_G _ENABLE_LIGHT_MAP_G
+#pragma shader_feature _ _ENABLE_AO_MAP _ENABLE_LIGHT_MAP
 
 struct VertexIn {
 	float3 position : POSITION;
@@ -50,19 +51,37 @@ cbuffer cbMaterial : register(b0) {
 	float  gRoughness;
 	float  gMetallic;
 	float  gAo;
-	float  padding1;
+	float  gAlphaCutoff;
 };
 
 Texture2D gDiffuseMap 	: register(t0);
 Texture2D gNormalMap	: register(t1);
-Texture2D gRoughnessMap : register(t2);
+
+#if defined(_ENABLE_ROUGHNESS_MAP)
+	Texture2D gRoughnessMap : register(t2);
+#elif defined(_ENABLE_SPECULAR_MAP)
+	Texture2D gSpecularMap  : register(t2);
+#endif
+
 Texture2D gMetallicMap	: register(t3);
-Texture2D gAoMap 		: register(t4);
+
+#if defined(_ENABLE_LIGHT_MAP)
+	Texture2D gLightMap		: register(t4);
+#else
+	Texture2D gAoMap 		: register(t4);
+#endif
 
 float4 getAlbedo(VertexOut pin) {
 	float3 albedo = gDiffuseAlbedo.rgb;
+	float4 albedoBuffer = (float4)1.0;
 	#if defined(_ENABLE_DIFFUSE_MAP)
-		albedo *= gDiffuseMap.Sample(gSamLinearWrap, pin.texcoord);
+		albedoBuffer = gDiffuseMap.Sample(gSamLinearWrap, pin.texcoord);
+		albedo *= albedoBuffer.xyz;
+	#endif
+
+	#if defined(_ENABLE_ALPHA_CUTOFF)
+		float alpha = albedoBuffer.a * gDiffuseAlbedo.a;
+		clip(alpha - gAlphaCutoff);
 	#endif
 	return float4(albedo, 1.0);
 }
@@ -83,22 +102,29 @@ float4 getNormal(VertexOut pin) {
 
 float4 getAoRoughnessMetallic(VertexOut pin) {
 	float ao = gAo;
+	float metallic = gMetallic;
+	float roughness = gRoughness;
+
 	#if defined(_ENABLE_AO_MAP)
-		ao *= gAoMap.sampleNormal(gSamLinearWrap, pin.texcoord).r;
+		ao *= gAoMap.Sample(gSamLinearWrap, pin.texcoord).r;
+	#elif defined(_ENABLE_LIGHT_MAP)
+		ao *= gLightMap.Sample(gSamLinearWrap, pin.texcoord).r;
 	#endif
 
-	float roughness = gRoughness;
 	float2 roughnessMapColor = 1.0;
 	#if defined(_ENABLE_ROUGHNESS_MAP)
 		roughnessMapColor = gRoughnessMap.Sample(gSamLinearWrap, pin.texcoord).rg;
 		roughness *= roughnessMapColor.r * 2.f;
+	#elif defined(_ENABLE_SPECULAR_MAP)
+		roughness *= 1.0 - gSpecularMap.Sample(gSamLinearWrap, pin.texcoord).r;
 	#endif
 
-	float metallic = gMetallic;
 	#if defined(_ENABLE_METALLIC_MAP)
 		metallic *= gMetallicMap.Sample(gSamLinearWrap, pin.texcoord).r;
 	#elif defined(_ENABLE_METALLIC_ROUGHNESS_MAP_G)
 		metallic *= roughnessMapColor.g * 2.f;
+	#elif defined(_ENABLE_LIGHT_MAP_G)
+		metallic *= gLightMap.Sample(gSamLinearWrap, pin.texcoord).g;
 	#endif
 
 	return float4(ao, roughness, metallic, 1.0);

@@ -26,6 +26,7 @@ public:
 	auto getEnableKeywords() const->std::vector<std::string>;
 	auto getBitMask() const -> const std::bitset<kMaxKeyword> &;
 	auto getKeywordByIndex(size_t index) const -> const std::string *;
+	auto hasKeyword(const std::string &keyword) const -> bool;
 	friend bool operator==(const KeywordMask &lhs, const KeywordMask &rhs);
 	friend bool operator!=(const KeywordMask &lhs, const KeywordMask &rhs);
 private:

@@ -22,19 +22,25 @@ static std::shared_ptr<dx12lib::Texture> loadTexture(
 	const ALTexture &alTexture,
 	bool sRGB)
 {
+
 	std::shared_ptr<dx12lib::Texture> pTex;
+	if (!alTexture.path.empty()) {
+		if ((pTex = TextureManager::instance()->getTexture(alTexture.path)) != nullptr)
+			return pTex;
+	}
+
 	if (alTexture.pTextureData != nullptr) {
 		pTex = graphicsCtx.createTextureFromMemory(alTexture.textureExtName,
 			alTexture.pTextureData.get(),
 			alTexture.textureDataSize
 		);
 	} else {
-		if ((pTex = TextureManager::instance()->getTexture(alTexture.path)) != nullptr)
-			return pTex;
-
 		pTex = graphicsCtx.createTextureFromFile(dx12lib::to_wstring(alTexture.path), sRGB, -1);
-		TextureManager::instance()->setTexture(alTexture.path, pTex);
 	}
+
+	if (!alTexture.path.empty())
+		TextureManager::instance()->setTexture(alTexture.path, pTex);
+
 	assert(pTex);
 	return pTex;
 }
@@ -43,7 +49,9 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 	auto *pALMaterial = desc.pAlMaterial;
 	auto &graphicsCtx = desc.graphicsCtx;
 
-	pCbMaterial = graphicsCtx.createFRConstantBuffer<CbMaterial>(CbMaterial{});
+	CbMaterial data;
+	data.alphaCutoff = pALMaterial->getAlphaCutoff();
+	pCbMaterial = graphicsCtx.createFRConstantBuffer<CbMaterial>(data);
 
 	auto pDeferredPBRShader = ShaderManager::instance()->getGraphicsShader("DeferredPBR");
 	auto pGBufferTechnique = std::make_shared<rgph::Technique>("GBuffer", kTechGBuffer);
@@ -56,6 +64,10 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 		if (pALMaterial->getDiffuseMap().valid()) {
 			keywordMask.setKeyWord("_ENABLE_DIFFUSE_MAP", true);
 			auto pDiffuseMap = loadTexture(graphicsCtx, pALMaterial->getDiffuseMap(), true);
+
+			if (pALMaterial->getEnableAlphaTest() && pDiffuseMap->hasAlpha())
+				keywordMask.setKeyWord("_ENABLE_ALPHA_CUTOFF", true);
+
 			bindables.push_back(rgph::SamplerTextureBindable::make(
 				"gDiffuseMap",
 				pDiffuseMap->get2dSRV(),
@@ -83,6 +95,14 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 				pRoughnessMap->get2dSRV(),
 				pRoughnessMap
 			));
+		} else if (pALMaterial->getSpecularMap().valid()) {
+			keywordMask.setKeyWord("_ENABLE_SPECULAR_MAP", true);
+			auto pSpecularMap = loadTexture(graphicsCtx, pALMaterial->getSpecularMap(), false);
+			bindables.push_back(rgph::SamplerTextureBindable::make(
+				"gSpecularMap",
+				pSpecularMap->get2dSRV(),
+				pSpecularMap
+			));
 		}
 
 		if (pALMaterial->getMetallicMap().valid()) {
@@ -97,7 +117,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 					pMetallicMap
 				));
 			}
-		}
+		} 
 
 		if (pALMaterial->getAmbientOcclusionMap().valid()) {
 			keywordMask.setKeyWord("_ENABLE_AO_MAP", true);
@@ -107,7 +127,18 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 				pAmbientOcclusionMap->get2dSRV(),
 				pAmbientOcclusionMap
 			));
+		} else if (pALMaterial->getLightMap().valid()) {
+			keywordMask.setKeyWord("_ENABLE_LIGHT_MAP", true);
+			auto pLightMap = loadTexture(graphicsCtx, pALMaterial->getLightMap(), false);
+			bindables.push_back(rgph::SamplerTextureBindable::make(
+				"gLightMap",
+				pLightMap->get2dSRV(),
+				pLightMap
+			));
+			if (!keywordMask.hasKeyword("_ENABLE_METALLIC_MAP") && !keywordMask.hasKeyword("_ENABLE_METALLIC_ROUGHNESS_MAP_G"))
+				keywordMask.setKeyWord("_ENABLE_LIGHT_MAP_G", true);
 		}
+		
 
 		auto pso = pDeferredPBRShader->getPSO(keywordMask);
 		_shaderLayoutMask |= ShaderHelper::calcShaderLayoutMask(pso->getInputLayout());

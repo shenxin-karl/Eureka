@@ -2,6 +2,8 @@
 #include "ALNode.h"
 #include <filesystem>
 
+#include "assimp/GltfMaterial.h"
+
 namespace Eureka {
 
 bool ALTexture::valid() const {
@@ -9,11 +11,21 @@ bool ALTexture::valid() const {
 }
 
 void ALMaterial::init(const std::string &directory, const aiScene *pAiScene, const aiMaterial *pAiMaterial) {
-	processTexture(_albedoMap, directory, pAiScene, pAiMaterial, aiTextureType_BASE_COLOR);
+	if (!processTexture(_albedoMap, directory, pAiScene, pAiMaterial, aiTextureType_BASE_COLOR))
+		processTexture(_albedoMap, directory, pAiScene, pAiMaterial, aiTextureType_DIFFUSE);
+
 	processTexture(_normalMap, directory, pAiScene, pAiMaterial, aiTextureType_NORMALS);
 	processTexture(_roughnessMap, directory, pAiScene, pAiMaterial, aiTextureType_DIFFUSE_ROUGHNESS);
+	processTexture(_specularMap, directory, pAiScene, pAiMaterial, aiTextureType_SPECULAR);
+
 	processTexture(_metallicMap, directory, pAiScene, pAiMaterial, aiTextureType_METALNESS);
+
 	processTexture(_ambientOcclusionMap, directory, pAiScene, pAiMaterial, aiTextureType_AMBIENT_OCCLUSION);
+	processTexture(_lightMap, directory, pAiScene, pAiMaterial, aiTextureType_LIGHTMAP);
+
+	float maskThreshold = 0.0;
+	if (pAiMaterial->Get(AI_MATKEY_GLTF_ALPHACUTOFF, maskThreshold) == aiReturn_SUCCESS)
+		_alphaCutoff = maskThreshold;
 }
 
 const ALTexture & ALMaterial::getDiffuseMap() const {
@@ -36,16 +48,34 @@ const ALTexture & ALMaterial::getAmbientOcclusionMap() const {
 	return _ambientOcclusionMap;
 }
 
+const ALTexture & ALMaterial::getSpecularMap() const {
+	return _specularMap;	
+}
+
+const ALTexture & ALMaterial::getLightMap() const {
+	return _lightMap;
+}
+
+auto ALMaterial::getEnableAlphaTest() const -> bool {
+	return _alphaCutoff > 0.001f;
+}
+
+auto ALMaterial::getAlphaCutoff() const -> float {
+	return _alphaCutoff;
+}
+
 ALMaterial ALMaterial::sDefaultMaterial {};
 
-void ALMaterial::processTexture(ALTexture &texture,
+bool ALMaterial::processTexture(ALTexture &texture,
 	const std::string &direction,
 	const aiScene *pAiScene, 
 	const aiMaterial *pAiMaterial, 
 	aiTextureType type) 
 {
 	aiString path;
-	pAiMaterial->GetTexture(type, 0, &path);
+	if (pAiMaterial->GetTexture(type, 0, &path) != aiReturn_SUCCESS)
+		return false;
+
 	const aiTexture *pAiTexture = pAiScene->GetEmbeddedTexture(path.C_Str());
 	if (pAiTexture != nullptr) {
 		texture.path = direction + path.C_Str();
@@ -58,6 +88,7 @@ void ALMaterial::processTexture(ALTexture &texture,
 	} else {
 		texture.path = path.length > 0 ? direction + path.C_Str() : "";
 	}
+	return texture.valid();
 }
 
 ALTree::ALTree(const std::string &path, int flag) {

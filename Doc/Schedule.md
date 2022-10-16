@@ -89,6 +89,8 @@ https://zhuanlan.zhihu.com/p/21983679
 
 ## Tile Based Deferred Rendering
 
+[当前和未来渲染管线的延迟渲染 (intel.com)](https://www.intel.com/content/www/us/en/developer/articles/technical/deferred-rendering-for-current-and-future-rendering-pipelines.html)
+
 https://zhuanlan.zhihu.com/p/62030747
 
 https://zhuanlan.zhihu.com/p/85447953
@@ -100,8 +102,12 @@ https://zhuanlan.zhihu.com/p/71932575
 https://zhuanlan.zhihu.com/p/339109155
 
 - [ ] 生成大量的点光源
-- [ ] 屏幕光源空间划分
+
+- [ ] 屏幕光源空间划分（只发现了点光源剔除算法， 聚光灯待考察）
+
 - [ ] compute 计算点光源
+
+    
 
 ## TAA 
 

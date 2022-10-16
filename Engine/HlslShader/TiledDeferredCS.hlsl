@@ -12,8 +12,8 @@ cbuffer gCbTiled {
 	float4x4 gProj;
 	float    gNear;
 	float	 gFar;
-	float    gFarMultiplyNear;
-	float	 gFarMinusNear;
+	float    gFarMultiplyNear;		// far * near
+	float	 gFarMinusNear;			// far - near
 };
 
 float ViewDepth(float depth) {

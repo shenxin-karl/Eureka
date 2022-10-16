@@ -18,7 +18,7 @@ struct CbMaterial {
 	float roughness				= 0.5f;
 	float metallic				= 0.5f;
 	float ambientOcclusion		= 1.f;
-	float padding0				= 0.f;
+	float alphaCutoff			= 0.f;
 };
 
 class Material final : public rgph::Material {

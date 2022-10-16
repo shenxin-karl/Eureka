@@ -27,9 +27,13 @@ public:
 	const ALTexture &getRoughnessMap() const;
 	const ALTexture &getMetallicMap() const;
 	const ALTexture &getAmbientOcclusionMap() const;
+	const ALTexture &getSpecularMap() const;
+	const ALTexture &getLightMap() const;
 	static ALMaterial sDefaultMaterial;
+	auto getEnableAlphaTest() const -> bool;
+	auto getAlphaCutoff() const -> float;
 private:
-	static void processTexture(ALTexture &texture, 
+	static bool processTexture(ALTexture &texture, 
 		const std::string &direction,
 		const aiScene *pAiScene, 
 		const aiMaterial *pAiMaterial, 
@@ -39,8 +43,11 @@ private:
 	ALTexture _albedoMap;
 	ALTexture _normalMap;
 	ALTexture _roughnessMap;
+	ALTexture _specularMap;
 	ALTexture _metallicMap;
+	ALTexture _lightMap;				// .r ao, .g metallic
 	ALTexture _ambientOcclusionMap;
+	float     _alphaCutoff = 0.f;
 };
 
 class ALTree {
