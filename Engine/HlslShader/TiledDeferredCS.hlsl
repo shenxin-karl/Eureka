@@ -7,7 +7,7 @@ RWStructuredBuffer<LightList> gTileLightLists : register(u0);
 groupshared uint sMinZ;
 groupshared uint sMaxZ;
 
-cbuffer gCbTiled {
+cbuffer gCbTile : register(b0) {
 	float4x4 gView;
 	float4x4 gProj;
 	float    gNear;
@@ -31,8 +31,10 @@ struct ComputeIn {
 [numthreads(TBDR_TILE_DIMENSION, TBDR_TILE_DIMENSION, 1)]
 void CS(ComputeIn cin) {
 	// 每个 group 负责一块 tile 的计算
-	// step 1 initialize tile
-	uint tileIndex = cin.GroupID.y * TBDR_TILE_DIMENSION + cin.GroupID.y;
+	uint2 texDim;
+	gDepthMap.GetDimensions(texDim.x, texDim.y);
+	uint tileIndex = CalcTileIndex(texDim.x, cin.GroupID);
+
 	if (cin.GroupIndex == 0) {
 		gTileLightLists[tileIndex].numPointLights = 0;
 		gTileLightLists[tileIndex].numSpotLights = 0;

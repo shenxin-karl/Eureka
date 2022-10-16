@@ -35,6 +35,13 @@
 
 - [ ] 新增 PartModel 用来渲染基础的几何体物体
 
+从 ndc depth 转换到 线性深度
+
+[www.humus.name/temp/Linearize depth.txt](http://www.humus.name/temp/Linearize depth.txt)
+$$
+\rm {(n * f) / (f - z * (f - n))}
+$$
+
 ## PBR
 
 - [x] 主应用定义好渲染 RenderGraph
@@ -80,6 +87,8 @@ https://zhuanlan.zhihu.com/p/21983679
 
 [HDR Tone Mapping - xiaOp的博客 (xiaoiver.github.io)](https://xiaoiver.github.io/coding/2019/02/05/HDR-Tone-Mapping.html)
 
+[ColorGrading](https://github.com/lettier/3d-game-shaders-for-beginners/blob/master/sections/lookup-table.md)
+
 - [x] Compute 后处理
 - [ ] 使用 mipmap 生成，计算出整个屏幕的亮度， 更准确的 aces 调整
 
@@ -101,13 +110,17 @@ https://zhuanlan.zhihu.com/p/71932575
 
 https://zhuanlan.zhihu.com/p/339109155
 
+ [Advancements-In-Tiled-Rendering.pdf](Advancements-In-Tiled-Rendering.pdf) 
+
+点光源和聚光灯都使用包围球, 快速求交
+
 - [ ] 生成大量的点光源
 
-- [ ] 屏幕光源空间划分（只发现了点光源剔除算法， 聚光灯待考察）
+- [ ] 屏幕光源空间划分
 
 - [ ] compute 计算点光源
 
-    
+   
 
 ## TAA 
 

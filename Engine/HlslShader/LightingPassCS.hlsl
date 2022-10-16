@@ -1,5 +1,6 @@
 #include "Common.hlsli"
 #include "CookTorrance.hlsli"
+#include "Lighting.hlsli"
 
 cbuffer CbLighting : register(b0) {
 	float3   gLightDirection;
@@ -14,7 +15,10 @@ cbuffer CbLighting : register(b0) {
 Texture2D<float3> gBuffer0  : register(t0);
 Texture2D<float3> gBuffer1  : register(t1);
 Texture2D<float3> gBuffer2  : register(t2);
-Texture2D         gDepthMap : register(t3);
+Texture2D<float>  gDepthMap : register(t3);
+
+StructuredBuffer<PointLight> gPointLights     : register(t4);      
+StructuredBuffer<LightList>  gTileLightLists  : register(t6);       
 
 RWTexture2D<float4> gLightingBuffer : register(u0);
 
@@ -55,7 +59,7 @@ void SampleAoRoughnessMetallic(float2 uv, inout float ao, inout float roughness,
     metallic = sampleColor.b;
 }
 
-[numthreads(16, 16, 1)]
+[numthreads(TBDR_TILE_DIMENSION, TBDR_TILE_DIMENSION, 1)]
 void CS(ComputeIn cin) {
     float2 uv = CalcTexcoord(cin);
     float3 worldPosition = CalcWorldPosition(uv);
@@ -73,8 +77,25 @@ void CS(ComputeIn cin) {
     light.strength = gLightRadiance;
     light.direction = gLightDirection;
 
-    float3 ambient = 0.1 * diffuseAlbedo * ao;
-	float3 radiance = ComputeDirectionLight(light, materialData, N, V);
+    // directional light 
+	float3 radiance = 0;// ComputeDirectionLight(light, materialData, N, V);
+
+    // ambient light
+    float3 ambient = 0.01 * diffuseAlbedo * ao;
     radiance += ambient;
+
+    // point light
+	uint2 texDim;
+	gDepthMap.GetDimensions(texDim.x, texDim.y);
+	uint tileIndex = CalcTileIndex(texDim.x, cin.GroupID);
+    uint numPointLights = min(gTileLightLists[tileIndex].numPointLights, MAX_TILE_POINT_LIGHT_NUM);
+    for (uint i = 0; i < numPointLights; ++i) {
+	    uint lightIndex = gTileLightLists[tileIndex].pointLightIndices[i];
+        PointLight pointLight = gPointLights[lightIndex];
+		radiance += ComputePointLight(pointLight, materialData, N, V, worldPosition);
+    }
+
     gLightingBuffer[cin.DispatchThreadID.xy] = float4(radiance, 1.0);
+
+
 }

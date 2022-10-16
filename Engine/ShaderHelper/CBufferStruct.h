@@ -61,5 +61,41 @@ struct alignas(16) CbLighting {
     float           padding0;
 };
 
+struct DirectionalLight {
+	Math::float3	ambientColor;
+	float			ambientIntensity;
+	Math::float3	directionalColor;
+	float			directionalIntensity;
+	Math::float3	direction;
+	float			padding0;
+};
+
+struct PointLight {
+	Math::float3	color;
+	float			intensity;
+	Math::float3	position;
+	float			range;
+	Math::float4	viewSpacePosition;
+};
+
+struct SpotLight {
+	Math::float3	color;
+	float			intensity;
+	Math::float3	position;
+	float			range;
+};
+
+#define MAX_TILE_POINT_LIGHT_NUM	80
+#define MAX_TILE_SPOT_LIGHT_NUM		80
+#define TBDR_TILE_DIMENSION			16
+#define TBDR_TILE_SIZE				(TBDR_TILE_DIMENSION * TBDR_TILE_DIMENSION)
+
+struct LightList {
+	uint32_t numPointLights;
+	uint32_t pointLightIndices[MAX_TILE_POINT_LIGHT_NUM];
+	uint32_t numSpotLights;
+	uint32_t spotLightIndices[MAX_TILE_POINT_LIGHT_NUM];
+};
+
 }
 

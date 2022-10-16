@@ -33,6 +33,10 @@ void ShaderManager::loading(std::weak_ptr<dx12lib::Device> pDevice) {
 	auto pPostProcessingShader = std::make_shared<ComputeShader>(pDevice, "Engine/HlslShader/PostProcessing.hlsl");
 	pPostProcessingShader->setComputeShader("CS");
 	_computeShaders["PostProcessing"] = pPostProcessingShader;
+
+	auto pTileDeferred = std::make_shared<ComputeShader>(pDevice, "Engine/HlslShader/TiledDeferredCS.hlsl");
+	pTileDeferred->setComputeShader("CS");
+	_computeShaders["TileDeferred"] = pTileDeferred;
 }
 
 auto ShaderManager::getComputeShader(const std::string &key) const -> std::shared_ptr<ComputeShader> {

@@ -18,6 +18,8 @@ public:
 	rgph::PassResourcePtr<dx12lib::Texture> pDepthMap;
 	FRConstantBufferPtr<CbLighting>			pCbLighting;
 	rgph::PassResourcePtr<dx12lib::Texture> pLightingBuffer;
+	rgph::PassResourcePtr<dx12lib::ISRStructuredBuffer> pPointLightLists;
+	rgph::PassResourcePtr<dx12lib::IUAStructuredBuffer> pTileLightLists;
 };
 
 }

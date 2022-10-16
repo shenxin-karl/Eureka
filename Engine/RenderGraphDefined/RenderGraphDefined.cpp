@@ -7,6 +7,7 @@
 #include "FXAAPass.h"
 #include "LightingPass.h"
 #include "PostProcessingPass.h"
+#include "TileDererredPass.h"
 #include "Application/EurekaApplication.h"
 
 namespace Eureka {
@@ -53,6 +54,19 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pRenderGraph->addPass(pGBufferPass);
 	}
 
+	auto pTileDeferred = std::make_shared<TileDeferredPass>(kTileDeferredPassName, directCtx);
+	{
+		pTileDeferred->pDepthMap.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_READ;
+		pGBufferPass->pDepthStencil >> pTileDeferred->pDepthMap;
+
+		pTileDeferred->pPointLightLists.preExecuteState = D3D12_RESOURCE_STATE_GENERIC_READ;
+		pApp->pPointLightList >> pTileDeferred->pPointLightLists;
+
+		pTileDeferred->pTileLightLists.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		pApp->pTileLightLists >> pTileDeferred->pTileLightLists;
+		pRenderGraph->addPass(pTileDeferred);
+	}
+
 	auto pLightingPass = std::make_shared<LightingPass>(kLightingPassName, pApp->getDevice());
 	{
 		pLightingPass->pGBuffer0.preExecuteState = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
@@ -66,13 +80,17 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 
 		pLightingPass->pDepthMap.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_READ;
 		pGBufferPass->pDepthStencil >> pLightingPass->pDepthMap;
-		auto getLightingBuffer = [=]() {
-			return pApp->pLightingBuffer;
-		};
+	
 		pLightingPass->pLightingBuffer.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
-		getLightingBuffer >> pLightingPass->pLightingBuffer;
+		pApp->pLightingBuffer >> pLightingPass->pLightingBuffer;
 
 		pLightingPass->pCbLighting = pApp->pCbLighting;
+
+		pLightingPass->pPointLightLists.preExecuteState = D3D12_RESOURCE_STATE_GENERIC_READ;
+		pApp->pPointLightList >> pLightingPass->pPointLightLists;
+
+		pLightingPass->pTileLightLists.preExecuteState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		pTileDeferred->pTileLightLists >> pLightingPass->pTileLightLists;
 
 		pRenderGraph->addPass(pLightingPass);
 	}

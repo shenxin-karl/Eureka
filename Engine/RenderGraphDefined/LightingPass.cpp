@@ -16,6 +16,8 @@ LightingPass::LightingPass(const std::string &passName, std::shared_ptr<dx12lib:
 	, pGBuffer2(this, "GBuffer2")
 	, pDepthMap(this, "DepthMap")
 	, pLightingBuffer(this, "LightingBuffer")
+	, pPointLightLists(this, "PointLightLists")
+	, pTileLightLists(this, "TileLightLists")
 {
 	//_pLightingPSO = pDevice->createComputePSO("LightingPSO");
 	//_pLightingPSO->setComputeShader(g_LightingPassCS, sizeof(g_LightingPassCS	));
@@ -37,7 +39,6 @@ void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::R
 	visitor->gInvViewProj = cameraData.matInvViewProj;
 	visitor->gCameraPosition = cameraData.lookFrom;
 
-
 	pDirectCtx->setComputePSO(_pLightingPSO);
 	pDirectCtx->setConstantBufferView("CbLighting", pCbLighting->getCBV());
 	pDirectCtx->setShaderResourceView("gBuffer0", pGBuffer0->get2dSRV());
@@ -45,6 +46,8 @@ void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::R
 	pDirectCtx->setShaderResourceView("gBuffer2", pGBuffer2->get2dSRV());
 	pDirectCtx->setShaderResourceView("gDepthMap", pDepthMap->get2dSRV());
 	pDirectCtx->setUnorderedAccessView("gLightingBuffer", pLightingBuffer->get2dUAV());
+	pDirectCtx->setShaderResourceView("gPointLights", pPointLightLists->getSRV());
+	pDirectCtx->setShaderResourceView("gTileLightLists", pTileLightLists->getSRV());
 	auto dispatchArgs = _pLightingPSO->calcDispatchArgs(desc.Width, desc.Height);
 	pDirectCtx->dispatch(dispatchArgs);
 }

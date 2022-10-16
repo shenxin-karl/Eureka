@@ -1,3 +1,4 @@
+#include "Lighting.hlsli"
 
 #ifndef USE_CARTOON_SHADING
     #define DIFF_SHADING_FACTOR(NdotL) (NdotL)
@@ -115,17 +116,18 @@ float3 ComputeDirectionLight(LightData light, MaterialData mat, float3 N, float3
     return CookTorrance(lightStrength, L, N, V, mat);
 }
 
+
 // ----------------------------------------------------------------------------
-float3 ComputePointLight(LightData light, MaterialData mat, float3 N, float3 V, float3 worldPosition) {
-    float3 lightVec = light.position - worldPosition;
+float3 ComputePointLight(PointLight pointLight, MaterialData mat, float3 N, float V, float3 worldPosition) {
+    float3 lightVec = pointLight.position - worldPosition;
     float dis = length(lightVec);
-    if (dis > light.falloffEnd)
+    if (dis > pointLight.range)
         return 0.f;
 
     float3 L = lightVec / dis;
     float NdotL = DIFF_SHADING_FACTOR(saturate(dot(N, L)));
-    float attenuation = CalcAttenuation(dis, light.falloffStart, light.falloffEnd);
-    float3 lightStrength = light.strength * NdotL * attenuation;
+    float attenuation = rcp(dis * dis);
+    float3 lightStrength = pointLight.color * NdotL * attenuation * pointLight.intensity;
     return CookTorrance(lightStrength, L, N, V, mat);
 }
 

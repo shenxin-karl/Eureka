@@ -33,13 +33,11 @@ float2 CalcTexcoord(ComputeIn cin) {
 	return (cin.DispatchThreadID.xy) / (texDimes - 1.0);
 }
 
-
-
-// ÿ�� lut ���� 256x16 �ڲ��� 16 �� 16x16 �Ŀ�.
-// ���󵽵Ŀ�, �� b ͨ������. ���� u ������ r ͨ������
-// ���� v ������ g ͨ������.
-// floor(c * 15.0) / 15.0 ����ȡ���� 0~15 ֮��
-// 240�����һ�����ʼλ��, ������ 256 ��һ���� 0~1
+// 每个 lut 都是 256x16 内部有 16 个 16x16 的块.
+// 从左到的块, 由 b 通道决定. 块内 u 坐标由 r 通道决定
+// 块内 v 坐标由 g 通道决定.
+// floor(c * 15.0) / 15.0 向下取整到 0~15 之间
+// 240是最后一块的起始位置, 最后除以 256 归一化到 0~1
 #define S_NORMALIZE_FACTOR (1.0 / 255.0)
 #define T_NORMALIZE_FACTOR (1.0 / 15.0)
 float FloorPixel(float c) {

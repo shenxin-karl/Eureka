@@ -2,7 +2,6 @@
 #include "Application/Application.h"
 #include "Model/MeshModel/MeshModel.h"
 #include "ShaderHelper/CBufferStruct.h"
-#include "HlslShader/Lighting.hlsli"
 
 namespace Eureka {
 
@@ -36,11 +35,11 @@ public:
 	std::shared_ptr<dx12lib::Texture>	pColorLutMap;
 	std::shared_ptr<rgph::RenderGraph>	pRenderGraph;
 
-	FRConstantBufferPtr<CbPrePass>		pCbPrePass;
-	FRConstantBufferPtr<CbLighting>		pCbLighting;
-	FRStructuredBufferPtr<PointLight>   pPointLightList;
-	FRStructuredBufferPtr<LightList>	pTileLightLists;
-	std::shared_ptr<dx12lib::ConstantBuffer> pCbFXAASetting;
+	FRConstantBufferPtr<CbPrePass>					pCbPrePass;
+	FRConstantBufferPtr<CbLighting>					pCbLighting;
+	FRStructuredBufferPtr<PointLight>				pPointLightList;
+	std::shared_ptr<dx12lib::UAStructuredBuffer>	pTileLightLists;
+	std::shared_ptr<dx12lib::ConstantBuffer>		pCbFXAASetting;
 };
 
 }
