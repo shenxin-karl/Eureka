@@ -2,6 +2,7 @@
 #include "Application/Application.h"
 #include "Model/MeshModel/MeshModel.h"
 #include "ShaderHelper/CBufferStruct.h"
+#include "HlslShader/Lighting.hlsli"
 
 namespace Eureka {
 
@@ -19,6 +20,7 @@ public:
 	void onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) final;
 private:
 	void loading(dx12lib::DirectContextProxy pDirectCtx);
+	void initPointLists(dx12lib::DirectContextProxy pDirectCtx);
 	void initRenderGraph(dx12lib::DirectContextProxy pDirectCtx);
 	void resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height);
 private:
@@ -36,6 +38,8 @@ public:
 
 	FRConstantBufferPtr<CbPrePass>		pCbPrePass;
 	FRConstantBufferPtr<CbLighting>		pCbLighting;
+	FRStructuredBufferPtr<PointLight>   pPointLightList;
+	FRStructuredBufferPtr<LightList>	pTileLightLists;
 	std::shared_ptr<dx12lib::ConstantBuffer> pCbFXAASetting;
 };
 

@@ -27,14 +27,12 @@ struct ComputeIn {
     uint  GroupIndex        : SV_GroupIndex;        // Flattened local index of the thread within a thread group.
 };
 
-#define TILE_DIM 16
-#define TILE_SIZE (TILE_DIM * TILE_DIM)
 
-[numthreads(TILE_DIM, TILE_DIM, 1)]
+[numthreads(TBDR_TILE_DIMENSION, TBDR_TILE_DIMENSION, 1)]
 void CS(ComputeIn cin) {
 	// 每个 group 负责一块 tile 的计算
 	// step 1 initialize tile
-	uint tileIndex = cin.GroupID.y * TILE_DIM + cin.GroupID.y;
+	uint tileIndex = cin.GroupID.y * TBDR_TILE_DIMENSION + cin.GroupID.y;
 	if (cin.GroupIndex == 0) {
 		gTileLightLists[tileIndex].numPointLights = 0;
 		gTileLightLists[tileIndex].numSpotLights = 0;
@@ -61,7 +59,7 @@ void CS(ComputeIn cin) {
 
 	float2 texDimes;
 	gDepthMap.GetDimensions(texDimes.x, texDimes.y);
-	float2 tileScale = texDimes * rcp(float(2.0 * TILE_DIM));
+	float2 tileScale = texDimes * rcp(float(2.0 * TBDR_TILE_SIZE));
     float2 tileBias = tileScale - float2(cin.GroupID.xy);
 
     float4 c1 = float4(gProj._11 * tileScale.x, 0.0f, tileBias.x, 0.0f);
@@ -86,7 +84,7 @@ void CS(ComputeIn cin) {
 
 	uint pointSizes, dummy;
     gPointLists.GetDimensions(pointSizes, dummy);
-	for (uint lightIndex = cin.GroupIndex; lightIndex < pointSizes; lightIndex += TILE_SIZE) {
+	for (uint lightIndex = cin.GroupIndex; lightIndex < pointSizes; lightIndex += TBDR_TILE_SIZE) {
         PointLight light = gPointLists[lightIndex];
 		// Cull: point light sphere vs tile frustum
         bool inFrustum = true;

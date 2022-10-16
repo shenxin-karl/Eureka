@@ -9,9 +9,7 @@ UploadBuffer::UploadBuffer(std::weak_ptr<Device> pDevice,
 	size_t elementCount, 
 	size_t elementByteSize, 
 	bool isConstantBuffer, 
-	D3D12_RESOURCE_FLAGS flags
-
-)
+	D3D12_RESOURCE_FLAGS flags)
 : _isConstantBuffer(isConstantBuffer), _elementByteSize(elementByteSize), _elementCount(elementCount), _pMappedData(nullptr)
 , _pDevice(pDevice)
 {
@@ -23,7 +21,7 @@ UploadBuffer::UploadBuffer(std::weak_ptr<Device> pDevice,
 	ThrowIfFailed(pD3DDevice->CreateCommittedResource(
 		RVPtr(CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD)),
 		D3D12_HEAP_FLAG_NONE,
-		RVPtr(CD3DX12_RESOURCE_DESC::Buffer(static_cast<UINT64>(elementByteSize) * _elementByteSize, flags)),
+		RVPtr(CD3DX12_RESOURCE_DESC::Buffer(static_cast<UINT64>(_elementCount) * _elementByteSize, flags)),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&_pUploadResource)

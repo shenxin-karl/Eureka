@@ -111,6 +111,7 @@ struct FloatStore<4> : public DX::XMFLOAT4 {
 	FORCEINLINE FloatStore &operator=(const FloatStore &) noexcept = default;
 	FORCEINLINE FloatStore &operator=(FloatStore &&) noexcept = default;
 	FORCEINLINE explicit FloatStore(DX::FXMVECTOR v) noexcept;
+	FORCEINLINE explicit FloatStore(const Vector4 &v4) noexcept;
 	FORCEINLINE explicit FloatStore(const Quaternion &q);
 	FORCEINLINE FloatStore(const FloatStore<2> &f2, float z, float w) noexcept;
 	FORCEINLINE FloatStore(const FloatStore<3> &f3, float w) noexcept;
@@ -542,7 +543,6 @@ private:
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /// BoolVector
 #if 1
-	
 
 FORCEINLINE BoolVector::BoolVector(DX::FXMVECTOR vec) noexcept : _vec(vec) {
 }

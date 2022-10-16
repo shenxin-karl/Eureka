@@ -4,6 +4,12 @@ FORCEINLINE FloatStore<4>::FloatStore(DX::FXMVECTOR v) noexcept {
 	z = DX::XMVectorGetZ(v);
 	w = DX::XMVectorGetW(v);
 }
+FORCEINLINE FloatStore<4>::FloatStore(const Vector4 &v4) noexcept {
+	x = v4.x;
+	y = v4.y;
+	z = v4.z;
+	w = v4.w;
+}
 FORCEINLINE FloatStore<4>::FloatStore(const FloatStore<2> &f2, float z, float w) noexcept : FloatStore(f2.x, f2.y, z, w) {
 }
 FORCEINLINE FloatStore<4>::FloatStore(const FloatStore<3> &f3, float w) noexcept : DX::XMFLOAT4(f3.x, f3.y, f3.z, w) {

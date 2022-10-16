@@ -3,7 +3,7 @@
 #include <Dx12lib/Texture/Texture.h>
 #include "EurekaApplication.h"
 
-#include <iostream>
+#include <random>
 
 #include "InputSystem/InputSystem.h"
 #include "InputSystem/window.h"
@@ -95,6 +95,12 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	pCbPrePassVisitor->fogEnd = 0.f;
 	pCbPrePassVisitor->cbPrePassPadding1 = float2(0.f);
 
+	// update point light view space position
+	//Math::Matrix4 matView = _pCamera->getMatView();
+	//std::span<PointLight> visitor = pPointLightList->visit();
+	//for (PointLight &pointLight : visitor)
+	//	pointLight.viewSpacePosition = float4(matView * Vector4(pointLight.position, 1.0));
+	
 	if (pGameTimer->oneSecondTrigger()) {
 		std::string titleName = std::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());
 		_pInputSystem->pWindow->setShowTitle(titleName);
@@ -153,7 +159,6 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	pModel->setModelTransform(static_cast<float4x4>(Matrix4::makeScale(2.f)));
 	_models.push_back(std::move(pModel));
 
-
 	auto pCubeMesh = GeometryGenerator::instance()->createBox(0.5, 0.5, 0.5f, 1);
 	auto pCubeModel = std::make_unique<PartModel>(*pDirectCtx, pCubeMesh);
 	pCubeModel->createMaterial(*pDirectCtx, materialCreator);
@@ -188,6 +193,30 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	pSkullModel->setModelTransform(static_cast<float4x4>(scale * rotate));
 	pSkullModel->createMaterial(*pDirectCtx, materialCreator);
 	_models.push_back(std::move(pSkullModel));
+}
+
+void EurekaApplication::initPointLists(dx12lib::DirectContextProxy pDirectCtx) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis;
+
+	constexpr float kRadius = 100.f;
+	constexpr size_t kNumPointLights = 300;
+	constexpr float kMinRange = 10.f;
+	constexpr float kMaxRange = 20.f;
+
+	std::vector<PointLight> pointLights;
+	pointLights.reserve(kNumPointLights);
+	for (size_t i = 0; i < kNumPointLights; ++i) {
+		PointLight pointLight;
+		pointLight.color = float3(dis(gen), dis(gen), dis(gen));
+		pointLight.intensity = 3.f;
+		pointLight.position = (Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f * kRadius).xyz;
+		pointLight.range = MathHelper::lerp(kMinRange, kMaxRange, dis(gen));
+		pointLights.push_back(pointLight);
+	}
+
+	//pPointLightList = pDirectCtx->createFRStructuredBuffer<PointLight>(pointLights.data(), pointLights.size());
 }
 
 void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {
@@ -237,6 +266,10 @@ void EurekaApplication::resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, si
 		height,
 		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
 	));
+
+	//size_t numTile = MathHelper::divideByMultiple(width, TBDR_TILE_DIMENSION) * 
+	//	MathHelper::divideByMultiple(height, TBDR_TILE_DIMENSION);
+	//pTileLightLists = pDirectCtx->createFRStructuredBuffer<LightList>(numTile);
 }
 
 }

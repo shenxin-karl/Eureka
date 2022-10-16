@@ -1,6 +1,7 @@
 #include "ALTree.h"
 #include "ALNode.h"
 #include <filesystem>
+#include <iostream>
 
 #include "assimp/GltfMaterial.h"
 
@@ -23,9 +24,14 @@ void ALMaterial::init(const std::string &directory, const aiScene *pAiScene, con
 	processTexture(_ambientOcclusionMap, directory, pAiScene, pAiMaterial, aiTextureType_AMBIENT_OCCLUSION);
 	processTexture(_lightMap, directory, pAiScene, pAiMaterial, aiTextureType_LIGHTMAP);
 
-	float maskThreshold = 0.0;
-	if (pAiMaterial->Get(AI_MATKEY_GLTF_ALPHACUTOFF, maskThreshold) == aiReturn_SUCCESS)
-		_alphaCutoff = maskThreshold;
+	aiString aiAlphaMode;
+	if (pAiMaterial->Get(AI_MATKEY_GLTF_ALPHAMODE, aiAlphaMode) == aiReturn_SUCCESS && 
+		std::strcmp(aiAlphaMode.data, "MASK") == 0) 
+	{
+		float maskThreshold = 0.0;
+		if (pAiMaterial->Get(AI_MATKEY_GLTF_ALPHACUTOFF, maskThreshold) == aiReturn_SUCCESS)
+			_alphaCutoff = maskThreshold;
+	}
 }
 
 const ALTexture & ALMaterial::getDiffuseMap() const {
