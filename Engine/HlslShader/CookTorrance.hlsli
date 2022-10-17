@@ -100,7 +100,8 @@ float3 CookTorrance(float3 radiance, float3 L, float3 N, float3 V, MaterialData 
     float3 kS = F;
     float3 kD = 1.0 - kS;
     kD *= 1.0 - mat.metallic;
-    return (BRDFLambert(kD * mat.diffuseAlbedo) + specular) * radiance;
+    float3 diffuse = BRDFLambert(kD * mat.diffuseAlbedo);
+    return (diffuse + specular) * radiance;
 }
 
 // ----------------------------------------------------------------------------
@@ -116,16 +117,15 @@ float3 ComputeDirectionLight(LightData light, MaterialData mat, float3 N, float3
     return CookTorrance(lightStrength, L, N, V, mat);
 }
 
-
 // ----------------------------------------------------------------------------
-float3 ComputePointLight(PointLight pointLight, MaterialData mat, float3 N, float V, float3 worldPosition) {
+float3 ComputePointLight(PointLight pointLight, MaterialData mat, float3 N, float3 V, float3 worldPosition) {
     float3 lightVec = pointLight.position - worldPosition;
     float dis = length(lightVec);
     if (dis > pointLight.range)
         return 0.f;
 
     float3 L = lightVec / dis;
-    float NdotL = DIFF_SHADING_FACTOR(saturate(dot(N, L)));
+    float NdotL = DIFF_SHADING_FACTOR(max(dot(N, L), 0.0));
     float attenuation = rcp(dis * dis);
     float3 lightStrength = pointLight.color * NdotL * attenuation * pointLight.intensity;
     return CookTorrance(lightStrength, L, N, V, mat);
@@ -139,7 +139,7 @@ float3 ComputeSpotLight(LightData light, MaterialData mat, float3 N, float3 V, f
         return 0.f;
 
     float3 L = lightVec / dis;
-    float NdotL = DIFF_SHADING_FACTOR(saturate(dot(N, L)));
+    float NdotL = DIFF_SHADING_FACTOR(max(dot(N, L), 0.0));
     float3 lightStrength = light.strength * NdotL;
     float attenuation = CalcAttenuation(dis, light.falloffStart, light.falloffEnd);
     lightStrength *= attenuation;

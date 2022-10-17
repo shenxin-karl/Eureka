@@ -61,6 +61,26 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	initPointLists(pDirectCtx);
 	initRenderGraph(pDirectCtx);
 
+	MaterialDesc materialDesc{
+		"DeferredPBR",
+		nullptr,
+		*pDirectCtx,
+		pRenderGraph
+	};
+	auto materialCreator = [&](const ALMaterial *pAlMaterial) {
+		materialDesc.pAlMaterial = pAlMaterial;
+		return std::make_shared<Material>(materialDesc);
+	};
+
+	auto pSphereMesh = GeometryGenerator::instance()->createSphere(0.15f, 5);
+	auto pointLightVisitor = pPointLightList->visit();
+	for (PointLight &pointLight : pointLightVisitor) {
+		auto pSphereModel = std::make_unique<PartModel>(*pDirectCtx, pSphereMesh);
+		pSphereModel->setModelTransform(float4x4(Matrix4::makeTranslation(Vector3(pointLight.position))));
+		pSphereModel->createMaterial(*pDirectCtx, materialCreator);
+		_models.push_back(std::move(pSphereModel));
+	}
+
 	// loading
 	loading(pDirectCtx);
 }
@@ -199,15 +219,15 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 
 void EurekaApplication::initPointLists(dx12lib::DirectContextProxy pDirectCtx) {
 	std::random_device rd;
-	auto seed = 601319370;rd();
+	auto seed = 601319370;;
 	std::cout << seed << std::endl;
 	std::mt19937 gen(seed);
 	std::uniform_real_distribution<float> dis;
 
-	constexpr float kRadius = 100.f;
-	constexpr size_t kNumPointLights = 300;
-	constexpr float kMinRange = 10.f;
-	constexpr float kMaxRange = 50.f;
+	constexpr float kRadius = 18.f;
+	constexpr size_t kNumPointLights = 1000;
+	constexpr float kMinRange = 1.f;
+	constexpr float kMaxRange = 5.f;
 
 	std::vector<PointLight> pointLights;
 	pointLights.reserve(kNumPointLights);
@@ -216,6 +236,7 @@ void EurekaApplication::initPointLists(dx12lib::DirectContextProxy pDirectCtx) {
 		pointLight.color = float3(dis(gen), dis(gen), dis(gen));
 		pointLight.intensity = 5.f;
 		pointLight.position = ((Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f) * kRadius).xyz;
+		pointLight.position.y = MathHelper::lerp(0.f, 13.f, dis(gen));
 		pointLight.range = MathHelper::lerp(kMinRange, kMaxRange, dis(gen));
 		pointLights.push_back(pointLight);
 	}

@@ -98,6 +98,8 @@ https://zhuanlan.zhihu.com/p/21983679
 
 ## Tile Based Deferred Rendering
 
+
+
 [当前和未来渲染管线的延迟渲染 (intel.com)](https://www.intel.com/content/www/us/en/developer/articles/technical/deferred-rendering-for-current-and-future-rendering-pipelines.html)
 
 https://zhuanlan.zhihu.com/p/62030747
@@ -114,13 +116,49 @@ https://zhuanlan.zhihu.com/p/339109155
 
 点光源和聚光灯都使用包围球, 快速求交
 
-- [ ] 生成大量的点光源
+- [x] 生成大量的点光源
 
-- [ ] 屏幕光源空间划分
+- [x] 屏幕光源空间划分
 
-- [ ] compute 计算点光源
+- [x] compute 计算点光源
 
-   
+- [ ] compute 计算聚光灯
+
+- [ ] 升级为按簇划分屏幕
+
+compute shader 提取视锥体的方式
+
+[momose_d blog: 2014年3月 (cocolog-nifty.com)](http://momose-d.cocolog-nifty.com/blog/2014/03/index.html)
+
+intel 给出的的 demo 是错误的, 需要使用下面的计算方式
+
+```cc
+ // Work out scale/bias from [0, 1]    
+float2 tileNum = float2(gRenderTargetSize.xy) * rcp(float2(TILE_SIZE_X, TILE_SIZE_Y));    
+float2 tileCenterOffset = float2(groupId.xy) * 2 + float2(1.0f, 1.0f) - tileNum;     
+// Now work out composite projection matrix    
+// Relevant matrix columns for this tile frusta    
+float4 c1 = float4(-gProj._11 * tileNum.x, 0.0f, tileCenterOffset.x, 0.0f);    
+float4 c2 = float4(0.0f, -gProj._22 * tileNum.y, -tileCenterOffset.y, 0.0f);    
+float4 c4 = float4(0.0f, 0.0f, 1.0f, 0.0f);     
+// Derive frustum planes    
+float4 frustumPlanes[6];    
+// Sides    
+frustumPlanes[0] = c4 - c1;    
+frustumPlanes[1] = c4 + c1;    
+frustumPlanes[2] = c4 - c2;    
+frustumPlanes[3] = c4 + c2;     
+// Near/far    
+frustumPlanes[4] = float4(0.0f, 0.0f,  1.0f, -minTileZ);    
+frustumPlanes[5] = float4(0.0f, 0.0f, -1.0f,  maxTileZ);        
+// Normalize frustum planes (near/far already normalized)    
+[unroll] for (uint i = 0; i < 4; ++i)   
+    frustumPlanes[i] *= rcp(length(frustumPlanes[i].xyz));   
+```
+
+
+
+
 
 ## TAA 
 

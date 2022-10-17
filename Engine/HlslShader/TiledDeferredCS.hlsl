@@ -61,11 +61,11 @@ void CS(ComputeIn cin) {
 
 	float2 texDimes;
 	gDepthMap.GetDimensions(texDimes.x, texDimes.y);
-	float2 tileScale = texDimes * rcp(float(2.0 * TBDR_TILE_SIZE));
-    float2 tileBias = tileScale - float2(cin.GroupID.xy);
+	float2 tileNum = texDimes * rcp(float2(TBDR_TILE_DIMENSION, TBDR_TILE_DIMENSION));
+    float2 tileCenterOffset = float2(cin.GroupID.xy) * 2.0 + float2(1.0, 1.0) - tileNum;
 
-    float4 c1 = float4(gProj._11 * tileScale.x, 0.0f, tileBias.x, 0.0f);
-	float4 c2 = float4(0.0f, -gProj._22 * tileScale.y, tileBias.y, 0.0f);
+	float4 c1 = float4(-gProj._11 * tileNum.x, 0.0f, tileCenterOffset.x, 0.0f);
+    float4 c2 = float4(0.0f, -gProj._22 * tileNum.y, -tileCenterOffset.y, 0.0f);
     float4 c4 = float4(0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Derive frustum planes

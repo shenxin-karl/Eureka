@@ -63,6 +63,7 @@ void SampleAoRoughnessMetallic(float2 uv, inout float ao, inout float roughness,
 void CS(ComputeIn cin) {
     float2 uv = CalcTexcoord(cin);
     float3 worldPosition = CalcWorldPosition(uv);
+
     float4 diffuseAlbedo = float4(gBuffer0.SampleLevel(gSamPointClamp, uv, 0), 1.0);
 
     float3 N = gBuffer1.SampleLevel(gSamPointClamp, uv, 0) * 2.0 - 1.0;
@@ -78,7 +79,7 @@ void CS(ComputeIn cin) {
     light.direction = gLightDirection;
 
     // directional light 
-	float3 radiance = 0;// ComputeDirectionLight(light, materialData, N, V);
+	float3 radiance = 0;//ComputeDirectionLight(light, materialData, N, V);
 
     // ambient light
     float3 ambient = 0.01 * diffuseAlbedo * ao;
