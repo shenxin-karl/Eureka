@@ -79,7 +79,7 @@ void CS(ComputeIn cin) {
     light.direction = gLightDirection;
 
     // directional light 
-	float3 radiance = 0;//ComputeDirectionLight(light, materialData, N, V);
+	float3 radiance = ComputeDirectionLight(light, materialData, N, V);
 
     // ambient light
     float3 ambient = 0.01 * diffuseAlbedo * ao;
@@ -88,7 +88,7 @@ void CS(ComputeIn cin) {
     // point light
 	uint2 texDim;
 	gDepthMap.GetDimensions(texDim.x, texDim.y);
-	uint tileIndex = CalcTileIndex(texDim.x, cin.GroupID);
+	uint tileIndex = CalcTileIndex(texDim.x, cin.GroupID.xy);
     uint numPointLights = min(gTileLightLists[tileIndex].numPointLights, MAX_TILE_POINT_LIGHT_NUM);
     for (uint i = 0; i < numPointLights; ++i) {
 	    uint lightIndex = gTileLightLists[tileIndex].pointLightIndices[i];
