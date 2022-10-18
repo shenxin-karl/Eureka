@@ -12,6 +12,8 @@ endmacro()
 AddShader("HlslShader/LightingPassCS.hlsl" "CS" "cs_5_1")
 AddShader("HlslShader/FXAA_cso/FXAA_VS.txt" "VS" "vs_5_1")
 AddShader("HlslShader/FXAA_cso/FXAA_PS.txt" "PS" "ps_5_1")
+AddShader("HlslShader/UpdateLightPosition_cso/UpdatePointLightPosition.txt" "CS" "cs_5_1")
+AddShader("HlslShader/UpdateLightPosition_cso/UpdateSpotLightPosition.txt" "CS" "cs_5_1")
 
 
 add_custom_target(EngineShader)

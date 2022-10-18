@@ -4,7 +4,7 @@
 #include <dx12lib/Device/DeviceStd.h>
 #include <dx12lib/Context/ContextStd.h>
 #include "GameTimer/GameTimer.h"
-#include "Defined/EngineDefined.h"
+#include "EngineDefinition/EngineDefinition.h"
 
 using namespace Math;
 

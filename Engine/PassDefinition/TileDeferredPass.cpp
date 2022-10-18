@@ -1,6 +1,6 @@
-#include "TileDererredPass.h"
-
+#include "TileDeferredPass.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
+#include "EngineDefinition/EngineDefinition.h"
 #include "HlslShader/ShaderManager.h"
 #include "ShaderHelper/ComputeShader.h"
 
@@ -36,10 +36,10 @@ void TileDeferredPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgp
 
 	const auto &desc = pDepthMap->getDesc();
 	pDirectCtx->setComputePSO(_pPipeline);
-	pDirectCtx->setConstantBufferView("gCbTile", _pCbTile->getCBV());
-	pDirectCtx->setShaderResourceView("gDepthMap", pDepthMap->get2dSRV());
-	pDirectCtx->setShaderResourceView("gPointLists", pPointLightLists->getSRV());
-	pDirectCtx->setUnorderedAccessView("gTileLightLists", pTileLightLists->getUAV());
+	pDirectCtx->setConstantBufferView(StringName("gCbTile"), _pCbTile->getCBV());
+	pDirectCtx->setShaderResourceView(StringName("gDepthMap"), pDepthMap->get2dSRV());
+	pDirectCtx->setShaderResourceView(StringName("gPointLists"), pPointLightLists->getSRV());
+	pDirectCtx->setUnorderedAccessView(StringName("gTileLightLists"), pTileLightLists->getUAV());
 	auto dispatchArgs = _pPipeline->calcDispatchArgs(desc.Width, desc.Height);
 	pDirectCtx->dispatch(dispatchArgs);
 }

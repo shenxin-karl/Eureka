@@ -42,8 +42,8 @@ void FXAAPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::Rende
 	GraphicsPass::execute(pDirectCtx, view);
 
 	pDirectCtx->setGraphicsPSO(_pPipeline);
-	pDirectCtx->setConstantBufferView("FXAASetting", pCbFXAASetting->getCBV());
-	pDirectCtx->setShaderResourceView("gScreenMap", pScreenMap->get2dSRV());
+	pDirectCtx->setConstantBufferView(StringName("FXAASetting"), pCbFXAASetting->getCBV());
+	pDirectCtx->setShaderResourceView(StringName("gScreenMap"), pScreenMap->get2dSRV());
 	auto mask = rgph::ShaderLayoutMask::Position | rgph::ShaderLayoutMask::TexCoord0;
 	_pFullScreenGeometry->bind(*pDirectCtx, mask);
 	_pFullScreenGeometry->draw(*pDirectCtx);

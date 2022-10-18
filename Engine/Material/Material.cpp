@@ -2,7 +2,7 @@
 #include "HlslShader/ShaderManager.h"
 #include "ShaderHelper/GraphicsShader.h"
 #include "AssimpLoader/ALTree.h"
-#include "RenderGraphDefined/RenderGraphDefined.h"
+#include "PassDefinition/SetupRenderGraph.h"
 #include <RenderGraph/Bindable/SamplerTextureBindable.h>
 #include <RenderGraph/Technique/Technique.h>
 #include <RenderGraph/Technique/Step.h>

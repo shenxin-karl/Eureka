@@ -1,6 +1,7 @@
 #include "LightingPass.h"
 #include "EngineShaders/LightingPassCS.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
+#include "EngineDefinition/EngineDefinition.h"
 #include "HlslShader/ShaderManager.h"
 #include "ShaderHelper/ComputeShader.h"
 #include "ShaderHelper/ShaderHelper.h"
@@ -19,13 +20,15 @@ LightingPass::LightingPass(const std::string &passName, std::shared_ptr<dx12lib:
 	, pPointLightLists(this, "PointLightLists")
 	, pTileLightLists(this, "TileLightLists")
 {
-	//_pLightingPSO = pDevice->createComputePSO("LightingPSO");
-	//_pLightingPSO->setComputeShader(g_LightingPassCS, sizeof(g_LightingPassCS	));
-	//ShaderHelper::generateRootSignature(_pLightingPSO);
-	//_pLightingPSO->finalize();
-
+#if defined(_DEBUG) || defined(DEBUG)
 	auto pLightShader = ShaderManager::instance()->getComputeShader("Lighting");
 	_pLightingPSO = pLightShader->getPSO();
+#else
+	_pLightingPSO = pDevice->createComputePSO("LightingPSO");
+	_pLightingPSO->setComputeShader(g_LightingPassCS, sizeof(g_LightingPassCS	));
+	ShaderHelper::generateRootSignature(_pLightingPSO);
+	_pLightingPSO->finalize();
+#endif
 }
 
 void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
@@ -40,14 +43,14 @@ void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::R
 	visitor->gCameraPosition = cameraData.lookFrom;
 
 	pDirectCtx->setComputePSO(_pLightingPSO);
-	pDirectCtx->setConstantBufferView("CbLighting", pCbLighting->getCBV());
-	pDirectCtx->setShaderResourceView("gBuffer0", pGBuffer0->get2dSRV());
-	pDirectCtx->setShaderResourceView("gBuffer1", pGBuffer1->get2dSRV());
-	pDirectCtx->setShaderResourceView("gBuffer2", pGBuffer2->get2dSRV());
-	pDirectCtx->setShaderResourceView("gDepthMap", pDepthMap->get2dSRV());
-	pDirectCtx->setUnorderedAccessView("gLightingBuffer", pLightingBuffer->get2dUAV());
-	pDirectCtx->setShaderResourceView("gPointLights", pPointLightLists->getSRV());
-	pDirectCtx->setShaderResourceView("gTileLightLists", pTileLightLists->getSRV());
+	pDirectCtx->setConstantBufferView(StringName("CbLighting"), pCbLighting->getCBV());
+	pDirectCtx->setShaderResourceView(StringName("gBuffer0"), pGBuffer0->get2dSRV());
+	pDirectCtx->setShaderResourceView(StringName("gBuffer1"), pGBuffer1->get2dSRV());
+	pDirectCtx->setShaderResourceView(StringName("gBuffer2"), pGBuffer2->get2dSRV());
+	pDirectCtx->setShaderResourceView(StringName("gDepthMap"), pDepthMap->get2dSRV());
+	pDirectCtx->setUnorderedAccessView(StringName("gLightingBuffer"), pLightingBuffer->get2dUAV());
+	pDirectCtx->setShaderResourceView(StringName("gPointLights"), pPointLightLists->getSRV());
+	pDirectCtx->setShaderResourceView(StringName("gTileLightLists"), pTileLightLists->getSRV());
 	auto dispatchArgs = _pLightingPSO->calcDispatchArgs(desc.Width, desc.Height);
 	pDirectCtx->dispatch(dispatchArgs);
 }

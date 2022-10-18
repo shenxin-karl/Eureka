@@ -1,7 +1,7 @@
 #include "MeshManager.h"
 #include <Dx12lib/Buffer/VertexBuffer.h>
 #include <Dx12lib/Buffer/IndexBuffer.h>
-#include "Defined/EngineDefined.h"
+#include "EngineDefinition/EngineDefinition.h"
 
 namespace Eureka {
 

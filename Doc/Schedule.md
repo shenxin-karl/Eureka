@@ -124,6 +124,8 @@ https://zhuanlan.zhihu.com/p/339109155
 
 - [ ] compute 计算聚光灯
 
+- [ ] 如果每帧需要更新光源的ViewSpacePosition数量太多时, 使用 ComputeShader 来更新
+
 - [ ] 升级为按簇划分屏幕
 
 compute shader 提取视锥体的方式

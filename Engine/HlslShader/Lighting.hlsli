@@ -23,10 +23,15 @@ struct PointLight {
 };
 
 struct SpotLight {
-	float3 color;
-	float  intensity;
-	float3 position;
-	float  range;
+	float3	color;
+	float	intensity;
+	float3	position;
+	float	range;
+	float3  direction;
+	float	boundingSphereRadius;
+	float3  viewSpaceBoundingSphereCenter;
+	float	innerConeCosTheta;
+	float	outerConeCosTheta;
 };
 
 #define MAX_TILE_POINT_LIGHT_NUM	160

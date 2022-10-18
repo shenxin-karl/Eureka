@@ -1,6 +1,6 @@
 #pragma once
 #include <RenderGraph/Job/Geometry.h>
-#include "Defined/EngineDefined.h"
+#include "EngineDefinition/EngineDefinition.h"
 
 namespace Eureka {
 

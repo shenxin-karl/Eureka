@@ -19,7 +19,7 @@ public:
 	void onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) final;
 private:
 	void loading(dx12lib::DirectContextProxy pDirectCtx);
-	void initPointLists(dx12lib::DirectContextProxy pDirectCtx);
+	void initLight(dx12lib::DirectContextProxy pDirectCtx);
 	void initRenderGraph(dx12lib::DirectContextProxy pDirectCtx);
 	void resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height);
 private:

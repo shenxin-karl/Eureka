@@ -15,6 +15,7 @@ public:
 	virtual void preExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
 	virtual void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
 	virtual void postExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
+	virtual void onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height);
 	virtual void reset();
 	virtual auto getPassType() const -> PassType;
 private:

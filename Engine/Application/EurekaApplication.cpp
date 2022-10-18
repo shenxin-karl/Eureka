@@ -3,6 +3,10 @@
 #include <Dx12lib/Device/DeviceStd.h>
 #include <Dx12lib/Context/ContextStd.h>
 #include <Dx12lib/Texture/Texture.h>
+#include <Dx12lib/Buffer/FRSRStructuredBuffer.hpp>
+#include <Dx12lib/Buffer/ConstantBuffer.h>
+#include <Dx12lib/Buffer/FRConstantBuffer.hpp>
+#include <Dx12lib/Buffer/UAStructuredBuffer.h>
 #include "EurekaApplication.h"
 #include "InputSystem/InputSystem.h"
 #include "InputSystem/window.h"
@@ -13,12 +17,12 @@
 #include "AssimpLoader/ALTree.h"
 #include "Camera/Camera.h"
 #include "Camera/FPSCameraControl.h"
-#include "Defined/EngineDefined.h"
+#include "EngineDefinition/EngineDefinition.h"
 #include "Material/Material.h"
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "Model/PartModel/PartModel.h"
 #include "RenderGraph/RenderGraph/RenderGraph.h"
-#include "RenderGraphDefined/RenderGraphDefined.h"
+#include "PassDefinition/SetupRenderGraph.h"
 #include "TextureManager/TextureManager.h"
 
 using namespace Math;
@@ -155,6 +159,7 @@ void EurekaApplication::onEndTick(std::shared_ptr<GameTimer> pGameTimer) {
 void EurekaApplication::onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) {
 	_pCamera->setAspect(static_cast<float>(width) / static_cast<float>(height));
 	resizeBuffers(pDirectCtx, width, height);
+	pRenderGraph->onResize(pDirectCtx, width, height);
 }
 
 void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
@@ -220,6 +225,8 @@ void EurekaApplication::initLight(dx12lib::DirectContextProxy pDirectCtx) {
 	constexpr size_t kNumPointLights = 1000;
 	constexpr float kMinRange = 1.f;
 	constexpr float kMaxRange = 5.f;
+	constexpr float kMinInnerConeAngle = 30.f;
+	constexpr float kMaxInnerConeAngle = 50.f;
 
 	std::vector<PointLight> pointLights;
 	pointLights.reserve(kNumPointLights);
@@ -245,7 +252,21 @@ void EurekaApplication::initLight(dx12lib::DirectContextProxy pDirectCtx) {
 		spotLight.range = MathHelper::lerp(kMinRange, kMaxRange, dis(gen));
 		spotLight.direction = normalize(Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f).xyz;
 
+		float innerConeAngle = MathHelper::lerp(kMinInnerConeAngle, kMaxInnerConeAngle, dis(gen));
+		float outerConeAngle = innerConeAngle + 15.f;
+		spotLight.outerConeCosTheta = std::cos(DirectX::XMConvertToRadians(outerConeAngle));
+		spotLight.innerConeCosTheta = std::cos(DirectX::XMConvertToRadians(innerConeAngle));
+
+		float e0 = spotLight.range / 2.f;
+		float e1 = std::sin(DirectX::XMConvertToRadians(outerConeAngle)) * spotLight.range;
+		float radius = std::sqrt(e0 * e0 + e1 * e1);
+		spotLight.boundingSphereRadius = radius;
+
+		spotLights.push_back(spotLight);
+
 	}
+
+	pSpotLightList = pDirectCtx->createFRStructuredBuffer<SpotLight>(spotLights.data(), spotLights.size());
 }
 
 void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {
@@ -253,7 +274,7 @@ void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) 
 
 	FXAASetting setting;
 	pCbFXAASetting = pDirectCtx->createConstantBuffer(&setting, sizeof(setting));
-	//pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_02.png", false);
+	pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_02.png", false);
 	pRenderGraph = SetupRenderGraph(this, *pDirectCtx);
 }
 

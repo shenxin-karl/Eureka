@@ -135,4 +135,9 @@ void RenderGraph::finalize() {
 	_finalized = true;
 }
 
+void RenderGraph::onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
+	for (auto &pass : _passes)
+		pass->onResize(pDirectCtx, width, height);
+}
+
 }

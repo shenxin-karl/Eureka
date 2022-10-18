@@ -31,6 +31,9 @@ void ExecutablePass::postExecute(dx12lib::DirectContextProxy pDirectCtx, const R
 		pPassResource->setFinished(true);
 }
 
+void ExecutablePass::onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
+}
+
 void ExecutablePass::reset() {
 	for (auto *pPassResource : _passResources) {
 		pPassResource->setFinished(false);

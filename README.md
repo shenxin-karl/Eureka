@@ -14,9 +14,11 @@ start build.bat
 
 ## Features:
 
-- [x] Shader Resource Binding System
-- [x] Resource State Tracking System
-- [x] Render Graph System
+- [x] **Based on the dx12**
+
+- [x] **Shader Resource Binding System**
+- [x] **Resource State Tracking System**
+- [x] **Render Graph System**
 
 
 
@@ -24,7 +26,7 @@ start build.bat
 
 ### ACES / ColorGrading / GammaCorrection / FXAA 
 
-Tag: [/Eureka at v1.0](https://github.com/shenxin-karl/Eureka/tree/v1.0)
+Tag: [Eureka at v1.0](https://github.com/shenxin-karl/Eureka/tree/v1.0)
 
 在一个 Compute Shader 中完成 ACES ColorGrading GammaCorrection 后处理, 在 Pixel Shader 中实现 FXAA, 同时拷贝到 BackBuffer 中
 

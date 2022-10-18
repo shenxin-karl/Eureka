@@ -3,7 +3,9 @@
 
 namespace Eureka {
 
-struct alignas(16) CbPrePass {
+#define CBUFFER struct alignas(16)
+
+CBUFFER CbPrePass {
     /// camera
 	Math::float4x4 matView;
 	Math::float4x4 matInvView;
@@ -33,21 +35,21 @@ struct alignas(16) CbPrePass {
     Math::float2   cbPrePassPadding1;
 };
 
-struct alignas(16) CbPreObject {
+CBUFFER CbPreObject {
     Math::float4x4 matWorld;
     Math::float4x4 matInvWorld;
     Math::float4x4 matNormal;
     Math::float4x4 matInvNormal;
 };
 
-struct alignas(16) FXAASetting {
+CBUFFER FXAASetting {
     float minThreshold          = 0.0312f;
     float threshold             = 0.125f;
     float consoleTangentScale   = 0.5f;
     float sharpness             = 8.f;
 };
 
-struct alignas(16) DirectionalLight {
+struct DirectionalLight {
 	Math::float3	ambientColor;
 	float			ambientIntensity;
 	Math::float3	directionalColor;
@@ -56,7 +58,7 @@ struct alignas(16) DirectionalLight {
 	float			padding0;
 };
 
-struct alignas(16) CbLighting {
+CBUFFER CbLighting {
 	DirectionalLight gDirectionalLight;
 	Math::float4x4   gInvViewProj;
 	Math::float3     gCameraPosition;
@@ -64,7 +66,7 @@ struct alignas(16) CbLighting {
 	float            gClosedIntervalOfWidth;        // width - 1
 };
 
-struct alignas(16) PointLight {
+struct PointLight {
 	Math::float3	color;
 	float			intensity;
 	Math::float3	position;
@@ -72,15 +74,16 @@ struct alignas(16) PointLight {
 	Math::float4	viewSpacePosition;
 };
 
-struct alignas(16) SpotLight {
+struct SpotLight {
 	Math::float3	color;
 	float			intensity;
 	Math::float3	position;
 	float			range;
 	Math::float3    direction;
-	float			spotPower;
-	Math::float3    viewSpaceBoundingSphereCenter;
 	float			boundingSphereRadius;
+	Math::float3    viewSpaceBoundingSphereCenter;
+	float			innerConeCosTheta;
+	float			outerConeCosTheta;
 };
 
 #define MAX_TILE_POINT_LIGHT_NUM	160

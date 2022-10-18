@@ -1,7 +1,6 @@
 #pragma once
 #include <RenderGraph/RenderGraphStd.h>
 #include <RenderGraph/Technique/TechniqueType.hpp>
-#include "RenderGraphDefined/GBufferPass.h"
 
 namespace Eureka {
 

@@ -1,5 +1,6 @@
 #include "PostProcessingPass.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
+#include "EngineDefinition/EngineDefinition.h"
 #include "HlslShader/ShaderManager.h"
 #include "ShaderHelper/ComputeShader.h"
 
@@ -19,18 +20,18 @@ void PostProcessingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const r
 	auto keyword = _pPipeline->getKeywordMask();
 	std::shared_ptr<dx12lib::ComputePSO> pso;
 	if (_pColorLutMap != nullptr) {
-		keyword.setKeyWord("_COLOR_GRADING", true);
+		keyword.setKeyWord(StringName("_COLOR_GRADING"), true);
 		pso = _pPipeline->getPSO(keyword);
 		pDirectCtx->setComputePSO(pso);
-		pDirectCtx->setShaderResourceView("gColorLutMap", _pColorLutMap->get2dSRV());
+		pDirectCtx->setShaderResourceView(StringName("gColorLutMap"), _pColorLutMap->get2dSRV());
 	} else {
 		pso = _pPipeline->getPSO(keyword);
 		pDirectCtx->setComputePSO(pso);
 	}
 
 	const auto &desc = pScreenMap->getDesc();
-	pDirectCtx->setShaderResourceView("gScreenTexture", pScreenMap->get2dSRV());
-	pDirectCtx->setUnorderedAccessView("gOutputMap", pOutputMap->get2dUAV());
+	pDirectCtx->setShaderResourceView(StringName("gScreenTexture"), pScreenMap->get2dSRV());
+	pDirectCtx->setUnorderedAccessView(StringName("gOutputMap"), pOutputMap->get2dUAV());
 	auto dispatchArgs = pso->calcDispatchArgs(desc.Width, desc.Height);
 	pDirectCtx->dispatch(dispatchArgs);
 }

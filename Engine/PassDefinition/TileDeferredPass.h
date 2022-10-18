@@ -25,6 +25,7 @@ public:
 private:
 	FRConstantBufferPtr<CbTile> _pCbTile;
 	std::shared_ptr<dx12lib::ComputePSO> _pPipeline;
+	Math::float4x4 _matView = Math::float4x4::identity();					
 };
 
 }

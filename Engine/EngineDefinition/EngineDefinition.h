@@ -1,6 +1,6 @@
 #pragma once
 #include <d3d12.h>
-#include <stdint.h>
+#include <cstdint>
 
 namespace Eureka {
 	
@@ -15,5 +15,12 @@ constexpr DXGI_FORMAT kSwapChainRenderTargetFormat  = DXGI_FORMAT_R8G8B8A8_UNORM
 using uint16 = std::uint16_t;
 using uint32 = std::uint32_t;
 using uint64 = std::uint64_t;
+
+#define StringName(ptr)							\
+	[]() -> const std::string & {				\
+		static std::string sName(ptr);			\
+		return sName;							\
+	}()
+
 
 }

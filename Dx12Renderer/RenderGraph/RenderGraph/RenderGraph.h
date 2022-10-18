@@ -17,6 +17,7 @@ public:
 	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
 	void reset();
 	void finalize();
+	void onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height);
 private:
 	bool _finalized = false;
 	std::vector<std::shared_ptr<ExecutablePass>> _passes;

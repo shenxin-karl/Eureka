@@ -1,6 +1,6 @@
 #include "ShaderManager.h"
 #include "ShaderHelper/GraphicsShader.h"
-#include "Defined/EngineDefined.h"
+#include "EngineDefinition/EngineDefinition.h"
 #include "ShaderHelper/ComputeShader.h"
 
 namespace Eureka {

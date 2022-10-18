@@ -6,8 +6,6 @@
 #include "dx12lib/Context/ContextProxy.hpp"
 #include "InputSystem/InputSystem.h"
 
-
-
 namespace Eureka {
 
 namespace DX  = DirectX;

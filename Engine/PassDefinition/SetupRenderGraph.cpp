@@ -2,12 +2,13 @@
 #include <RenderGraph/RenderGraph/RenderGraph.h>
 #include <RenderGraph/Pass/PresentPass.hpp>
 #include <Dx12lib/Device/SwapChain.h>
-#include "RenderGraphDefined/RenderGraphDefined.h"
+#include "PassDefinition/SetupRenderGraph.h"
 
 #include "FXAAPass.h"
+#include "GBufferPass.h"
 #include "LightingPass.h"
 #include "PostProcessingPass.h"
-#include "TileDererredPass.h"
+#include "TileDeferredPass.h"
 #include "Application/EurekaApplication.h"
 
 namespace Eureka {

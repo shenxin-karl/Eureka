@@ -40,14 +40,14 @@ float2 CalcTexcoord(ComputeIn cin) {
 		return ( wp / wp.w ).xyz;
 	}
  */
-float4 CalcWorldPosition(float2 uv)
+float3 CalcWorldPosition(float2 uv)
 {
 	float zNdc = gDepthMap.SampleLevel(gSamLinearClamp, uv, 0).x;
     float4 pos = float4(uv * 2.0 - 1.0, zNdc, 1.0);
     pos.y *= -1.0;
     float4 worldPos = mul(gInvViewProj, pos);
     worldPos.xyz /= worldPos.w;
-    return worldPos;
+    return worldPos.xyz;
 }
 
 void SampleAoRoughnessMetallic(float2 uv, inout float ao, inout float roughness, inout float metallic) {
