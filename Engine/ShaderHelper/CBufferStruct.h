@@ -1,11 +1,7 @@
 #pragma once
 #include <Math/MathStd.hpp>
-#include <Dx12lib/Pipeline/ShaderRegister.hpp>
 
 namespace Eureka {
-
-constexpr dx12lib::RegisterSpace kPrePassSpace = dx12lib::RegisterSpace::Space8;
-constexpr dx12lib::RegisterSpace kPreObjectSpace = dx12lib::RegisterSpace::Space0;
 
 struct alignas(16) CbPrePass {
     /// camera
@@ -51,17 +47,7 @@ struct alignas(16) FXAASetting {
     float sharpness             = 8.f;
 };
 
-struct alignas(16) CbLighting {
-	Math::float3    gLightDirection;                // 向着光源
-    float           gClosedIntervalOfWidth;         // width - 1
-	Math::float3    gLightRadiance;
-    float           gClosedIntervalOfHeight;        // height - 1
-	Math::float4x4  gInvViewProj;
-	Math::float3    gCameraPosition;
-    float           padding0;
-};
-
-struct DirectionalLight {
+struct alignas(16) DirectionalLight {
 	Math::float3	ambientColor;
 	float			ambientIntensity;
 	Math::float3	directionalColor;
@@ -70,7 +56,15 @@ struct DirectionalLight {
 	float			padding0;
 };
 
-struct PointLight {
+struct alignas(16) CbLighting {
+	DirectionalLight gDirectionalLight;
+	Math::float4x4   gInvViewProj;
+	Math::float3     gCameraPosition;
+	float            gClosedIntervalOfHeight;       // height - 1
+	float            gClosedIntervalOfWidth;        // width - 1
+};
+
+struct alignas(16) PointLight {
 	Math::float3	color;
 	float			intensity;
 	Math::float3	position;
@@ -78,11 +72,15 @@ struct PointLight {
 	Math::float4	viewSpacePosition;
 };
 
-struct SpotLight {
+struct alignas(16) SpotLight {
 	Math::float3	color;
 	float			intensity;
 	Math::float3	position;
 	float			range;
+	Math::float3    direction;
+	float			spotPower;
+	Math::float3    viewSpaceBoundingSphereCenter;
+	float			boundingSphereRadius;
 };
 
 #define MAX_TILE_POINT_LIGHT_NUM	160

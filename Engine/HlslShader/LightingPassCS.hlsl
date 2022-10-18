@@ -3,13 +3,11 @@
 #include "Lighting.hlsli"
 
 cbuffer CbLighting : register(b0) {
-	float3   gLightDirection;
-    float    gClosedIntervalOfWidth;        // width - 1
-    float3   gLightRadiance;
-    float    gClosedIntervalOfHeight;       // height - 1
-    float4x4 gInvViewProj;
-    float3   gCameraPosition;
-    float    padding0;
+	DirectionalLight gDirectionalLight;
+    float4x4         gInvViewProj;
+    float3           gCameraPosition;
+    float            gClosedIntervalOfHeight;       // height - 1
+    float            gClosedIntervalOfWidth;        // width - 1
 };
 
 Texture2D<float3> gBuffer0  : register(t0);
@@ -74,16 +72,11 @@ void CS(ComputeIn cin) {
 
     MaterialData materialData = calcMaterialData(diffuseAlbedo, roughness, metallic);
 
-    LightData light = (LightData)0;
-    light.strength = gLightRadiance;
-    light.direction = gLightDirection;
-
     // directional light 
-	float3 radiance = ComputeDirectionLight(light, materialData, N, V);
+	float3 radiance = ComputeDirectionLight(gDirectionalLight, materialData, N, V);
 
     // ambient light
-    float3 ambient = 0.01 * diffuseAlbedo * ao;
-    radiance += ambient;
+	radiance += ComputeAmbientLight(gDirectionalLight, materialData, ao);
 
     // point light
 	uint2 texDim;

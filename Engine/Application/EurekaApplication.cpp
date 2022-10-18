@@ -1,11 +1,9 @@
+#include <iostream>
+#include <random>
 #include <Dx12lib/Device/DeviceStd.h>
 #include <Dx12lib/Context/ContextStd.h>
 #include <Dx12lib/Texture/Texture.h>
 #include "EurekaApplication.h"
-
-#include <iostream>
-#include <random>
-
 #include "InputSystem/InputSystem.h"
 #include "InputSystem/window.h"
 #include "GameTimer/GameTimer.h"
@@ -55,10 +53,13 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	pCbPrePass = pDirectCtx->createFRConstantBuffer<CbPrePass>();
 	pCbLighting = pDirectCtx->createFRConstantBuffer<CbLighting>();
 	auto visitor = pCbLighting->visit();
-	visitor->gLightDirection = normalize(Vector3(0.1f, 0.7f, 0.3f)).xyz;
-	visitor->gLightRadiance = float3(5.f);
+	visitor->gDirectionalLight.direction = normalize(Vector3(0.1f, 0.7f, 0.3f)).xyz;
+	visitor->gDirectionalLight.directionalColor = float3(1.f);
+	visitor->gDirectionalLight.directionalIntensity = 1.f;
+	visitor->gDirectionalLight.ambientColor = float3(0.1f);
+	visitor->gDirectionalLight.ambientIntensity = 1.f;
 
-	initPointLists(pDirectCtx);
+	initLight(pDirectCtx);
 	initRenderGraph(pDirectCtx);
 
 	MaterialDesc materialDesc{
@@ -119,10 +120,9 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 
 	// update point light view space position
 	Math::Matrix4 matView = _pCamera->getMatView();
-	std::span<PointLight> visitor = pPointLightList->visit();
-	for (PointLight &pointLight : visitor)
+	for (PointLight &pointLight : pPointLightList->visit())
 		pointLight.viewSpacePosition = float4(matView * Vector4(pointLight.position, 1.0));
-	
+
 	if (pGameTimer->oneSecondTrigger()) {
 		std::string titleName = std::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());
 		_pInputSystem->pWindow->setShowTitle(titleName);
@@ -141,12 +141,6 @@ void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {
 	rgph::RenderView view;
 	view.cameraData = _pCamera->getCameraData();
 	view.pProfiler = &profiler;
-
-	float radian = DirectX::XMConvertToRadians(pGameTimer->getTotalTime() * 20.f);
-	Quaternion q(Vector3(0, 1, 0), radian);
-
-	auto visitor = pCbLighting->visit();
-	visitor->gLightDirection = normalize(q * Vector3(0.1f, 0.7f, 0.3f)).xyz;
 
 	pRenderGraph->execute(pDirectProxy, view);
 	pCmdQueue->executeCommandList(pDirectProxy);
@@ -217,10 +211,8 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	_models.push_back(std::move(pSkullModel));
 }
 
-void EurekaApplication::initPointLists(dx12lib::DirectContextProxy pDirectCtx) {
-	std::random_device rd;
+void EurekaApplication::initLight(dx12lib::DirectContextProxy pDirectCtx) {
 	auto seed = 601319370;;
-	std::cout << seed << std::endl;
 	std::mt19937 gen(seed);
 	std::uniform_real_distribution<float> dis;
 
@@ -240,8 +232,20 @@ void EurekaApplication::initPointLists(dx12lib::DirectContextProxy pDirectCtx) {
 		pointLight.range = MathHelper::lerp(kMinRange, kMaxRange, dis(gen));
 		pointLights.push_back(pointLight);
 	}
-
 	pPointLightList = pDirectCtx->createFRStructuredBuffer<PointLight>(pointLights.data(), pointLights.size());
+
+	std::vector<SpotLight> spotLights;
+	spotLights.reserve(kNumPointLights);
+	for (size_t i = 0; i < kNumPointLights; ++i) {
+		SpotLight spotLight;
+		spotLight.color = float3(dis(gen), dis(gen), dis(gen));
+		spotLight.intensity = 5.f;
+		spotLight.position = ((Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f) * kRadius).xyz;
+		spotLight.position.y = MathHelper::lerp(0.f, 13.f, dis(gen));
+		spotLight.range = MathHelper::lerp(kMinRange, kMaxRange, dis(gen));
+		spotLight.direction = normalize(Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f).xyz;
+
+	}
 }
 
 void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) {

@@ -80,8 +80,7 @@ void CS(ComputeIn cin) {
     frustumPlanes[5] = float4(0.0f, 0.0f, -1.0f,  maxTileZ);
     
     // Normalize frustum planes (near/far already normalized)
-    [unroll]
-	for (uint i = 0; i < 4; ++i) 
+    [unroll] for (uint i = 0; i < 4; ++i) 
         frustumPlanes[i] *= rcp(length(frustumPlanes[i].xyz));
 
 	uint pointSizes, dummy;
@@ -94,7 +93,7 @@ void CS(ComputeIn cin) {
 			float d = dot(frustumPlanes[i], light.viewSpacePosition);
             inFrustum = inFrustum && (d >= -light.range);
 		}
-		 [branch] if (inFrustum) {
+		[branch] if (inFrustum) {
             // Append light to list
             // Compaction might be better if we expect a lot of lights
             uint listIndex;

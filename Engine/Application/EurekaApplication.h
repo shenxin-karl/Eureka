@@ -38,6 +38,7 @@ public:
 	FRConstantBufferPtr<CbPrePass>					pCbPrePass;
 	FRConstantBufferPtr<CbLighting>					pCbLighting;
 	FRStructuredBufferPtr<PointLight>				pPointLightList;
+	FRStructuredBufferPtr<SpotLight>				pSpotLightList;
 	std::shared_ptr<dx12lib::UAStructuredBuffer>	pTileLightLists;
 	std::shared_ptr<dx12lib::ConstantBuffer>		pCbFXAASetting;
 };

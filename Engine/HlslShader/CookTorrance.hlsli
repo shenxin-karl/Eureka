@@ -42,7 +42,8 @@ struct LightData {
 };
 
 
-static const float PI = 3.14159265359;
+static const float PI     = 3.14159265359;
+static const float INV_PI = 1.0 / 3.14159265359;
 // ----------------------------------------------------------------------------
 float DistributionGGX(float3 N, float3 H, float roughness)
 {
@@ -57,20 +58,18 @@ float DistributionGGX(float3 N, float3 H, float roughness)
 }
 
 // ----------------------------------------------------------------------------
-float GeometrySchlickGGX(float NdotV, float roughness) {
-    float r = (roughness + 1.0);
-    float k = (r * r) / 8.0;
+float GeometrySchlickGGX(float NdotV, float k) {
     float nom = NdotV;
     float denom = NdotV * (1.0 - k) + k;
     return nom / denom;
 }
 
 // ----------------------------------------------------------------------------
-float GeometrySmith(float3 N, float3 V, float3 L, float roughness) {
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+float GeometrySmith(float NdotL, float NdotV, float roughness) {
+    float r = (roughness + 1.0);
+    float k = (r * r) * (1.0 / 8.0);
+    float ggx2 = GeometrySchlickGGX(NdotV, k);
+    float ggx1 = GeometrySchlickGGX(NdotL, k);
     return ggx1 * ggx2;
 }
 
@@ -79,28 +78,29 @@ float3 FresnelSchlick(float cosTheta, float3 F0) {
     return F0 + (1.0 - F0) * pow(saturate(1.0 - cosTheta), 5.0);
 }
 
-float3 BRDFLambert(float3 diffuse)
-{
-    return diffuse / PI;
+float3 LambertDiffuse(float3 diffuse) {
+    return diffuse * INV_PI;
 }
 
 // ----------------------------------------------------------------------------
-float3 CookTorrance(float3 radiance, float3 L, float3 N, float3 V, MaterialData mat) {
+float3 CookTorrance(float3 radiance, float3 L, float3 N, float3 V, MaterialData mat, float NdotL) {
     // Cook-Torrance BRDF
+    float NdotV = max(dot(N, V), 0.0);
+
     float3 H = normalize(V + L);
     float NDF = DistributionGGX(N, H, mat.roughness);
-    float G = GeometrySmith(N, V, L, mat.roughness);
-    float3 F = FresnelSchlick(saturate(dot(H, V)), mat.fresnelFactor);
+    float G = GeometrySmith(NdotL, NdotV, mat.roughness);
+    float3 F = FresnelSchlick(dot(H, V), mat.fresnelFactor);
 
     float3 numerator = NDF * G * F;
-    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
+    float denominator = 4.0 * NdotV * NdotL + 0.0001; // + 0.0001 to prevent divide by zero
     float3 specular = numerator / denominator;
 
     // kS is equal to Fresnel
     float3 kS = F;
     float3 kD = 1.0 - kS;
     kD *= 1.0 - mat.metallic;
-    float3 diffuse = BRDFLambert(kD * mat.diffuseAlbedo);
+    float3 diffuse = LambertDiffuse(kD * mat.diffuseAlbedo);
     return (diffuse + specular) * radiance;
 }
 
@@ -110,11 +110,16 @@ float CalcAttenuation(float d, float falloffStart, float falloffEnd) {
 }
 
 // ----------------------------------------------------------------------------
-float3 ComputeDirectionLight(LightData light, MaterialData mat, float3 N, float3 V) {
+float3 ComputeDirectionLight(DirectionalLight light, MaterialData mat, float3 N, float3 V) {
     float3 L = light.direction;
-    float NdotL = DIFF_SHADING_FACTOR(saturate(dot(N, L)));
-    float3 lightStrength = light.strength * NdotL;
-    return CookTorrance(lightStrength, L, N, V, mat);
+    float NdotL = DIFF_SHADING_FACTOR(max(dot(N, L), 0.0));
+    float3 lightStrength = light.directionalColor * NdotL;
+    return CookTorrance(lightStrength, L, N, V, mat, NdotL);
+}
+
+float3 ComputeAmbientLight(DirectionalLight light, MaterialData mat, float ao) {
+	float3 ambient = light.ambientIntensity * ao * light.ambientColor * mat.diffuseAlbedo;
+	return ambient;
 }
 
 // ----------------------------------------------------------------------------
@@ -128,7 +133,7 @@ float3 ComputePointLight(PointLight pointLight, MaterialData mat, float3 N, floa
     float NdotL = DIFF_SHADING_FACTOR(max(dot(N, L), 0.0));
     float attenuation = rcp(dis * dis);
     float3 lightStrength = pointLight.color * NdotL * attenuation * pointLight.intensity;
-    return CookTorrance(lightStrength, L, N, V, mat);
+    return CookTorrance(lightStrength, L, N, V, mat, NdotL);
 }
 
 // ----------------------------------------------------------------------------
@@ -145,5 +150,5 @@ float3 ComputeSpotLight(LightData light, MaterialData mat, float3 N, float3 V, f
     lightStrength *= attenuation;
     float spotFactor = pow(saturate(dot(L, light.direction)), light.spotPower);
     lightStrength *= spotFactor;
-    return CookTorrance(lightStrength, L, N, V, mat);
+    return CookTorrance(lightStrength, L, N, V, mat, NdotL);
 }
