@@ -5,10 +5,12 @@ cbuffer CbView : register(b0) {
 };
 
 #if defined(UPDATE_POINT_LIGHT)
-	RWStructuredBuffer<PointLight> gPointList : register(u0);
+	StructuredBuffer<PointLight> gPointList : register(t0);
 #else
-	RWStructuredBuffer<SpotLight>  gSpotList : register(u0);
+	StructuredBuffer<SpotLight>  gSpotList  : register(t0);
 #endif
+
+RWStructuredBuffer<float4> gOutputBoundingSphere : register(u0);
 
 struct ComputeIn {
     uint3 GroupID           : SV_GroupID;           // 3D index of the thread group in the dispatch.
@@ -25,9 +27,13 @@ void CS(ComputeIn cin) {
 
 #if defined(UPDATE_POINT_LIGHT)
     float3 position = gPointList[index].position;
-    gPointList[index].viewSpacePosition = mul(gView, float4(position, 1.0));
+	float radius = gPointList[index].range;
+    float3 boundingSphereCenter = mul(gView, float4(position, 1.0)).xyz;
+	gOutputBoundingSphere[index] = float4(boundingSphereCenter, radius);
 #else
 	float3 position = gSpotList[index].position;
-    gSpotList[index].viewSpaceBoundingSphereCenter = mul(gView, float4(position, 1.0)).xyz;
+	float radius = gSpotList[index].boundingSphereRadius;
+    float3 boundingSphereCenter = mul(gView, float4(position, 1.0)).xyz;
+	gOutputBoundingSphere[index] = float4(boundingSphereCenter, radius);
 #endif
 }

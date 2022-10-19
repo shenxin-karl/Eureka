@@ -66,25 +66,25 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	initLight(pDirectCtx);
 	initRenderGraph(pDirectCtx);
 
-	MaterialDesc materialDesc{
-		"DeferredPBR",
-		nullptr,
-		*pDirectCtx,
-		pRenderGraph
-	};
-	auto materialCreator = [&](const ALMaterial *pAlMaterial) {
-		materialDesc.pAlMaterial = pAlMaterial;
-		return std::make_shared<Material>(materialDesc);
-	};
+	//MaterialDesc materialDesc{
+	//	"DeferredPBR",
+	//	nullptr,
+	//	*pDirectCtx,
+	//	pRenderGraph
+	//};
+	//auto materialCreator = [&](const ALMaterial *pAlMaterial) {
+	//	materialDesc.pAlMaterial = pAlMaterial;
+	//	return std::make_shared<Material>(materialDesc);
+	//};
 
-	auto pSphereMesh = GeometryGenerator::instance()->createSphere(0.15f, 5);
-	auto pointLightVisitor = pPointLightList->visit();
-	for (PointLight &pointLight : pointLightVisitor) {
-		auto pSphereModel = std::make_unique<PartModel>(*pDirectCtx, pSphereMesh);
-		pSphereModel->setModelTransform(float4x4(Matrix4::makeTranslation(Vector3(pointLight.position))));
-		pSphereModel->createMaterial(*pDirectCtx, materialCreator);
-		_models.push_back(std::move(pSphereModel));
-	}
+	//auto pSphereMesh = GeometryGenerator::instance()->createSphere(0.15f, 5);
+	//auto pointLightVisitor = pPointLightList->visit();
+	//for (PointLight &pointLight : pointLightVisitor) {
+	//	auto pSphereModel = std::make_unique<PartModel>(*pDirectCtx, pSphereMesh);
+	//	pSphereModel->setModelTransform(float4x4(Matrix4::makeTranslation(Vector3(pointLight.position))));
+	//	pSphereModel->createMaterial(*pDirectCtx, materialCreator);
+	//	_models.push_back(std::move(pSphereModel));
+	//}
 
 	// loading
 	loading(pDirectCtx);
@@ -121,11 +121,6 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	pCbPrePassVisitor->fogStart = 0.f;
 	pCbPrePassVisitor->fogEnd = 0.f;
 	pCbPrePassVisitor->cbPrePassPadding1 = float2(0.f);
-
-	// update point light view space position
-	Math::Matrix4 matView = _pCamera->getMatView();
-	for (PointLight &pointLight : pPointLightList->visit())
-		pointLight.viewSpacePosition = float4(matView * Vector4(pointLight.position, 1.0));
 
 	if (pGameTimer->oneSecondTrigger()) {
 		std::string titleName = std::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());

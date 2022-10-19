@@ -54,7 +54,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 
 # include 的 cmake
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(EngineResources)
 include(EngineShaders)
 

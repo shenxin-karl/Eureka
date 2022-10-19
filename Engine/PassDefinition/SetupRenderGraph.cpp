@@ -55,7 +55,8 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pRenderGraph->addPass(pGBufferPass);
 	}
 
-	auto pTileDeferred = std::make_shared<TileDeferredPass>(kTileDeferredPassName, directCtx);
+	size_t numPointLights = pApp->pPointLightList->getElementCount();
+	auto pTileDeferred = std::make_shared<TileDeferredPass>(kTileDeferredPassName, directCtx, numPointLights);
 	{
 		pTileDeferred->pDepthMap.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_READ;
 		pGBufferPass->pDepthStencil >> pTileDeferred->pDepthMap;

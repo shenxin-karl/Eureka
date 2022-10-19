@@ -1,8 +1,9 @@
 #include "Lighting.hlsli"
 
-Texture2D<float> gDepthMap : register(t0);
-StructuredBuffer<PointLight> gPointLists : register(t1);
-RWStructuredBuffer<LightList> gTileLightLists : register(u0);
+Texture2D<float>				gDepthMap			  : register(t0);
+StructuredBuffer<PointLight>	gPointLists			  : register(t1);
+StructuredBuffer<float4>		gPointBoundingSpheres : register(t2);
+RWStructuredBuffer<LightList>	gTileLightLists		  : register(u0);
 
 groupshared uint sMinZ;
 groupshared uint sMaxZ;
@@ -89,9 +90,10 @@ void CS(ComputeIn cin) {
         PointLight light = gPointLists[lightIndex];
 		// Cull: point light sphere vs tile frustum
         bool inFrustum = true;
+		float4 boundingSphere = gPointBoundingSpheres[lightIndex];
 		[unroll] for (uint i = 0; i < 6; ++i) {
-			float d = dot(frustumPlanes[i], light.viewSpacePosition);
-            inFrustum = inFrustum && (d >= -light.range);
+			float d = dot(frustumPlanes[i], float4(boundingSphere.xyz, 1.0));
+            inFrustum = inFrustum && (d >= -boundingSphere.w);
 		}
 		[branch] if (inFrustum) {
             // Append light to list
