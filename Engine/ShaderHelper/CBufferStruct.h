@@ -71,7 +71,6 @@ struct PointLight {
 	float			intensity;
 	Math::float3	position;
 	float			range;
-	Math::float4	viewSpacePosition;
 };
 
 struct SpotLight {

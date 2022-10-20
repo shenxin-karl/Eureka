@@ -23,7 +23,7 @@ struct ComputeIn {
 
 [numthreads(NUM_THREAD, 1, 1)]
 void CS(ComputeIn cin) {
-	uint index = cin.DispatchThreadID.y * NUM_THREAD + cin.DispatchThreadID.x;
+	uint index = cin.GroupID.x * NUM_THREAD + cin.GroupIndex;
 
 #if defined(UPDATE_POINT_LIGHT)
     float3 position = gPointList[index].position;
