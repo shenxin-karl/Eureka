@@ -2,6 +2,7 @@
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "Dx12lib/Pipeline/RootSignature.h"
 #include "EngineShaders/ClusterDeferredCS.h"
+#include "Math/MathHelper.h"
 
 using namespace Math;
 
@@ -46,10 +47,18 @@ size_t ClusterDeferredPass::calcClusterSize(float zFar) noexcept {
 
 void ClusterDeferredPass::updateClusterFrustums(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
 	bool updateFrustum = std::memcmp(&_matProj, &view.cameraData.matProj, sizeof(float4x4)) == 0;
-	updateFrustum = updateFrustum || _pClusterFrustums == nullptr;
-
-	if (_pClusterFrustums == nullptr) {
-		
+	if (_pClusterFrustums == nullptr || _width != view.viewport.width || _height != view.viewport.height) {
+		_width = view.viewport.width;
+		_height = view.viewport.height;
+		updateFrustum = true;
+		size_t x = MathHelper::divideByMultiple(view.viewport.width, kTileDimension);
+		size_t y = MathHelper::divideByMultiple(view.viewport.height, kTileDimension);
+		size_t z = calcClusterSize(view.cameraData.zFar);
+		_pClusterFrustums = directCtx.createUAStructuredBuffer(
+			nullptr,
+			x * y * z,
+			sizeof(ClusterFrustum)
+		);
 	}
 
 }

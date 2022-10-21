@@ -25,8 +25,10 @@ public:
 	constexpr static size_t kTileDimension = 64;
 	static size_t calcClusterSize(float zFar) noexcept;
 private:
-	void updateClusterFrustums(dx12lib::IDirectContext &directCtxm const rgph::RenderView &view);
+	void updateClusterFrustums(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view);
 private:
+	size_t _width = 0;
+	size_t _height = 0;
 	Math::float4x4 _matProj;
 	std::shared_ptr<dx12lib::ComputePSO> _pPipeline;
 	std::shared_ptr<dx12lib::IUAStructuredBuffer> _pClusterFrustums;

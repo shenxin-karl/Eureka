@@ -140,6 +140,8 @@ void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {
 	rgph::RenderView view;
 	view.cameraData = _pCamera->getCameraData();
 	view.pProfiler = &profiler;
+	view.viewport.width = _width;
+	view.viewport.height = _height;
 
 	pRenderGraph->execute(pDirectProxy, view);
 	pCmdQueue->executeCommandList(pDirectProxy);

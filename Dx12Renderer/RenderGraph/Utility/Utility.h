@@ -22,7 +22,13 @@ struct CameraData {
 	Math::BoundingFrustum projSpaceFrustum;
 };
 
+struct Viewport {
+	size_t width;
+	size_t height;
+};
+
 struct RenderView {
+	Viewport viewport;
 	CameraData cameraData;
 	dx12lib::RenderProfiler *pProfiler;
 };

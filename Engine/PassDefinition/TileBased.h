@@ -17,7 +17,7 @@ protected:
 	void postExecute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) override;
 	void onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) override;
 protected:
-	bool _needUpdate = true;
+	bool _needUpdateTile = true;
 	size_t _maxSpotLights;
 	size_t _maxPointLights;
 	Math::float4x4 _matView = Math::float4x4::identity();					
