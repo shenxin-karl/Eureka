@@ -55,7 +55,7 @@ TileBased::TileBased(const std::string &passName,
 
 void TileBased::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
 	ExecutablePass::execute(pDirectCtx, view);
-	_needUpdate = std::memcmp(&_matView, &view.cameraData.matView, sizeof(float4x4)) != 0;
+	_needUpdate = _needUpdate || std::memcmp(&_matView, &view.cameraData.matView, sizeof(float4x4)) != 0;
 	if (_needUpdate) {
 		if (_maxPointLights > 0) {
 			pDirectCtx->setComputePSO(_pUpdatePointLightBoundingSpherePipeline);
@@ -76,6 +76,12 @@ void TileBased::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::Rend
 void TileBased::postExecute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
 	ExecutablePass::postExecute(pDirectCtx, view);
 	_matView = view.cameraData.matView;
+	_needUpdate = false;
+}
+
+void TileBased::onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
+	ExecutablePass::onResize(pDirectCtx, width, height);
+	_needUpdate = true;
 }
 
 

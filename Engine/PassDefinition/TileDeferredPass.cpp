@@ -26,6 +26,9 @@ TileDeferredPass::TileDeferredPass(const std::string &passName, dx12lib::IDirect
 void TileDeferredPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
 	TileBased::execute(pDirectCtx, view);
 
+	if (!_needUpdate)
+		return;
+
 	const rgph::CameraData &cameraData = view.cameraData;
 	auto visitor = _pCbTile->visit();
 	visitor->gView = cameraData.matView;

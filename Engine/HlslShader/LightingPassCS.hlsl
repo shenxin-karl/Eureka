@@ -40,9 +40,8 @@ float2 CalcTexcoord(ComputeIn cin) {
 		return ( wp / wp.w ).xyz;
 	}
  */
-float3 CalcWorldPosition(float2 uv)
-{
-	float zNdc = gDepthMap.SampleLevel(gSamLinearClamp, uv, 0).x;
+float3 CalcWorldPosition(float2 uv) {
+	float zNdc = gDepthMap.SampleLevel(gSamPointClamp, uv, 0).x;
     float4 pos = float4(uv * 2.0 - 1.0, zNdc, 1.0);
     pos.y *= -1.0;
     float4 worldPos = mul(gInvViewProj, pos);

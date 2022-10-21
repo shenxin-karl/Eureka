@@ -14,6 +14,7 @@ public:
 		size_t maxPointLight = 0, 
 		size_t maxSpotLight = 0
 	);
+	void execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) override;
 public:
 	constexpr static float kDepthSlicing16[17] = {
 		1.0f, 20.0f, 29.7f, 44.0f, 65.3f,
@@ -23,6 +24,12 @@ public:
 	};
 	constexpr static size_t kTileDimension = 64;
 	static size_t calcClusterSize(float zFar) noexcept;
+private:
+	void updateClusterFrustums(dx12lib::IDirectContext &directCtxm const rgph::RenderView &view);
+private:
+	Math::float4x4 _matProj;
+	std::shared_ptr<dx12lib::ComputePSO> _pPipeline;
+	std::shared_ptr<dx12lib::IUAStructuredBuffer> _pClusterFrustums;
 };
 
 }
