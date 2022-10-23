@@ -53,34 +53,34 @@ TileBased::TileBased(const std::string &passName,
 	_pUpdateSpotLightBoundingSpherePipeline->finalize();
 }
 
-void TileBased::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
-	ExecutablePass::execute(pDirectCtx, view);
+void TileBased::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
+	ExecutablePass::execute(directCtx, view);
 	_needUpdateTile = _needUpdateTile || std::memcmp(&_matView, &view.cameraData.matView, sizeof(float4x4)) != 0;
-	if (_needUpdateTile) {
+	//if (_needUpdateTile) {
 		if (_maxPointLights > 0) {
-			pDirectCtx->setComputePSO(_pUpdatePointLightBoundingSpherePipeline);
-			pDirectCtx->setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, 16, &_matView);
+			directCtx.setComputePSO(_pUpdatePointLightBoundingSpherePipeline);
+			directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, 16, &_matView);
 			const auto &srv = pPointLightLists->getSRV();
-			pDirectCtx->setShaderResourceView(StringName("gPointList"), srv);
-			pDirectCtx->transitionBarrier(_pPointLightBoundingSpheres, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+			directCtx.setShaderResourceView(StringName("gPointList"), srv);
+			directCtx.transitionBarrier(_pPointLightBoundingSpheres, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 			const auto &uav = _pPointLightBoundingSpheres->getUAV();
-			pDirectCtx->setUnorderedAccessView(StringName("gOutputBoundingSphere"), uav);
+			directCtx.setUnorderedAccessView(StringName("gOutputBoundingSphere"), uav);
 			size_t numPointLight = pPointLightLists->getElementCount();
 			auto dispatchArgs = _pUpdatePointLightBoundingSpherePipeline->calcDispatchArgs(numPointLight);
-			pDirectCtx->dispatch(dispatchArgs);
-			pDirectCtx->transitionBarrier(_pPointLightBoundingSpheres, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+			directCtx.dispatch(dispatchArgs);
+			directCtx.transitionBarrier(_pPointLightBoundingSpheres, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 		}
-	}
+	//}
 }
 
-void TileBased::postExecute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
-	ExecutablePass::postExecute(pDirectCtx, view);
+void TileBased::postExecute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
+	ExecutablePass::postExecute(directCtx, view);
 	_matView = view.cameraData.matView;
 	_needUpdateTile = false;
 }
 
-void TileBased::onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
-	ExecutablePass::onResize(pDirectCtx, width, height);
+void TileBased::onResize(dx12lib::IDirectContext &directCtx, size_t width, size_t height) {
+	ExecutablePass::onResize(directCtx, width, height);
 	_needUpdateTile = true;
 }
 

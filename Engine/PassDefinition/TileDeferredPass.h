@@ -19,10 +19,10 @@ public:
 	TileDeferredPass(const std::string &passName, dx12lib::IDirectContext &directCtx,
 		size_t maxPointLights = 0,
 		size_t maxSpotLights = 0);
-	void execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) override;
+	void execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) override;
 	rgph::PassResourcePtr<dx12lib::Texture> pDepthMap;
 private:
-	FRConstantBufferPtr<CbTile> _pCbTile;
+	dx12lib::FRConstantBufferPtr<CbTile> _pCbTile;
 	std::shared_ptr<dx12lib::ComputePSO> _pPipeline;
 };
 

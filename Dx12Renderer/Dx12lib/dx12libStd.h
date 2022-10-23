@@ -181,9 +181,3 @@ std::string to_string(const std::wstring &str);
 
 }
 
-using dx12lib::FRRawConstantBufferPtr;
-using dx12lib::FRConstantBufferPtr;
-using dx12lib::FRRawStructuredBufferPtr;
-using dx12lib::FRStructuredBufferPtr;
-
-

@@ -14,8 +14,8 @@ public:
 		pDstResource.preExecuteState = D3D12_RESOURCE_STATE_COPY_DEST;
 	}
 
-	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override {
-		pDirectCtx->copyResource(pDstResource.getResource(), pSrcResource.getResource());
+	void execute(dx12lib::IDirectContext &directCtx, const RenderView &view) override {
+		directCtx.copyResource(pDstResource.getResource(), pSrcResource.getResource());
 	}
 public:
 	PassResourcePtr<dx12lib::IResource> pSrcResource;

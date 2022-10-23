@@ -13,9 +13,9 @@ namespace Eureka {
 class TileBased : public rgph::ExecutablePass {
 protected:
 	TileBased(const std::string &passName, dx12lib::IDirectContext &directCtx, size_t maxPointLights, size_t maxSpotLights);
-	void execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) override;
-	void postExecute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) override;
-	void onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) override;
+	void execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) override;
+	void postExecute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) override;
+	void onResize(dx12lib::IDirectContext &directCtx, size_t width, size_t height) override;
 protected:
 	bool _needUpdateTile = true;
 	size_t _maxSpotLights;

@@ -12,10 +12,10 @@ public:
 	explicit ExecutablePass(const std::string &passName);
 	PassResourceBase *getPassResource(const std::string &resourceName) const;
 	const std::string &getPassName() const;
-	virtual void preExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
-	virtual void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
-	virtual void postExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view);
-	virtual void onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height);
+	virtual void preExecute(dx12lib::IDirectContext &directCtx, const RenderView &view);
+	virtual void execute(dx12lib::IDirectContext &directCtx, const RenderView &view);
+	virtual void postExecute(dx12lib::IDirectContext &directCtx, const RenderView &view);
+	virtual void onResize(dx12lib::IDirectContext &directCtx, size_t width, size_t height);
 	virtual void reset();
 	virtual auto getPassType() const -> PassType;
 private:

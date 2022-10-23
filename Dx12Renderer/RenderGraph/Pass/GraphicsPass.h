@@ -8,9 +8,9 @@ namespace rgph {
 class GraphicsPass : public ExecutablePass {
 public:
 	GraphicsPass(const std::string &passName);
-	void preExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override;
-	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override;
-	void postExecute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override;
+	void preExecute(dx12lib::IDirectContext &directCtx, const RenderView &view) override;
+	void execute(dx12lib::IDirectContext &directCtx, const RenderView &view) override;
+	void postExecute(dx12lib::IDirectContext &directCtx, const RenderView &view) override;
 	auto getPassType() const ->PassType override;
 	virtual void setViewportScissorRect(dx12lib::IGraphicsContext &graphicsCtx) = 0;
 	virtual void setRenderTargets(dx12lib::IGraphicsContext &graphicsContext) = 0;

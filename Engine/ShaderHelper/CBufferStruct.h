@@ -94,7 +94,7 @@ struct LightList {
 	uint32_t numPointLights;
 	uint32_t pointLightIndices[MAX_TILE_POINT_LIGHT_NUM];
 	uint32_t numSpotLights;
-	uint32_t spotLightIndices[MAX_TILE_POINT_LIGHT_NUM];
+	uint32_t spotLightIndices[MAX_TILE_SPOT_LIGHT_NUM];
 };
 
 }

@@ -22,7 +22,7 @@ void TransformCBufferPtr::setTransformStore(const TransformStore &store) {
 	std::memcpy(ptr, &store, sizeof(store));
 }
 
-void TransformCBufferPtr::setTransformCBuffer(FRConstantBufferPtr<TransformStore> pTransformCBuf) {
+void TransformCBufferPtr::setTransformCBuffer(dx12lib::FRConstantBufferPtr<TransformStore> pTransformCBuf) {
 	assert(pTransformCBuf != nullptr);
 	_pTransformCBuf = std::move(pTransformCBuf);
 }

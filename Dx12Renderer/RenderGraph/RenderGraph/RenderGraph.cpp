@@ -34,9 +34,9 @@ void RenderGraph::execute(dx12lib::DirectContextProxy pDirectCtx, const RenderVi
 	assert(_finalized);
 	assert(!_executeList.empty());
 	for (auto &pPass : _executeList) {
-		pPass->preExecute(pDirectCtx, view);
-		pPass->execute(pDirectCtx, view);
-		pPass->postExecute(pDirectCtx, view);
+		pPass->preExecute(*pDirectCtx, view);
+		pPass->execute(*pDirectCtx, view);
+		pPass->postExecute(*pDirectCtx, view);
 	}
 	if (view.pProfiler)
 		*view.pProfiler += pDirectCtx->getRenderProfiler();
@@ -137,7 +137,7 @@ void RenderGraph::finalize() {
 
 void RenderGraph::onResize(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height) {
 	for (auto &pass : _passes)
-		pass->onResize(pDirectCtx, width, height);
+		pass->onResize(*pDirectCtx, width, height);
 }
 
 }

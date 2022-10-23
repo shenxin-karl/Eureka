@@ -21,6 +21,7 @@
 #include "Material/Material.h"
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "Model/PartModel/PartModel.h"
+#include "PassDefinition/ClusterDeferredPass.h"
 #include "RenderGraph/RenderGraph/RenderGraph.h"
 #include "PassDefinition/SetupRenderGraph.h"
 #include "TextureManager/TextureManager.h"
@@ -236,6 +237,8 @@ void EurekaApplication::initLight(dx12lib::DirectContextProxy pDirectCtx) {
 		pointLight.range = MathHelper::lerp(kMinRange, kMaxRange, dis(gen));
 		pointLights.push_back(pointLight);
 	}
+
+	//pointLights.back().range = 5000.f;
 	pPointLightList = pDirectCtx->createFRStructuredBuffer<PointLight>(pointLights.data(), pointLights.size());
 
 	std::vector<SpotLight> spotLights;
@@ -317,6 +320,9 @@ void EurekaApplication::resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, si
 	size_t numTile = MathHelper::divideByMultiple(width, TBDR_TILE_DIMENSION) * 
 		MathHelper::divideByMultiple(height, TBDR_TILE_DIMENSION);
 	pTileLightLists = pDirectCtx->createUAStructuredBuffer(nullptr, numTile, sizeof(LightList));
+
+	size_t numClusterTile = ClusterDeferredPass::calcTileSize(_width, _height, _pCamera->getFarClip());
+	pTileClusterLightList = pDirectCtx->createUAStructuredBuffer(nullptr, numClusterTile, sizeof(LightList));
 }
 
 }

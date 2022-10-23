@@ -35,11 +35,12 @@ public:
 	std::shared_ptr<dx12lib::Texture>	pColorLutMap;
 	std::shared_ptr<rgph::RenderGraph>	pRenderGraph;
 
-	FRConstantBufferPtr<CbPrePass>					pCbPrePass;
-	FRConstantBufferPtr<CbLighting>					pCbLighting;
-	FRStructuredBufferPtr<PointLight>				pPointLightList;
-	FRStructuredBufferPtr<SpotLight>				pSpotLightList;
+	dx12lib::FRConstantBufferPtr<CbPrePass>			pCbPrePass;
+	dx12lib::FRConstantBufferPtr<CbLighting>		pCbLighting;
+	dx12lib::FRStructuredBufferPtr<PointLight>		pPointLightList;
+	dx12lib::FRStructuredBufferPtr<SpotLight>		pSpotLightList;
 	std::shared_ptr<dx12lib::UAStructuredBuffer>	pTileLightLists;
+	std::shared_ptr<dx12lib::UAStructuredBuffer>	pTileClusterLightList;
 	std::shared_ptr<dx12lib::ConstantBuffer>		pCbFXAASetting;
 };
 

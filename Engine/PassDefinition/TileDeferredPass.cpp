@@ -23,8 +23,8 @@ TileDeferredPass::TileDeferredPass(const std::string &passName, dx12lib::IDirect
 	_pPipeline = pTileDeferredShader->getPSO();
 }
 
-void TileDeferredPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
-	TileBased::execute(pDirectCtx, view);
+void TileDeferredPass::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
+	TileBased::execute(directCtx, view);
 
 	if (!_needUpdateTile)
 		return;
@@ -39,14 +39,14 @@ void TileDeferredPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgp
 	visitor->gFarMinusNear = cameraData.zFar - cameraData.zNear;
 
 	const auto &desc = pDepthMap->getDesc();
-	pDirectCtx->setComputePSO(_pPipeline);
-	pDirectCtx->setConstantBufferView(StringName("gCbTile"), _pCbTile->getCBV());
-	pDirectCtx->setShaderResourceView(StringName("gDepthMap"), pDepthMap->get2dSRV());
-	pDirectCtx->setShaderResourceView(StringName("gPointLists"), pPointLightLists->getSRV());
-	pDirectCtx->setShaderResourceView(StringName("gPointBoundingSpheres"), _pPointLightBoundingSpheres->getSRV());
-	pDirectCtx->setUnorderedAccessView(StringName("gTileLightLists"), pTileLightLists->getUAV());
+	directCtx.setComputePSO(_pPipeline);
+	directCtx.setConstantBufferView(StringName("gCbTile"), _pCbTile->getCBV());
+	directCtx.setShaderResourceView(StringName("gDepthMap"), pDepthMap->get2dSRV());
+	directCtx.setShaderResourceView(StringName("gPointLists"), pPointLightLists->getSRV());
+	directCtx.setShaderResourceView(StringName("gPointBoundingSpheres"), _pPointLightBoundingSpheres->getSRV());
+	directCtx.setUnorderedAccessView(StringName("gTileLightLists"), pTileLightLists->getUAV());
 	auto dispatchArgs = _pPipeline->calcDispatchArgs(desc.Width, desc.Height);
-	pDirectCtx->dispatch(dispatchArgs);
+	directCtx.dispatch(dispatchArgs);
 }
 
 }

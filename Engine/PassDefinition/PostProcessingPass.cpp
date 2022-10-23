@@ -14,26 +14,27 @@ PostProcessingPass::PostProcessingPass(const std::string &passName)
 	_pPipeline = ShaderManager::instance()->getComputeShader("PostProcessing");
 }
 
-void PostProcessingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
-	ExecutablePass::execute(pDirectCtx, view);
+void PostProcessingPass::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
+	ExecutablePass::execute(directCtx, view);
 
 	auto keyword = _pPipeline->getKeywordMask();
 	std::shared_ptr<dx12lib::ComputePSO> pso;
 	if (_pColorLutMap != nullptr) {
 		keyword.setKeyWord(StringName("_COLOR_GRADING"), true);
 		pso = _pPipeline->getPSO(keyword);
-		pDirectCtx->setComputePSO(pso);
-		pDirectCtx->setShaderResourceView(StringName("gColorLutMap"), _pColorLutMap->get2dSRV());
-	} else {
+		directCtx.setComputePSO(pso);
+		directCtx.setShaderResourceView(StringName("gColorLutMap"), _pColorLutMap->get2dSRV());
+	}
+	else {
 		pso = _pPipeline->getPSO(keyword);
-		pDirectCtx->setComputePSO(pso);
+		directCtx.setComputePSO(pso);
 	}
 
 	const auto &desc = pScreenMap->getDesc();
-	pDirectCtx->setShaderResourceView(StringName("gScreenTexture"), pScreenMap->get2dSRV());
-	pDirectCtx->setUnorderedAccessView(StringName("gOutputMap"), pOutputMap->get2dUAV());
+	directCtx.setShaderResourceView(StringName("gScreenTexture"), pScreenMap->get2dSRV());
+	directCtx.setUnorderedAccessView(StringName("gOutputMap"), pOutputMap->get2dUAV());
 	auto dispatchArgs = pso->calcDispatchArgs(desc.Width, desc.Height);
-	pDirectCtx->dispatch(dispatchArgs);
+	directCtx.dispatch(dispatchArgs);
 }
 
 bool PostProcessingPass::setColorLutMap(std::shared_ptr<dx12lib::Texture> pColorLutMap) {

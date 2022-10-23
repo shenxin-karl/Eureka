@@ -31,8 +31,8 @@ LightingPass::LightingPass(const std::string &passName, std::shared_ptr<dx12lib:
 #endif
 }
 
-void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
-	ExecutablePass::execute(pDirectCtx, view);
+void LightingPass::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
+	ExecutablePass::execute(directCtx, view);
 
 	const auto &desc = pDepthMap->getDesc();
 	const rgph::CameraData &cameraData = view.cameraData;
@@ -42,17 +42,17 @@ void LightingPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::R
 	visitor->gInvViewProj = cameraData.matInvViewProj;
 	visitor->gCameraPosition = cameraData.lookFrom;
 
-	pDirectCtx->setComputePSO(_pLightingPSO);
-	pDirectCtx->setConstantBufferView(StringName("CbLighting"), pCbLighting->getCBV());
-	pDirectCtx->setShaderResourceView(StringName("gBuffer0"), pGBuffer0->get2dSRV());
-	pDirectCtx->setShaderResourceView(StringName("gBuffer1"), pGBuffer1->get2dSRV());
-	pDirectCtx->setShaderResourceView(StringName("gBuffer2"), pGBuffer2->get2dSRV());
-	pDirectCtx->setShaderResourceView(StringName("gDepthMap"), pDepthMap->get2dSRV());
-	pDirectCtx->setUnorderedAccessView(StringName("gLightingBuffer"), pLightingBuffer->get2dUAV());
-	pDirectCtx->setShaderResourceView(StringName("gPointLights"), pPointLightLists->getSRV());
-	pDirectCtx->setShaderResourceView(StringName("gTileLightLists"), pTileLightLists->getSRV());
+	directCtx.setComputePSO(_pLightingPSO);
+	directCtx.setConstantBufferView(StringName("CbLighting"), pCbLighting->getCBV());
+	directCtx.setShaderResourceView(StringName("gBuffer0"), pGBuffer0->get2dSRV());
+	directCtx.setShaderResourceView(StringName("gBuffer1"), pGBuffer1->get2dSRV());
+	directCtx.setShaderResourceView(StringName("gBuffer2"), pGBuffer2->get2dSRV());
+	directCtx.setShaderResourceView(StringName("gDepthMap"), pDepthMap->get2dSRV());
+	directCtx.setUnorderedAccessView(StringName("gLightingBuffer"), pLightingBuffer->get2dUAV());
+	directCtx.setShaderResourceView(StringName("gPointLights"), pPointLightLists->getSRV());
+	directCtx.setShaderResourceView(StringName("gTileLightLists"), pTileLightLists->getSRV());
 	auto dispatchArgs = _pLightingPSO->calcDispatchArgs(desc.Width, desc.Height);
-	pDirectCtx->dispatch(dispatchArgs);
+	directCtx.dispatch(dispatchArgs);
 }
 
 }

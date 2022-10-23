@@ -7,6 +7,7 @@ namespace Eureka {
 constexpr rgph::TechniqueType kTechGBuffer = rgph::TechniqueType(1);
 inline const std::string kGBufferPassName			= "GBuffer";
 inline const std::string kTileDeferredPassName		= "TileDeferred";
+inline const std::string kClusterDeferredPassName   = "ClusterDeferred";
 inline const std::string kLightingPassName			= "Lighting";
 inline const std::string kPostProcessingPassName	= "PostProcessing";
 

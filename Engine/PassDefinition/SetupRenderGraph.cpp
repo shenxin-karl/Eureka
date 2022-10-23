@@ -4,6 +4,7 @@
 #include <Dx12lib/Device/SwapChain.h>
 #include "PassDefinition/SetupRenderGraph.h"
 
+#include "ClusterDeferredPass.h"
 #include "FXAAPass.h"
 #include "GBufferPass.h"
 #include "LightingPass.h"
@@ -56,6 +57,17 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 	}
 
 	size_t numPointLights = pApp->pPointLightList->getElementCount();
+	auto pClusterDeferred = std::make_shared<ClusterDeferredPass>(kClusterDeferredPassName, directCtx, numPointLights);
+	{
+		pClusterDeferred->pTileLightLists.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		pApp->pTileClusterLightList >> pClusterDeferred->pTileLightLists;
+
+		pClusterDeferred->pPointLightLists.preExecuteState = D3D12_RESOURCE_STATE_GENERIC_READ;
+		pApp->pPointLightList >> pClusterDeferred->pPointLightLists;
+
+		pRenderGraph->addPass(pClusterDeferred);
+	}
+
 	auto pTileDeferred = std::make_shared<TileDeferredPass>(kTileDeferredPassName, directCtx, numPointLights);
 	{
 		pTileDeferred->pDepthMap.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_READ;

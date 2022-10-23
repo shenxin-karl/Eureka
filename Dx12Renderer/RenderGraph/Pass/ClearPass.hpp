@@ -11,9 +11,9 @@ public:
 	, pRenderTarget2d(this, "pBackBuffer") {
 	}
 
-	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override {
+	void execute(dx12lib::IDirectContext &directCtx, const RenderView &view) override {
 		const auto &clearValue = pRenderTarget2d->getClearValue();
-		pDirectCtx->clearColor(pRenderTarget2d->get2dRTV(), clearValue.Color);
+		directCtx.clearColor(pRenderTarget2d->get2dRTV(), clearValue.Color);
 	}
 public:
 	PassResourcePtr<dx12lib::Texture> pRenderTarget2d;
@@ -22,14 +22,14 @@ public:
 class ClearDsPass : public ExecutablePass {
 public:
 	ClearDsPass(const std::string &passName)
-	: ExecutablePass(passName)
-	, pDepthStencil2d(this, "pDepthStencil2d") {
+		: ExecutablePass(passName)
+		, pDepthStencil2d(this, "pDepthStencil2d") {
 	}
 
-	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override {
+	void execute(dx12lib::IDirectContext &directCtx, const RenderView &view) override {
 		const auto &clearValue = pDepthStencil2d->getClearValue();
-		pDirectCtx->clearDepthStencil(pDepthStencil2d->get2dDSV(), 
-			clearValue.DepthStencil.Depth, 
+		directCtx.clearDepthStencil(pDepthStencil2d->get2dDSV(),
+			clearValue.DepthStencil.Depth,
 			clearValue.DepthStencil.Stencil
 		);
 	}
@@ -42,17 +42,17 @@ class ClearPass : public ExecutablePass {
 public:
 public:
 	ClearPass(const std::string &passName)
-	: ExecutablePass(passName)
-	, pRenderTarget2d(this, "pBackBuffer")
-	, pDepthStencil2d(this, "pDepthStencil2d") {
+		: ExecutablePass(passName)
+		, pRenderTarget2d(this, "pBackBuffer")
+		, pDepthStencil2d(this, "pDepthStencil2d") {
 	}
 
-	void execute(dx12lib::DirectContextProxy pDirectCtx, const RenderView &view) override {
+	void execute(dx12lib::IDirectContext &directCtx, const RenderView &view) override {
 		const auto &rtClearValue = pRenderTarget2d->getClearValue();
-		pDirectCtx->clearColor(pRenderTarget2d->get2dRTV(), rtClearValue.Color);
+		directCtx.clearColor(pRenderTarget2d->get2dRTV(), rtClearValue.Color);
 
 		const auto &dsClearValue = pDepthStencil2d->getClearValue();
-		pDirectCtx->clearDepthStencil(pDepthStencil2d->get2dDSV(),
+		directCtx.clearDepthStencil(pDepthStencil2d->get2dDSV(),
 			dsClearValue.DepthStencil.Depth,
 			dsClearValue.DepthStencil.Stencil
 		);

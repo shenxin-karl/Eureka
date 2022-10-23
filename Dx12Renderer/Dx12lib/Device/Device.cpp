@@ -8,8 +8,8 @@
 #include <Dx12lib/Pipeline/PipelineStateObject.h>
 #include <Dx12lib/Pipeline/RootSignature.h>
 #include <Dx12lib/Resource/ResourceStateTracker.h>
-
-#include "Dx12lib/Texture/GenerateMipsPSO.h"
+#include <Dx12lib/Texture/GenerateMipsPSO.h>
+#include <Dx12lib/Context/CommonContext.h>
 
 namespace dx12lib {
 	

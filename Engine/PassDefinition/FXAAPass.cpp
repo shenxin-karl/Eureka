@@ -38,15 +38,15 @@ FXAAPass::FXAAPass(const std::string &passName, dx12lib::IDirectContext &directC
 	_pFullScreenGeometry = GeometryGenerator::instance()->createGeometry(directCtx, mask, pMesh);
 }
 
-void FXAAPass::execute(dx12lib::DirectContextProxy pDirectCtx, const rgph::RenderView &view) {
-	GraphicsPass::execute(pDirectCtx, view);
+void FXAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
+	GraphicsPass::execute(directCtx, view);
 
-	pDirectCtx->setGraphicsPSO(_pPipeline);
-	pDirectCtx->setConstantBufferView(StringName("FXAASetting"), pCbFXAASetting->getCBV());
-	pDirectCtx->setShaderResourceView(StringName("gScreenMap"), pScreenMap->get2dSRV());
+	directCtx.setGraphicsPSO(_pPipeline);
+	directCtx.setConstantBufferView(StringName("FXAASetting"), pCbFXAASetting->getCBV());
+	directCtx.setShaderResourceView(StringName("gScreenMap"), pScreenMap->get2dSRV());
 	auto mask = rgph::ShaderLayoutMask::Position | rgph::ShaderLayoutMask::TexCoord0;
-	_pFullScreenGeometry->bind(*pDirectCtx, mask);
-	_pFullScreenGeometry->draw(*pDirectCtx);
+	_pFullScreenGeometry->bind(directCtx, mask);
+	_pFullScreenGeometry->draw(directCtx);
 }
 
 void FXAAPass::setViewportScissorRect(dx12lib::IGraphicsContext &graphicsCtx) {

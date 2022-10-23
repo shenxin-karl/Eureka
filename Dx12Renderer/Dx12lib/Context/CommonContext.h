@@ -7,7 +7,6 @@
 #include <Dx12lib/Buffer/FRConstantBuffer.hpp>
 #include <Dx12lib/Tool/RenderProfiler.hpp>
 
-
 namespace dx12lib {
 
 interface IContext {
