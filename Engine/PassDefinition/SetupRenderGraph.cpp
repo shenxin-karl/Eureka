@@ -5,6 +5,7 @@
 #include "PassDefinition/SetupRenderGraph.h"
 
 #include "ClusterDeferredPass.h"
+#include "CopyToBackPass.h"
 #include "FXAAPass.h"
 #include "GBufferPass.h"
 #include "LightingPass.h"
@@ -57,16 +58,16 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 	}
 
 	size_t numPointLights = pApp->pPointLightList->getElementCount();
-	auto pClusterDeferred = std::make_shared<ClusterDeferredPass>(kClusterDeferredPassName, directCtx, numPointLights);
-	{
-		pClusterDeferred->pTileLightLists.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
-		pApp->pTileClusterLightList >> pClusterDeferred->pTileLightLists;
+	//auto pClusterDeferred = std::make_shared<ClusterDeferredPass>(kClusterDeferredPassName, directCtx, numPointLights);
+	//{
+	//	pClusterDeferred->pTileLightLists.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+	//	pApp->pTileClusterLightList >> pClusterDeferred->pTileLightLists;
 
-		pClusterDeferred->pPointLightLists.preExecuteState = D3D12_RESOURCE_STATE_GENERIC_READ;
-		pApp->pPointLightList >> pClusterDeferred->pPointLightLists;
+	//	pClusterDeferred->pPointLightLists.preExecuteState = D3D12_RESOURCE_STATE_GENERIC_READ;
+	//	pApp->pPointLightList >> pClusterDeferred->pPointLightLists;
 
-		pRenderGraph->addPass(pClusterDeferred);
-	}
+	//	pRenderGraph->addPass(pClusterDeferred);
+	//}
 
 	auto pTileDeferred = std::make_shared<TileDeferredPass>(kTileDeferredPassName, directCtx, numPointLights);
 	{
@@ -123,21 +124,20 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pRenderGraph->addPass(pPostProcessingPass);
 	}
 
-	auto pFXAAPass = std::make_shared<FXAAPass>("FXAAPass", directCtx);
+	auto pCopyToBackPass = std::make_shared<CopyToBackPass>("CopyToBackPass", directCtx);
 	{
-		pFXAAPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-		pPostProcessingPass->pOutputMap >> pFXAAPass->pScreenMap;
+		pCopyToBackPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		pPostProcessingPass->pOutputMap >> pCopyToBackPass->pScreenMap;
 
-		pFXAAPass->pBackBuffer.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		pClearBackBuffer->pRenderTarget2d >> pFXAAPass->pBackBuffer;
+		pCopyToBackPass->pBackBufferMap.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		pClearBackBuffer->pRenderTarget2d >> pCopyToBackPass->pBackBufferMap;
 
-		pFXAAPass->pCbFXAASetting = pApp->pCbFXAASetting;
-		pRenderGraph->addPass(pFXAAPass);
+		pRenderGraph->addPass(pCopyToBackPass);
 	}
 
 	auto pPresentPass = std::make_shared<rgph::PresentPass>("PresentPass");
 	{
-		pFXAAPass->pBackBuffer >> pPresentPass->pBackBuffer;
+		pCopyToBackPass->pBackBufferMap >> pPresentPass->pBackBuffer;
 		pRenderGraph->addPass(pPresentPass);
 	}
 

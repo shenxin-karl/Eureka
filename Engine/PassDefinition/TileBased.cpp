@@ -56,7 +56,7 @@ TileBased::TileBased(const std::string &passName,
 void TileBased::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
 	ExecutablePass::execute(directCtx, view);
 	_needUpdateTile = _needUpdateTile || std::memcmp(&_matView, &view.cameraData.matView, sizeof(float4x4)) != 0;
-	//if (_needUpdateTile) {
+	if (_needUpdateTile) {
 		if (_maxPointLights > 0) {
 			directCtx.setComputePSO(_pUpdatePointLightBoundingSpherePipeline);
 			directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, 16, &_matView);
@@ -70,7 +70,7 @@ void TileBased::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderVi
 			directCtx.dispatch(dispatchArgs);
 			directCtx.transitionBarrier(_pPointLightBoundingSpheres, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 		}
-	//}
+	}
 }
 
 void TileBased::postExecute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {

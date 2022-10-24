@@ -16,6 +16,8 @@ AddShader("HlslShader/UpdateLightBoundingSphere_cso/UpdatePointLightBoundingSphe
 AddShader("HlslShader/UpdateLightBoundingSphere_cso/UpdateSpotLightBoundingSphere_CS.txt" "CS" "cs_5_1")
 AddShader("HlslShader/ClusterDeferredCS.hlsl" "CS" "cs_5_1")
 AddShader("HlslShader/CalcClusterFrustumCS.hlsl" "CS" "cs_5_1")
+AddShader("HlslShader/CopyToBack_cso/CopyToBack_VS.txt" "VS" "vs_5_1")
+AddShader("HlslShader/CopyToBack_cso/CopyToBack_PS.txt" "PS" "ps_5_1")
 
 add_custom_target(EngineShader)
 # 创建一个目录
