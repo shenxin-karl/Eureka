@@ -172,6 +172,10 @@ https://zhuanlan.zhihu.com/p/142922246
 
 [Temporal Anti Aliasing – Step by Step | ziyad barakat's programming blog (wordpress.com)](https://ziyadbarakat.wordpress.com/2020/07/28/temporal-anti-aliasing-step-by-step/)
 
+代码参考
+
+[GameTechDev/TAA: Intel® Graphics Optimized Temporal Anti-Aliasing (TAA) (github.com)](https://github.com/GameTechDev/TAA)
+
 ## CSM 
 
 
