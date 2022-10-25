@@ -168,6 +168,10 @@ https://zhuanlan.zhihu.com/p/64993622
 
 https://zhuanlan.zhihu.com/p/142922246
 
+[Temporal Anti-Aliasing (sardinefish.com)](https://www.sardinefish.com/blog/444)
+
+[Temporal Anti Aliasing – Step by Step | ziyad barakat's programming blog (wordpress.com)](https://ziyadbarakat.wordpress.com/2020/07/28/temporal-anti-aliasing-step-by-step/)
+
 ## CSM 
 
 
@@ -196,7 +200,7 @@ https://zhuanlan.zhihu.com/p/142922246
 
 ## 物理的天空渲染
 
-
+[Volumetric Light Rendering (sardinefish.com)](https://www.sardinefish.com/blog/432)
 
 ## 体积云
 
