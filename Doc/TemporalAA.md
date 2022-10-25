@@ -54,5 +54,26 @@ proj.r[2].m128_f32[0] += (float)JitterX;//_31
 proj.r[2].m128_f32[1] += (float)JitterY;//_32
 ```
 
-## 步骤2混合历史帧
+## 步骤2 混合历史帧(Blending History Samples)
 
+最简单的方法即是将 N 个历史帧叠加取平均值, 但这样我们需要额外保存前 N 个历史帧, 在混合的 pass 中对 N 个历史帧进行采样混合. 但是这也消耗的显存很大.
+
+### Exponential History
+
+我们可以采用另一种混合方式，将当前帧的渲染画面与前一帧混合后的画面按一定比例混合:
+$$
+\rm { Output(t) = \alpha \cdot Input(t) + (1 − \alpha) Output(t−1) }
+$$
+当系数 α 足够小时，上述指数混合将会近似等于叠加取平均的结果
+$$
+\rm { 
+ 	x_t = x_{t-n} \Rightarrow s_t = \frac{ \alpha }{1 - (1 - \alpha)^n} \sum_{k=0}^{n-1}(1 - \alpha)^k_{t-k}
+}
+\\
+\rm {
+	\lim_{\alpha \rightarrow 0 }\frac{ \alpha }{1 - (1 - \alpha)^n} \sum_{k=0}^{n-1}(1 - \alpha)^k_{t-k} \frac{1}{n} \sum 	x_{t-k} 
+}
+$$
+于是我们就只需要保存并读取前一帧混合的结果。α 的取值应该根据所选择的采样点数量调整, α 过大将会导致混合后的历史帧无法保留一个完整的 sampling pattern，造成画面抖动的问题.
+
+![img](ODczOTg1.png)
