@@ -9,7 +9,7 @@ void ShaderManager::loading(std::weak_ptr<dx12lib::Device> pDevice) {
 	auto pDeferredPBR = std::make_shared<GraphicsShader>(pDevice, "Engine/HlslShader/DeferredPBR.hlsl");
 	pDeferredPBR->setVertexShader("VS");
 	pDeferredPBR->setPixelShader("PS");
-	pDeferredPBR->setRenderTargetFormats({ kGBuffer0Format, kGBuffer1Format, kGBuffer2Format });
+	pDeferredPBR->setRenderTargetFormats({ kGBuffer0Format, kGBuffer1Format, kGBuffer2Format, kVelocityFormat });
 	pDeferredPBR->setDepthStencilFormat(kSwapChainDepthStencilFormat);
 	_graphicsShaders["DeferredPBR"] = pDeferredPBR;
 

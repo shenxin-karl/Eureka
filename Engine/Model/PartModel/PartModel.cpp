@@ -15,18 +15,8 @@ PartModel::PartModel(dx12lib::IDirectContext &directCtx, std::shared_ptr<PartMes
 void PartModel::submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const {
 	if (_transformDirty) {
 		_transformDirty = false;
-		Matrix4 matWorld(_transform);
-		Matrix4 matInvWorld = inverse(matWorld);
-		Matrix4 matNormal = transpose(matInvWorld);
-		Matrix4 matInvNormal = inverse(matNormal);
-		rgph::TransformStore store = {
-			static_cast<float4x4>(matWorld),
-			static_cast<float4x4>(matInvWorld),
-			static_cast<float4x4>(matNormal),
-			static_cast<float4x4>(matInvNormal)
-		};
-		_pTransformCBuffer.setTransformStore(store);
-		_pRenderItem->setTransform(matWorld);
+		_pTransformCBuffer.setMatWorld(_transform);
+		_pRenderItem->setTransform(Matrix4(_transform));
 	}
 
 	const auto &worldBoundBox = _pRenderItem->getWorldAABB();

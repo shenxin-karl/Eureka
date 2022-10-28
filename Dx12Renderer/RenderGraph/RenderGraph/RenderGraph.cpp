@@ -34,9 +34,11 @@ void RenderGraph::execute(dx12lib::DirectContextProxy pDirectCtx, const RenderVi
 	assert(_finalized);
 	assert(!_executeList.empty());
 	for (auto &pPass : _executeList) {
+		pDirectCtx->beginEvent(pPass->getPassName());
 		pPass->preExecute(*pDirectCtx, view);
 		pPass->execute(*pDirectCtx, view);
 		pPass->postExecute(*pDirectCtx, view);
+		pDirectCtx->endEvent();
 	}
 	if (view.pProfiler)
 		*view.pProfiler += pDirectCtx->getRenderProfiler();

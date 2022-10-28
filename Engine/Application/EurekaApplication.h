@@ -23,6 +23,8 @@ private:
 	void initRenderGraph(dx12lib::DirectContextProxy pDirectCtx);
 	void resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, size_t width, size_t height);
 private:
+	float _xJitter = 0.f;
+	float _yJitter = 0.f;
 	std::vector<std::unique_ptr<IModel>> _models;
 	std::shared_ptr<Camera>				_pCamera;
 	std::shared_ptr<FPSCameraControl>	_pCameraControl;
@@ -33,6 +35,8 @@ public:
 	std::shared_ptr<dx12lib::Texture>	pLightingBuffer;
 	std::shared_ptr<dx12lib::Texture>	pPostProcessingBuffer;
 	std::shared_ptr<dx12lib::Texture>	pColorLutMap;
+	std::shared_ptr<dx12lib::Texture>	pTemporalOutput;
+	std::shared_ptr<dx12lib::Texture>	pVelocityMap;	// x: 0~width, y: 0~height, z: 0~1
 	std::shared_ptr<rgph::RenderGraph>	pRenderGraph;
 
 	dx12lib::FRConstantBufferPtr<CbPrePass>			pCbPrePass;

@@ -1,6 +1,7 @@
 #pragma once
 #include <Math/MathStd.hpp>
 #include <Dx12lib/Tool/RenderProfiler.hpp>
+#include <Dx12lib/dx12libStd.h>
 
 namespace rgph {
 
@@ -29,6 +30,9 @@ struct Viewport {
 
 struct RenderView {
 	Viewport viewport;
+	uint64_t frameIndex = dx12lib::FrameIndexProxy::getConstantFrameIndexRef();
+	float	 xJitter    = 0.f;
+	float	 yJitter    = 0.f;
 	CameraData cameraData;
 	dx12lib::RenderProfiler *pProfiler;
 };

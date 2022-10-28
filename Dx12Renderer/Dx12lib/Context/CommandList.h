@@ -60,6 +60,9 @@ public:
 	void clearDepth(const DepthStencilView &dsv, float depth) final;
 	void clearStencil(const DepthStencilView &dsv, UINT stencil) final;
 	void clearDepthStencil(const DepthStencilView &dsv, float depth, UINT stencil) final;
+
+	void beginEvent(const std::string &eventName) override;
+	void endEvent() override;
 /// ComputeContext api 
 	void setComputePSO(std::shared_ptr<ComputePSO> pPipelineStateObject) final;
 	void setUnorderedAccessView(const ShaderRegister &sr, const UnorderedAccessView &uav) final;

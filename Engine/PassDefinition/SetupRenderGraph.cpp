@@ -10,6 +10,7 @@
 #include "GBufferPass.h"
 #include "LightingPass.h"
 #include "PostProcessingPass.h"
+#include "TemporalAAPass.h"
 #include "TileDeferredPass.h"
 #include "Application/EurekaApplication.h"
 
@@ -42,18 +43,30 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pApp->pGBuffer2 >> pClearGBuffer2->pRenderTarget2d;
 		pRenderGraph->addPass(pClearGBuffer2);
 	}
+	auto pClearVelocity = std::make_shared<rgph::ClearRtPass>("ClearVelocityMa");
+	{
+		pApp->pVelocityMap >> pClearVelocity->pRenderTarget2d;
+		pRenderGraph->addPass(pClearVelocity);
+	}
 
 	auto pGBufferPass = std::make_shared<GBufferPass>(kGBufferPassName);
 	pGBufferPass->setPassCBuffer(pApp->pCbPrePass);
 	{
 		pClearGBuffer0->pRenderTarget2d >> pGBufferPass->pGBuffer0;
 		pGBufferPass->pGBuffer0.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
 		pClearGBuffer1->pRenderTarget2d >> pGBufferPass->pGBuffer1;
 		pGBufferPass->pGBuffer1.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
 		pClearGBuffer2->pRenderTarget2d >> pGBufferPass->pGBuffer2;
 		pGBufferPass->pGBuffer2.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
 		pClearBackBuffer->pDepthStencil2d >> pGBufferPass->pDepthStencil;
 		pGBufferPass->pDepthStencil.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+
+		pClearVelocity->pRenderTarget2d >> pGBufferPass->pVelocityMap;
+		pGBufferPass->pVelocityMap.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
 		pRenderGraph->addPass(pGBufferPass);
 	}
 
@@ -110,10 +123,21 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pRenderGraph->addPass(pLightingPass);
 	}
 
+	auto pTemporalAAPass = std::make_shared<TemporalAAPass>(kTemporalAAPassName, directCtx);
+	{
+		pTemporalAAPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+		pLightingPass->pLightingBuffer >> pTemporalAAPass->pScreenMap;
+
+		pTemporalAAPass->pOutputMap.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		pApp->pTemporalOutput >> pTemporalAAPass->pOutputMap;
+
+		pRenderGraph->addPass(pTemporalAAPass);
+	}
+
 	auto pPostProcessingPass = std::make_shared<PostProcessingPass>(kPostProcessingPassName);
 	{
 		pPostProcessingPass->pScreenMap.preExecuteState = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
-		pLightingPass->pLightingBuffer >> pPostProcessingPass->pScreenMap;
+		pTemporalAAPass->pOutputMap >> pPostProcessingPass->pScreenMap;
 
 		auto getBuffer = [=]() { return pApp->pPostProcessingBuffer; };
 		pPostProcessingPass->pOutputMap.preExecuteState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;

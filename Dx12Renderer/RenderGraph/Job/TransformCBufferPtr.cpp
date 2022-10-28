@@ -14,12 +14,7 @@ const float4x4 & TransformCBufferPtr::getMatNormal() const {
 }
 
 const TransformStore & TransformCBufferPtr::getTransformStore() const {
-	return *_pTransformCBuf->visit();
-}
-
-void TransformCBufferPtr::setTransformStore(const TransformStore &store) {
-	auto *ptr = _pTransformCBuf->map();
-	std::memcpy(ptr, &store, sizeof(store));
+	return _transform;
 }
 
 void TransformCBufferPtr::setTransformCBuffer(dx12lib::FRConstantBufferPtr<TransformStore> pTransformCBuf) {
@@ -30,6 +25,23 @@ void TransformCBufferPtr::setTransformCBuffer(dx12lib::FRConstantBufferPtr<Trans
 void TransformCBufferPtr::bind(dx12lib::IGraphicsContext &graphicsCtx, const dx12lib::ShaderRegister &shaderRegister) const {
 	assert(_pTransformCBuf != nullptr);
 	graphicsCtx.setConstantBuffer(shaderRegister, _pTransformCBuf);
+}
+
+void TransformCBufferPtr::setMatWorld(const Math::float4x4 &world) {
+	Matrix4 matWorld(world);
+	Matrix4 matInvWorld = inverse(matWorld);
+	Matrix4 matNormal = transpose(inverse(matWorld));
+	Matrix4 matInvNormal = inverse(matNormal);
+	rgph::TransformStore store {
+		.matWorld = float4x4(matWorld),
+		.matInvWorld = float4x4(matInvWorld),
+		.matNormal = float4x4(matNormal),
+		.matInvNormal = float4x4(matInvNormal),
+		.matPreFrameWorld = _transform.matWorld,
+	};
+	_transform = store;
+	auto *ptr = _pTransformCBuf->map();
+	std::memcpy(ptr, &store, sizeof(store));
 }
 
 TransformCBufferPtr::operator bool() const {

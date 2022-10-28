@@ -6,7 +6,7 @@ namespace Eureka {
 
 class TemporalAAPass : public rgph::ExecutablePass {
 public:
-	TemporalAAPass(const std::string &passName);
+	TemporalAAPass(const std::string &passName, dx12lib::IDirectContext &directCtx);
 	void execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) override;
 	void onResize(dx12lib::IDirectContext &directCtx, size_t width, size_t height) override;
 public:
@@ -15,6 +15,7 @@ public:
 private:
 	bool _hasHistory = false;
 	std::shared_ptr<dx12lib::Texture> _pTemporalColor[2];
+	std::shared_ptr<dx12lib::ComputePSO> _pTemporalPipeline;
 };
 
 }

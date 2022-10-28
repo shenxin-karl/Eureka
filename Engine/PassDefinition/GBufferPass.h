@@ -12,6 +12,7 @@ public:
 	rgph::PassResourcePtr<dx12lib::Texture> pGBuffer0;
 	rgph::PassResourcePtr<dx12lib::Texture> pGBuffer1;
 	rgph::PassResourcePtr<dx12lib::Texture> pGBuffer2;
+	rgph::PassResourcePtr<dx12lib::Texture> pVelocityMap;
 	rgph::PassResourcePtr<dx12lib::Texture> pDepthStencil;
 };
 

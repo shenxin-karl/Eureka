@@ -60,7 +60,7 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	auto visitor = pCbLighting->visit();
 	visitor->gDirectionalLight.direction = normalize(Vector3(0.1f, 0.7f, 0.3f)).xyz;
 	visitor->gDirectionalLight.directionalColor = float3(1.f);
-	visitor->gDirectionalLight.directionalIntensity = 1.f;
+	visitor->gDirectionalLight.directionalIntensity = 5.f;
 	visitor->gDirectionalLight.ambientColor = float3(0.1f);
 	visitor->gDirectionalLight.ambientIntensity = 1.f;
 
@@ -100,8 +100,9 @@ void EurekaApplication::onDestroy() {
 
 void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	_pCameraControl->update(_pInputSystem, pGameTimer);
-
 	auto pCbPrePassVisitor = pCbPrePass->visit();
+	Matrix4 preFrameViewProj(pCbPrePassVisitor->matViewProj);
+
 	pCbPrePassVisitor->matView = _pCamera->getView();
 	pCbPrePassVisitor->matInvView = _pCamera->getInvView();
 	pCbPrePassVisitor->matProj = _pCamera->getProj();
@@ -121,7 +122,26 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	pCbPrePassVisitor->fogColor = float4(0.f);
 	pCbPrePassVisitor->fogStart = 0.f;
 	pCbPrePassVisitor->fogEnd = 0.f;
-	pCbPrePassVisitor->cbPrePassPadding1 = float2(0.f);
+
+	float fWidth = static_cast<float>(_width);
+	float fHeight = static_cast<float>(_height);
+	Matrix4 matClipToViewport = Matrix4::makeScale(fWidth, fHeight, 1.f)
+							  * Matrix4::makeTranslation(0.5f, 0.5f, 0.f)
+							  * Matrix4::makeScale(0.5f, -0.5f, 1.f);
+
+	uint64_t frameIndex = dx12lib::FrameIndexProxy::getConstantFrameIndexRef();
+	float2 jitterOffset = kHalton23[frameIndex % 8];
+	_xJitter = (jitterOffset.x * 2.f - 1.f) / fWidth;
+	_yJitter = (jitterOffset.y * 2.f - 1.f) / fHeight;
+
+	DX::XMMATRIX matProj = DX::XMLoadFloat4x4(RVPtr(_pCamera->getProj()));
+	matProj.r[2].m128_f32[0] += _xJitter;//_31
+	matProj.r[2].m128_f32[1] += _yJitter;//_32
+
+	Matrix4 matView = _pCamera->getMatView();
+	pCbPrePassVisitor->gMatJitterViewProj = float4x4(Matrix4(matProj) * matView);
+	pCbPrePassVisitor->gMatViewport = float4x4(matClipToViewport * _pCamera->getMatViewProj());
+	pCbPrePassVisitor->gMatPreViewport = float4x4(matClipToViewport * preFrameViewProj);
 
 	if (pGameTimer->oneSecondTrigger()) {
 		std::string titleName = std::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());
@@ -315,6 +335,20 @@ void EurekaApplication::resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, si
 		width,
 		height,
 		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
+	));
+
+	pTemporalOutput = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kTemporalAAFormat,
+		width,
+		height,
+		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
+	));
+
+	pVelocityMap = pDirectCtx->createTexture(dx12lib::Texture::make2D(
+		kVelocityFormat,
+		width,
+		height,
+		D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
 
 	size_t numTile = MathHelper::divideByMultiple(width, TBDR_TILE_DIMENSION) * 

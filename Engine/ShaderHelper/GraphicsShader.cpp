@@ -155,6 +155,15 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 	auto pGraphicsPSOPtr = pGraphicsPSO.get();
 	for (auto &entry : _entryPoints) {
 		size_t index = static_cast<size_t>(entry.shaderType);
+
+#if defined(_DEBUG) || defined(DEBUG)
+		auto pBinaryBlob = ShaderHelper::compile(
+			dx12lib::to_wstring(_shaderFileName), 
+			macros.data(), 
+			entry.entryPoint, 
+			versionList[index]
+		);
+#else
 		auto pBinaryBlob = ShaderHelper::compile(
 			_pShaderContent.get(),
 			_shaderContentLength,
@@ -162,6 +171,7 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 			entry.entryPoint,
 			versionList[index]
 		);
+#endif
 		(pGraphicsPSOPtr->*setterList[index])(pBinaryBlob);
 	}
 

@@ -17,19 +17,20 @@ struct VertexIn {
 };
 
 struct VertexOut {
-	float4 SVPosition : SV_POSITION;
-	float4 position   : POSITION;
-	float2 texcoord   : TEXCOORD;
-	float3 normal	  : NORMAL;
+	float4 SVPosition   : SV_POSITION;
+	float4 position     : POSITION;
+	float2 texcoord     : TEXCOORD;
+	float3 normal	    : NORMAL;
 #if defined(_ENABLE_NORMAL_MAP)
-	float4 tangent	  : TANGENT;
+	float4 tangent	    : TANGENT;
 #endif
+	float3 motionVector : TEXCOORD1;
 };
 
 VertexOut VS(VertexIn vin) {
 	VertexOut vout;
 	float4 worldPosition = mul(gMatWorld, float4(vin.position, 1.0));
-	vout.SVPosition = mul(gMatViewProj, worldPosition);
+	vout.SVPosition = mul(gMatJitterViewProj, worldPosition);
 	vout.position = worldPosition;
 	vout.texcoord = vin.texcoord;
 	vout.normal = mul((float3x3)gMatNormal, vin.normal);
@@ -37,6 +38,11 @@ VertexOut VS(VertexIn vin) {
 		vout.tangent.xzy = mul((float3x3)gMatWorld, vin.tangent.xyz);
 		vout.tangent.w = vin.tangent.w;
 	#endif
+
+	float4 preFrameWorldPos =  mul(gMatPreFrameWorld, float4(vin.position, 1.0));
+	float4 viewportPos = mul(gMatViewport, float4(vin.position, 1.0));
+	float4 preFrameViewportPos = mul(gMatPreViewport, preFrameWorldPos);
+	vout.motionVector = (preFrameViewportPos.xyz / preFrameViewportPos.w) - (viewportPos.xyz / viewportPos.w);
 	return vout;
 }
 
@@ -44,6 +50,7 @@ struct PixelOut {
 	float4 gBuffer0 : SV_TARGET0;			// .rgb albedo 								.a unused
 	float4 gBuffer1 : SV_TARGET1;			// .rgb normal								.a unused
 	float4 gBuffer2 : SV_TARGET2;			// .r ao 	.g roughness 	.b metallic		.a unused
+	float4 velocity : SV_TARGET3;			
 };
 
 cbuffer cbMaterial : register(b0) {
@@ -136,5 +143,6 @@ PixelOut PS(VertexOut pin) {
 	pout.gBuffer0 = getAlbedo(pin);
 	pout.gBuffer1 = getNormal(pin);
 	pout.gBuffer2 = getAoRoughnessMetallic(pin);
+	pout.velocity = float4(pin.motionVector, 0.0);
 	return pout;
 }

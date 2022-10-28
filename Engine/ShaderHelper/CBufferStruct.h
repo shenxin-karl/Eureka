@@ -29,10 +29,14 @@ CBUFFER CbPrePass {
 	float		   deltaTime;
 
     /// fog
-    Math::float4   fogColor;						
 	float          fogStart;
     float          fogEnd;
-    Math::float2   cbPrePassPadding1;
+    Math::float4   fogColor;						
+
+	// TAA
+    Math::float4x4 gMatJitterViewProj;
+	Math::float4x4 gMatViewport;
+    Math::float4x4 gMatPreViewport;
 };
 
 CBUFFER CbPreObject {

@@ -11,8 +11,10 @@ MeshNode::MeshNode(dx12lib::IDirectContext &directCtx, const ALNode *pALNode) {
 	_applyTransform = pALNode->getNodeTransform();
 	_nodeLocalTransform = pALNode->getNodeTransform();
 
-	if (pALNode->getNumMesh() > 0)
+	if (pALNode->getNumMesh() > 0) {
 		_pTransformCBuffer.setTransformCBuffer(directCtx.createFRConstantBuffer<rgph::TransformStore>());
+		_pTransformCBuffer.setMatWorld(_applyTransform);
+	}
 
 	for (size_t i = 0; i < pALNode->getNumMesh(); ++i) {
 		auto pMesh = pALNode->getMesh(i);
@@ -26,17 +28,7 @@ MeshNode::MeshNode(dx12lib::IDirectContext &directCtx, const ALNode *pALNode) {
 
 void MeshNode::submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const {
 	if (_transformDirty && _pTransformCBuffer != nullptr) {
-		Matrix4 matWorld(_applyTransform);
-		Matrix4 matInvWorld = inverse(matWorld);
-		Matrix4 matNormal = transpose(inverse(matWorld));
-		Matrix4 matInvNormal = inverse(matNormal);
-		rgph::TransformStore store {
-			.matWorld = float4x4(matWorld),
-			.matInvWorld = float4x4(matInvWorld),
-			.matNormal = float4x4(matNormal),
-			.matInvNormal = float4x4(matInvNormal)
-		};
-		_pTransformCBuffer.setTransformStore(store);
+		_pTransformCBuffer.setMatWorld(_applyTransform);
 		_transformDirty = false;
 	}
 

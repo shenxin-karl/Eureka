@@ -3,11 +3,12 @@
 namespace Eureka {
 
 GBufferPass::GBufferPass(const std::string &passName)
-	: RenderQueuePass(passName)
-	, pGBuffer0(this, "GBuffer0")
-	, pGBuffer1(this, "GBuffer1")
-	, pGBuffer2(this, "GBuffer2")
-	, pDepthStencil(this, "DepthStencil")
+: RenderQueuePass(passName)
+, pGBuffer0(this, "GBuffer0")
+, pGBuffer1(this, "GBuffer1")
+, pGBuffer2(this, "GBuffer2")
+, pVelocityMap(this, "VelocityMap")
+, pDepthStencil(this, "DepthStencil")
 {
 }
 
@@ -21,6 +22,7 @@ void GBufferPass::setRenderTargets(dx12lib::IGraphicsContext &graphicsContext) {
 	rtvs.push_back(pGBuffer0->get2dRTV());
 	rtvs.push_back(pGBuffer1->get2dRTV());
 	rtvs.push_back(pGBuffer2->get2dRTV());
+	rtvs.push_back(pVelocityMap->get2dRTV());
 	graphicsContext.setRenderTargets(rtvs, pDepthStencil->get2dDSV());
 }
 

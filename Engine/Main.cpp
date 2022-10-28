@@ -4,33 +4,38 @@
 #include "GameTimer/GameTimer.h"
 #include "Math/MathHelper.h"
 
-struct uint2 {
-	uint32_t x;
-	uint32_t y;
-	friend uint2 operator/(const uint2 &lhs, const uint32_t &rhs) {
-		return { lhs.x / rhs, lhs.y / rhs };
-	}
-	friend uint2 operator%(const uint2 &lhs, const uint32_t &rhs) {
-		return { lhs.x % rhs, lhs.y % rhs };
-	}
-};
 
-
-#define CBDR_TILE_DIMENSION 64
-
-uint2 CalcClusterTileParam(uint32_t renderTargetWidth, uint2 dispatchID, uint32_t zClusterSize) {
-	uint32_t xTileSize = Math::MathHelper::divideByMultiple(renderTargetWidth, CBDR_TILE_DIMENSION);
-	uint2 tileID = dispatchID / CBDR_TILE_DIMENSION;
-	uint32_t startIndex = (tileID.y * xTileSize + tileID.x) * zClusterSize;
-	uint2 groupID = dispatchID % CBDR_TILE_DIMENSION;
-	uint32_t groupIndex = groupID.y * CBDR_TILE_DIMENSION + groupID.x;
-	return uint2(startIndex, groupIndex);
-}
 
 void test() {
-	uint32_t renderTargetWidth = 1280;
-	uint2 dispatchID = { 65, 1 };
-	CalcClusterTileParam(renderTargetWidth, dispatchID, 6);
+	using namespace Math;
+	Matrix4 matProj = DirectX::XMMatrixPerspectiveFovLH(
+		DirectX::XMConvertToRadians(45.f),
+		1.f,
+		0.1,
+		1000.f
+	);
+	Matrix4 matView = DirectX::XMMatrixLookAtLH(
+		Vector3(0.f, 0.f, 0.f), 
+		Vector3(0.f, 0.f, 10.f), 
+		Vector3(0.f, 1.f, 0.f)
+	);
+
+	Matrix4 matViewProj = matProj * matView;
+	Matrix4 matViewport = Matrix4::makeScale(1280, 760, 1.0) * Matrix4::makeTranslation(0.5f, 0.5f, 0.f) * Matrix4::makeScale(0.5f, -0.5f, 1.f);
+
+	
+		Vector4 point(-5.f, 0.f, 5.f, 1.0);
+		Vector4 res = matViewport * matViewProj * point;
+		res /= res.w;
+	
+	
+		point = Vector4(-5.f, 0.f, 5.f, 1.0);
+		res = matViewProj * point;
+		res /= res.w;
+		res.xy = (Vector2(res.xy) * 0.5f).xy;
+		res.xy = (Vector2(res.xy) + 0.5f).xy;
+		res.x = res.x * 1280;
+		res.y = res.y * 760;
 }
 
 int main() {

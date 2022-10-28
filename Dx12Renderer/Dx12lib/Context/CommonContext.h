@@ -183,6 +183,9 @@ interface IGraphicsContext : virtual ICommonContext {
 	virtual void clearDepth(const DepthStencilView &dsv, float depth) = 0;
 	virtual void clearStencil(const DepthStencilView &dsv, UINT stencil) = 0;
 	virtual void clearDepthStencil(const DepthStencilView &dsv, float depth, UINT stencil) = 0;
+
+	virtual void beginEvent(const std::string &eventName) = 0;
+	virtual void endEvent() = 0;
 };
 
 interface IComputeContext : virtual ICommonContext {

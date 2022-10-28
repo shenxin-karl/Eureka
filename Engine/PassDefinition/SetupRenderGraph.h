@@ -10,6 +10,7 @@ inline const std::string kTileDeferredPassName		= "TileDeferred";
 inline const std::string kClusterDeferredPassName   = "ClusterDeferred";
 inline const std::string kLightingPassName			= "Lighting";
 inline const std::string kPostProcessingPassName	= "PostProcessing";
+inline const std::string kTemporalAAPassName		= "TemporalAA";
 
 class EurekaApplication;
 std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx12lib::IDirectContext &directCtx);
