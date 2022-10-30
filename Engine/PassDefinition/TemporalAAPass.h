@@ -11,6 +11,8 @@ public:
 	void onResize(dx12lib::IDirectContext &directCtx, size_t width, size_t height) override;
 public:
 	rgph::PassResourcePtr<dx12lib::Texture> pScreenMap;
+	rgph::PassResourcePtr<dx12lib::Texture> pVelocityMap;
+	rgph::PassResourcePtr<dx12lib::Texture> pDepthMap;
 	rgph::PassResourcePtr<dx12lib::Texture> pOutputMap;
 private:
 	bool _hasHistory = false;

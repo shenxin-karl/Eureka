@@ -37,9 +37,10 @@ void TransformCBufferPtr::setMatWorld(const Math::float4x4 &world) {
 		.matInvWorld = float4x4(matInvWorld),
 		.matNormal = float4x4(matNormal),
 		.matInvNormal = float4x4(matInvNormal),
-		.matPreFrameWorld = _transform.matWorld,
+		.matPreFrameWorld = _first ? world :  _transform.matWorld,
 	};
 	_transform = store;
+	_first = false;
 	auto *ptr = _pTransformCBuf->map();
 	std::memcpy(ptr, &store, sizeof(store));
 }

@@ -1,5 +1,8 @@
 #include "Common.hlsli"
 
+#define PACKING_VELOCITY_UINT32
+#include "PixelPacking_Velocity.hlsli"
+
 #pragma shader_feature _ _ENABLE_ALPHA_CUTOFF
 #pragma shader_feature _ _ENABLE_DIFFUSE_MAP
 #pragma shader_feature _ _ENABLE_NORMAL_MAP
@@ -24,7 +27,8 @@ struct VertexOut {
 #if defined(_ENABLE_NORMAL_MAP)
 	float4 tangent	    : TANGENT;
 #endif
-	float3 motionVector : TEXCOORD1;
+	float4 currViewportPos : TEXCOORD1;
+	float4 prevViewportPos : TEXCOORD2;
 };
 
 VertexOut VS(VertexIn vin) {
@@ -39,18 +43,16 @@ VertexOut VS(VertexIn vin) {
 		vout.tangent.w = vin.tangent.w;
 	#endif
 
-	float4 preFrameWorldPos =  mul(gMatPreFrameWorld, float4(vin.position, 1.0));
-	float4 viewportPos = mul(gMatViewport, float4(vin.position, 1.0));
-	float4 preFrameViewportPos = mul(gMatPreViewport, preFrameWorldPos);
-	vout.motionVector = (preFrameViewportPos.xyz / preFrameViewportPos.w) - (viewportPos.xyz / viewportPos.w);
+	vout.currViewportPos = mul(gMatViewport, worldPosition);
+	vout.prevViewportPos = mul(gMatPreViewport, mul(gMatPreFrameWorld, float4(vin.position, 1.0)));
 	return vout;
 }
 
 struct PixelOut {
-	float4 gBuffer0 : SV_TARGET0;			// .rgb albedo 								.a unused
-	float4 gBuffer1 : SV_TARGET1;			// .rgb normal								.a unused
+	float4 gBuffer0	: SV_TARGET0;			// .rgb albedo 								.a unused
+	float4 gBuffer1	: SV_TARGET1;			// .rgb normal								.a unused
 	float4 gBuffer2 : SV_TARGET2;			// .r ao 	.g roughness 	.b metallic		.a unused
-	float4 velocity : SV_TARGET3;			
+	packed_velocity_t velocity : SV_TARGET3;			
 };
 
 cbuffer cbMaterial : register(b0) {
@@ -138,11 +140,20 @@ float4 getAoRoughnessMetallic(VertexOut pin) {
 }
 
 
+packed_velocity_t GetVelocity(VertexOut pin) {
+	float4 currPos = pin.currViewportPos;
+	float4 prevPos = pin.prevViewportPos;
+	currPos.xy /= currPos.w;
+	prevPos.xy /= prevPos.w;
+	float3 packed = float3(prevPos.xy - currPos.xy, prevPos.z);
+	return PackVelocity(packed);
+}
+
 PixelOut PS(VertexOut pin) {
 	PixelOut pout;
 	pout.gBuffer0 = getAlbedo(pin);
 	pout.gBuffer1 = getNormal(pin);
 	pout.gBuffer2 = getAoRoughnessMetallic(pin);
-	pout.velocity = float4(pin.motionVector, 0.0);
+	pout.velocity = GetVelocity(pin);
 	return pout;
 }

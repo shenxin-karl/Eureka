@@ -79,7 +79,7 @@ auto Texture::getArraySize() const -> size_t {
 }
 
 auto Texture::get2dSRV(size_t mipSlice) const -> const ShaderResourceView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() != 1 || !checkSRVSupport()) {
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() != 1 || !check2DSupport()) {
 		assert(false);
 		return InvalidSRV;
 	}
@@ -120,7 +120,7 @@ auto Texture::get2dSRV(size_t mipSlice) const -> const ShaderResourceView & {
 }
 
 auto Texture::get2dUAV(size_t mipSlice) const -> const UnorderedAccessView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() != 1 || !checkUAVSupport()) {
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() != 1 || !checkUAVSupport() || !check2DSupport()) {
 		assert(false);
 		return InvalidUAV;
 	}
@@ -153,7 +153,7 @@ auto Texture::get2dUAV(size_t mipSlice) const -> const UnorderedAccessView & {
 }
 
 auto Texture::get2dRTV(size_t mipSlice) const -> const RenderTargetView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() != 1 || !checkRTVSupport())
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() != 1 || !checkRTVSupport() || !check2DSupport())
 		return InvalidRTV;
 
 	ViewKey viewKey;
@@ -185,8 +185,8 @@ auto Texture::get2dRTV(size_t mipSlice) const -> const RenderTargetView & {
 	return std::get<RenderTargetView>(_viewMap[viewKey] = RTV);
 }
 
-auto Texture::get2dDSV(size_t mipSlice) const -> const DepthStencilView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() != 1 || !checkDSVSupport())
+auto Texture::get2dDSV(size_t mipSlice) const -> const DepthStencilView &{
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() != 1 || !checkDSVSupport() || !check2DSupport())
 		return InvalidDSV;
 
 	ViewKey viewKey;
@@ -216,8 +216,8 @@ auto Texture::get2dDSV(size_t mipSlice) const -> const DepthStencilView & {
 	return std::get<DepthStencilView>(_viewMap[viewKey] = DSV);
 }
 
-auto Texture::getPlaneSRV(size_t planeSlice, size_t mipSlice) const -> const ShaderResourceView & {
-	if (mipSlice >= _resourceDesc.MipLevels || planeSlice >= getDepthOrArraySize() || !checkSRVSupport())
+auto Texture::getPlaneSRV(size_t planeSlice, size_t mipSlice) const -> const ShaderResourceView &{
+	if (!checkMipSupport(mipSlice) || planeSlice >= getDepthOrArraySize() || !check2DSupport())
 		return InvalidSRV;
 
 	ViewKey viewKey;
@@ -256,8 +256,8 @@ auto Texture::getPlaneSRV(size_t planeSlice, size_t mipSlice) const -> const Sha
 	return std::get<ShaderResourceView>(_viewMap[viewKey] = SRV);
 }
 
-auto Texture::getPlaneUAV(size_t planeSlice, size_t mipSlice) const -> const UnorderedAccessView & {
-	if (mipSlice >= _resourceDesc.MipLevels || planeSlice >= getDepthOrArraySize() || !checkUAVSupport())
+auto Texture::getPlaneUAV(size_t planeSlice, size_t mipSlice) const -> const UnorderedAccessView &{
+	if (!checkMipSupport(mipSlice) || planeSlice >= getDepthOrArraySize() || !checkUAVSupport() || !check2DSupport())
 		return InvalidUAV;
 
 	ViewKey viewKey;
@@ -290,8 +290,8 @@ auto Texture::getPlaneUAV(size_t planeSlice, size_t mipSlice) const -> const Uno
 	return std::get<UnorderedAccessView>(_viewMap[viewKey] = UAV);
 }
 
-auto Texture::getPlaneRTV(size_t planeSlice, size_t mipSlice) const -> const RenderTargetView & {
-	if (mipSlice >= _resourceDesc.MipLevels || planeSlice >= getDepthOrArraySize() || !checkRTVSupport())
+auto Texture::getPlaneRTV(size_t planeSlice, size_t mipSlice) const -> const RenderTargetView &{
+	if (!checkMipSupport(mipSlice) || planeSlice >= getDepthOrArraySize() || !checkRTVSupport() || !check2DSupport())
 		return InvalidRTV;
 
 	ViewKey viewKey;
@@ -321,8 +321,8 @@ auto Texture::getPlaneRTV(size_t planeSlice, size_t mipSlice) const -> const Ren
 	return std::get<RenderTargetView>(_viewMap[viewKey] = RTV);
 }
 
-auto Texture::getPlaneDSV(size_t planeSlice, size_t mipSlice) const -> const DepthStencilView & {
-	if (mipSlice >= _resourceDesc.MipLevels || planeSlice >= getDepthOrArraySize() || !checkDSVSupport())
+auto Texture::getPlaneDSV(size_t planeSlice, size_t mipSlice) const -> const DepthStencilView &{
+	if (!checkMipSupport(mipSlice) || planeSlice >= getDepthOrArraySize() || !checkDSVSupport() || !check2DSupport())
 		return InvalidDSV;
 
 	ViewKey viewKey;
@@ -355,8 +355,8 @@ auto Texture::getPlaneDSV(size_t planeSlice, size_t mipSlice) const -> const Dep
 	return std::get<DepthStencilView>(_viewMap[viewKey] = DSV);
 }
 
-auto Texture::getCubeSRV(size_t mipSlice) const -> const ShaderResourceView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() != 6 || !checkSRVSupport()) {
+auto Texture::getCubeSRV(size_t mipSlice) const -> const ShaderResourceView &{
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() != 6 || !checkCubeSupport()) {
 		assert(false);
 		return InvalidSRV;
 	}
@@ -394,8 +394,8 @@ auto Texture::getCubeSRV(size_t mipSlice) const -> const ShaderResourceView & {
 	return std::get<ShaderResourceView>(_viewMap[viewKey] = SRV);
 }
 
-auto Texture::getArraySRV(size_t mipSlice) const -> const ShaderResourceView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() <= 1 || !checkSRVSupport())
+auto Texture::getArraySRV(size_t mipSlice) const -> const ShaderResourceView &{
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() <= 1 || !check2DSupport())
 		return InvalidSRV;
 
 	ViewKey viewKey;
@@ -430,8 +430,8 @@ auto Texture::getArraySRV(size_t mipSlice) const -> const ShaderResourceView & {
 	return std::get<ShaderResourceView>(_viewMap[viewKey] = SRV);
 }
 
-auto Texture::getArrayUAV(size_t mipSlice) const -> const UnorderedAccessView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() <= 1 || !checkUAVSupport())
+auto Texture::getArrayUAV(size_t mipSlice) const -> const UnorderedAccessView &{
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() <= 1 || !check2DSupport())
 		return InvalidUAV;
 
 	ViewKey viewKey;
@@ -464,8 +464,8 @@ auto Texture::getArrayUAV(size_t mipSlice) const -> const UnorderedAccessView & 
 	return std::get<UnorderedAccessView>(_viewMap[viewKey] = UAV);
 }
 
-auto Texture::getArrayRTV(size_t mipSlice) const -> const RenderTargetView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() <= 1 || !checkRTVSupport())
+auto Texture::getArrayRTV(size_t mipSlice) const -> const RenderTargetView &{
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() <= 1 || !checkRTVSupport() || !check2DSupport())
 		return InvalidRTV;
 
 	ViewKey viewKey;
@@ -495,8 +495,8 @@ auto Texture::getArrayRTV(size_t mipSlice) const -> const RenderTargetView & {
 	return std::get<RenderTargetView>(_viewMap[viewKey] = RTV);
 }
 
-auto Texture::getArrayDSV(size_t mipSlice) const -> const DepthStencilView & {
-	if (mipSlice >= _resourceDesc.MipLevels || getDepthOrArraySize() <= 1 || !checkDSVSupport())
+auto Texture::getArrayDSV(size_t mipSlice) const -> const DepthStencilView &{
+	if (!checkMipSupport(mipSlice) || getDepthOrArraySize() <= 1 || !checkDSVSupport() || !check2DSupport())
 		return InvalidDSV;
 
 	ViewKey viewKey;
@@ -624,30 +624,6 @@ D3D12_RESOURCE_DESC Texture::makeCube(DXGI_FORMAT format, size_t width, size_t h
 	return desc;
 }
 
-bool Texture::checkSRVSupport() const {
-	return _isSupportSRV;
-}        
-
-bool Texture::checkUAVSupport() const {
-	return _isSupportUAV;
-}
-
-bool Texture::checkRTVSupport() const {
-	return _isSupportRTV;
-}
-
-bool Texture::checkDSVSupport() const {
-	return _isSupportDSV;
-}
-
-bool Texture::checkFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport1) const {
-	return (_formatSupport.Support1 & formatSupport1) != 0;
-}
-
-bool Texture::checkFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport2) const {
-	return (_formatSupport.Support2 & formatSupport2) != 0;
-}
-
 void Texture::initClearValue(const D3D12_CLEAR_VALUE *pClearValue) {
 	if (pClearValue != nullptr) {
 		_clearValue = *pClearValue;
@@ -676,32 +652,37 @@ void Texture::initFeatureSupport(ID3D12Device *pDevice, DXGI_FORMAT format) {
 		));
 		return support;
 	};
-	auto checkRTVSupport = [&](D3D12_FEATURE_DATA_FORMAT_SUPPORT formatSupport) {
+	auto checkRTVSupport = [&](const D3D12_FEATURE_DATA_FORMAT_SUPPORT &formatSupport) {
 		return _resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET &&
 			   formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_RENDER_TARGET  ;
 	};
-	auto checkDSVSupport = [&](D3D12_FEATURE_DATA_FORMAT_SUPPORT formatSupport) {
+	auto checkDSVSupport = [&](const D3D12_FEATURE_DATA_FORMAT_SUPPORT &formatSupport) {
 		return _resourceDesc.Flags &D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL &&
 			   formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_DEPTH_STENCIL;
 	};
-	auto checkUASupport = [&](D3D12_FEATURE_DATA_FORMAT_SUPPORT formatSupport) {
+	auto checkUASupport = [&](const D3D12_FEATURE_DATA_FORMAT_SUPPORT &formatSupport) {
 		return _resourceDesc.Flags &D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS				&&
 			   formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_TYPED_UNORDERED_ACCESS_VIEW	&&
 			   formatSupport.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD				&&
 			   formatSupport.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_STORE				;
 	};
-	auto checkSRVSupport = [&](D3D12_FEATURE_DATA_FORMAT_SUPPORT formatSupport) {
-		return formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_SHADER_SAMPLE;
-	};
 
-	_formatSupport = getFormatSupport(format);
-	_isSupportRTV = checkRTVSupport(_formatSupport);
-	_isSupportDSV = checkDSVSupport(_formatSupport);
-	_isSupportUAV = checkUASupport(_formatSupport);
-	_isSupportSRV = checkSRVSupport(_formatSupport);
+	_formatSupport			= getFormatSupport(format);
+	_isSupportRTV			= checkRTVSupport(_formatSupport);
+	_isSupportDSV			= checkDSVSupport(_formatSupport);
+	_isSupportUAV			= checkUASupport(_formatSupport);
+	_isSupport2D			= _formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_TEXTURE2D;
+	_isSupportCube			= _formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_TEXTURECUBE;
+	_isSupportLinearSample	= _formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_SHADER_SAMPLE;
+	_isSupportMip			= _formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_MIP;
+
 	if (_resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) {
-		_isSupportDSV = checkDSVSupport(getFormatSupport(getDepthDSVFormat(format)));
-		_isSupportSRV = checkSRVSupport(getFormatSupport(getDepthSRVFormat(format)));
+		auto formatSupport = getFormatSupport(getDepthDSVFormat(format));
+		_isSupportDSV			= checkDSVSupport(formatSupport);
+		_isSupport2D			= formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_TEXTURE2D;
+		_isSupportCube			= formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_TEXTURECUBE;
+		_isSupportLinearSample	= formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_SHADER_SAMPLE;
+		_isSupportMip			= formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_MIP;
 	}
 }
 

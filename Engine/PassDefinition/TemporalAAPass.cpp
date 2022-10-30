@@ -21,6 +21,8 @@ struct alignas(16) CBData {
 TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectContext &directCtx)
 : ExecutablePass(passName)
 , pScreenMap(this, "ScreenMap")
+, pVelocityMap(this, "VelocityMap")
+, pDepthMap(this, "DepthMap")
 , pOutputMap(this, "OutputMap")
 {
 	auto pSharedDevice = directCtx.getDevice().lock();
@@ -28,13 +30,19 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 	pRootSignature->initStaticSampler(0, ShaderHelper::getStaticSamplers());
 	pRootSignature->at(0).initAsConstants(dx12lib::RegisterSlot::CBV0, sizeof(CBData) / sizeof(float));
 	pRootSignature->at(1).initAsDescriptorTable({
-		{ dx12lib::RegisterSlot::SRV0, 1 },
+		{ dx12lib::RegisterSlot::SRV0, 3 }, // t0 t1
 		{ dx12lib::RegisterSlot::UAV0, 1 },
 	});
 	pRootSignature->finalize();
 
 	_pTemporalPipeline = pSharedDevice->createComputePSO("TemporalPipeline");
+
+#if defined(DEBUG) || defined(_DEBUG)
+	auto pBlob = ShaderHelper::compile(L"Engine/HlslShader/TAAResolveCS.hlsl", nullptr, "CS", "cs_5_1");
+	_pTemporalPipeline->setComputeShader(pBlob);
+#else
 	_pTemporalPipeline->setComputeShader(g_TAAResolveCS, sizeof(g_TAAResolveCS));
+#endif
 	_pTemporalPipeline->setRootSignature(pRootSignature);
 	_pTemporalPipeline->finalize();
 }
@@ -50,13 +58,16 @@ void TemporalAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::Ren
 	data.gResolution.w = 1.f / view.viewport.height;
 	data.gJitter.x = view.xJitter;
 	data.gJitter.y = view.yJitter;
-	data.gFrameNumber = view.frameIndex;
+	data.gFrameNumber = static_cast<uint32_t>(view.frameIndex);
 	data.padding0 = 0;
 
 	directCtx.setComputePSO(_pTemporalPipeline);
 	directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, kNum32Bit, &data);
-	directCtx.setUnorderedAccessView("gOutputMap", pOutputMap->get2dUAV());
-	directCtx.setShaderResourceView("gScreenMap", pScreenMap->get2dSRV());
+	directCtx.setUnorderedAccessView(StringName("gOutputMap"), pOutputMap->get2dUAV());
+	directCtx.setShaderResourceView(StringName("gScreenMap"), pScreenMap->get2dSRV());
+	directCtx.setShaderResourceView(StringName("gDepthMap"), pDepthMap->get2dSRV());
+	directCtx.setShaderResourceView(StringName("gVelocityMap"), pVelocityMap->get2dSRV());
+	
 	auto dispatchArgs = _pTemporalPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
 	directCtx.dispatch(dispatchArgs);
 }

@@ -294,7 +294,7 @@ void EurekaApplication::initRenderGraph(dx12lib::DirectContextProxy pDirectCtx) 
 
 	FXAASetting setting;
 	pCbFXAASetting = pDirectCtx->createConstantBuffer(&setting, sizeof(setting));
-	pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_02.png", false);
+	//pColorLutMap = pDirectCtx->createTextureFromFile(L"Assets/Textures/lut/color_grading_lut_02.png", false);
 	pRenderGraph = SetupRenderGraph(this, *pDirectCtx);
 }
 
@@ -350,6 +350,7 @@ void EurekaApplication::resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, si
 		height,
 		D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 	));
+	pVelocityMap->setResourceName("VelocityMap");
 
 	size_t numTile = MathHelper::divideByMultiple(width, TBDR_TILE_DIMENSION) * 
 		MathHelper::divideByMultiple(height, TBDR_TILE_DIMENSION);

@@ -5,37 +5,24 @@
 #include "Math/MathHelper.h"
 
 
+	using namespace Math;
+Vector3 PackVelocity(Vector3 Velocity)
+{
+	// Stretch dx,dy from [-64, 63.875] to [-512, 511] to [-0.5, 0.5) to [0, 1)
+	// Velocity.xy = (0,0) must be representable.
+	return Velocity * Vector3(8, 8, 4096) / 1024.0 + 512 / 1023.0;
+}
+
+// Unpack the velocity from R10G10B10A2_UNORM
+Vector3 UnpackVelocity(Vector3 Velocity)
+{
+	return (Velocity - 512.0 / 1023.0) * Vector3(1024, 1024, 2) / 8.0;
+}
 
 void test() {
-	using namespace Math;
-	Matrix4 matProj = DirectX::XMMatrixPerspectiveFovLH(
-		DirectX::XMConvertToRadians(45.f),
-		1.f,
-		0.1,
-		1000.f
-	);
-	Matrix4 matView = DirectX::XMMatrixLookAtLH(
-		Vector3(0.f, 0.f, 0.f), 
-		Vector3(0.f, 0.f, 10.f), 
-		Vector3(0.f, 1.f, 0.f)
-	);
-
-	Matrix4 matViewProj = matProj * matView;
-	Matrix4 matViewport = Matrix4::makeScale(1280, 760, 1.0) * Matrix4::makeTranslation(0.5f, 0.5f, 0.f) * Matrix4::makeScale(0.5f, -0.5f, 1.f);
-
-	
-		Vector4 point(-5.f, 0.f, 5.f, 1.0);
-		Vector4 res = matViewport * matViewProj * point;
-		res /= res.w;
-	
-	
-		point = Vector4(-5.f, 0.f, 5.f, 1.0);
-		res = matViewProj * point;
-		res /= res.w;
-		res.xy = (Vector2(res.xy) * 0.5f).xy;
-		res.xy = (Vector2(res.xy) + 0.5f).xy;
-		res.x = res.x * 1280;
-		res.y = res.y * 760;
+	Vector3 v(91.f, 3.2f, 0.00064f);
+	auto packed = PackVelocity(v);
+	auto v1 = UnpackVelocity(packed);
 }
 
 int main() {

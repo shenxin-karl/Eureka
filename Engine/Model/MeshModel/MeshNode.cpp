@@ -11,11 +11,9 @@ MeshNode::MeshNode(dx12lib::IDirectContext &directCtx, const ALNode *pALNode) {
 	_applyTransform = pALNode->getNodeTransform();
 	_nodeLocalTransform = pALNode->getNodeTransform();
 
-	if (pALNode->getNumMesh() > 0) {
+	if (pALNode->getNumMesh() > 0) 
 		_pTransformCBuffer.setTransformCBuffer(directCtx.createFRConstantBuffer<rgph::TransformStore>());
-		_pTransformCBuffer.setMatWorld(_applyTransform);
-	}
-
+	
 	for (size_t i = 0; i < pALNode->getNumMesh(); ++i) {
 		auto pMesh = pALNode->getMesh(i);
 		_alMeshes.push_back(pALNode->getMesh(i));

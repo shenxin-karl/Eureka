@@ -53,12 +53,33 @@ public:
 	static D3D12_RESOURCE_DESC makeCube(DXGI_FORMAT format, size_t width, size_t height,
 		D3D12_RESOURCE_FLAGS flags, size_t numMipMap = 1
 	);
-	bool checkSRVSupport() const;
-	bool checkUAVSupport() const;
-	bool checkRTVSupport() const;
-	bool checkDSVSupport() const;
-	bool checkFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport1) const;
-	bool checkFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport2) const;
+	bool checkUAVSupport() const noexcept {
+		return _isSupportUAV;
+	}
+	bool checkRTVSupport() const noexcept {
+		return _isSupportRTV;
+	}
+	bool checkDSVSupport() const noexcept {
+		return _isSupportDSV;
+	}
+	bool check2DSupport() const noexcept {
+		return _isSupport2D;
+	}
+	bool checkCubeSupport() const noexcept {
+		return _isSupportCube;
+	}
+	bool checkLinearSampleSupport() const noexcept {
+		return _isSupportLinearSample;
+	}
+	bool checkMipSupport(size_t mipMap = 0) const noexcept {
+		return _isSupportMip && mipMap < _resourceDesc.MipLevels;
+	}
+	bool checkFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport1) const noexcept {
+		return (_formatSupport.Support1 & formatSupport1) != 0;
+	}
+	bool checkFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport2) const noexcept {
+		return (_formatSupport.Support2 & formatSupport2) != 0;
+	}
 private:
 	enum class ViewType {
 		Unknown = 0,
@@ -114,7 +135,10 @@ private:
 	bool _isSupportRTV = false;
 	bool _isSupportDSV = false;
 	bool _isSupportUAV = false;
-	bool _isSupportSRV = false;
+	bool _isSupport2D = false;
+	bool _isSupportCube = false;
+	bool _isSupportLinearSample = false;
+	bool _isSupportMip = false;
 };
 
 bool hasAlpha(DXGI_FORMAT format);
