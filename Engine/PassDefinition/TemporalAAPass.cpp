@@ -80,7 +80,6 @@ void TemporalAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::Ren
 	uint64_t dstIdx = (~srcIdx) & 0x1;
 
 	// TAA
-	constexpr size_t kNum32Bit = sizeof(CBData) / sizeof(float);
 	CBData data;
 	data.gResolution.x = static_cast<float>(view.viewport.width);
 	data.gResolution.y = static_cast<float>(view.viewport.height);
@@ -93,9 +92,11 @@ void TemporalAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::Ren
 	data.gDebugFlag |= (HAS_HISTORY_FLAG * _hasHistory);
 
 	directCtx.setComputePSO(_pTemporalPipeline);
-	directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, kNum32Bit, &data);
+	directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, sizeof(CBData) / sizeof(float), &data);
 	directCtx.transitionBarrier(_pTemporalColor[dstIdx], D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	directCtx.transitionBarrier(_pTemporalColor[srcIdx], D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 	directCtx.setUnorderedAccessView(StringName("gOutputMap"), _pTemporalColor[dstIdx]->get2dUAV());
+	directCtx.setShaderResourceView(StringName("gTemporalMap"), _pTemporalColor[srcIdx]->get2dSRV());
 	directCtx.setShaderResourceView(StringName("gScreenMap"), pScreenMap->get2dSRV());
 	directCtx.setShaderResourceView(StringName("gVelocityMap"), pVelocityMap->get2dSRV());
 	
@@ -109,6 +110,8 @@ void TemporalAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::Ren
 	directCtx.setUnorderedAccessView(StringName("gOutputColorMap"), pOutputMap->get2dUAV());
 	dispatchArgs = _pSharpenPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
 	directCtx.dispatch(dispatchArgs);
+
+	_hasHistory = true;
 }
 
 void TemporalAAPass::onResize(dx12lib::IDirectContext &directCtx, size_t width, size_t height) {

@@ -12,16 +12,20 @@ struct ComputeIn {
 
 cbuffer CBData : register(b0) {
     float4 gResolution;         // width, height, 1/width, 1/height
-    float4 gZBufferParam;       // near, far, (near * far), (far - near)
     float2 gJitter;
     uint   gFrameNumber;
 	uint   gDebugFlag;
 };
 
-#define HAS_HISTORY_FLAG (1 << 0)
+#define HAS_HISTORY_FLAG        (1 << 0)
+#define ENABLE_BICUBIC_SAMPLE   (1 << 1)
 
 float HasHistory() {
 	return (gDebugFlag & HAS_HISTORY_FLAG) ? 1.0 : 0.0;
+}
+
+bool GetEnableBicubicSample() {
+	return false;
 }
 
 // Reinhard tone mapper
@@ -36,9 +40,10 @@ float3 Reinhard(float3 inRGB) {
 
 #define NUM_THREAD 8
 groupshared uint SharedColor[NUM_THREAD+2][NUM_THREAD+2];
+
 Texture2D<float3>              gScreenMap   : register(t0);
 Texture2D<packed_velocity_t>   gVelocityMap : register(t1);
-Texture2D<float3>              gTemporalMap : register(t3);
+Texture2D<float3>              gTemporalMap : register(t2);
 
 
 void StoreCurrentColor(ComputeIn cin) {
@@ -52,16 +57,11 @@ void StoreCurrentColor(ComputeIn cin) {
     */  
     if (cin.GroupThreadID.x < 5 && cin.GroupThreadID.y < 5) {
         uint2 groupStart = cin.GroupID.xy * NUM_THREAD;
-        uint2 index = cin.GroupThreadID.xy;
+        uint2 index = cin.GroupThreadID.xy * 2;
 	    float2 uv = (groupStart + index) * gResolution.zw - 0.5 * gResolution.zw;
         float4 reds = gScreenMap.GatherRed(gSamLinearClamp, uv);
         float4 greens = gScreenMap.GatherGreen(gSamLinearClamp, uv);
         float4 blues = gScreenMap.GatherBlue(gSamLinearClamp, uv);
-
-        reds = 1.0;
-        greens = 1.0;
-        blues = 1.0;
-
         SharedColor[index.x+0][index.y+0] = Pack_R11G11B10_FLOAT(Reinhard(float3(reds.w, greens.w, blues.w)));
         SharedColor[index.x+1][index.y+0] = Pack_R11G11B10_FLOAT(Reinhard(float3(reds.z, greens.z, blues.z)));
         SharedColor[index.x+0][index.y+1] = Pack_R11G11B10_FLOAT(Reinhard(float3(reds.x, greens.x, blues.x)));
@@ -84,36 +84,41 @@ float3 GetVelocity(ComputeIn cin) {
 }
 
 float3 GetHistory(float2 prevScreenST) {
-	// 双三次插值: https://stackoverflow.com/questions/13501081/efficient-bicubic-filtering-code-in-glsl
-	const float2 rcpResolution = gResolution.zw;
-    const float2 fractional = frac( prevScreenST );
-    const float2 uv = ( floor( prevScreenST ) + float2( 0.5f, 0.5f ) ) * rcpResolution;
+	if (GetEnableBicubicSample()) {
+		// 双三次插值: https://stackoverflow.com/questions/13501081/efficient-bicubic-filtering-code-in-glsl
+		const float2 rcpResolution = gResolution.zw;
+	    const float2 fractional = frac( prevScreenST );
+	    const float2 uv = ( floor( prevScreenST ) + float2( 0.5f, 0.5f ) ) * rcpResolution;
 
-    // 5-tap bicubic sampling (for Hermite/Carmull-Rom filter) -- (approximate from original 16->9-tap bilinear fetching) 
-    const float2 t =  fractional;
-    const float2 t2 = fractional * fractional;
-    const float2 t3 = t2 * fractional;
-    const float s = 0.5;
+	    // 5-tap bicubic sampling (for Hermite/Carmull-Rom filter) -- (approximate from original 16->9-tap bilinear fetching) 
+	    const float2 t =  fractional;
+	    const float2 t2 = fractional * fractional;
+	    const float2 t3 = t2 * fractional;
+	    const float s = 0.5;
 
-    const float2 w0 = -s * t3 + 2.f * s * t2 - s * t;
-    const float2 w1 = (2.f - s ) * t3 + (s - 3.f) * t2 + 1.f;
-    const float2 w2 = (s - 2.f) * t3 + (3 - 2.f * s ) * t2 + s * t;
-    const float2 w3 = s * t3 - s * t2;
-    const float2 s0 = w1 + w2;
-    const float2 f0 = w2 / ( w1 + w2 );
-    const float2 m0 = uv + f0 * rcpResolution;
-    const float2 tc0 = uv - 1.f * rcpResolution;
-    const float2 tc3 = uv + 2.f * rcpResolution;
+	    const float2 w0 = -s * t3 + 2.f * s * t2 - s * t;
+	    const float2 w1 = (2.f - s ) * t3 + (s - 3.f) * t2 + 1.f;
+	    const float2 w2 = (s - 2.f) * t3 + (3 - 2.f * s ) * t2 + s * t;
+	    const float2 w3 = s * t3 - s * t2;
+	    const float2 s0 = w1 + w2;
+	    const float2 f0 = w2 / ( w1 + w2 );
+	    const float2 m0 = uv + f0 * rcpResolution;
+	    const float2 tc0 = uv - 1.f * rcpResolution;
+	    const float2 tc3 = uv + 2.f * rcpResolution;
 
-    const float3 A = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  tc0.y), 0);
-    const float3 B = gTemporalMap.SampleLevel(gSamLinearClamp, float2(tc0.x, m0.y),  0);
-    const float3 C = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  m0.y),  0);
-    const float3 D = gTemporalMap.SampleLevel(gSamLinearClamp, float2(tc3.x, m0.y),  0);
-    const float3 E = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  tc3.y), 0);
-    const float3 color = (0.5 * (A + B) * w0.x + A * s0.x + 0.5 * (A + B) * w3.x ) * w0.y + 
-						 (B * w0.x + C * s0.x + D * w3.x) * s0.y                          + 
-                         (0.5 * (B + E) * w0.x + E * s0.x + 0.5 * (D + E) * w3.x) * w3.y;
-    return color;
+	    const float3 A = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  tc0.y), 0);
+	    const float3 B = gTemporalMap.SampleLevel(gSamLinearClamp, float2(tc0.x, m0.y),  0);
+	    const float3 C = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  m0.y),  0);
+	    const float3 D = gTemporalMap.SampleLevel(gSamLinearClamp, float2(tc3.x, m0.y),  0);
+	    const float3 E = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  tc3.y), 0);
+	    const float3 color = (0.5 * (A + B) * w0.x + A * s0.x + 0.5 * (A + B) * w3.x ) * w0.y + 
+							 (B * w0.x + C * s0.x + D * w3.x) * s0.y                          + 
+	                         (0.5 * (B + E) * w0.x + E * s0.x + 0.5 * (D + E) * w3.x) * w3.y;
+	    return color;
+	} else {
+		float2 uv = (prevScreenST + 0.5) * gResolution.zw;
+		return gTemporalMap.SampleLevel(gSamLinearClamp, uv, 0);
+	}
 }
 
 
@@ -135,15 +140,14 @@ void CS(ComputeIn cin) {
     const bool hasValidHistory = HasHistory() * velocityConfidenceFactor * uvWeight;
 
     float3 finalColor = 0.0;
-    if (0 && hasValidHistory) {
-        finalColor = 1.0;
+    if (hasValidHistory) {
+        finalColor = GetHistory(prevFrameScreenUV);
     } else {
         finalColor = currentFrameColor;
         uint2 offsets[4] = { uint2(+1, -1), uint2(+1, +1), uint2(-1, +1), uint2(-1, -1) };
-        for (uint i = 0; i < 4; ++i) {
-            uint2 aaa = groupST + offsets[i];
-			finalColor += GetCurrentColor(aaa);
-        }
+        [unroll] for (uint i = 0; i < 4; ++i)
+			finalColor += GetCurrentColor(groupST + offsets[i]);
+
         finalColor *= 0.2;
     }
     gOutputMap[cin.DispatchThreadID.xy] = finalColor;

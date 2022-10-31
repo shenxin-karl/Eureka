@@ -91,13 +91,16 @@ constexpr static std::size_t kMaxRenderTargetCount = 8;				// 最多8个渲染目标
 class FrameIndexProxy {
 	static inline std::atomic_size_t _frameIndex = 0;
 public:
-	static const std::atomic_size_t &getConstantFrameIndexRef() noexcept {
+	static size_t getFrameResourceIndex() noexcept {
+		return _frameIndex % kFrameResourceCount;
+	}
+	static size_t getFrameIndex() noexcept {
 		return _frameIndex;
 	}
 private:
 	friend class FrameResourceQueue;
 	static void startNewFrame() noexcept {
-		_frameIndex = (_frameIndex + 1) % kFrameResourceCount;
+		++_frameIndex;
 	}
 };
 

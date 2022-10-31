@@ -68,7 +68,7 @@ FrameResourceQueue::FrameResourceQueue(std::weak_ptr<Device> pDevice, D3D12_COMM
 }
 
 std::shared_ptr<CommandList> FrameResourceQueue::createCommandList() {
-	return _frameResourceQueue[FrameIndexProxy::getConstantFrameIndexRef()]->createCommandList();
+	return _frameResourceQueue[FrameIndexProxy::getFrameResourceIndex()]->createCommandList();
 }
 
 uint32 FrameResourceQueue::getMaxFrameResourceCount() const noexcept {
@@ -77,11 +77,11 @@ uint32 FrameResourceQueue::getMaxFrameResourceCount() const noexcept {
 
 void FrameResourceQueue::newFrame(uint64 fence) {
 	FrameIndexProxy::startNewFrame();
-	_frameResourceQueue[FrameIndexProxy::getConstantFrameIndexRef()]->newFrame(fence);
+	_frameResourceQueue[FrameIndexProxy::getFrameResourceIndex()]->newFrame(fence);
 }
 
 std::shared_ptr<FrameResourceItem> FrameResourceQueue::getCurrentFrameResourceItem() const {
-	return _frameResourceQueue[FrameIndexProxy::getConstantFrameIndexRef()];
+	return _frameResourceQueue[FrameIndexProxy::getFrameResourceIndex()];
 }
 
 void FrameResourceQueue::destroy() {

@@ -44,23 +44,23 @@ size_t FRConstantBuffer<RawData>::getElementStride() const {
 }
 
 BYTE *FRConstantBuffer<RawData>::getMappedPtr() {
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	return _pUploadBuffer->getMappedDataByIndex(frameIndex);
 }
 
 const BYTE *FRConstantBuffer<RawData>::getMappedPtr() const {
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	return _pUploadBuffer->getMappedDataByIndex(frameIndex);
 }
 
 void FRConstantBuffer<RawData>::updateBuffer(const void *pData, size_t sizeInByte, size_t offset) {
 	assert((sizeInByte + offset) <= getElementStride());
 	std::memcpy(_pObject.get() + offset, pData, sizeInByte);
-	_bufferDirty.set(FrameIndexProxy::getConstantFrameIndexRef());
+	_bufferDirty.set(FrameIndexProxy::getFrameResourceIndex());
 }
 
 const ConstantBufferView & FRConstantBuffer<RawData>::getCBV() const {
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	if (_bufferDirty.test(frameIndex)) {
 		_pUploadBuffer->copyData(frameIndex, _pObject.get(), getElementStride(), 0);
 		_bufferDirty.set(frameIndex, false);

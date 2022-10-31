@@ -25,7 +25,7 @@ public:
 	template<typename T>
 	std::span<T> visit() {
 		assert(sizeof(T) == getElementStride());
-		size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+		size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 		size_t numElements = getElementCount();
 		T *ptr = reinterpret_cast<T *>(_pUploadBuffer->getMappedDataByIndex(frameIndex));
 		return std::span<T>(ptr, numElements);
@@ -123,19 +123,19 @@ size_t FRSRStructuredBuffer<T>::getElementStride() const {
 template <typename T>
 void FRSRStructuredBuffer<T>::updateBuffer(const void *pData, size_t sizeInByte, size_t offset) {
 	assert((sizeInByte + offset) <= getElementStride());
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	_pUploadBuffer->copyData(frameIndex, pData, sizeInByte, offset);
 }
 
 template <typename T>
 const ShaderResourceView & FRSRStructuredBuffer<T>::getSRV() const {
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	return _srvs[frameIndex];
 }
 
 template <typename T>
 std::span<T> FRSRStructuredBuffer<T>::visit() {
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	size_t numElements = getElementCount();
 	T *ptr = reinterpret_cast<T *>(_pUploadBuffer->getMappedDataByIndex(frameIndex));
 	return std::span<T>(ptr, numElements);

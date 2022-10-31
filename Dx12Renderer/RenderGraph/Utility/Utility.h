@@ -30,7 +30,7 @@ struct Viewport {
 
 struct RenderView {
 	Viewport viewport;
-	uint64_t frameIndex = dx12lib::FrameIndexProxy::getConstantFrameIndexRef();
+	uint64_t frameIndex = dx12lib::FrameIndexProxy::getFrameResourceIndex();
 	float	 xJitter    = 0.f;
 	float	 yJitter    = 0.f;
 	CameraData cameraData;

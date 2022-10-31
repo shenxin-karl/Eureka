@@ -128,7 +128,7 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 							  * Matrix4::makeTranslation(0.5f, 0.5f, 0.f)
 							  * Matrix4::makeScale(0.5f, -0.5f, 1.f);
 
-	uint64_t frameIndex = dx12lib::FrameIndexProxy::getConstantFrameIndexRef();
+	uint64_t frameIndex = dx12lib::FrameIndexProxy::getFrameResourceIndex();
 	float2 jitterOffset = kHalton23[frameIndex % 8];
 	_xJitter = (jitterOffset.x * 2.f - 1.f) / fWidth;
 	_yJitter = (jitterOffset.y * 2.f - 1.f) / fHeight;
@@ -165,6 +165,9 @@ void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {
 	view.pProfiler = &profiler;
 	view.viewport.width = _width;
 	view.viewport.height = _height;
+	view.frameIndex = dx12lib::FrameIndexProxy::getFrameIndex();
+	view.xJitter = _xJitter;
+	view.yJitter = _yJitter;
 
 	pRenderGraph->execute(pDirectProxy, view);
 	pCmdQueue->executeCommandList(pDirectProxy);

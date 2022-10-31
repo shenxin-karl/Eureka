@@ -126,24 +126,24 @@ size_t FRConstantBuffer<T>::getElementStride() const {
 
 template <typename T>
 BYTE *FRConstantBuffer<T>::getMappedPtr() {
-	return _pUploadBuffer->getMappedDataByIndex(FrameIndexProxy::getConstantFrameIndexRef());
+	return _pUploadBuffer->getMappedDataByIndex(FrameIndexProxy::getFrameResourceIndex());
 }
 
 template <typename T>
 const BYTE *FRConstantBuffer<T>::getMappedPtr() const {
-	return _pUploadBuffer->getMappedDataByIndex(FrameIndexProxy::getConstantFrameIndexRef());
+	return _pUploadBuffer->getMappedDataByIndex(FrameIndexProxy::getFrameResourceIndex());
 }
 
 template <typename T>
 void FRConstantBuffer<T>::updateBuffer(const void *pData, size_t sizeInByte, size_t offset) {
 	assert((sizeInByte + offset) <= sizeof(T));
 	std::memcpy(reinterpret_cast<char *>(& _object) + offset, pData, sizeInByte);
-	_bufferDirty.set(FrameIndexProxy::getConstantFrameIndexRef());
+	_bufferDirty.set(FrameIndexProxy::getFrameResourceIndex());
 }
 
 template <typename T>
 const ConstantBufferView & FRConstantBuffer<T>::getCBV() const {
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	if (_bufferDirty.test(frameIndex)) {
 		_pUploadBuffer->copyData(frameIndex, &_object, sizeof(T), 0);
 		_bufferDirty.set(frameIndex, false);
@@ -153,7 +153,7 @@ const ConstantBufferView & FRConstantBuffer<T>::getCBV() const {
 
 template <typename T>
 T *FRConstantBuffer<T>::map() {
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	_bufferDirty.set(frameIndex);
 	return &_object;
 }

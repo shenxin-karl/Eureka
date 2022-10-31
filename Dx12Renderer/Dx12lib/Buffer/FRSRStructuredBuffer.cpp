@@ -56,12 +56,12 @@ size_t FRSRStructuredBuffer<RawData>::getElementStride() const {
 
 void FRSRStructuredBuffer<RawData>::updateBuffer(const void *pData, size_t sizeInByte, size_t offset) {
 	assert((sizeInByte + offset) <= getElementStride());
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	_pUploadBuffer->copyData(frameIndex, pData, sizeInByte, offset);
 }
 
 const ShaderResourceView & FRSRStructuredBuffer<RawData>::getSRV() const {
-	size_t frameIndex = FrameIndexProxy::getConstantFrameIndexRef();
+	size_t frameIndex = FrameIndexProxy::getFrameResourceIndex();
 	return _srvs[frameIndex];
 }
 
