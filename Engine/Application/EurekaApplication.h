@@ -39,6 +39,8 @@ public:
 	std::shared_ptr<dx12lib::Texture>	pVelocityMap;	// x: 0~width, y: 0~height, z: 0~1
 	std::shared_ptr<rgph::RenderGraph>	pRenderGraph;
 
+	Math::float4x4 prevFrameMatViewProj = Math::float4x4::identity();
+
 	dx12lib::FRConstantBufferPtr<CbPrePass>			pCbPrePass;
 	dx12lib::FRConstantBufferPtr<CbLighting>		pCbLighting;
 	dx12lib::FRStructuredBufferPtr<PointLight>		pPointLightList;

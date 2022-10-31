@@ -19,6 +19,7 @@ AddShader("HlslShader/CalcClusterFrustumCS.hlsl" "CS" "cs_5_1")
 AddShader("HlslShader/CopyToBack_cso/CopyToBack_VS.txt" "VS" "vs_5_1")
 AddShader("HlslShader/CopyToBack_cso/CopyToBack_PS.txt" "PS" "ps_5_1")
 AddShader("HlslShader/TAAResolveCS.hlsl" "CS" "cs_5_1")
+AddShader("HlslShader/SharpenTAACS.hlsl" "CS" "cs_5_1")
 
 add_custom_target(EngineShader)
 # 创建一个目录

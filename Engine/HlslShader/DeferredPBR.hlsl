@@ -1,6 +1,4 @@
 #include "Common.hlsli"
-
-#define PACKING_VELOCITY_UINT32
 #include "PixelPacking_Velocity.hlsli"
 
 #pragma shader_feature _ _ENABLE_ALPHA_CUTOFF

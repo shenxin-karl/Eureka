@@ -39,7 +39,7 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	ShaderManager::SingletionEmplace();
 	GeometryGenerator::SingletionEmplace();
 
-	_pSwapChain->setVerticalSync(false);
+	_pSwapChain->setVerticalSync(true);
 
 	ShaderManager::instance()->loading(_pDevice);
 	GeometryGenerator::instance()->loading();
@@ -101,7 +101,6 @@ void EurekaApplication::onDestroy() {
 void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	_pCameraControl->update(_pInputSystem, pGameTimer);
 	auto pCbPrePassVisitor = pCbPrePass->visit();
-	Matrix4 preFrameViewProj(pCbPrePassVisitor->matViewProj);
 
 	pCbPrePassVisitor->matView = _pCamera->getView();
 	pCbPrePassVisitor->matInvView = _pCamera->getInvView();
@@ -138,11 +137,14 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	matProj.r[2].m128_f32[0] += _xJitter;//_31
 	matProj.r[2].m128_f32[1] += _yJitter;//_32
 
+	Matrix4 preFrameViewProj(prevFrameMatViewProj);
 	Matrix4 matView = _pCamera->getMatView();
+
 	pCbPrePassVisitor->gMatJitterViewProj = float4x4(Matrix4(matProj) * matView);
 	pCbPrePassVisitor->gMatViewport = float4x4(matClipToViewport * _pCamera->getMatViewProj());
 	pCbPrePassVisitor->gMatPreViewport = float4x4(matClipToViewport * preFrameViewProj);
 
+	prevFrameMatViewProj = _pCamera->getViewProj();
 	if (pGameTimer->oneSecondTrigger()) {
 		std::string titleName = std::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());
 		_pInputSystem->pWindow->setShowTitle(titleName);
