@@ -12,12 +12,12 @@ public:
 public:
 	rgph::PassResourcePtr<dx12lib::Texture> pScreenMap;
 	rgph::PassResourcePtr<dx12lib::Texture> pVelocityMap;
-	rgph::PassResourcePtr<dx12lib::Texture> pDepthMap;
 	rgph::PassResourcePtr<dx12lib::Texture> pOutputMap;
 private:
 	bool _hasHistory = false;
 	std::shared_ptr<dx12lib::Texture> _pTemporalColor[2];
 	std::shared_ptr<dx12lib::ComputePSO> _pTemporalPipeline;
+	std::shared_ptr<dx12lib::ComputePSO> _pSharpenPipeline;
 };
 
 }

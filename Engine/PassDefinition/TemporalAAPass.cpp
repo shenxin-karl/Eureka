@@ -4,25 +4,30 @@
 
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "Dx12lib/Pipeline/RootSignature.h"
-#include "EngineShaders/TAAResolveCS.h"
 #include "ShaderHelper/ShaderHelper.h"
+
+#include "EngineShaders/TAAResolveCS.h"
+#include "EngineShaders/SharpenTAACS.h"
 
 using namespace Math;
 
 namespace Eureka {
 
+enum TAAFlag {
+	HAS_HISTORY_FLAG = (1 << 0),
+};
+
 struct alignas(16) CBData {
 	float4		gResolution;         //width, height, 1/width, 1/height
 	float2		gJitter;
 	uint32_t	gFrameNumber;
-	uint32_t	padding0;
+	uint32_t	gDebugFlag;
 };
 
 TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectContext &directCtx)
 : ExecutablePass(passName)
 , pScreenMap(this, "ScreenMap")
 , pVelocityMap(this, "VelocityMap")
-, pDepthMap(this, "DepthMap")
 , pOutputMap(this, "OutputMap")
 {
 	auto pSharedDevice = directCtx.getDevice().lock();
@@ -34,22 +39,47 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 		{ dx12lib::RegisterSlot::UAV0, 1 },
 	});
 	pRootSignature->finalize();
-
 	_pTemporalPipeline = pSharedDevice->createComputePSO("TemporalPipeline");
 
 #if defined(DEBUG) || defined(_DEBUG)
-	auto pBlob = ShaderHelper::compile(L"Engine/HlslShader/TAAResolveCS.hlsl", nullptr, "CS", "cs_5_1");
+	auto pBlob = ShaderHelper::compile(
+		L"Engine/HlslShader/TAAResolveCS.hlsl", 
+		nullptr, 
+		"CS", 
+		"cs_5_1"
+	);
 	_pTemporalPipeline->setComputeShader(pBlob);
 #else
 	_pTemporalPipeline->setComputeShader(g_TAAResolveCS, sizeof(g_TAAResolveCS));
 #endif
 	_pTemporalPipeline->setRootSignature(pRootSignature);
 	_pTemporalPipeline->finalize();
+
+
+	_pSharpenPipeline = pSharedDevice->createComputePSO("SharpenPipeline");
+#if defined(DEBUG) || defined(_DEBUG)
+	auto pBlob1 = ShaderHelper::compile(
+		L"Engine/HlslShader/SharpenTAACS.hlsl", 
+		nullptr, 
+		"CS", 
+		"cs_5_0"
+	);
+	_pSharpenPipeline->setComputeShader(pBlob1);
+#else
+	_pSharpenPipeline->setComputeShader(g_SharpenTAACS, sizeof(g_SharpenTAACS));
+#endif
+	ShaderHelper::generateRootSignature(_pSharpenPipeline);
+	_pSharpenPipeline->finalize();
 }
 
 void TemporalAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {
 	ExecutablePass::execute(directCtx, view);
 
+	uint64_t frameIndexMod2 = view.frameIndex % 2;
+	uint64_t srcIdx = frameIndexMod2;
+	uint64_t dstIdx = (~srcIdx) & 0x1;
+
+	// TAA
 	constexpr size_t kNum32Bit = sizeof(CBData) / sizeof(float);
 	CBData data;
 	data.gResolution.x = static_cast<float>(view.viewport.width);
@@ -59,16 +89,25 @@ void TemporalAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::Ren
 	data.gJitter.x = view.xJitter;
 	data.gJitter.y = view.yJitter;
 	data.gFrameNumber = static_cast<uint32_t>(view.frameIndex);
-	data.padding0 = 0;
+	data.gDebugFlag = 0;
+	data.gDebugFlag |= (HAS_HISTORY_FLAG * _hasHistory);
 
 	directCtx.setComputePSO(_pTemporalPipeline);
 	directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, kNum32Bit, &data);
-	directCtx.setUnorderedAccessView(StringName("gOutputMap"), pOutputMap->get2dUAV());
+	directCtx.transitionBarrier(_pTemporalColor[dstIdx], D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	directCtx.setUnorderedAccessView(StringName("gOutputMap"), _pTemporalColor[dstIdx]->get2dUAV());
 	directCtx.setShaderResourceView(StringName("gScreenMap"), pScreenMap->get2dSRV());
-	directCtx.setShaderResourceView(StringName("gDepthMap"), pDepthMap->get2dSRV());
 	directCtx.setShaderResourceView(StringName("gVelocityMap"), pVelocityMap->get2dSRV());
 	
 	auto dispatchArgs = _pTemporalPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
+	directCtx.dispatch(dispatchArgs);
+
+	// Sharpen And copy
+	directCtx.setComputePSO(_pSharpenPipeline);
+	directCtx.transitionBarrier(_pTemporalColor[dstIdx], D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+	directCtx.setShaderResourceView(StringName("gTemporalColor"), _pTemporalColor[dstIdx]->get2dSRV());
+	directCtx.setUnorderedAccessView(StringName("gOutputColorMap"), pOutputMap->get2dUAV());
+	dispatchArgs = _pSharpenPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
 	directCtx.dispatch(dispatchArgs);
 }
 

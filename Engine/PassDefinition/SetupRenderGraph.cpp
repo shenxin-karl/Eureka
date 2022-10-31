@@ -134,8 +134,6 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pTemporalAAPass->pVelocityMap.preExecuteState = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
 		pGBufferPass->pVelocityMap >> pTemporalAAPass->pVelocityMap;
 
-		pTemporalAAPass->pDepthMap.preExecuteState = D3D12_RESOURCE_STATE_DEPTH_READ;
-		pGBufferPass->pDepthStencil >> pTemporalAAPass->pDepthMap;
 		pRenderGraph->addPass(pTemporalAAPass);
 	}
 
