@@ -18,7 +18,8 @@ void GBufferPass::setViewportScissorRect(dx12lib::IGraphicsContext &graphicsCtx)
 	auto viewport = pGBuffer0->getViewport();
 	viewport.TopLeftX = pApplication->xJitter;
 	viewport.TopLeftY = pApplication->yJitter;
-	graphicsCtx.setViewport(viewport);
+	//graphicsCtx.setViewport(viewport);
+	graphicsCtx.setViewport(pGBuffer0->getViewport());
 	graphicsCtx.setScissorRect(pGBuffer0->getScissorRect());
 }
 

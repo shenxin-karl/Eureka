@@ -34,7 +34,6 @@ float LuminanceRec709( float3 inRGB ) {
 }
 
 float3 Reinhard(float3 inRGB) {
-	return inRGB;
 	return inRGB / ( 1.0 + LuminanceRec709( inRGB ) );
 }
 
@@ -43,8 +42,8 @@ groupshared uint SharedColor[NUM_THREAD+2][NUM_THREAD+2];
 
 Texture2D<float3>              gScreenMap   : register(t0);
 Texture2D<packed_velocity_t>   gVelocityMap : register(t1);
-Texture2D<float3>              gTemporalMap : register(t2);
-
+Texture2D<float4>              gTemporalMap : register(t2);
+RWTexture2D<float4>            gOutputMap   : register(u0);
 
 void StoreCurrentColor(ComputeIn cin) {
 	/*  http://wojtsterna.blogspot.com/2018/02/directx-11-hlsl-gatherred.html
@@ -94,7 +93,7 @@ float4 cubic(float x) {
     return w / 6.0;
 }
 
-float3 BicubicTexture(in float2 texcoord) {
+float4 BicubicTexture(in float2 texcoord) {
 	float2 resolution = gResolution.xy;
 	texcoord *= resolution;
 
@@ -113,17 +112,17 @@ float3 BicubicTexture(in float2 texcoord) {
     float4 s = float4(xcubic.x + xcubic.y, xcubic.z + xcubic.w, ycubic.x + ycubic.y, ycubic.z + ycubic.w);
     float4 offset = c + float4(xcubic.y, xcubic.w, ycubic.y, ycubic.w) / s;
 
-    float3 sample0 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.x, offset.z) * gResolution.zw, 0);
-    float3 sample1 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.y, offset.z) * gResolution.zw, 0);
-    float3 sample2 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.x, offset.w) * gResolution.zw, 0);
-    float3 sample3 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.y, offset.w) * gResolution.zw, 0);
+    float4 sample0 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.x, offset.z) * gResolution.zw, 0);
+    float4 sample1 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.y, offset.z) * gResolution.zw, 0);
+    float4 sample2 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.x, offset.w) * gResolution.zw, 0);
+    float4 sample3 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.y, offset.w) * gResolution.zw, 0);
 
     float sx = s.x / (s.x + s.y);
     float sy = s.z / (s.z + s.w);
     return lerp(lerp(sample3, sample2, sx), lerp(sample1, sample0, sx), sy);
 }
 
-float3 GetHistory(float2 prevScreenUV) {
+float4 GetHistory(float2 prevScreenUV) {
 	if (GetEnableBicubicSample()) {
 	    return BicubicTexture(prevScreenUV);
 	} else {
@@ -132,7 +131,6 @@ float3 GetHistory(float2 prevScreenUV) {
 }
 
 
-RWTexture2D<float3> gOutputMap : register(u0);
 [numthreads(NUM_THREAD, NUM_THREAD, 1)]
 void CS(ComputeIn cin) {
     StoreCurrentColor(cin);
@@ -144,22 +142,26 @@ void CS(ComputeIn cin) {
     float velocityConfidenceFactor = GetVelocityConfidenceFactor(velocity);
 
     float2 prevFrameScreenST = cin.DispatchThreadID.xy + velocity;
-    float2 prevFrameScreenUV = GetTexcoord(prevFrameScreenST);
+    float2 prevFrameScreenUV = float3(GetTexcoord(prevFrameScreenST), velocity.z);
 
     const float uvWeight = (all(prevFrameScreenUV >= 0.0) && all(prevFrameScreenUV <= 1.0)) ? 1.0 : 0.0;
-    const bool hasValidHistory = HasHistory() * velocityConfidenceFactor * uvWeight;
+    const bool hasValidHistory = (HasHistory() * velocityConfidenceFactor * uvWeight) > 0.001;
 
-    float3 finalColor = 0.0;
+    float4 finalColor = 0.0;
     if (hasValidHistory) {
-        float3 historyColor = GetHistory(prevFrameScreenUV);
-        finalColor = lerp(currentFrameColor, historyColor, 0.1);
+        float4 historyColor = GetHistory(prevFrameScreenUV);
+        float weight = historyColor.a * velocityConfidenceFactor;
+		const float newWeight = saturate( float( 1.f ) / ( float( 2.f ) - weight ) );
+
+        finalColor = float4(lerp(currentFrameColor, historyColor.rgb, weight), newWeight);
     } else {
-        finalColor = currentFrameColor;
+        float3 neighbourhoodsColor = currentFrameColor;
         uint2 offsets[4] = { uint2(+1, -1), uint2(+1, +1), uint2(-1, +1), uint2(-1, -1) };
         [unroll] for (uint i = 0; i < 4; ++i)
-			finalColor += GetCurrentColor(groupST + offsets[i]);
+			neighbourhoodsColor += GetCurrentColor(groupST + offsets[i]);
 
-        finalColor *= 0.2;
+        neighbourhoodsColor *= 0.2;
+        finalColor = float4(neighbourhoodsColor, 0.5);
     }
     gOutputMap[cin.DispatchThreadID.xy] = finalColor;
 }
