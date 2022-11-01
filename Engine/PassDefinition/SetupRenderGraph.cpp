@@ -67,6 +67,7 @@ std::shared_ptr<rgph::RenderGraph> SetupRenderGraph(EurekaApplication *pApp, dx1
 		pClearVelocity->pRenderTarget2d >> pGBufferPass->pVelocityMap;
 		pGBufferPass->pVelocityMap.preExecuteState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
+		pGBufferPass->pApplication = pApp;
 		pRenderGraph->addPass(pGBufferPass);
 	}
 

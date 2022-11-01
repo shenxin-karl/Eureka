@@ -30,6 +30,11 @@ using namespace Math;
 
 namespace Eureka {
 
+EurekaApplication::EurekaApplication() {
+	_width = 256;
+	_height = 256;
+}
+
 EurekaApplication::~EurekaApplication() {
 }
 
@@ -130,17 +135,18 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 
 	uint64_t frameIndex = dx12lib::FrameIndexProxy::getFrameResourceIndex();
 	float2 jitterOffset = kHalton23[frameIndex % 8];
-	_xJitter = (jitterOffset.x * 2.f - 1.f) / fWidth;
-	_yJitter = (jitterOffset.y * 2.f - 1.f) / fHeight;
+	xJitter = jitterOffset.x / fWidth;
+	yJitter = jitterOffset.y / fHeight;
 
 	DX::XMMATRIX matProj = DX::XMLoadFloat4x4(RVPtr(_pCamera->getProj()));
-	matProj.r[2].m128_f32[0] += _xJitter;//_31
-	matProj.r[2].m128_f32[1] += _yJitter;//_32
+	matProj.r[2].m128_f32[0] += xJitter;//_31
+	matProj.r[2].m128_f32[1] += yJitter;//_32
 
 	Matrix4 preFrameViewProj(prevFrameMatViewProj);
 	Matrix4 matView = _pCamera->getMatView();
 
-	pCbPrePassVisitor->gMatJitterViewProj = float4x4(Matrix4(matProj) * matView);
+	//pCbPrePassVisitor->gMatJitterViewProj = float4x4(Matrix4(matProj) * matView);
+	pCbPrePassVisitor->gMatJitterViewProj = pCbPrePassVisitor->matViewProj;
 	pCbPrePassVisitor->gMatViewport = float4x4(matClipToViewport * _pCamera->getMatViewProj());
 	pCbPrePassVisitor->gMatPreViewport = float4x4(matClipToViewport * preFrameViewProj);
 
@@ -166,8 +172,8 @@ void EurekaApplication::onTick(std::shared_ptr<GameTimer> pGameTimer) {
 	view.viewport.width = _width;
 	view.viewport.height = _height;
 	view.frameIndex = dx12lib::FrameIndexProxy::getFrameIndex();
-	view.xJitter = _xJitter;
-	view.yJitter = _yJitter;
+	view.xJitter = xJitter;
+	view.yJitter = yJitter;
 
 	pRenderGraph->execute(pDirectProxy, view);
 	pCmdQueue->executeCommandList(pDirectProxy);
@@ -348,6 +354,7 @@ void EurekaApplication::resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, si
 		height,
 		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
 	));
+	pTemporalOutput->setResourceName("TemporalOutputMap");
 
 	pVelocityMap = pDirectCtx->createTexture(dx12lib::Texture::make2D(
 		kVelocityFormat,
@@ -360,6 +367,7 @@ void EurekaApplication::resizeBuffers(dx12lib::DirectContextProxy pDirectCtx, si
 	size_t numTile = MathHelper::divideByMultiple(width, TBDR_TILE_DIMENSION) * 
 		MathHelper::divideByMultiple(height, TBDR_TILE_DIMENSION);
 	pTileLightLists = pDirectCtx->createUAStructuredBuffer(nullptr, numTile, sizeof(LightList));
+	pTileLightLists->setResourceName("TileLightLists");
 
 	size_t numClusterTile = ClusterDeferredPass::calcTileSize(_width, _height, _pCamera->getFarClip());
 	pTileClusterLightList = pDirectCtx->createUAStructuredBuffer(nullptr, numClusterTile, sizeof(LightList));

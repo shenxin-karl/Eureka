@@ -1,5 +1,7 @@
 #include "GBufferPass.h"
 
+#include "Application/EurekaApplication.h"
+
 namespace Eureka {
 
 GBufferPass::GBufferPass(const std::string &passName)
@@ -13,7 +15,10 @@ GBufferPass::GBufferPass(const std::string &passName)
 }
 
 void GBufferPass::setViewportScissorRect(dx12lib::IGraphicsContext &graphicsCtx) {
-	graphicsCtx.setViewport(pGBuffer0->getViewport());
+	auto viewport = pGBuffer0->getViewport();
+	viewport.TopLeftX = pApplication->xJitter;
+	viewport.TopLeftY = pApplication->yJitter;
+	graphicsCtx.setViewport(viewport);
 	graphicsCtx.setScissorRect(pGBuffer0->getScissorRect());
 }
 

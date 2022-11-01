@@ -3,6 +3,7 @@
 
 namespace Eureka {
 
+class EurekaApplication;
 class GBufferPass : public rgph::RenderQueuePass {
 public:
 	explicit GBufferPass(const std::string &passName);
@@ -14,6 +15,7 @@ public:
 	rgph::PassResourcePtr<dx12lib::Texture> pGBuffer2;
 	rgph::PassResourcePtr<dx12lib::Texture> pVelocityMap;
 	rgph::PassResourcePtr<dx12lib::Texture> pDepthStencil;
+	EurekaApplication *pApplication;
 };
 
 }

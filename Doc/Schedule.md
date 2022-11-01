@@ -172,6 +172,8 @@ https://zhuanlan.zhihu.com/p/142922246
 
 [Temporal Anti Aliasing – Step by Step | ziyad barakat's programming blog (wordpress.com)](https://ziyadbarakat.wordpress.com/2020/07/28/temporal-anti-aliasing-step-by-step/)
 
+[Temporal Anti-Aliasing - Mali GPU and Vulkan - Graphics, Gaming, and VR blog - Arm Community blogs - Arm Community](https://community.arm.com/arm-community-blogs/b/graphics-gaming-and-vr-blog/posts/temporal-anti-aliasing)
+
 代码参考
 
 [GameTechDev/TAA: Intel® Graphics Optimized Temporal Anti-Aliasing (TAA) (github.com)](https://github.com/GameTechDev/TAA)

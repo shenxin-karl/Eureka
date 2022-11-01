@@ -132,7 +132,9 @@ void TemporalAAPass::onResize(dx12lib::IDirectContext &directCtx, size_t width, 
 	std::memcpy(&clearValue.Color, &DirectX::Colors::Black, sizeof(FLOAT) * 4);
 
 	_pTemporalColor[0] = directCtx.createTexture(desc, &clearValue);
+	_pTemporalColor[0]->setResourceName("TemporalColor0");
 	_pTemporalColor[1] = directCtx.createTexture(desc, &clearValue);
+	_pTemporalColor[1]->setResourceName("TemporalColor1");
 }
 
 }

@@ -83,41 +83,51 @@ float3 GetVelocity(ComputeIn cin) {
 	return UnpackVelocity(gVelocityMap[cin.DispatchThreadID.xy]);
 }
 
-float3 GetHistory(float2 prevScreenST) {
+float4 cubic(float x) {
+    float4 w;
+    float x2 = x * x;
+    float x3 = x2 * x;
+    w.x = -x3 + 3.0 * x2 - 3.0 * x + 1.0;
+    w.y = +3.0 * x3 - 6.0 * x2 + 4.0;
+    w.z = -3.0 * x3 + 3.0 * x2 + 3.0 * x + 1.0;
+    w.w = +x3;
+    return w / 6.0;
+}
+
+float3 BicubicTexture(in float2 texcoord) {
+	float2 resolution = gResolution.xy;
+	texcoord *= resolution;
+
+	float fx = frac(texcoord.x);
+    float fy = frac(texcoord.y);
+    texcoord.x -= fx;
+    texcoord.y -= fy;
+
+    fx -= 0.5;
+    fy -= 0.5;
+
+    float4 xcubic = cubic(fx);
+    float4 ycubic = cubic(fy);
+
+    float4 c = float4(texcoord.x - 0.5, texcoord.x + 1.5, texcoord.y - 0.5, texcoord.y + 1.5);
+    float4 s = float4(xcubic.x + xcubic.y, xcubic.z + xcubic.w, ycubic.x + ycubic.y, ycubic.z + ycubic.w);
+    float4 offset = c + float4(xcubic.y, xcubic.w, ycubic.y, ycubic.w) / s;
+
+    float3 sample0 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.x, offset.z) * gResolution.zw, 0);
+    float3 sample1 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.y, offset.z) * gResolution.zw, 0);
+    float3 sample2 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.x, offset.w) * gResolution.zw, 0);
+    float3 sample3 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.y, offset.w) * gResolution.zw, 0);
+
+    float sx = s.x / (s.x + s.y);
+    float sy = s.z / (s.z + s.w);
+    return lerp(lerp(sample3, sample2, sx), lerp(sample1, sample0, sx), sy);
+}
+
+float3 GetHistory(float2 prevScreenUV) {
 	if (GetEnableBicubicSample()) {
-		// Ë«Èý´Î²åÖµ: https://stackoverflow.com/questions/13501081/efficient-bicubic-filtering-code-in-glsl
-		const float2 rcpResolution = gResolution.zw;
-	    const float2 fractional = frac( prevScreenST );
-	    const float2 uv = ( floor( prevScreenST ) + float2( 0.5f, 0.5f ) ) * rcpResolution;
-
-	    // 5-tap bicubic sampling (for Hermite/Carmull-Rom filter) -- (approximate from original 16->9-tap bilinear fetching) 
-	    const float2 t =  fractional;
-	    const float2 t2 = fractional * fractional;
-	    const float2 t3 = t2 * fractional;
-	    const float s = 0.5;
-
-	    const float2 w0 = -s * t3 + 2.f * s * t2 - s * t;
-	    const float2 w1 = (2.f - s ) * t3 + (s - 3.f) * t2 + 1.f;
-	    const float2 w2 = (s - 2.f) * t3 + (3 - 2.f * s ) * t2 + s * t;
-	    const float2 w3 = s * t3 - s * t2;
-	    const float2 s0 = w1 + w2;
-	    const float2 f0 = w2 / ( w1 + w2 );
-	    const float2 m0 = uv + f0 * rcpResolution;
-	    const float2 tc0 = uv - 1.f * rcpResolution;
-	    const float2 tc3 = uv + 2.f * rcpResolution;
-
-	    const float3 A = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  tc0.y), 0);
-	    const float3 B = gTemporalMap.SampleLevel(gSamLinearClamp, float2(tc0.x, m0.y),  0);
-	    const float3 C = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  m0.y),  0);
-	    const float3 D = gTemporalMap.SampleLevel(gSamLinearClamp, float2(tc3.x, m0.y),  0);
-	    const float3 E = gTemporalMap.SampleLevel(gSamLinearClamp, float2(m0.x,  tc3.y), 0);
-	    const float3 color = (0.5 * (A + B) * w0.x + A * s0.x + 0.5 * (A + B) * w3.x ) * w0.y + 
-							 (B * w0.x + C * s0.x + D * w3.x) * s0.y                          + 
-	                         (0.5 * (B + E) * w0.x + E * s0.x + 0.5 * (D + E) * w3.x) * w3.y;
-	    return color;
+	    return BicubicTexture(prevScreenUV);
 	} else {
-		float2 uv = (prevScreenST + 0.5) * gResolution.zw;
-		return gTemporalMap.SampleLevel(gSamLinearClamp, uv, 0);
+		return gTemporalMap.SampleLevel(gSamLinearClamp, prevScreenUV, 0);
 	}
 }
 
@@ -133,7 +143,7 @@ void CS(ComputeIn cin) {
     float3 velocity = GetVelocity(cin);
     float velocityConfidenceFactor = GetVelocityConfidenceFactor(velocity);
 
-    float2 prevFrameScreenST = cin.DispatchThreadID.xy + velocity.xy + gJitter;
+    float2 prevFrameScreenST = cin.DispatchThreadID.xy + velocity;
     float2 prevFrameScreenUV = GetTexcoord(prevFrameScreenST);
 
     const float uvWeight = (all(prevFrameScreenUV >= 0.0) && all(prevFrameScreenUV <= 1.0)) ? 1.0 : 0.0;
@@ -141,7 +151,8 @@ void CS(ComputeIn cin) {
 
     float3 finalColor = 0.0;
     if (hasValidHistory) {
-        finalColor = GetHistory(prevFrameScreenUV);
+        float3 historyColor = GetHistory(prevFrameScreenUV);
+        finalColor = lerp(currentFrameColor, historyColor, 0.1);
     } else {
         finalColor = currentFrameColor;
         uint2 offsets[4] = { uint2(+1, -1), uint2(+1, +1), uint2(-1, +1), uint2(-1, -1) };
