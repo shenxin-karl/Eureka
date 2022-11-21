@@ -14,8 +14,8 @@ float LuminanceRec709( float3 inRGB ) {
 }
 
 float3 InverseReinhard( float3 inRGB ) {
-    return  inRGB;
-    return inRGB / ( 1.f - LuminanceRec709( inRGB ) );
+    const float3 currentColor = inRGB / (1.f - LuminanceRec709(inRGB));
+    return max(currentColor, 0.0);
 }
 
 #define NUM_THREAD       8

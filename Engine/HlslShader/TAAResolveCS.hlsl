@@ -3,6 +3,8 @@
 
 // Difference in pixels for velocity after which the pixel is marked as no-history valid for 1920x1080
 
+
+
 struct ComputeIn {
     uint3 GroupID           : SV_GroupID;           
     uint3 GroupThreadID     : SV_GroupThreadID;     
@@ -19,23 +21,39 @@ cbuffer CBData : register(b0) {
 
 #define HAS_HISTORY_FLAG        (1 << 0)
 #define ENABLE_BICUBIC_SAMPLE   (1 << 1)
+#define MIN_VARIANCE_GAMMA 0.75f // under motion
+#define MAX_VARIANCE_GAMMA 2.f   // no motion
 
 float HasHistory() {
 	return (gDebugFlag & HAS_HISTORY_FLAG) ? 1.0 : 0.0;
 }
-
-bool GetEnableBicubicSample() {
-	return false;
+bool GetEnableClipHistoryClip() {
+	return true;
 }
 
 // Reinhard tone mapper
-float LuminanceRec709( float3 inRGB ) {
+float LuminanceRec709(float3 inRGB) {
     return dot( inRGB, float3( 0.2126f, 0.7152f, 0.0722f ) );
 }
 
 float3 Reinhard(float3 inRGB) {
 	return inRGB / ( 1.0 + LuminanceRec709( inRGB ) );
 }
+
+float3 RGB2YCoCg(float3 inRGB) {
+    const float y  = dot(inRGB, float3(0.25f, 0.5f, 0.25f) );
+    const float co = dot(inRGB, float3(0.5f, 0.f, -0.5f));
+    const float cg = dot(inRGB, float3(-0.25f, 0.5f, -0.25f));
+    return float3(y, co, cg);
+}
+
+float3 YCoCg2RGB(float3 inYCoCg) {
+    const float r = dot(inYCoCg, float3(1.f, 1.f, -1.f));
+    const float g = dot(inYCoCg, float3(1.f, 0.f, 1.f));
+    const float b = dot(inYCoCg, float3(1.f, -1.f, -1.f));
+    return float3(r, g, b);
+}
+
 
 #define NUM_THREAD 8
 groupshared uint SharedColor[NUM_THREAD+2][NUM_THREAD+2];
@@ -55,12 +73,12 @@ void StoreCurrentColor(ComputeIn cin) {
 	*	+----+----+
     */  
     if (cin.GroupThreadID.x < 5 && cin.GroupThreadID.y < 5) {
-        uint2 groupStart = cin.GroupID.xy * NUM_THREAD;
-        uint2 index = cin.GroupThreadID.xy * 2;
-	    float2 uv = (groupStart + index) * gResolution.zw - 0.5 * gResolution.zw;
-        float4 reds = gScreenMap.GatherRed(gSamLinearClamp, uv);
-        float4 greens = gScreenMap.GatherGreen(gSamLinearClamp, uv);
-        float4 blues = gScreenMap.GatherBlue(gSamLinearClamp, uv);
+        const uint2 groupStart = cin.GroupID.xy * NUM_THREAD;
+        const uint2 index = cin.GroupThreadID.xy * 2;
+	    const float2 uv = (groupStart + index) * gResolution.zw - 0.5 * gResolution.zw;
+        const float4 reds = gScreenMap.GatherRed(gSamLinearClamp, uv);
+        const float4 greens = gScreenMap.GatherGreen(gSamLinearClamp, uv);
+        const float4 blues = gScreenMap.GatherBlue(gSamLinearClamp, uv);
         SharedColor[index.x+0][index.y+0] = Pack_R11G11B10_FLOAT(Reinhard(float3(reds.w, greens.w, blues.w)));
         SharedColor[index.x+1][index.y+0] = Pack_R11G11B10_FLOAT(Reinhard(float3(reds.z, greens.z, blues.z)));
         SharedColor[index.x+0][index.y+1] = Pack_R11G11B10_FLOAT(Reinhard(float3(reds.x, greens.x, blues.x)));
@@ -74,7 +92,7 @@ float2 GetTexcoord(float2 dispatchID) {
 }
 
 float3 GetCurrentColor(uint2 groupThreadID) {
-    uint packedRGB = SharedColor[groupThreadID.x][groupThreadID.y];
+    const uint packedRGB = SharedColor[groupThreadID.x][groupThreadID.y];
     return Unpack_R11G11B10_FLOAT(packedRGB);
 }
 
@@ -82,52 +100,38 @@ float3 GetVelocity(ComputeIn cin) {
 	return UnpackVelocity(gVelocityMap[cin.DispatchThreadID.xy]);
 }
 
-float4 cubic(float x) {
-    float4 w;
-    float x2 = x * x;
-    float x3 = x2 * x;
-    w.x = -x3 + 3.0 * x2 - 3.0 * x + 1.0;
-    w.y = +3.0 * x3 - 6.0 * x2 + 4.0;
-    w.z = -3.0 * x3 + 3.0 * x2 + 3.0 * x + 1.0;
-    w.w = +x3;
-    return w / 6.0;
-}
-
-float4 BicubicTexture(in float2 texcoord) {
-	float2 resolution = gResolution.xy;
-	texcoord *= resolution;
-
-	float fx = frac(texcoord.x);
-    float fy = frac(texcoord.y);
-    texcoord.x -= fx;
-    texcoord.y -= fy;
-
-    fx -= 0.5;
-    fy -= 0.5;
-
-    float4 xcubic = cubic(fx);
-    float4 ycubic = cubic(fy);
-
-    float4 c = float4(texcoord.x - 0.5, texcoord.x + 1.5, texcoord.y - 0.5, texcoord.y + 1.5);
-    float4 s = float4(xcubic.x + xcubic.y, xcubic.z + xcubic.w, ycubic.x + ycubic.y, ycubic.z + ycubic.w);
-    float4 offset = c + float4(xcubic.y, xcubic.w, ycubic.y, ycubic.w) / s;
-
-    float4 sample0 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.x, offset.z) * gResolution.zw, 0);
-    float4 sample1 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.y, offset.z) * gResolution.zw, 0);
-    float4 sample2 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.x, offset.w) * gResolution.zw, 0);
-    float4 sample3 = gTemporalMap.SampleLevel(gSamLinearClamp, float2(offset.y, offset.w) * gResolution.zw, 0);
-
-    float sx = s.x / (s.x + s.y);
-    float sy = s.z / (s.z + s.w);
-    return lerp(lerp(sample3, sample2, sx), lerp(sample1, sample0, sx), sy);
-}
-
 float4 GetHistory(float2 prevScreenUV) {
-	if (GetEnableBicubicSample()) {
-	    return BicubicTexture(prevScreenUV);
-	} else {
-		return gTemporalMap.SampleLevel(gSamLinearClamp, prevScreenUV, 0);
-	}
+	return gTemporalMap.SampleLevel(gSamLinearClamp, prevScreenUV, 0);
+}
+
+float3 ClipHistoryColor(float3 inCurrentColor, float3 inHistoryColor, uint2 groupST, float inVarianceGamma) {
+	[branch] if (!GetEnableClipHistoryClip())
+		return inHistoryColor;
+
+    const float rcpDivider = 1.f / 9.f;
+	const uint2 offsets[8] = {
+        uint2(-1, -1), uint2(-1, +0), uint2(-1, +1), uint2(+0, +1),
+        uint2(+1, +1), uint2(+1, +0), uint2(+1, -1), uint2(+0, -1),
+	};
+
+    const float3 currentColorInYCoCg = RGB2YCoCg(inCurrentColor);
+    float3 moment1 = currentColorInYCoCg;
+    float3 moment2 = currentColorInYCoCg * currentColorInYCoCg;
+    [unroll] for (uint i = 0; i < 8; ++i) {
+	    const uint2 newST = groupST + offsets[i];
+        const float3 newColor = RGB2YCoCg(GetCurrentColor(newST));
+        moment1 += newColor;
+        moment2 += newColor * newColor;
+    }
+
+    const float3 mean1 = moment1 * rcpDivider;
+    const float3 mean2 = moment2 * rcpDivider;
+    const float3 variance = sqrt(mean2 - (mean1 * mean1)) * inVarianceGamma;
+
+    const float3 minC = YCoCg2RGB(mean1 - variance);
+    const float3 maxC = YCoCg2RGB(mean1 + variance);
+    const float3 toReturn = clamp(inHistoryColor, minC, maxC);
+    return toReturn;
 }
 
 
@@ -135,28 +139,29 @@ float4 GetHistory(float2 prevScreenUV) {
 void CS(ComputeIn cin) {
     StoreCurrentColor(cin);
 
-    uint2 groupST = cin.GroupThreadID.xy + 1;
-    float3 currentFrameColor = GetCurrentColor(groupST);
+    const uint2 groupST = cin.GroupThreadID.xy + 1;
+    const float3 currentFrameColor = GetCurrentColor(groupST);
 
-    float3 velocity = GetVelocity(cin);
+    const float3 velocity = GetVelocity(cin);
     float velocityConfidenceFactor = GetVelocityConfidenceFactor(velocity);
 
-    float2 prevFrameScreenST = cin.DispatchThreadID.xy + velocity;
-    float2 prevFrameScreenUV = float3(GetTexcoord(prevFrameScreenST), velocity.z);
+    const float2 prevFrameScreenST = cin.DispatchThreadID.xy + velocity;
+    const float2 prevFrameScreenUV = float3(GetTexcoord(prevFrameScreenST), velocity.z);
 
-    const float uvWeight = (all(prevFrameScreenUV >= 0.0) && all(prevFrameScreenUV <= 1.0)) ? 1.0 : 0.0;
+    const float uvWeight = (all(prevFrameScreenUV >= float3(0.0, 0.0, 0.0)) && all(prevFrameScreenUV <= float3(1.0, 1.0, 1.0))) ? 1.0 : 0.0;
     const bool hasValidHistory = (HasHistory() * velocityConfidenceFactor * uvWeight) > 0.001;
 
     float4 finalColor = 0.0;
     if (hasValidHistory) {
-        float4 historyColor = GetHistory(prevFrameScreenUV);
-        float weight = historyColor.a * velocityConfidenceFactor;
-		const float newWeight = saturate( float( 1.f ) / ( float( 2.f ) - weight ) );
-
+        const float4 rawHistoryColor = GetHistory(prevFrameScreenUV);
+        const float variantGamma = lerp(MIN_VARIANCE_GAMMA, MAX_VARIANCE_GAMMA, velocityConfidenceFactor*velocityConfidenceFactor);
+        const float3 historyColor = ClipHistoryColor(currentFrameColor, rawHistoryColor.rgb, groupST, variantGamma);
+        float weight = rawHistoryColor.a * velocityConfidenceFactor;
+		const float newWeight = saturate(1.f / (2.f - weight));
         finalColor = float4(lerp(currentFrameColor, historyColor.rgb, weight), newWeight);
     } else {
         float3 neighbourhoodsColor = currentFrameColor;
-        uint2 offsets[4] = { uint2(+1, -1), uint2(+1, +1), uint2(-1, +1), uint2(-1, -1) };
+        const uint2 offsets[4] = { uint2(+1, -1), uint2(+1, +1), uint2(-1, +1), uint2(-1, -1) };
         [unroll] for (uint i = 0; i < 4; ++i)
 			neighbourhoodsColor += GetCurrentColor(groupST + offsets[i]);
 

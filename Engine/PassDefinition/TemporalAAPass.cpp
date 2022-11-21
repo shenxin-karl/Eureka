@@ -91,25 +91,35 @@ void TemporalAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::Ren
 	data.gDebugFlag = 0;
 	data.gDebugFlag |= (HAS_HISTORY_FLAG * _hasHistory);
 
-	directCtx.setComputePSO(_pTemporalPipeline);
-	directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, sizeof(CBData) / sizeof(float), &data);
-	directCtx.transitionBarrier(_pTemporalColor[dstIdx], D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	directCtx.transitionBarrier(_pTemporalColor[srcIdx], D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
-	directCtx.setUnorderedAccessView(StringName("gOutputMap"), _pTemporalColor[dstIdx]->get2dUAV());
-	directCtx.setShaderResourceView(StringName("gTemporalMap"), _pTemporalColor[srcIdx]->get2dSRV());
-	directCtx.setShaderResourceView(StringName("gScreenMap"), pScreenMap->get2dSRV());
-	directCtx.setShaderResourceView(StringName("gVelocityMap"), pVelocityMap->get2dSRV());
-	
-	auto dispatchArgs = _pTemporalPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
-	directCtx.dispatch(dispatchArgs);
+	directCtx.beginEvent("Resolve");
+	{
+		directCtx.setComputePSO(_pTemporalPipeline);
+		directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, sizeof(CBData) / sizeof(float), &data);
+		directCtx.transitionBarrier(_pTemporalColor[dstIdx], D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+		directCtx.transitionBarrier(_pTemporalColor[srcIdx], D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+		directCtx.setUnorderedAccessView(StringName("gOutputMap"), _pTemporalColor[dstIdx]->get2dUAV());
+		directCtx.setShaderResourceView(StringName("gTemporalMap"), _pTemporalColor[srcIdx]->get2dSRV());
+		directCtx.setShaderResourceView(StringName("gScreenMap"), pScreenMap->get2dSRV());
+		directCtx.setShaderResourceView(StringName("gVelocityMap"), pVelocityMap->get2dSRV());
+		
+		auto dispatchArgs = _pTemporalPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
+		directCtx.dispatch(dispatchArgs);
+		
+	}
+	directCtx.endEvent();
+
 
 	// Sharpen And copy
-	directCtx.setComputePSO(_pSharpenPipeline);
-	directCtx.transitionBarrier(_pTemporalColor[dstIdx], D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
-	directCtx.setShaderResourceView(StringName("gTemporalColor"), _pTemporalColor[dstIdx]->get2dSRV());
-	directCtx.setUnorderedAccessView(StringName("gOutputColorMap"), pOutputMap->get2dUAV());
-	dispatchArgs = _pSharpenPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
-	directCtx.dispatch(dispatchArgs);
+	directCtx.beginEvent("Sharpen");
+	{
+		directCtx.setComputePSO(_pSharpenPipeline);
+		directCtx.transitionBarrier(_pTemporalColor[dstIdx], D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+		directCtx.setShaderResourceView(StringName("gTemporalColor"), _pTemporalColor[dstIdx]->get2dSRV());
+		directCtx.setUnorderedAccessView(StringName("gOutputColorMap"), pOutputMap->get2dUAV());
+		auto dispatchArgs = _pSharpenPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
+		directCtx.dispatch(dispatchArgs);
+	}
+	directCtx.endEvent();
 
 	_hasHistory = true;
 }
