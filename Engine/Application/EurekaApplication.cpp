@@ -168,8 +168,8 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 
 	//pCbPrePassVisitor->gMatJitterViewProj = float4x4(Matrix4(matProj) * matView);
 	pCbPrePassVisitor->gMatJitterViewProj = (float4x4)(tranlation * _pCamera->getMatViewProj());
-	pCbPrePassVisitor->gMatViewport = float4x4(matClipToViewport * _pCamera->getMatViewProj());
-	pCbPrePassVisitor->gMatPreViewport = float4x4(matClipToViewport * preFrameViewProj);
+	pCbPrePassVisitor->gMatViewport = float4x4(_pCamera->getMatViewProj());
+	pCbPrePassVisitor->gMatPreViewport = float4x4(preFrameViewProj);
 
 	prevFrameMatViewProj = _pCamera->getViewProj();
 	if (pGameTimer->oneSecondTrigger()) {

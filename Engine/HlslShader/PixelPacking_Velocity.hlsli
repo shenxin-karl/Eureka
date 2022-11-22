@@ -3,7 +3,7 @@
 
 // options:
 // #define PACKING_VELOCITY_UINT32
- #define PACKING_VELOCITY_R10G10B10A2_UNORM
+// #define PACKING_VELOCITY_R10G10B10A2_UNORM
 // #define PACKING_VELOCITY_R16G16B16A16_FLOAT
 
 #ifndef __PIXEL_PACKING_VELOCITY_HLSLI__
@@ -101,21 +101,6 @@
 #endif
 
 
-#if defined(PACKING_VELOCITY_UINT32) || defined(PACKING_VELOCITY_R10G10B10A2_UNORM) || defined(PACKING_VELOCITY_R16G16B16A16_FLOAT)
-	float GetVelocityConfidenceFactor(float3 velocity) {
-		float len = length(velocity.xy);
-	    float factor = len / FRAME_VELOCITY_IN_PIXELS_DIFF;
-		float inFrustum = velocity.z >= 0.0 && velocity.z <= 1.0 ? 1.0 : 0.0;
-	    return saturate(1.0 - factor) * inFrustum;
-	}
-#else
-	float GetVelocityConfidenceFactor(float3 velocity) {
-		float len = length(velocity.xy);
-	    float factor = len / FRAME_VELOCITY_IN_PIXELS_DIFF;
-	    return saturate(1.0 - factor);
-	}
-
-#endif
 
 
 #endif // __PIXEL_PACKING_HLSLI__

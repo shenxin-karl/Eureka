@@ -3,8 +3,6 @@
 
 // Difference in pixels for velocity after which the pixel is marked as no-history valid for 1920x1080
 
-
-
 struct ComputeIn {
     uint3 GroupID           : SV_GroupID;           
     uint3 GroupThreadID     : SV_GroupThreadID;     
@@ -59,7 +57,7 @@ float3 YCoCg2RGB(float3 inYCoCg) {
 groupshared uint SharedColor[NUM_THREAD+2][NUM_THREAD+2];
 
 Texture2D<float3>              gScreenMap   : register(t0);
-Texture2D<packed_velocity_t>   gVelocityMap : register(t1);
+Texture2D<float2>              gVelocityMap : register(t1);
 Texture2D<float4>              gTemporalMap : register(t2);
 RWTexture2D<float4>            gOutputMap   : register(u0);
 
@@ -96,8 +94,14 @@ float3 GetCurrentColor(uint2 groupThreadID) {
     return Unpack_R11G11B10_FLOAT(packedRGB);
 }
 
-float3 GetVelocity(ComputeIn cin) {
-	return UnpackVelocity(gVelocityMap[cin.DispatchThreadID.xy]);
+float2 GetVelocity(ComputeIn cin) {
+	return gVelocityMap[cin.DispatchThreadID.xy];
+}
+
+float GetVelocityConfidenceFactor(float2 velocity) {
+	float len = length(velocity.xy);
+    float factor = len / FRAME_VELOCITY_IN_PIXELS_DIFF;
+    return saturate(1.0 - factor);
 }
 
 float4 GetHistory(float2 prevScreenUV) {
@@ -142,23 +146,24 @@ void CS(ComputeIn cin) {
     const uint2 groupST = cin.GroupThreadID.xy + 1;
     const float3 currentFrameColor = GetCurrentColor(groupST);
 
-    const float3 velocity = GetVelocity(cin);
+    const float2 velocity = GetVelocity(cin);
     float velocityConfidenceFactor = GetVelocityConfidenceFactor(velocity);
 
-    const float2 prevFrameScreenST = cin.DispatchThreadID.xy + velocity;
-    const float2 prevFrameScreenUV = float3(GetTexcoord(prevFrameScreenST), velocity.z);
+    const float2 prevFrameScreenST = cin.DispatchThreadID.xy;
+    const float2 prevFrameScreenUV = GetTexcoord(prevFrameScreenST) + velocity;
 
-    const float uvWeight = (all(prevFrameScreenUV >= float3(0.0, 0.0, 0.0)) && all(prevFrameScreenUV <= float3(1.0, 1.0, 1.0))) ? 1.0 : 0.0;
+    const float uvWeight = (all(prevFrameScreenUV >= float2(0.0, 0.0)) && all(prevFrameScreenUV <= float2(1.0, 1.0))) ? 1.0 : 0.0;
     const bool hasValidHistory = (HasHistory() * velocityConfidenceFactor * uvWeight) > 0.001;
 
     float4 finalColor = 0.0;
     if (hasValidHistory) {
-        const float4 rawHistoryColor = GetHistory(prevFrameScreenUV);
+        const float4 rawHistoryColor = GetHistory(prevFrameScreenUV.xy);
         const float variantGamma = lerp(MIN_VARIANCE_GAMMA, MAX_VARIANCE_GAMMA, velocityConfidenceFactor*velocityConfidenceFactor);
         const float3 historyColor = ClipHistoryColor(currentFrameColor, rawHistoryColor.rgb, groupST, variantGamma);
         float weight = rawHistoryColor.a * velocityConfidenceFactor;
 		const float newWeight = saturate(1.f / (2.f - weight));
-        finalColor = float4(lerp(currentFrameColor, historyColor.rgb, weight), newWeight);
+        //finalColor = float4(lerp(currentFrameColor, historyColor.rgb, weight), newWeight);
+        finalColor =  float4(historyColor.rgb, newWeight);
     } else {
         float3 neighbourhoodsColor = currentFrameColor;
         const uint2 offsets[4] = { uint2(+1, -1), uint2(+1, +1), uint2(-1, +1), uint2(-1, -1) };

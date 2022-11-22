@@ -56,19 +56,28 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 	_pTemporalPipeline->finalize();
 
 
+	auto pSharpenRootSignature = pSharedDevice->createRootSignature(2, 8);
+	pSharpenRootSignature->at(0).initAsConstants(dx12lib::RegisterSlot::CBV0, 1);
+	pSharpenRootSignature->initStaticSampler(0, ShaderHelper::getStaticSamplers());
+	pSharpenRootSignature->at(1).initAsDescriptorTable({
+		{ dx12lib::RegisterSlot::SRV0, 1 }, 
+		{ dx12lib::RegisterSlot::UAV0, 1 },
+	});
+	pSharpenRootSignature->finalize();
+
 	_pSharpenPipeline = pSharedDevice->createComputePSO("SharpenPipeline");
 #if defined(DEBUG) || defined(_DEBUG)
 	auto pBlob1 = ShaderHelper::compile(
 		L"Engine/HlslShader/SharpenTAACS.hlsl", 
 		nullptr, 
 		"CS", 
-		"cs_5_0"
+		"cs_5_1"
 	);
 	_pSharpenPipeline->setComputeShader(pBlob1);
 #else
 	_pSharpenPipeline->setComputeShader(g_SharpenTAACS, sizeof(g_SharpenTAACS));
 #endif
-	ShaderHelper::generateRootSignature(_pSharpenPipeline);
+	_pSharpenPipeline->setRootSignature(pSharpenRootSignature);
 	_pSharpenPipeline->finalize();
 }
 
@@ -116,6 +125,7 @@ void TemporalAAPass::execute(dx12lib::IDirectContext &directCtx, const rgph::Ren
 		directCtx.transitionBarrier(_pTemporalColor[dstIdx], D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 		directCtx.setShaderResourceView(StringName("gTemporalColor"), _pTemporalColor[dstIdx]->get2dSRV());
 		directCtx.setUnorderedAccessView(StringName("gOutputColorMap"), pOutputMap->get2dUAV());
+		directCtx.setCompute32BitConstants(dx12lib::RegisterSlot::CBV0, 1, &data.gResolution);
 		auto dispatchArgs = _pSharpenPipeline->calcDispatchArgs(view.viewport.width, view.viewport.height);
 		directCtx.dispatch(dispatchArgs);
 	}

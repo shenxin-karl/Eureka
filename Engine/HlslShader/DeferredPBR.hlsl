@@ -50,7 +50,7 @@ struct PixelOut {
 	float4 gBuffer0	: SV_TARGET0;			// .rgb albedo 								.a unused
 	float4 gBuffer1	: SV_TARGET1;			// .rgb normal								.a unused
 	float4 gBuffer2 : SV_TARGET2;			// .r ao 	.g roughness 	.b metallic		.a unused
-	packed_velocity_t velocity : SV_TARGET3;			
+	float2 velocity : SV_TARGET3;			
 };
 
 cbuffer cbMaterial : register(b0) {
@@ -137,14 +137,15 @@ float4 getAoRoughnessMetallic(VertexOut pin) {
 	return float4(ao, roughness, metallic, 1.0);
 }
 
-
-packed_velocity_t GetVelocity(VertexOut pin) {
+float2 GetVelocity(VertexOut pin) {
 	float4 currPos = pin.currViewportPos;
 	float4 prevPos = pin.prevViewportPos;
 	currPos.xy /= currPos.w;
 	prevPos.xy /= prevPos.w;
-	float3 packed = float3(prevPos.xy - currPos.xy, prevPos.z);
-	return PackVelocity(packed);
+	float2 velocity = prevPos.xy - currPos.xy;
+	// 如果 prevPos.z 范围不对, 就让这个 velocity 超出范围, 让混合无效
+	velocity += (float)(prevPos.z >= 0.0 && prevPos <= 1.0) * 5.0;
+	return velocity;
 }
 
 PixelOut PS(VertexOut pin) {
