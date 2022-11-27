@@ -2,6 +2,7 @@
 
 cbuffer CBData : register(b0) {
     float4 gResolution;         // width, height, 1/width, 1/height
+    float  gSharpenFactor;       
 };
 
 struct ComputeIn {
@@ -11,7 +12,7 @@ struct ComputeIn {
     uint  GroupIndex        : SV_GroupIndex;        
 };
 
-Texture2D<float3>   gTemporalColor : register(t0);
+Texture2D<float4>   gTemporalColor : register(t0);
 RWTexture2D<float3> gOutputColorMap : register(u0);
 
 float LuminanceRec709( float3 inRGB ) {
@@ -26,46 +27,40 @@ float3 InverseReinhard( float3 inRGB ) {
 #define NUM_THREAD       8
 #define BORDER_SIZE      1
 #define GROUP_SIZE       (NUM_THREAD * NUM_THREAD)
-#define TILE_PIXEL_COUNT ((NUM_THREAD + BORDER_SIZE) * (NUM_THREAD + BORDER_SIZE))
+#define TILE_SIZE_X      (NUM_THREAD + 2 * BORDER_SIZE)
+#define TILE_SIZE_Y      (NUM_THREAD + 2 * BORDER_SIZE)
+#define TILE_PIXEL_COUNT (TILE_SIZE_X * TILE_SIZE_Y)
 
-groupshared float4 SharedColor[NUM_THREAD+2][NUM_THREAD+2];
-void StoreCurrentColor(ComputeIn cin) {
-    if (cin.GroupThreadID.x < 5 && cin.GroupThreadID.y < 5) {
-        const uint2 groupStart = cin.GroupID.xy * NUM_THREAD;
-        const uint2 index = cin.GroupThreadID.xy * 2;
-	    const float2 uv = (groupStart + index) * gResolution.zw - 0.5 * gResolution.zw;
-        const float4 reds = gTemporalColor.GatherRed(gSamLinearClamp, uv);
-        const float4 greens = gTemporalColor.GatherGreen(gSamLinearClamp, uv);
-        const float4 blues = gTemporalColor.GatherBlue(gSamLinearClamp, uv);
-        const float4 alphas = gTemporalColor.GatherAlpha(gSamLinearClamp, uv);
-        SharedColor[index.x+0][index.y+0] = float4(InverseReinhard(float3(reds.w, greens.w, blues.w)), alphas.w);
-        SharedColor[index.x+1][index.y+0] = float4(InverseReinhard(float3(reds.z, greens.z, blues.z)), alphas.z);
-        SharedColor[index.x+0][index.y+1] = float4(InverseReinhard(float3(reds.x, greens.x, blues.x)), alphas.x);
-        SharedColor[index.x+1][index.y+1] = float4(InverseReinhard(float3(reds.y, greens.y, blues.y)), alphas.y);
-    }
-    GroupMemoryBarrierWithGroupSync();
-}
+groupshared float gs_R[TILE_PIXEL_COUNT];
+groupshared float gs_G[TILE_PIXEL_COUNT];
+groupshared float gs_B[TILE_PIXEL_COUNT];
 
-float4 GetColor(uint2 groupST) {
-    return SharedColor[groupST.x][groupST.y];
+float3 LoadSample(uint ldsIndex) {
+    return float3(gs_R[ldsIndex], gs_G[ldsIndex], gs_B[ldsIndex]);
 }
 
 [numthreads(NUM_THREAD, NUM_THREAD, 1)]
 void CS(ComputeIn cin) {
-	StoreCurrentColor(cin);
-    uint2 groupST = cin.GroupThreadID.xy + 1;
-    float4 currentColor = GetColor(groupST);
+	const int2 groupUL = cin.GroupID.xy * uint2(NUM_THREAD, NUM_THREAD) - BORDER_SIZE;
+    for (uint i = cin.GroupIndex; i < TILE_PIXEL_COUNT; i += GROUP_SIZE) {
+	    int2 ST = groupUL + int2(i % TILE_SIZE_X, i / TILE_SIZE_X);
+        float4 color = gTemporalColor[ST];
+        const float3 colorNoAlpha = InverseReinhard(color.rgb);
+        color.rgb = log2(1.0 + colorNoAlpha);
+        gs_R[i] = color.r;
+        gs_G[i] = color.g;
+        gs_B[i] = color.b;
+    }
+    GroupMemoryBarrierWithGroupSync();
 
-    /*  0  1  0
-     *  1 -4  1
-     *  0  1  0
-     */ 
-    float3 sharpenColor = currentColor.rgb * -4.0    +
-		GetColor(groupST + uint2(+1, -1)).rgb +
-	    GetColor(groupST + uint2(-1, +0)).rgb +
-	    GetColor(groupST + uint2(+1, +0)).rgb +
-	    GetColor(groupST + uint2(+0, +1)).rgb ;
-	//float3 filterColor = lerp(currentColor.rgb, sharpenColor, currentColor.a * 0.2);
-    // gOutputColorMap[cin.DispatchThreadID.xy] = filterColor;
-    gOutputColorMap[cin.DispatchThreadID.xy] = currentColor;
+    const uint localIndex = (cin.GroupThreadID.x + BORDER_SIZE) + (cin.GroupThreadID.y + BORDER_SIZE) * TILE_SIZE_X;
+    const float3 center = LoadSample(localIndex);
+    const float3 neighbors = LoadSample(localIndex - 1)           + 
+					         LoadSample(localIndex + 1)           + 
+                             LoadSample(localIndex - TILE_SIZE_X) +
+                             LoadSample(localIndex + TILE_SIZE_X) ;
+
+    const float3 edgeColor = gSharpenFactor * (center - 0.25 * neighbors);
+    const float3 finalColor = exp2(max(0, center + edgeColor)) - 1.0;
+    gOutputColorMap[cin.DispatchThreadID.xy] = finalColor;
 }

@@ -59,6 +59,7 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	cameraDesc.aspect = static_cast<float>(_width) / static_cast<float>(_height);
 	_pCamera = std::make_shared<Camera>(cameraDesc);
 	_pCameraControl = std::make_shared<FPSCameraControl>(_pCamera);
+	//_pCameraControl->cameraMoveSpeed = 20.f;
 
 	pCbPrePass = pDirectCtx->createFRConstantBuffer<CbPrePass>();
 	pCbLighting = pDirectCtx->createFRConstantBuffer<CbLighting>();
@@ -129,49 +130,19 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 
 	float fWidth = static_cast<float>(_width);
 	float fHeight = static_cast<float>(_height);
-	Matrix4 matClipToViewport = Matrix4::makeScale(fWidth, fHeight, 1.f)
-							  * Matrix4::makeTranslation(0.5f, 0.5f, 0.f)
-							  * Matrix4::makeScale(0.5f, -0.5f, 1.f);
+	Matrix4 matClipToNdc = Matrix4::makeTranslation(0.5f, 0.5f, 0.f) * Matrix4::makeScale(0.5f, -0.5f, 1.f);
+	Matrix4 preFrameViewProj(_pCamera->getMatPreviousViewProj());
 
 	uint64_t frameIndex = dx12lib::FrameIndexProxy::getFrameIndex();
 	float2 jitterOffset = kHalton23[frameIndex % 8];
 	xJitter = jitterOffset.x / fWidth;
 	yJitter = jitterOffset.y / fHeight;
+	Matrix4 translation = Matrix4::makeTranslation(xJitter, yJitter, 0.f);
 
-	DX::XMMATRIX matProj = DX::XMLoadFloat4x4(RVPtr(_pCamera->getProj()));
-	matProj.r[2].m128_f32[0] += xJitter;//_31
-	matProj.r[2].m128_f32[1] += yJitter;//_32
+	pCbPrePassVisitor->gMatJitterViewProj = (float4x4)(translation * _pCamera->getMatViewProj());
+	pCbPrePassVisitor->gMatViewport = float4x4(matClipToNdc * _pCamera->getMatViewProj());
+	pCbPrePassVisitor->gMatPreViewport = float4x4(matClipToNdc * preFrameViewProj);
 
-	Matrix4 preFrameViewProj(prevFrameMatViewProj);
-	Matrix4 matView = _pCamera->getMatView();
-
-	// Sub-sample positions for 8x TAA
-	static const Vector2 SAMPLE_LOCS_8[8] = {
-		Vector2(-7.0f, 1.0f) / 8.0f,
-		Vector2(-5.0f, -5.0f) / 8.0f,
-		Vector2(-1.0f, -3.0f) / 8.0f,
-		Vector2(3.0f, -7.0f) / 8.0f,
-		Vector2(5.0f, -1.0f) / 8.0f,
-		Vector2(7.0f, 7.0f) / 8.0f,
-		Vector2(1.0f, 3.0f) / 8.0f,
-		Vector2(-3.0f, 5.0f) / 8.0f
-	};
-
-	const unsigned SubsampleIdx = dx12lib::FrameIndexProxy::getFrameIndex() % 8;
-	const float2 TexSize(1.0f / _width, 1.f / _height); // Texel size
-	const float2 SubsampleSize = (Vector2(TexSize) * 2.0f).xy; // That is the size of the subsample in NDC
-	const Vector2 S = SAMPLE_LOCS_8[SubsampleIdx]; // In [-1, 1]
-	Vector2 Subsample = S * Vector2(SubsampleSize); // In [-SubsampleSize, SubsampleSize] range
-	Subsample *= 0.5f; // In [-SubsampleSize / 2, SubsampleSize / 2] range
-	Matrix4 tranlation = Matrix4::makeTranslation(Subsample.x, Subsample.y, 0.f);
-
-
-	//pCbPrePassVisitor->gMatJitterViewProj = float4x4(Matrix4(matProj) * matView);
-	pCbPrePassVisitor->gMatJitterViewProj = (float4x4)(tranlation * _pCamera->getMatViewProj());
-	pCbPrePassVisitor->gMatViewport = float4x4(_pCamera->getMatViewProj());
-	pCbPrePassVisitor->gMatPreViewport = float4x4(preFrameViewProj);
-
-	prevFrameMatViewProj = _pCamera->getViewProj();
 	if (pGameTimer->oneSecondTrigger()) {
 		std::string titleName = std::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());
 		_pInputSystem->pWindow->setShowTitle(titleName);

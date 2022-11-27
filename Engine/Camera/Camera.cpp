@@ -55,6 +55,10 @@ const Math::float4x4 &Camera::getInvViewProj() const {
 	return _cameraData.matInvViewProj;
 }
 
+const Math::float4x4 & Camera::getMatPreviousViewProj() const {
+	return _cameraData.matPreviousViewProj;
+}
+
 void Camera::update() {
 	Vector3 lookFrom(_cameraData.lookFrom);
 	Vector3 lookAt(_cameraData.lookAtDir);
@@ -71,6 +75,9 @@ void Camera::update() {
 	Matrix4 invView = inverse(view);
 	Matrix4 invProj = inverse(proj);
 	Matrix4 invViewProj = inverse(viewProj);
+
+
+	_cameraData.matPreviousViewProj = _cameraData.matViewProj;
 
 	_cameraData.matView = float4x4(view);
 	_cameraData.matProj = float4x4(proj);

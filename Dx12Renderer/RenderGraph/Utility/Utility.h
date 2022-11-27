@@ -19,6 +19,7 @@ struct CameraData {
 	Math::float4x4  matInvProj;
 	Math::float4x4	matViewProj;
 	Math::float4x4  matInvViewProj;
+	Math::float4x4  matPreviousViewProj;
 	Math::BoundingFrustum viewSpaceFrustum;
 	Math::BoundingFrustum projSpaceFrustum;
 };

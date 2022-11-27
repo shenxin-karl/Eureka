@@ -26,7 +26,7 @@ using uint64 = std::uint64_t;
 		return sName;							\
 	}()
 
-inline Math::float2 kHalton23[8] = {
+inline const Math::float2 kHalton23[8] = {
 	Math::float2{ 0.0f / 8.0f, 0.0f / 9.0f }, Math::float2{ 4.0f / 8.0f, 3.0f / 9.0f },
 	Math::float2{ 2.0f / 8.0f, 6.0f / 9.0f }, Math::float2{ 6.0f / 8.0f, 1.0f / 9.0f },
 	Math::float2{ 1.0f / 8.0f, 4.0f / 9.0f }, Math::float2{ 5.0f / 8.0f, 7.0f / 9.0f },

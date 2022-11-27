@@ -99,7 +99,7 @@ float2 GetVelocity(ComputeIn cin) {
 }
 
 float GetVelocityConfidenceFactor(float2 velocity) {
-	float len = length(velocity.xy);
+	float len = length(velocity.xy * gResolution.xy);
     float factor = len / FRAME_VELOCITY_IN_PIXELS_DIFF;
     return saturate(1.0 - factor);
 }
@@ -160,18 +160,17 @@ void CS(ComputeIn cin) {
         const float4 rawHistoryColor = GetHistory(prevFrameScreenUV.xy);
         const float variantGamma = lerp(MIN_VARIANCE_GAMMA, MAX_VARIANCE_GAMMA, velocityConfidenceFactor*velocityConfidenceFactor);
         const float3 historyColor = ClipHistoryColor(currentFrameColor, rawHistoryColor.rgb, groupST, variantGamma);
-        float weight = rawHistoryColor.a * velocityConfidenceFactor;
+        const float weight = rawHistoryColor.a * velocityConfidenceFactor;
 		const float newWeight = saturate(1.f / (2.f - weight));
-        //finalColor = float4(lerp(currentFrameColor, historyColor.rgb, weight), newWeight);
-        finalColor =  float4(historyColor.rgb, newWeight);
+        finalColor = float4(lerp(currentFrameColor, historyColor.rgb, weight), newWeight);
     } else {
-        float3 neighbourhoodsColor = currentFrameColor;
+        float3 neighborsColor = currentFrameColor;
         const uint2 offsets[4] = { uint2(+1, -1), uint2(+1, +1), uint2(-1, +1), uint2(-1, -1) };
         [unroll] for (uint i = 0; i < 4; ++i)
-			neighbourhoodsColor += GetCurrentColor(groupST + offsets[i]);
+			neighborsColor += GetCurrentColor(groupST + offsets[i]);
 
-        neighbourhoodsColor *= 0.2;
-        finalColor = float4(neighbourhoodsColor, 0.5);
+        neighborsColor *= 0.2;
+        finalColor = float4(neighborsColor, 0.5);
     }
     gOutputMap[cin.DispatchThreadID.xy] = finalColor;
 }

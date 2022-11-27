@@ -26,6 +26,7 @@ public:
 	const Math::float4x4 &getInvView() const;
 	const Math::float4x4 &getInvProj() const;
 	const Math::float4x4 &getInvViewProj() const;
+	const Math::float4x4 &getMatPreviousViewProj() const;
 	void update();
 	Math::Matrix4 getMatView() const;
 	Math::Matrix4 getMatProj() const;

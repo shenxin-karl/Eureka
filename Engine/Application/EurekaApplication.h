@@ -40,7 +40,6 @@ public:
 
 	float xJitter = 0.f;
 	float yJitter = 0.f;
-	Math::float4x4 prevFrameMatViewProj = Math::float4x4::identity();
 
 	dx12lib::FRConstantBufferPtr<CbPrePass>			pCbPrePass;
 	dx12lib::FRConstantBufferPtr<CbLighting>		pCbLighting;

@@ -82,7 +82,7 @@ float4 getAlbedo(VertexOut pin) {
 	float3 albedo = gDiffuseAlbedo.rgb;
 	float4 albedoBuffer = (float4)1.0;
 	#if defined(_ENABLE_DIFFUSE_MAP)
-		albedoBuffer = gDiffuseMap.Sample(gSamLinearWrap, pin.texcoord);
+		albedoBuffer = gDiffuseMap.Sample(gSamAnisotropicWrap, pin.texcoord);
 		albedo *= albedoBuffer.xyz;
 	#endif
 
@@ -98,7 +98,7 @@ float4 getNormal(VertexOut pin) {
 	#if defined(_ENABLE_NORMAL_MAP)
 		float3 T = normalize(pin.tangent.xyz);
 		float3 B = cross(N, T) * pin.tangent.w;
-		float3 sampleNormal = gNormalMap.Sample(gSamLinearWrap, pin.texcoord).xyz * 2.0 - 1.0;
+		float3 sampleNormal = gNormalMap.Sample(gSamAnisotropicWrap, pin.texcoord).xyz * 2.0 - 1.0;
 		N = T * sampleNormal.x +
 			B * sampleNormal.y +
 			N * sampleNormal.z ;
@@ -144,7 +144,7 @@ float2 GetVelocity(VertexOut pin) {
 	prevPos.xy /= prevPos.w;
 	float2 velocity = prevPos.xy - currPos.xy;
 	// 如果 prevPos.z 范围不对, 就让这个 velocity 超出范围, 让混合无效
-	velocity += (float)(prevPos.z >= 0.0 && prevPos <= 1.0) * 5.0;
+	velocity += (float)(prevPos.z < 0.0 && prevPos > 1.0) * 5.0;
 	return velocity;
 }
 

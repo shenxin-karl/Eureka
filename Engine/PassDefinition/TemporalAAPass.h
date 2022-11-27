@@ -13,6 +13,7 @@ public:
 	rgph::PassResourcePtr<dx12lib::Texture> pScreenMap;
 	rgph::PassResourcePtr<dx12lib::Texture> pVelocityMap;
 	rgph::PassResourcePtr<dx12lib::Texture> pOutputMap;
+	float sharpenFactor = 0.5f;
 private:
 	bool _hasHistory = false;
 	std::shared_ptr<dx12lib::Texture> _pTemporalColor[2];
