@@ -132,7 +132,7 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevic
 		switch (desc.Type) {
 		case D3D_SIT_CBUFFER:
 		{
-			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::CBV0 + desc.BindPoint);
+			shaderRegister.slot = dx12lib::RegisterSlot::CBV0 + desc.BindPoint;
 			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
 			ShaderInput shaderInput = { desc.Name, desc.BindCount, shaderRegister };
 			spaceViews[desc.Space].cbvs.push_back(shaderInput);
@@ -141,7 +141,7 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevic
 		case D3D_SIT_TEXTURE:
 		case D3D_SIT_STRUCTURED:
 		{
-			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::SRV0 + desc.BindPoint);
+			shaderRegister.slot = dx12lib::RegisterSlot::SRV0 + desc.BindPoint;
 			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
 			ShaderInput shaderInput = { desc.Name, desc.BindCount, shaderRegister };
 			spaceViews[desc.Space].srvs.push_back(shaderInput);
@@ -150,7 +150,7 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevic
 		case D3D_SIT_UAV_RWTYPED:
 		case D3D_SIT_UAV_RWSTRUCTURED:
 		{
-			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::UAV0 + desc.BindPoint);
+			shaderRegister.slot = dx12lib::RegisterSlot::UAV0 + desc.BindPoint;
 			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
 			ShaderInput shaderInput = { desc.Name, desc.BindCount, shaderRegister };
 			spaceViews[desc.Space].uavs.push_back(shaderInput);

@@ -539,7 +539,7 @@ void CommandList::clearDepthStencil(const DepthStencilView &dsv, float depth, UI
 }
 
 void CommandList::beginEvent(const std::string &eventName) {
-	_pCommandList->BeginEvent(1, eventName.c_str(), eventName.length()+1);
+	_pCommandList->BeginEvent(1, eventName.c_str(), static_cast<UINT>(eventName.length() + 1));
 }
 
 void CommandList::endEvent() {

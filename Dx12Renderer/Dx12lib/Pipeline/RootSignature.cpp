@@ -211,7 +211,7 @@ WRL::ComPtr<ID3D12RootSignature> RootSignature::getRootSignature() const {
 	return _pRootSignature;
 }
 
-std::bitset<kMaxDescriptorTables> RootSignature::getDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE heapType) {
+std::bitset<kMaxRootParameter> RootSignature::getDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE heapType) {
 	switch (heapType) {
 	case D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV:
 		return _rootParamBitMask[0];

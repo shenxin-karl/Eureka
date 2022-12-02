@@ -16,7 +16,7 @@ public:
 	void stageDescriptor(const ShaderRegister &sr, const D3D12_CPU_DESCRIPTOR_HANDLE &descriptor);
 	void stageDescriptors(size_t rootParameterIndex,
 		size_t offset,
-		size_t numDescripotrs,
+		size_t numDescriptors,
 		const D3D12_CPU_DESCRIPTOR_HANDLE &srcDescriptor
 	);
 	auto getDescriptorHandleIncrementSize() const -> std::size_t;
@@ -37,17 +37,17 @@ private:
 		D3D12_CPU_DESCRIPTOR_HANDLE *_pBaseHandle;
 	};
 
-	using DescriptorHandleCache = std::array<D3D12_CPU_DESCRIPTOR_HANDLE, kMaxDescriptorTables>;
+	using DescriptorHandleCache = std::array<D3D12_CPU_DESCRIPTOR_HANDLE, kMaxDescriptor>;
 private:
 	size_t                            _numDescriptorsPerHeap;
 	size_t                            _descriptorHandleIncrementSize;
 	D3D12_DESCRIPTOR_HEAP_TYPE        _heapType;
-	DescriptorTableCache              _descriptorTableCache[kMaxDescriptorTables];
+	DescriptorTableCache              _descriptorTableCache[kMaxRootParameter];
 	std::weak_ptr<Device>             _pDevice;
 	ID3D12Device					 *_pD3DDevice;
 	bool							  _skipSubmit = false;
-	std::bitset<kMaxDescriptorTables> _descriptorTableBitMask;
-	std::bitset<kMaxDescriptorTables> _staleDescriptorTableBitMask;
+	std::bitset<kMaxRootParameter>	  _descriptorTableBitMask;
+	std::bitset<kMaxRootParameter>	  _staleDescriptorTableBitMask;
 	DescriptorHandleCache             _descriptorHandleCache;
 
 

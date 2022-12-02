@@ -37,7 +37,7 @@ public:
 
 class RootSignature {
 	static size_t getPerTableIndexByRangeType(D3D12_DESCRIPTOR_RANGE_TYPE type);
-	using DescriptorsPerTable = std::array<uint8_t, kMaxDescriptorTables>;
+	using DescriptorsPerTable = std::array<uint8_t, kMaxDescriptorInRootParameter>;
 	using ShaderParamLocationMap = std::unordered_map<ShaderRegister, ShaderParamLocation, ShaderRegisterHasher>;
 protected:
 	RootSignature(std::weak_ptr<Device> pDevice, size_t numRootParams, size_t numStaticSamplers = 0);
@@ -47,15 +47,15 @@ public:
 	void initStaticSampler(size_t index, const D3D12_STATIC_SAMPLER_DESC &desc);
 	template<size_t N>
 	void initStaticSampler(size_t index, const std::array<CD3DX12_STATIC_SAMPLER_DESC, N> &samplers);
-	WRL::ComPtr<ID3D12RootSignature> getRootSignature() const;
-	std::bitset<kMaxDescriptorTables> getDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE heapType);
-	RootParameter &operator[](size_t index);
-	const RootParameter &operator[](size_t index) const;
-	RootParameter &at(size_t index);
-	const RootParameter &at(size_t index) const;
-	std::optional<ShaderParamLocation> getShaderParamLocation(const ShaderRegister &sr) const;
-	const DescriptorsPerTable &getDescriptorPerTableByType(D3D12_DESCRIPTOR_HEAP_TYPE heapType) const;
-	bool isFinalized() const;
+	auto getRootSignature() const -> WRL::ComPtr<ID3D12RootSignature>;
+	auto getDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE heapType) -> std::bitset<kMaxRootParameter>;
+	auto operator[](size_t index) -> RootParameter &;
+	auto operator[](size_t index) const -> const RootParameter &;
+	auto at(size_t index) -> RootParameter &;
+	auto at(size_t index) const -> const RootParameter &;
+	auto getShaderParamLocation(const ShaderRegister &sr) const -> std::optional<ShaderParamLocation>;
+	auto getDescriptorPerTableByType(D3D12_DESCRIPTOR_HEAP_TYPE heapType) const -> const DescriptorsPerTable&;
+	auto isFinalized() const -> bool;
 private:
 	bool _finalized = false;
 	size_t _numRootParams;
@@ -69,7 +69,7 @@ private:
 	std::unique_ptr<D3D12_STATIC_SAMPLER_DESC[]> _pStaticSamplerArray;
 
 	DescriptorsPerTable				  _rootParamDescriptorPerTable[kDynamicDescriptorHeapCount];
-	std::bitset<kMaxDescriptorTables> _rootParamBitMask[kDynamicDescriptorHeapCount];
+	std::bitset<kMaxRootParameter> _rootParamBitMask[kDynamicDescriptorHeapCount];
 };
 
 template <size_t N>

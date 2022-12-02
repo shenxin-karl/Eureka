@@ -6,10 +6,10 @@
 
 namespace dx12lib {
 
-DynamicDescriptorHeap::DynamicDescriptorHeap(std::weak_ptr<Device> pDevice, 
-	D3D12_DESCRIPTOR_HEAP_TYPE heapType, 
+DynamicDescriptorHeap::DynamicDescriptorHeap(std::weak_ptr<Device> pDevice,
+	D3D12_DESCRIPTOR_HEAP_TYPE heapType,
 	size_t numDescriptorsPerHeap)
-: _numDescriptorsPerHeap(numDescriptorsPerHeap), _heapType(heapType), _pDevice(pDevice)
+	: _numDescriptorsPerHeap(numDescriptorsPerHeap), _heapType(heapType), _pDevice(pDevice)
 {
 	_pD3DDevice = pDevice.lock()->getD3DDevice();
 	_descriptorHandleIncrementSize = pDevice.lock()->getD3DDevice()->GetDescriptorHandleIncrementSize(heapType);
@@ -26,7 +26,7 @@ void DynamicDescriptorHeap::parseRootSignature(std::shared_ptr<RootSignature> pR
 	_descriptorTableBitMask = descriptorTableBitMask;
 	_staleDescriptorTableBitMask = descriptorTableBitMask;
 
-	for (std::size_t i = 0; i < kMaxDescriptorTables; ++i) {
+	for (std::size_t i = 0; i < kMaxRootParameter; ++i) {
 		if (!descriptorTableBitMask.test(i))
 			continue;
 
@@ -38,7 +38,7 @@ void DynamicDescriptorHeap::parseRootSignature(std::shared_ptr<RootSignature> pR
 	}
 
 	/// out of cache range
-	assert(currentOffset < kMaxDescriptorTables);
+	assert(currentOffset < kMaxRootParameter);
 	_skipSubmit = _descriptorTableBitMask.count() > 0;
 }
 
@@ -59,7 +59,7 @@ void DynamicDescriptorHeap::reset() {
 	_descriptorTableBitMask.reset();
 	_staleDescriptorTableBitMask.reset();
 	_availableDescriptorHeaps = _descriptorHeapPool;
-	for (std::size_t i = 0; i < kMaxDescriptorTables; ++i) {
+	for (std::size_t i = 0; i < kMaxRootParameter; ++i) {
 		_descriptorTableCache[i].reset();
 		_descriptorHandleCache[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(D3D12_DEFAULT);
 	}
@@ -70,46 +70,47 @@ void DynamicDescriptorHeap::stageDescriptor(const ShaderRegister &sr, const D3D1
 	auto location = _pRootSignature->getShaderParamLocation(sr);
 	if (location.has_value()) {
 		stageDescriptors(
-			location->rootParamIndex, 
-			location->offset, 
-			1, 
+			location->rootParamIndex,
+			location->offset,
+			1,
 			descriptor
 		);
-	} else {
+	}
+	else {
 		assert(false);
 		std::cerr << "The current register does not: "
-				  << "slot: "
-		          << static_cast<size_t>(sr.slot)
-				  << ", space:" << static_cast<size_t>(sr.space)
-				  << std::endl;
+			<< "slot: "
+			<< static_cast<size_t>(sr.slot)
+			<< ", space:" << static_cast<size_t>(sr.space)
+			<< std::endl;
 	}
 }
 
 void DynamicDescriptorHeap::stageDescriptors(size_t rootParameterIndex,
-                                             size_t offset,
-                                             size_t numDescripotrs,
-                                             const D3D12_CPU_DESCRIPTOR_HANDLE &srcDescriptor)
+	size_t offset,
+	size_t numDescriptors,
+	const D3D12_CPU_DESCRIPTOR_HANDLE &srcDescriptor)
 {
-	if (numDescripotrs > _numDescriptorsPerHeap || rootParameterIndex >= kMaxDescriptorTables)
+	if (numDescriptors > _numDescriptorsPerHeap || rootParameterIndex >= kMaxRootParameter)
 		throw std::bad_alloc();
 
 	auto &descriptorTableCache = _descriptorTableCache[rootParameterIndex];
-	if ((offset + numDescripotrs) > descriptorTableCache._numDescriptors) {
+	if ((offset + numDescriptors) > descriptorTableCache._numDescriptors) {
 		std::stringstream sbuf;
 		sbuf << "Number of descriptors exceeds the number of descriptors in the descriptor table." << std::endl;
 		sbuf << "rootParameterIndex: " << rootParameterIndex << std::endl
 			<< "offset: " << offset << std::endl
-			<< "numDescriptors: " << numDescripotrs << std::endl
+			<< "numDescriptors: " << numDescriptors << std::endl
 			<< "descriptorTableCache._numDescriptors: " << descriptorTableCache._numDescriptors << std::endl;
 		throw std::length_error(sbuf.str());
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE *pDstDescriptor = (descriptorTableCache._pBaseHandle + offset);
 	bool dirty = false;
-	for (size_t i = 0; i < numDescripotrs; ++i) {
+	for (size_t i = 0; i < numDescriptors; ++i) {
 		auto descriptor = CD3DX12_CPU_DESCRIPTOR_HANDLE(
-			srcDescriptor, 
-			static_cast<INT>(i), 
+			srcDescriptor,
+			static_cast<INT>(i),
 			static_cast<UINT>(_descriptorHandleIncrementSize)
 		);
 		if (descriptor.ptr != pDstDescriptor[i].ptr) {
@@ -130,7 +131,7 @@ size_t DynamicDescriptorHeap::computeStaleDescriptorCount() const {
 		return 0;
 
 	size_t numStaleDescriptors = 0;
-	for (std::size_t i = 0; i < kMaxDescriptorTables; ++i) {
+	for (std::size_t i = 0; i < kMaxRootParameter; ++i) {
 		int flag = _staleDescriptorTableBitMask.test(i);
 		numStaleDescriptors += flag * _descriptorTableCache[i]._numDescriptors;
 	}
@@ -155,7 +156,7 @@ void DynamicDescriptorHeap::commitDescriptorTables(CommandList *pCmdList, const 
 		pCmdList->setDescriptorHeap(_heapType, _pCurrentDescriptorHeap.Get());
 	}
 
-	for (std::size_t rootIndex = 0; rootIndex < kMaxDescriptorTables; ++rootIndex) {
+	for (std::size_t rootIndex = 0; rootIndex < kMaxRootParameter; ++rootIndex) {
 		if (!_staleDescriptorTableBitMask.test(rootIndex))
 			continue;
 
@@ -166,7 +167,7 @@ void DynamicDescriptorHeap::commitDescriptorTables(CommandList *pCmdList, const 
 
 		// todo-note: 如果 CopyDescriptors 出现错误, 检查 _pBaseHandle 的值是否有效. 确认是不是 stageDescriptors 时没有设置 offset
 		_pD3DDevice->CopyDescriptors(
-			1, pDstDescriptorRangeStarts, pDstDescriptorRangeSizes, 
+			1, pDstDescriptorRangeStarts, pDstDescriptorRangeSizes,
 			numDescriptors, pSrcHandle, nullptr,
 			_heapType
 		);
@@ -185,7 +186,8 @@ WRL::ComPtr<ID3D12DescriptorHeap> DynamicDescriptorHeap::requestDescriptorHeap()
 	if (!_availableDescriptorHeaps.empty()) {
 		pDescriptorHeap = _availableDescriptorHeaps.front();
 		_availableDescriptorHeaps.pop();
-	} else {
+	}
+	else {
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc;
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		heapDesc.NodeMask = 0;

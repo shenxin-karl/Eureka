@@ -87,7 +87,7 @@ void PSO::generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders) {
 	for (auto &&[name, desc] : boundResources) {
 		switch (desc.Type) {
 		case D3D_SIT_CBUFFER:
-			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::CBV0 + desc.BindPoint);
+			shaderRegister.slot = dx12lib::RegisterSlot::CBV0 + desc.BindPoint;
 			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
 			pLocation = _pRootSignature->getShaderParamLocation(shaderRegister);
 			_boundResourceMap[name] = BoundResource{
@@ -100,7 +100,7 @@ void PSO::generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders) {
 			break;
 		case D3D_SIT_TEXTURE:
 		case D3D_SIT_STRUCTURED:
-			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::SRV0 + desc.BindPoint);
+			shaderRegister.slot = dx12lib::RegisterSlot::SRV0 + desc.BindPoint;
 			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
 			pLocation = _pRootSignature->getShaderParamLocation(shaderRegister);
 			_boundResourceMap[name] = BoundResource{
@@ -113,7 +113,7 @@ void PSO::generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders) {
 			break;
 		case D3D_SIT_UAV_RWTYPED:
 		case D3D_SIT_UAV_RWSTRUCTURED:
-			shaderRegister.slot = (dx12lib::RegisterSlot::Slot)((int)dx12lib::RegisterSlot::UAV0 + desc.BindPoint);
+			shaderRegister.slot = dx12lib::RegisterSlot::UAV0 + desc.BindPoint;
 			shaderRegister.space = (dx12lib::RegisterSpace)((int)dx12lib::RegisterSpace::Space0 + desc.Space);
 			pLocation = _pRootSignature->getShaderParamLocation(shaderRegister);
 			_boundResourceMap[name] = BoundResource{

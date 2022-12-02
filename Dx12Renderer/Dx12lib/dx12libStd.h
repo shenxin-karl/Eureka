@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define NOMINMAX
 #include <cassert>
 #include <cstdint>
@@ -80,13 +80,15 @@ enum class RegisterSpace : size_t {
 	Space6 = 6, Space7 = 7, Space8 = 8,
 };
 
-constexpr static std::size_t kSwapChainBufferCount	= 2;			// 2¸ö½»»»»º³åÇø
-constexpr static std::size_t kFrameResourceCount = 3;				// 3¸öÖ¡×ÊÔ´
-constexpr static std::size_t kMaxDescriptorTables = 32;				// 32¸öÃèÊö·û±íÏî
-constexpr static std::size_t kDynamicDescriptorPerHeap = 1024;		// 1024¸ö¶¯Ì¬¶ÑÃèÊö·û
-constexpr static std::size_t kDynamicDescriptorHeapCount = 2;		// 2ÖĞ¶Ñ(Shader×ÊÔ´¶Ñ, ²ÉÑùÆ÷¶Ñ)
-constexpr static std::size_t kVertexBufferSlotCount = 16;			// 16¸ö¶¥µã²ÛÎ»
-constexpr static std::size_t kMaxRenderTargetCount = 8;				// ×î¶à8¸öäÖÈ¾Ä¿±ê
+constexpr static std::size_t kSwapChainBufferCount	= 2;			// 2ä¸ªäº¤æ¢ç¼“å†²åŒº
+constexpr static std::size_t kFrameResourceCount = 3;				// 3ä¸ªå¸§èµ„æº
+constexpr static std::size_t kMaxRootParameter = 16;				// æœ€å¤š16ä¸ªæ ¹ç­¾å
+constexpr static std::size_t kMaxDescriptor = 512;					// æ ¹ç­¾åä¸­æœ€å¤š512ä¸ªæè¿°ç¬¦
+constexpr static std::size_t kMaxDescriptorInRootParameter = 255;	// å•ä¸ªæ ¹å‚æ•°æœ€å¤§255ä¸ªæè¿°ç¬¦
+constexpr static std::size_t kDynamicDescriptorPerHeap = 1024;		// 1024ä¸ªåŠ¨æ€å †æè¿°ç¬¦
+constexpr static std::size_t kDynamicDescriptorHeapCount = 2;		// 2ä¸­å †(Shaderèµ„æºå †, é‡‡æ ·å™¨å †)
+constexpr static std::size_t kVertexBufferSlotCount = 16;			// 16ä¸ªé¡¶ç‚¹æ§½ä½
+constexpr static std::size_t kMaxRenderTargetCount = 8;				// æœ€å¤š8ä¸ªæ¸²æŸ“ç›®æ ‡
 
 class FrameIndexProxy {
 	static inline std::atomic_size_t _frameIndex = 0;

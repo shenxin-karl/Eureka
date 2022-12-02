@@ -4,129 +4,100 @@
 namespace dx12lib {
 
 struct RegisterSlot {
-	enum Slot : size_t {
-		NONE = -1,
-		CBVBegin = 0, SRVBegin = 10, UAVBegin = 20, SamplerBegin = 30,
-		CBV0 = 0, SRV0 = 10, UAV0 = 20, Sampler0 = 30,
-		CBV1 = 1, SRV1 = 11, UAV1 = 21, Sampler1 = 31,
-		CBV2 = 2, SRV2 = 12, UAV2 = 22, Sampler2 = 32,
-		CBV3 = 3, SRV3 = 13, UAV3 = 23, Sampler3 = 33,
-		CBV4 = 4, SRV4 = 14, UAV4 = 24, Sampler4 = 34,
-		CBV5 = 5, SRV5 = 15, UAV5 = 25, Sampler5 = 35,
-		CBV6 = 6, SRV6 = 16, UAV6 = 26, Sampler6 = 36,
-		CBV7 = 7, SRV7 = 17, UAV7 = 27, Sampler7 = 37,
-		CBV8 = 8, SRV8 = 18, UAV8 = 28, Sampler8 = 38,
-		CBVEnd = 9, SRVEnd = 19, UAVEnd = 29, SamplerEnd = 39,
-	};
+	static const RegisterSlot NONE;
+	static const RegisterSlot CBV0, CBV1, CBV2, CBV3, CBV4, CBV5, CBV6, CBV7, CBV8;
+	static const RegisterSlot SRV0, SRV1, SRV2, SRV3, SRV4, SRV5, SRV6, SRV7, SRV8;
+	static const RegisterSlot UAV0, UAV1, UAV2, UAV3, UAV4, UAV5, UAV6, UAV7, UAV8;
 public:
-	constexpr RegisterSlot(Slot slot) : slot(slot) {
-	}
-
-	constexpr RegisterSlot(D3D12_DESCRIPTOR_RANGE_TYPE type, size_t baseRegister) {
-		assert(baseRegister < 9);
-		switch (type) {
-		case D3D12_DESCRIPTOR_RANGE_TYPE_CBV:
-			slot = static_cast<Slot>(CBVBegin + baseRegister);
-			break;
-		case D3D12_DESCRIPTOR_RANGE_TYPE_UAV:
-			slot = static_cast<Slot>(UAVBegin + baseRegister);
-			break;
-		case D3D12_DESCRIPTOR_RANGE_TYPE_SRV:
-			slot = static_cast<Slot>(SRVBegin + baseRegister);
-			break;
-		case D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER:
-			slot = static_cast<Slot>(SamplerBegin + baseRegister);
-			break;
-		default:
-			assert(false);
-			break;
-		}
-	}
+	constexpr RegisterSlot() = default;
 	constexpr RegisterSlot(const RegisterSlot &) = default;
-
+	constexpr RegisterSlot(D3D12_DESCRIPTOR_RANGE_TYPE type, size_t baseRegister) : index(baseRegister), type(type) {
+	}
 	constexpr bool isCBV() const {
-		return slot >= CBVBegin && slot < CBVEnd;
+		return type == D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 	}
-
 	constexpr bool isSRV() const {
-		return slot >= SRVBegin && slot < SRVEnd;
+		return type == D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	}
-
 	constexpr bool isUAV() const {
-		return slot >= UAVBegin && slot < UAVEnd;
+		return type == D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
 	}
-
 	constexpr bool isSampler() const {
-		return slot >= SamplerBegin && slot < SamplerEnd;
+		return type == D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
 	}
-
-	size_t getRegisterId() const {
-		if (isCBV())
-			return slot - CBVBegin;
-		if (isSRV())
-			return slot - SRVBegin;
-		if (isUAV())
-			return slot - UAVBegin;
-		if (isSampler())
-			return slot - SamplerBegin;
-		assert(false);
-		return static_cast<size_t>(-1);
+	constexpr size_t getRegisterId() const {
+		return index;
 	}
-
-	D3D12_DESCRIPTOR_RANGE_TYPE getDescriptorRangeType() const {
-		if (isCBV())
-			return D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-		if (isSRV())
-			return D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-		if (isUAV())
-			return D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
-		if (isSampler())
-			return D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
-		assert(false);
-		return static_cast<D3D12_DESCRIPTOR_RANGE_TYPE>(-1);
+	constexpr D3D12_DESCRIPTOR_RANGE_TYPE getDescriptorRangeType() const {
+		return type;
 	}
-
-	bool valid() const noexcept {
-		return isCBV() || isSRV() || isUAV() || isSampler();
+	constexpr bool valid() const noexcept {
+		return index != -1 || static_cast<int>(type) != -1;
 	}
-
 	constexpr friend bool operator==(const RegisterSlot &lhs, const RegisterSlot &rhs) noexcept {
-		return lhs.slot == rhs.slot;
+		return lhs.type == rhs.type && lhs.index == rhs.index;
 	}
-
 	constexpr friend bool operator!=(const RegisterSlot &lhs, const RegisterSlot &rhs) noexcept {
 		return !(lhs == rhs);
 	}
-
-	friend RegisterSlot operator+(const RegisterSlot &lhs, size_t rhs) noexcept {
-		RegisterSlot res(static_cast<RegisterSlot::Slot>(lhs.slot + rhs));
-		assert(res.getRegisterId() != static_cast<size_t>(-1));
-		return res;
+	friend constexpr RegisterSlot operator+(const RegisterSlot &lhs, size_t rhs) noexcept {
+		assert(lhs.valid());
+		return { lhs.type, lhs.index + rhs };
 	}
-
 	constexpr explicit operator size_t() const {
-		return static_cast<size_t>(slot);
+		return index;
 	}
-
-	explicit operator bool() const {
+	constexpr explicit operator bool() const {
 		return valid();
 	}
 public:
-	Slot slot;
+	size_t index = -1;
+	D3D12_DESCRIPTOR_RANGE_TYPE type = static_cast<D3D12_DESCRIPTOR_RANGE_TYPE>(-1);
 };
 
+#pragma region RegisterSlot_Static_defination
+inline constexpr RegisterSlot RegisterSlot::NONE{};
+inline constexpr RegisterSlot RegisterSlot::CBV0{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 0 };
+inline constexpr RegisterSlot RegisterSlot::CBV1{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1 };
+inline constexpr RegisterSlot RegisterSlot::CBV2{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 2 };
+inline constexpr RegisterSlot RegisterSlot::CBV3{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 3 };
+inline constexpr RegisterSlot RegisterSlot::CBV4{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 4 };
+inline constexpr RegisterSlot RegisterSlot::CBV5{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 5 };
+inline constexpr RegisterSlot RegisterSlot::CBV6{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 6 };
+inline constexpr RegisterSlot RegisterSlot::CBV7{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 7 };
+inline constexpr RegisterSlot RegisterSlot::CBV8{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 8 };
+
+inline constexpr RegisterSlot RegisterSlot::SRV0{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0 };
+inline constexpr RegisterSlot RegisterSlot::SRV1{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1 };
+inline constexpr RegisterSlot RegisterSlot::SRV2{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2 };
+inline constexpr RegisterSlot RegisterSlot::SRV3{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 3 };
+inline constexpr RegisterSlot RegisterSlot::SRV4{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4 };
+inline constexpr RegisterSlot RegisterSlot::SRV5{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 5 };
+inline constexpr RegisterSlot RegisterSlot::SRV6{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 6 };
+inline constexpr RegisterSlot RegisterSlot::SRV7{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 7 };
+inline constexpr RegisterSlot RegisterSlot::SRV8{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8 };
+
+inline constexpr RegisterSlot RegisterSlot::UAV0{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 0 };
+inline constexpr RegisterSlot RegisterSlot::UAV1{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1 };
+inline constexpr RegisterSlot RegisterSlot::UAV2{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 2 };
+inline constexpr RegisterSlot RegisterSlot::UAV3{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 3 };
+inline constexpr RegisterSlot RegisterSlot::UAV4{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 4 };
+inline constexpr RegisterSlot RegisterSlot::UAV5{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 5 };
+inline constexpr RegisterSlot RegisterSlot::UAV6{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 6 };
+inline constexpr RegisterSlot RegisterSlot::UAV7{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 7 };
+inline constexpr RegisterSlot RegisterSlot::UAV8{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 8 };
+#pragma endregion RegisterSlot_Static_defination
+
 struct ShaderRegister {
-	RegisterSlot  slot   = RegisterSlot::NONE;
-	RegisterSpace space  = RegisterSpace::Space0;
+	RegisterSlot  slot;
+	RegisterSpace space = RegisterSpace::Space0;
 public:
 	constexpr ShaderRegister() = default;
 	constexpr ShaderRegister(const ShaderRegister &) = default;
 	constexpr ShaderRegister(ShaderRegister &&) noexcept = default;
 	constexpr ShaderRegister &operator=(const ShaderRegister &) = default;
 	constexpr ShaderRegister &operator=(ShaderRegister &&) noexcept = default;
-	constexpr ShaderRegister(RegisterSlot::Slot slot) : slot(slot), space(RegisterSpace::Space0) {
-	}
-	constexpr ShaderRegister(RegisterSlot slot, RegisterSpace space) : slot(slot), space(space) {
+	constexpr ShaderRegister(RegisterSlot slot, RegisterSpace space = RegisterSpace::Space0) : slot(slot), space(space) {
 	};
 	constexpr friend bool operator==(const ShaderRegister &lhs, const ShaderRegister &rhs) {
 		return lhs.slot == rhs.slot && lhs.space == rhs.space;
