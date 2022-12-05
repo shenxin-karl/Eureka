@@ -43,7 +43,7 @@ set_property(SOURCE ${SHADER_FILES} PROPERTY VS_TOOL_OVERRIDE "shader")	# 设置
 set_property(SOURCE ${SCRIPT_FILES} PROPERTY VS_TOOL_OVERRIDE "script")	# 设置 hlsl 为 shader 资源文件
 
 ## 提供查找路径
-add_definitions(-DEUREKA_HLSL_SHADER_PATH="HlslShader") 
+add_definitions(-DEUREKA_HLSL_SHADER_PATH="EngineAssets/Shaders") 
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	Dx12lib

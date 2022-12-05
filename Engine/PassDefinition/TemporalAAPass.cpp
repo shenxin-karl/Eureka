@@ -43,7 +43,7 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 
 #if defined(DEBUG) || defined(_DEBUG)
 	auto pBlob = ShaderHelper::compile(
-		L"Engine/HlslShader/TAAResolveCS.hlsl", 
+		"EngineAssets/Shaders/TAAResolveCS.hlsl",
 		nullptr, 
 		"CS", 
 		"cs_5_1"
@@ -68,7 +68,7 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 	_pSharpenPipeline = pSharedDevice->createComputePSO("SharpenPipeline");
 #if defined(DEBUG) || defined(_DEBUG)
 	auto pBlob1 = ShaderHelper::compile(
-		L"Engine/HlslShader/SharpenTAACS.hlsl", 
+		"EngineAssets/Shaders/SharpenTAACS.hlsl",
 		nullptr, 
 		"CS", 
 		"cs_5_1"

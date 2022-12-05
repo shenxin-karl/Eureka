@@ -7,28 +7,18 @@
 #include "GraphicsShader.h"
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
+#include "ShaderLoader.h"
+#include "Foundation/Exception.h"
 
 namespace Eureka {
 
 GraphicsShader::GraphicsShader(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName) 
 : _shaderFileName(shaderFileName), _pDevice(std::move(pDevice)) 
 {
-	char error[256];
-	std::filesystem::path path(shaderFileName);
-	std::string dir = path.remove_filename().string();
-	_pShaderContent = std::unique_ptr<char[]>(stb_include_file(
-		const_cast<char *>(shaderFileName.c_str()),
-		nullptr,
-		dir.data(),
-		error
-	));
-
-	if (_pShaderContent == nullptr) {
-		std::cerr << error << std::endl;
-		assert(false);
-	}
-	_shaderContentLength = std::strlen(_pShaderContent.get());
-	_keywordMask.handleShaderContent(_pShaderContent.get());
+	_shaderContent = ShaderLoader::instance()->open(shaderFileName);
+	if (_shaderContent.empty())
+		Exception::Throw("Can't open the file {}", _shaderFileName);
+	_keywordMask.handleShaderContent(_shaderContent.data());
 }
 
 GraphicsShader::~GraphicsShader() {
@@ -93,7 +83,7 @@ void GraphicsShader::setPrimitiveType(D3D12_PRIMITIVE_TOPOLOGY_TYPE type) {
 }
 
 auto GraphicsShader::getShaderContent() const -> std::string_view {
-	return std::string_view(_pShaderContent.get(), _shaderContentLength);
+	return _shaderContent;
 }
 
 auto GraphicsShader::getEntryPoints() const -> const std::vector<ShaderEntryPoint> & {
@@ -155,23 +145,14 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 	auto pGraphicsPSOPtr = pGraphicsPSO.get();
 	for (auto &entry : _entryPoints) {
 		size_t index = static_cast<size_t>(entry.shaderType);
-
-#if defined(_DEBUG) || defined(DEBUG)
 		auto pBinaryBlob = ShaderHelper::compile(
-			dx12lib::to_wstring(_shaderFileName), 
-			macros.data(), 
-			entry.entryPoint, 
-			versionList[index]
-		);
-#else
-		auto pBinaryBlob = ShaderHelper::compile(
-			_pShaderContent.get(),
-			_shaderContentLength,
+			_shaderContent.data(),
+			_shaderContent.length(),
+			_shaderFileName,
 			macros.data(),
 			entry.entryPoint,
 			versionList[index]
 		);
-#endif
 		(pGraphicsPSOPtr->*setterList[index])(pBinaryBlob);
 	}
 

@@ -29,7 +29,7 @@ ClusterDeferredPass::ClusterDeferredPass(const std::string &passName,
 
 	_pPipeline = pSharedDevice->createComputePSO("ClusterDeferredPass");
 #if 1 || defined(_DEBUG) || defined(DEBUG)
-	auto pBlob = ShaderHelper::compile(L"Engine/HlslShader/ClusterDeferredCS.hlsl", 
+	auto pBlob = ShaderHelper::compile("Engine/HlslShader/ClusterDeferredCS.hlsl", 
 		nullptr, 
 		"CS", 
 		"cs_5_1"

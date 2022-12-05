@@ -5,8 +5,10 @@
 
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
+#include "ShaderLoader.h"
 #include "Dx12lib/Device/Device.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
+#include "Foundation/Exception.h"
 
 namespace Eureka {
 
@@ -14,22 +16,10 @@ namespace Eureka {
 ComputeShader::ComputeShader(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName)
 : _shaderFileName(shaderFileName), _pDevice(pDevice)
 {
-	char error[256];
-	std::filesystem::path path(shaderFileName);
-	std::string dir = path.remove_filename().string();
-	_pShaderContent = std::unique_ptr<char[]>(stb_include_file(
-		const_cast<char *>(shaderFileName.c_str()),
-		nullptr,
-		dir.data(),
-		error
-	));
-
-	if (_pShaderContent == nullptr) {
-		std::cerr << error << std::endl;
-		assert(false);
-	}
-	_shaderContentLength = std::strlen(_pShaderContent.get());
-	_keywordMask.handleShaderContent(_pShaderContent.get());
+	_shaderContent = ShaderLoader::instance()->open(shaderFileName);
+	if (_shaderContent.empty())
+		Exception::Throw("Can't open the file {}", _shaderFileName);
+	_keywordMask.handleShaderContent(_shaderContent.data());
 }
 
 void ComputeShader::setComputeShader(const std::string &entryPoints) {
@@ -59,23 +49,14 @@ auto ComputeShader::getPSO(const KeywordMask &keywordMask) const -> std::shared_
 		}
 	}
 	macros.push_back(D3D_SHADER_MACRO{ nullptr, nullptr });
-
-#if defined(_DEBUG) || defined(DEBUG)
 	auto pBinaryBlob = ShaderHelper::compile(
-		dx12lib::to_wstring(_shaderFileName),
+		_shaderContent.data(),
+		_shaderContent.length(),
+		_shaderFileName,
 		macros.data(),
 		_entryPoint,
 		"cs_5_1"
 	);
-#else
-	auto pBinaryBlob = ShaderHelper::compile(
-		_pShaderContent.get(),
-		_shaderContentLength,
-		macros.data(),
-		_entryPoint,
-		"cs_5_1"
-	);
-#endif
 	auto pSharedDevice = _pDevice.lock();
 	auto pComputePSO = pSharedDevice->createComputePSO(key);
 	pComputePSO->setComputeShader(pBinaryBlob);

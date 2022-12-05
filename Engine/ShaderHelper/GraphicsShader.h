@@ -53,11 +53,10 @@ public:
 private:
 	KeywordMask _keywordMask;
 	std::string _shaderFileName;
-	size_t _shaderContentLength;
+	std::string_view _shaderContent;
 	DXGI_FORMAT _DSVFormat = DXGI_FORMAT_UNKNOWN;
 	std::vector<DXGI_FORMAT> _RTVFormats;
 	std::weak_ptr<dx12lib::Device> _pDevice;
-	std::unique_ptr<char[]> _pShaderContent;
 	std::vector<ShaderEntryPoint> _entryPoints;
 	D3D12_BLEND_DESC _blendDesc = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	D3D12_RASTERIZER_DESC _rasterizerDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);

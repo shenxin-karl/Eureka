@@ -7,49 +7,35 @@
 #include <RenderGraph/Job/ShaderLayout.h>
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
+#include "ShaderLoader.h"
+#include "Foundation/Exception.h"
 
 namespace Eureka {
 
 WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
-	const std::wstring &fileName,
+	const std::string &fileName,
 	const D3D_SHADER_MACRO *defines,
 	const std::string &entryPoint,
 	const std::string &target)
 {
-	UINT compilesFlags = 0;
-#if defined(DEBUG) || defined(_DEBUG) 
-	compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
+	auto shaderContentView = ShaderLoader::instance()->open(fileName);
+	if (shaderContentView.empty())
+		Exception::Throw("ShaderHelper::compile can't open the file {}", fileName);
 
-	auto path = std::filesystem::path(fileName).parent_path();
-	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string(), EUREKA_HLSL_SHADER_PATH);
-
-	using Microsoft::WRL::ComPtr;
-	HRESULT hr = S_OK;
-	ComPtr<ID3DBlob> byteCode;
-	ComPtr<ID3DBlob> errors;
-	hr = D3DCompileFromFile(
-		fileName.c_str(),
+	return compile(
+		shaderContentView.data(),
+		shaderContentView.length(),
+		fileName,
 		defines,
-		pShaderInclude.get(),
-		entryPoint.c_str(),
-		target.c_str(),
-		compilesFlags,
-		0,
-		&byteCode,
-		&errors
+		entryPoint,
+		target
 	);
-
-	if (FAILED(hr)) {
-		OutputDebugString(static_cast<char *>(errors->GetBufferPointer()));
-		ThrowIfFailed(hr);
-	}
-	return byteCode;
 }
 
 WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
-	const char *fileContext,
+	const char *fileContent,
 	std::size_t sizeInByte,
+	const std::string &sourceName,
 	const D3D_SHADER_MACRO *defines,
 	const std::string &entryPoint,
 	const std::string &target)
@@ -58,15 +44,18 @@ WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
 #if defined(DEBUG) || defined(_DEBUG) 
 	compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
+
+	auto path = std::filesystem::path(sourceName).lexically_normal();
+	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string(), EUREKA_HLSL_SHADER_PATH);
 
 	HRESULT hr = S_OK;
 	WRL::ComPtr<ID3DBlob> byteCode;
 	WRL::ComPtr<ID3DBlob> errors;
-	hr = D3DCompile(fileContext,
+	hr = D3DCompile(fileContent,
 		sizeInByte,
-		nullptr,
+		sourceName.c_str(),
 		defines,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		pShaderInclude.get(),
 		entryPoint.c_str(),
 		target.c_str(),
 		compilesFlags,

@@ -20,7 +20,7 @@ private:
 	std::string _entryPoint;
 	std::string _shaderFileName;
 	mutable ComputePSOMap _psoMap;
-	std::unique_ptr<char[]> _pShaderContent;
+	std::string_view _shaderContent;
 	std::weak_ptr<dx12lib::Device> _pDevice;
 };
 

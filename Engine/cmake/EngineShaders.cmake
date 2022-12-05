@@ -2,24 +2,24 @@
 # 定义宏函数
 set(HLSL_SHADER_FILES "")
 macro(AddShader shaderPath entryPoint version)
-	list(APPEND HLSL_SHADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${shaderPath}")
-	set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/${shaderPath}" PROPERTIES EntryPoint "${entryPoint}")
-	set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/${shaderPath}" PROPERTIES Version "${version}")
+	list(APPEND HLSL_SHADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/EngineAssets/Shaders/${shaderPath}")
+	set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/EngineAssets/Shaders/${shaderPath}" PROPERTIES EntryPoint "${entryPoint}")
+	set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/EngineAssets/Shaders/${shaderPath}" PROPERTIES Version "${version}")
 endmacro()
 
 
 # 这里添加 shader
-AddShader("HlslShader/LightingPassCS.hlsl" "CS" "cs_5_1")
-AddShader("HlslShader/FXAA_cso/FXAA_VS.txt" "VS" "vs_5_1")
-AddShader("HlslShader/FXAA_cso/FXAA_PS.txt" "PS" "ps_5_1")
-AddShader("HlslShader/UpdateLightBoundingSphere_cso/UpdatePointLightBoundingSphere_CS.txt" "CS" "cs_5_1")
-AddShader("HlslShader/UpdateLightBoundingSphere_cso/UpdateSpotLightBoundingSphere_CS.txt" "CS" "cs_5_1")
-AddShader("HlslShader/ClusterDeferredCS.hlsl" "CS" "cs_5_1")
-AddShader("HlslShader/CalcClusterFrustumCS.hlsl" "CS" "cs_5_1")
-AddShader("HlslShader/CopyToBack_cso/CopyToBack_VS.txt" "VS" "vs_5_1")
-AddShader("HlslShader/CopyToBack_cso/CopyToBack_PS.txt" "PS" "ps_5_1")
-AddShader("HlslShader/TAAResolveCS.hlsl" "CS" "cs_5_1")
-AddShader("HlslShader/SharpenTAACS.hlsl" "CS" "cs_5_1")
+AddShader("LightingPassCS.hlsl" "CS" "cs_5_1")
+AddShader("FXAA_cso/FXAA_VS.txt" "VS" "vs_5_1")
+AddShader("FXAA_cso/FXAA_PS.txt" "PS" "ps_5_1")
+AddShader("UpdateLightBoundingSphere_cso/UpdatePointLightBoundingSphere_CS.txt" "CS" "cs_5_1")
+AddShader("UpdateLightBoundingSphere_cso/UpdateSpotLightBoundingSphere_CS.txt" "CS" "cs_5_1")
+AddShader("ClusterDeferredCS.hlsl" "CS" "cs_5_1")
+AddShader("CalcClusterFrustumCS.hlsl" "CS" "cs_5_1")
+AddShader("CopyToBack_cso/CopyToBack_VS.txt" "VS" "vs_5_1")
+AddShader("CopyToBack_cso/CopyToBack_PS.txt" "PS" "ps_5_1")
+AddShader("TAAResolveCS.hlsl" "CS" "cs_5_1")
+AddShader("SharpenTAACS.hlsl" "CS" "cs_5_1")
 
 add_custom_target(EngineShader)
 # 创建一个目录
@@ -32,7 +32,7 @@ foreach(FILE ${HLSL_SHADER_FILES})
   get_source_file_property(version ${FILE} Version)
   add_custom_command(TARGET EngineShader						
                      COMMAND fxc.exe 
-					            /I "${CMAKE_CURRENT_SOURCE_DIR}/HlslShader/"
+					            /I "${CMAKE_CURRENT_SOURCE_DIR}/EngineAssets/Shaders/"
 								/nologo 
 								/Qstrip_rootsignature
 								/E${entryPoint} 					# 进入点

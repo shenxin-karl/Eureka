@@ -13,7 +13,7 @@
 #include "GameTimer/GameTimer.h"
 #include "Model/MeshManager.h"
 #include "ShaderHelper/GraphicsShader.h"
-#include "HlslShader/ShaderManager.h"
+#include "ShaderHelper/ShaderManager.h"
 #include "AssimpLoader/ALTree.h"
 #include "Camera/Camera.h"
 #include "Camera/FPSCameraControl.h"
