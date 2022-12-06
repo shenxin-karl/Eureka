@@ -60,3 +60,23 @@ include(EngineShaders)
 
 # 设置工作目录
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${EUREKA_WORK_DIR}")
+
+# 判断 Res 目录是否存在, 不存在就创建目录
+if(NOT EXISTS ${EUREKA_BINARY_DIR}) 
+	file(MAKE_DIRECTORY ${EUREKA_BINARY_DIR})
+endif()
+
+set(EXECUTABLE_OUTPUT_PATH ${EUREKA_BINARY_DIR})
+
+# 拷贝 WinPixEventRuntime.dll 到运行目录
+add_custom_target(CopyPixDLL)
+add_custom_command(TARGET CopyPixDLL POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy 
+	"${DX12LIB_DIR}/Ext/WinPixEventRuntime/winpixeventruntime.1.0.22081000/bin/x64/WinPixEventRuntime.dll" 
+	${EXECUTABLE_OUTPUT_PATH}
+)
+
+set_target_properties(CopyPixDLL PROPERTIES FOLDER "Other")
+add_dependencies(${PROJECT_NAME} CopyPixDLL)
+
+# file(COPY "${DX12LIB_DIR}/Ext/WinPixEventRuntime/winpixeventruntime.1.0.22081000/bin/x64/WinPixEventRuntime.dll" DESTINATION ${EXECUTABLE_OUTPUT_PATH})

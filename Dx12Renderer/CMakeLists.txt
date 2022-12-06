@@ -11,6 +11,8 @@ if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.12.25835)
 	set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std:c++latest")
 endif()
 
+set(DX12LIB_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Ext)
+
 LIST(APPEND ComponentAllSubDir "Dx12lib")
 LIST(APPEND ComponentAllSubDir "Ext/DirectXTex")
 LIST(APPEND ComponentAllSubDir "Math")
@@ -29,4 +31,3 @@ foreach(dirname ${ComponentAllSubDir})
 		LIST(APPEND AllTestDir "${dirname}")
 	endif()
 endforeach()
-

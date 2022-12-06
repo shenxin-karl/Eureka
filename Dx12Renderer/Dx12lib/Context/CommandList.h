@@ -34,6 +34,8 @@ public:
 	void transitionBarrierImpl(std::shared_ptr<IResource> pBuffer, D3D12_RESOURCE_STATES state, UINT subResource, bool flushBarrier) final;
 	void aliasBarrierImpl(std::shared_ptr<IResource> pBefore, std::shared_ptr<IResource> pAfter, bool flushBarrier) final;
 	void flushResourceBarriers() final;
+	void beginEvent(const std::string &label, UINT64 color) final;
+	void endEvent() final;
 
 /// GraphicsContext api
 	std::shared_ptr<VertexBuffer> createVertexBuffer(const void *pData, size_t numElements, size_t stride) final;
@@ -61,8 +63,6 @@ public:
 	void clearStencil(const DepthStencilView &dsv, UINT stencil) final;
 	void clearDepthStencil(const DepthStencilView &dsv, float depth, UINT stencil) final;
 
-	void beginEvent(const std::string &eventName) override;
-	void endEvent() override;
 /// ComputeContext api 
 	void setComputePSO(std::shared_ptr<ComputePSO> pPipelineStateObject) final;
 	void setUnorderedAccessView(const ShaderRegister &sr, const UnorderedAccessView &uav) final;

@@ -25,15 +25,22 @@ endforeach()
 add_library(${PROJECT_NAME} STATIC ${AllFile})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Dx12Renderer")
 set_property(SOURCE ${SHADER_FILES} PROPERTY VS_TOOL_OVERRIDE "shader")		# 设置 hlsl 为 shader 资源文件
+
+target_link_directories(${PROJECT_NAME} PUBLIC
+	${DX12LIB_EXT_DIR}/WinPixEventRuntime/winpixeventruntime.1.0.22081000/bin/x64/
+)
+
 target_include_directories(${PROJECT_NAME} PUBLIC 
 	${DX12RENDERER_DIR}/
 	${DX12RENDERER_DIR}/Ext
+	${DX12LIB_EXT_DIR}/WinPixEventRuntime/winpixeventruntime.1.0.22081000/Include/WinPixEventRuntime
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
 	d3dcompiler
 	D3D12
 	dxgi
+	WinPixEventRuntime.lib
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
@@ -89,6 +96,6 @@ add_dependencies(${PROJECT_NAME} Dx12libShaders)
 set_target_properties(Dx12libShaders PROPERTIES FOLDER "Dx12Renderer")
 
 # 添加头文件目录
-target_include_directories(${PROJECT_NAME} PRIVATE 
-	${CMAKE_BINARY_DIR}/Dx12libShaders
+target_include_directories(${PROJECT_NAME} 
+	PRIVATE ${CMAKE_BINARY_DIR}/Dx12libShaders
 )

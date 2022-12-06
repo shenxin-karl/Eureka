@@ -6,6 +6,7 @@
 #include <Dx12lib/Tool/MakeObejctTool.hpp>
 #include <Dx12lib/Buffer/FRConstantBuffer.hpp>
 #include <Dx12lib/Tool/RenderProfiler.hpp>
+#include <pix3.h>
 
 namespace dx12lib {
 
@@ -37,6 +38,9 @@ interface ICommonContext : IContext {
 	virtual void aliasBarrierImpl(std::shared_ptr<IResource> pBefore, std::shared_ptr<IResource> pAfter, bool flushBarrier) = 0;
 	virtual void flushResourceBarriers() = 0;
 
+	virtual void beginEvent(const std::string &label, UINT64 color = 0) = 0;
+	virtual void endEvent() = 0;
+
 	template<typename T1, typename T2> requires(std::is_base_of_v<IResource, T1> &&std::is_base_of_v<IResource, T2>)
 	void copyResource(std::shared_ptr<T1> pDest, std::shared_ptr<T2> pSrc) {
 		this->copyResourceImpl(
@@ -63,8 +67,6 @@ interface ICommonContext : IContext {
 			flushBarrier
 		);
 	}
-
-
 	/////////////////////////////////// ConstantBuffer //////////////////////////////////
 #if 1
 	template<typename T>
@@ -183,9 +185,6 @@ interface IGraphicsContext : virtual ICommonContext {
 	virtual void clearDepth(const DepthStencilView &dsv, float depth) = 0;
 	virtual void clearStencil(const DepthStencilView &dsv, UINT stencil) = 0;
 	virtual void clearDepthStencil(const DepthStencilView &dsv, float depth, UINT stencil) = 0;
-
-	virtual void beginEvent(const std::string &eventName) = 0;
-	virtual void endEvent() = 0;
 };
 
 interface IComputeContext : virtual ICommonContext {

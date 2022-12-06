@@ -19,7 +19,6 @@
 #include <Dx12lib/Texture/GenerateMipsPSO.h>
 #include <iostream>
 
-
 #if defined(_DEBUG) || defined(DEBUG)
 	#define DBG_CALL(f) f;
 	#define DEBUG_MODE
@@ -296,6 +295,14 @@ void CommandList::flushResourceBarriers() {
 	_pResourceStateTracker->flushResourceBarriers(this);
 }
 
+void CommandList::beginEvent(const std::string &label, UINT64 color) {
+	::PIXBeginEvent(_pCommandList.Get(), color, label.c_str());
+}
+
+void CommandList::endEvent() {
+	::PIXEndEvent(_pCommandList.Get());
+}
+
 /// ******************************************** GraphicsContext api ********************************************
 std::shared_ptr<VertexBuffer>
 CommandList::createVertexBuffer(const void *pData, std::size_t numElements, std::size_t stride) {
@@ -537,15 +544,6 @@ void CommandList::clearDepthStencil(const DepthStencilView &dsv, float depth, UI
 		nullptr
 	);
 }
-
-void CommandList::beginEvent(const std::string &eventName) {
-	_pCommandList->BeginEvent(1, eventName.c_str(), static_cast<UINT>(eventName.length() + 1));
-}
-
-void CommandList::endEvent() {
-	_pCommandList->EndEvent();
-}
-
 
 /// ******************************************** ComputeContext api ********************************************
 
