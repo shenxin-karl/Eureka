@@ -61,12 +61,17 @@ FORCEINLINE FloatStore<4>::operator const FloatStore<N> &() const noexcept {
 	return reinterpret_cast<const FloatStore<N> &>(*this);
 }
 
-FORCEINLINE const FloatStore<4> & FloatStore<4>::identity() noexcept {
+FORCEINLINE const FloatStore<4> & FloatStore<4>::one() noexcept {
 	static FloatStore<4> object(1.f);
 	return object;
 }
 
 FORCEINLINE const FloatStore<4> & FloatStore<4>::zero() noexcept {
 	static FloatStore<4> object(0.f);
+	return object;
+}
+
+FORCEINLINE const FloatStore<4> & FloatStore<4>::rotateIdentity() noexcept {
+	static float4 object(0.f, 0.f, 0.f, 1.f);
 	return object;
 }

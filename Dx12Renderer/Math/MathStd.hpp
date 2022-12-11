@@ -134,8 +134,9 @@ struct FloatStore<4> : public DX::XMFLOAT4 {
 
 	template<size_t N> requires(N <= 4)
 	FORCEINLINE explicit operator const FloatStore<N> &() const noexcept;
-	FORCEINLINE static const FloatStore<4> &identity() noexcept;
+	FORCEINLINE static const FloatStore<4> &one() noexcept;
 	FORCEINLINE static const FloatStore<4> &zero() noexcept;
+	FORCEINLINE static const FloatStore<4> &rotateIdentity() noexcept;
 };
 
 template<>
@@ -543,8 +544,7 @@ private:
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /// BoolVector
 #if 1
-
-FORCEINLINE BoolVector::BoolVector(DX::FXMVECTOR vec) noexcept : _vec(vec) {
+	FORCEINLINE BoolVector::BoolVector(DX::FXMVECTOR vec) noexcept : _vec(vec) {
 }
 FORCEINLINE BoolVector::operator DX::XMVECTOR() const {
 	return _vec;

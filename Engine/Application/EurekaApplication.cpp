@@ -21,6 +21,7 @@
 #include "Material/Material.h"
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "Model/PartModel/PartModel.h"
+#include "Objects/GameObject.h"
 #include "PassDefinition/ClusterDeferredPass.h"
 #include "RenderGraph/RenderGraph/RenderGraph.h"
 #include "PassDefinition/SetupRenderGraph.h"
@@ -235,6 +236,8 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	pSkullModel->setModelTransform(static_cast<float4x4>(scale * rotate));
 	pSkullModel->createMaterial(*pDirectCtx, materialCreator);
 	_models.push_back(std::move(pSkullModel));
+
+	auto go = std::make_unique<GameObject>();
 }
 
 void EurekaApplication::initLight(dx12lib::DirectContextProxy pDirectCtx) {

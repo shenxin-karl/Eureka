@@ -18,8 +18,17 @@ public:
 	}
 	template<typename...Args>
 	static void Throw(std::string_view fmt, Args&&...args) {
-		std::string message = std::vformat(fmt, std::make_format_args(args...));
+		std::string message;
+		if constexpr (sizeof...(args) > 0) 
+			message = std::vformat(fmt, std::make_format_args(args...));
+		else
+			message = fmt.data();
 		throw Exception(message);
+	}
+	template<typename...Args>
+	static void Assert(bool flag, std::string_view fmt, Args&&...args) {
+		if (!flag)
+			Throw(fmt, std::format<Args>(args)...);
 	}
 private:
 	std::string _message;
