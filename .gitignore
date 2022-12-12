@@ -362,3 +362,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/EffectCompiler/FlexBison/output/BisonEffectParser.cpp
+/EffectCompiler/FlexBison/output/BisonEffectParser.hpp
+/EffectCompiler/FlexBison/output/FlexEffectParser.cpp
