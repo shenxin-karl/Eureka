@@ -73,6 +73,11 @@ FORCEINLINE DX::XMVECTOR * Quaternion::operator&() noexcept {
 	return &_vec;
 }
 
+FORCEINLINE const Quaternion & Quaternion::identity() noexcept {
+	static Quaternion object(0.f, 0.f, 0.f, 1.f);
+	return object;
+}
+
 FORCEINLINE BoolVector operator==(const Quaternion &lhs, const Quaternion &rhs) noexcept {
 	return BoolVector(DX::XMVectorEqual(lhs._vec, rhs._vec));
 }

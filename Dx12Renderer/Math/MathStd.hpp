@@ -19,12 +19,12 @@ namespace DX = DirectX;
 template<size_t N>
 struct FloatStore;
 
-using float2 = FloatStore<2>;
-using float3 = FloatStore<3>;
-using float4 = FloatStore<4>;
-using float3x3 = FloatStore<33>;
-using float4x3 = FloatStore<43>;
-using float4x4 = FloatStore<44>;
+using float2	 = FloatStore<2>;
+using float3	 = FloatStore<3>;
+using float4	 = FloatStore<4>;
+using float3x3	 = FloatStore<33>;
+using float4x3	 = FloatStore<43>;
+using float4x4	 = FloatStore<44>;
 
 class Vector2;
 class Vector3;
@@ -58,8 +58,10 @@ struct FloatStore<2> : public DX::XMFLOAT2 {
 		requires(std::is_convertible_v<T1, float> &&std::is_convertible_v<T2, float>)
 	FORCEINLINE FloatStore(T1 x, T2 y) noexcept;
 
-	FORCEINLINE static const FloatStore<2> &identity() noexcept;
+	FORCEINLINE static const FloatStore<2> &one() noexcept;
 	FORCEINLINE static const FloatStore<2> &zero() noexcept;
+	FORCEINLINE friend bool operator==(const FloatStore &lhs, const FloatStore &rhs);
+	FORCEINLINE friend bool operator!=(const FloatStore &lhs, const FloatStore &rhs);
 };
 
 template<>
@@ -96,8 +98,10 @@ struct FloatStore<3> : public DX::XMFLOAT3 {
 
 	template<size_t N> requires(N <= 3)
 	FORCEINLINE explicit operator const FloatStore<N> &() const noexcept;
-	FORCEINLINE static const FloatStore<3> &identity() noexcept;
+	FORCEINLINE static const FloatStore<3> &one() noexcept;
 	FORCEINLINE static const FloatStore<3> &zero() noexcept;
+	FORCEINLINE friend bool operator==(const FloatStore &lhs, const FloatStore &rhs);
+	FORCEINLINE friend bool operator!=(const FloatStore &lhs, const FloatStore &rhs);
 };
 
 template<>
@@ -136,7 +140,9 @@ struct FloatStore<4> : public DX::XMFLOAT4 {
 	FORCEINLINE explicit operator const FloatStore<N> &() const noexcept;
 	FORCEINLINE static const FloatStore<4> &one() noexcept;
 	FORCEINLINE static const FloatStore<4> &zero() noexcept;
-	FORCEINLINE static const FloatStore<4> &rotateIdentity() noexcept;
+	FORCEINLINE static const FloatStore<4> &QuaternionIdentity() noexcept;
+	FORCEINLINE friend bool operator==(const FloatStore &lhs, const FloatStore &rhs);
+	FORCEINLINE friend bool operator!=(const FloatStore &lhs, const FloatStore &rhs);
 };
 
 template<>
@@ -388,6 +394,7 @@ public:
 	static FORCEINLINE Matrix4 makeTranslation(float ox, float oy, float oz) noexcept;
 	static FORCEINLINE Matrix4 makeTranslation(float offset) noexcept;
 	static FORCEINLINE Matrix4 identity() noexcept;
+	static FORCEINLINE Matrix4 Affine(const Vector3 &translation, const Quaternion &rotateQuat, const Vector3 &scale) noexcept;
 private:
 	DX::XMMATRIX _mat;
 };
@@ -412,6 +419,7 @@ public:
 	FORCEINLINE Quaternion &operator=(const Quaternion &rhs) noexcept;
 	FORCEINLINE Quaternion &operator*=(const Quaternion &rhs) noexcept;
 	FORCEINLINE DX::XMVECTOR *operator&() noexcept;
+	FORCEINLINE static const Quaternion &identity() noexcept;
 	friend BoolVector operator==(const Quaternion &, const Quaternion &) noexcept;
 	friend BoolVector operator!=(const Quaternion &, const Quaternion &) noexcept;
 	friend Quaternion normalize(const Quaternion &q) noexcept;
@@ -544,7 +552,7 @@ private:
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /// BoolVector
 #if 1
-	FORCEINLINE BoolVector::BoolVector(DX::FXMVECTOR vec) noexcept : _vec(vec) {
+FORCEINLINE BoolVector::BoolVector(DX::FXMVECTOR vec) noexcept : _vec(vec) {
 }
 FORCEINLINE BoolVector::operator DX::XMVECTOR() const {
 	return _vec;

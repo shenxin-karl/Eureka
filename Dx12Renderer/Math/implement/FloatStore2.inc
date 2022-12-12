@@ -36,7 +36,7 @@ template<typename T1, typename T2>
 FORCEINLINE FloatStore<2>::FloatStore(T1 x, T2 y) noexcept : DX::XMFLOAT2(float(x), float(y)) {
 }
 
-FORCEINLINE const FloatStore<2> &FloatStore<2>::identity() noexcept {
+FORCEINLINE const FloatStore<2> &FloatStore<2>::one() noexcept {
 	static FloatStore<2> object(1.f);
 	return object;
 }
@@ -44,4 +44,12 @@ FORCEINLINE const FloatStore<2> &FloatStore<2>::identity() noexcept {
 FORCEINLINE const FloatStore<2> &FloatStore<2>::zero() noexcept {
 	static FloatStore<2> object(0.f);
 	return object;
+}
+
+FORCEINLINE bool operator==(const FloatStore<2> &lhs, const FloatStore<2> &rhs) {
+	return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+
+FORCEINLINE bool operator!=(const FloatStore<2> &lhs, const FloatStore<2> &rhs) {
+	return !(lhs == rhs);
 }

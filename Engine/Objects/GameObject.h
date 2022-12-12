@@ -16,14 +16,11 @@ public:
 	~GameObject();
 
 	template<typename T> requires(std::is_base_of_v<IComponent, T>)
-	T *getComponent(size_t index = 0) {
+	T *getComponent() {
 		auto typeIndex = std::type_index(typeid(T));
 		for (auto &item : _components) {
-			if (item.typeIndex == typeIndex) {
-				if (index == 0)
-					return static_cast<T *>(item.pComponent.get());
-				--index;
-			}
+			if (item.typeIndex == typeIndex)
+				return static_cast<T *>(item.pComponent.get());
 		}
 		return nullptr;
 	}
@@ -37,6 +34,8 @@ public:
 		_components.push_back(std::move(item));
 		return static_cast<T *>(_components.back().pComponent.get());
 	}
+
+
 private:
 	std::vector<ComponentItem> _components;
 };

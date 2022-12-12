@@ -135,6 +135,15 @@ FORCEINLINE Matrix4 Matrix4::makeTranslation(float offset) noexcept {
 FORCEINLINE Matrix4 Matrix4::identity() noexcept {
 	return DX::XMMatrixIdentity();
 }
+FORCEINLINE Matrix4 Matrix4::Affine(const Vector3 &translation, const Quaternion &rotateQuat, const Vector3 &scale) noexcept {
+	static Vector4 origin(0.f, 0.f, 0.f, 1.f);
+	return Matrix4(DX::XMMatrixAffineTransformation(
+		scale,
+		origin,
+		rotateQuat,
+		translation
+	));
+}
 FORCEINLINE Matrix4 transpose(const Matrix4 &mat4) noexcept {
 	return Matrix4(DX::XMMatrixTranspose(static_cast<DX::XMMATRIX>(mat4)));
 }

@@ -71,7 +71,15 @@ FORCEINLINE const FloatStore<4> & FloatStore<4>::zero() noexcept {
 	return object;
 }
 
-FORCEINLINE const FloatStore<4> & FloatStore<4>::rotateIdentity() noexcept {
+FORCEINLINE const FloatStore<4> & FloatStore<4>::QuaternionIdentity() noexcept {
 	static float4 object(0.f, 0.f, 0.f, 1.f);
 	return object;
+}
+
+FORCEINLINE bool operator==(const FloatStore<4> &lhs, const FloatStore<4> &rhs) {
+	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
+}
+
+FORCEINLINE bool operator!=(const FloatStore<4> &lhs, const FloatStore<4> &rhs) {
+	return !(lhs == rhs);
 }

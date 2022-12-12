@@ -90,7 +90,7 @@ void Device::releaseStaleDescriptor() {
 		pAllocator->releaseStateDescriptors();
 }
 
-const dx12lib::DeviceInitDesc &Device::getDesc() const {
+const DeviceInitDesc &Device::getDesc() const {
 	return _initDesc;
 }
 

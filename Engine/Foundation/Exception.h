@@ -26,8 +26,8 @@ public:
 		throw Exception(message);
 	}
 	template<typename...Args>
-	static void Assert(bool flag, std::string_view fmt, Args&&...args) {
-		if (!flag)
+	static void Assert(bool condition, std::string_view fmt, Args&&...args) {
+		if (!condition)
 			Throw(fmt, std::format<Args>(args)...);
 	}
 private:

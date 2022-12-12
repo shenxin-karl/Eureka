@@ -55,7 +55,7 @@ FORCEINLINE FloatStore<3>::operator DX::XMVECTOR() const noexcept {
 	return DX::XMVectorSet(x, y, z, 0.f);
 }
 
-FORCEINLINE const FloatStore<3> & FloatStore<3>::identity() noexcept {
+FORCEINLINE const FloatStore<3> & FloatStore<3>::one() noexcept {
 	static FloatStore<3> object(1.f);
 	return object;
 }
@@ -63,4 +63,12 @@ FORCEINLINE const FloatStore<3> & FloatStore<3>::identity() noexcept {
 FORCEINLINE const FloatStore<3> & FloatStore<3>::zero() noexcept {
 	static FloatStore<3> object(0.f);
 	return object;
+}
+
+FORCEINLINE bool operator==(const FloatStore<3> &lhs, const FloatStore<3> &rhs) {
+	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+}
+
+FORCEINLINE bool operator!=(const FloatStore<3> &lhs, const FloatStore<3> &rhs) {
+	return !(lhs == rhs);
 }
