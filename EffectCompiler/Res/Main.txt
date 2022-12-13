@@ -1,4 +1,5 @@
 Properties 
 {
-	AlbedoMap()
+	AlbedoMap("MainTex", Texture2D),
+	AlbedoMap("NormalTex", Float),
 }

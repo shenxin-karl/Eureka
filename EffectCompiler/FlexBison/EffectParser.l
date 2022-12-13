@@ -1,6 +1,7 @@
 %option noyywrap
 %option nounput
 %option noinput
+%option yylineno
 
 %{
     #pragma warning(disable : 4005) 
@@ -39,6 +40,12 @@ DoubleFloatingPoint     [-+]?[0-9]+"."[0-9]+
 "int"                       { return KW_INT; }
 "return"                    { return KW_RETURN; }
 "Properties"|"properties"   { return KW_PROPERTIES; }
+"Texture2D"|"texture2D"     { return KW_TEXTURE2D; }
+"Color"|"color"             { return KW_COLOR; }
+"Float"|"float"             { return KW_FLOAT; }
+"Vector"|"vector"           { return KW_VECTOR; }
+"Uint"|"uint"               { return KW_UINT; }
+"Range"|"range"             { return KW_RANGE; }
 {Identifier}                { yylval.str_val = new string(yytext); return IDENT; }
 {Decimal}                   { yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
 {Octal}                     { yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
@@ -46,5 +53,4 @@ DoubleFloatingPoint     [-+]?[0-9]+"."[0-9]+
 {FloatingPoint}             { yylval.float_val = strtof(yytext, nullptr); return FLOAT_CONST; }
 {DoubleFloatingPoint}       { yylval.double_val = strtod(yytext, nullptr); return DOUBLE_CONST; }
 .                           { return yytext[0]; }
-\n                          { ++yylineno; }
 %%
