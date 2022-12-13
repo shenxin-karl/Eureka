@@ -47,6 +47,10 @@ endif()
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${EXE_FILE_DIR}")
 
 
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/FlexBison/output") 
+	file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/FlexBison/output")
+endif()
+
 set(FlexTool "${EUREKA_TOOL_DIR}/win_flex_bison/win_flex.exe")
 set(BisonTool "${EUREKA_TOOL_DIR}/win_flex_bison/win_bison.exe")
 
