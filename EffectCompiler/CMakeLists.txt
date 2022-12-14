@@ -37,6 +37,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/
 )
 
+target_link_libraries(${PROJECT_NAME} PUBLIC 
+	Math
+)
+
 set(EXE_FILE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Res")
 set(EXECUTABLE_OUTPUT_PATH ${EXE_FILE_DIR})
 if(NOT EXISTS ${EXE_FILE_DIR}) 

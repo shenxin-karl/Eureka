@@ -1,15 +1,16 @@
 #pragma once
-#include "BaseAST.hpp"
 #include <string>
+#include "BaseAST.hpp"
+#include "Foundation/PropertyFundation.hpp"
 
-namespace Eureka {
+namespace EC {
 
 class PropertyItem : public BaseAST {
 public:
-	
-public:
-	std::string uniformName;
-	std::string propertyName;
+	std::string   uniformName;
+	std::string   propertyName;
+	PropertyType  propertyType;
+	PropertyValue propertyValue;
 	PropertyItem *pNext = nullptr;
 };
 

@@ -2,7 +2,7 @@
 #include <memory>
 #include "BaseAST.hpp"
 
-namespace Eureka {
+namespace EC {
 
 class PropertySet;
 class CompUnit : public BaseAST {

@@ -1,8 +1,9 @@
 #pragma once
-#include "BaseAST.hpp"
+#include <memory>
 #include <vector>
+#include "BaseAST.hpp"
 
-namespace Eureka {
+namespace EC {
 
 class PropertyItem;
 class PropertySet : public BaseAST {
