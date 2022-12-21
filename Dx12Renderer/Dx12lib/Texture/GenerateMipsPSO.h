@@ -20,6 +20,7 @@ public:
 	auto getDefaultUVA(size_t i) const ->D3D12_CPU_DESCRIPTOR_HANDLE;
 private:
 	std::shared_ptr<dx12lib::ComputePSO> _pPipelineState;
+	WRL::ComPtr<ID3DBlob> _pComputeShader;
 	DescriptorAllocation _defaultUAV;
 };
 

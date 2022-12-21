@@ -6,7 +6,36 @@
 
 namespace dx12lib {
 
+static unsigned char g_GenerateMips_CS_data[] = {
+	#include "GenerateMips_CS.hlsl.h"
+};
+
 GenerateMipsPSO::GenerateMipsPSO(std::weak_ptr<Device> pDevice) {
+	UINT compilesFlags = 0;
+	#if defined(DEBUG) || defined(_DEBUG) 
+		compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+	#endif
+
+	HRESULT hr = S_OK;
+	WRL::ComPtr<ID3DBlob> errors;
+	hr = D3DCompile(g_GenerateMips_CS_data,
+		sizeof(g_GenerateMips_CS_data),
+		"GenerateMips_CS.hlsl",
+		nullptr,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		"main",
+		"cs_5_1",
+		0,
+		0,
+		&_pComputeShader,
+		&errors
+	);
+
+	if (FAILED(hr)) {
+		OutputDebugString(static_cast<char *>(errors->GetBufferPointer()));
+		ThrowIfFailed(hr);
+	}
+
 	auto pSharedDevice = pDevice.lock();
 	auto pRootSignature = pSharedDevice->createRootSignature(3, 1);
 	pRootSignature->at(0).initAsConstants(RegisterSlot::CBV0, 6);
@@ -21,7 +50,7 @@ GenerateMipsPSO::GenerateMipsPSO(std::weak_ptr<Device> pDevice) {
 	pRootSignature->finalize();
 
 	_pPipelineState = pSharedDevice->createComputePSO("GenerateMipsPSO");
-	_pPipelineState->setComputeShader(g_GenerateMips_CS, sizeof(g_GenerateMips_CS));
+	_pPipelineState->setComputeShader(_pComputeShader);
 	_pPipelineState->setRootSignature(pRootSignature);
 	_pPipelineState->finalize();
 
