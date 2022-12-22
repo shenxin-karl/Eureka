@@ -1,5 +1,4 @@
 #include <iostream>
-#include <sol/sol.hpp>
 #include "Application/EurekaApplication.h"
 #include "GameTimer/GameTimer.h"
 #include "Math/MathHelper.h"

@@ -1,0 +1,13 @@
+add_rules("mode.debug", "mode.release", "mode.releasedbg")
+
+target("DirectXTex")
+    set_languages("c++20")
+    set_group("Dx12Renderer/Ext")
+    set_kind("static")
+    add_cxflags("/MP")
+    add_headerfiles("**.h")
+    add_headerfiles("**.hpp")
+    add_headerfiles("**.ini")
+    add_files("**.cpp")
+    add_includedirs(path.join(os.scriptdir(), "DirectXTex"))
+target_end()

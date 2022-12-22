@@ -1,5 +1,4 @@
 #include "GenerateMipsPSO.h"
-#include "GenerateMips_CS.h"
 #include "Dx12lib/Device/Device.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "Dx12lib/Pipeline/RootSignature.h"

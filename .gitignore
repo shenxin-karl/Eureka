@@ -33,6 +33,8 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+vsxmake2022/
+.vscode/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

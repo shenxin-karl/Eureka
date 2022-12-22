@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-#include "Math/MatrixHelper.h"
+#include "MatrixHelper.h"
 
 namespace Math {
 
