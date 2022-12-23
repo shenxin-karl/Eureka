@@ -5,10 +5,14 @@
 #include "EngineShaders/ClusterDeferredCS.h"
 #include "Math/MathHelper.h"
 
-#include "EngineShaders/CalcClusterFrustumCS.h"
 #include "ShaderHelper/ShaderHelper.h"
 
 using namespace Math;
+
+
+static unsigned char gCalcClusterFrustumCSHlsl[] = {
+	#include "CalcClusterFrustumCS.hlsl.h"
+};
 
 namespace Eureka {
 

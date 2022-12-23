@@ -1,6 +1,0 @@
-Properties 
-{
-	gAlbedo("AlbedoColor", Color) = Color(-1.f, 1.0, +1, 2.000000000),
-	gNormalMap("NormalTex", Texture2D) = Texture2D("norm", 1),
-	gNormalScale("NormalScale", Range(0, 1)) = 0.5f,
-}

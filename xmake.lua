@@ -9,5 +9,7 @@ EUREKA_TOOL_DIR     = path.join(EUREKA_DIR, "Tool")
 
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
 
+includes("xmake/rule/utils_dxc.lua")
+
 includes("Dx12Renderer/xmake.lua")
 includes("Engine/xmake.lua")
