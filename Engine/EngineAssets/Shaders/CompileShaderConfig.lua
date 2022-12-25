@@ -9,7 +9,7 @@ if not CompileShaderConfig.shader_list then
         ["ClusterDeferredCS.hlsl"] = {
             { entryPoint = "CS", target = "cs_6_0" },
         },
-        ["CalcClusterFrustumCS"] = {
+        ["CalcClusterFrustumCS.hlsl"] = {
             { entryPoint = "CS", target = "cs_6_0" },
         },
         ["FXAA.hlsl"] = {

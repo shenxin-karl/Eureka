@@ -59,7 +59,11 @@ rule("utils.dxc")
                 table.insert(args, string.format("/D%s=%s", tostring(k), tostring(v)))
             end
 
-            local output = compile_info.output or path.basename(sourcefile_bin)
+            local output = compile_info.output
+            if not output then
+                output = string.format("%s_%s", path.basename(sourcefile_bin), compile_info.entryPoint)
+            end
+            
             local headerfile = path.join(headerdir, output .. ".h")
             local outputPdbFileName =  path.join(headerdir, output .. ".pdb")
             table.insert(args, "/Fh " .. headerfile)

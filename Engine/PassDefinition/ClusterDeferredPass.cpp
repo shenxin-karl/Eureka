@@ -6,7 +6,7 @@
 #include "ShaderHelper/ShaderHelper.h"
 
 // shaders
-#include "CalcClusterFrustumCS.h"
+#include "CalcClusterFrustumCS_CS.h"
 
 using namespace Math;
 
@@ -44,7 +44,7 @@ ClusterDeferredPass::ClusterDeferredPass(const std::string &passName,
 	_pCbParam = directCtx.createFRConstantBuffer<CbParam>();
 
 	_pCalcClusterFrustumPipeline = pSharedDevice->createComputePSO("CalcClusterFrustum");
-	_pCalcClusterFrustumPipeline->setComputeShader(g_CalcClusterFrustumCS, sizeof(g_CalcClusterFrustumCS));
+	_pCalcClusterFrustumPipeline->setComputeShader(g_CalcClusterFrustumCS_CS, sizeof(g_CalcClusterFrustumCS_CS));
 	ShaderHelper::generateRootSignature(_pCalcClusterFrustumPipeline);
 	_pCalcClusterFrustumPipeline->finalize();
 }
