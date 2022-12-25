@@ -2,17 +2,13 @@
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "Dx12lib/Pipeline/RootSignature.h"
 #include "EngineDefinition/EngineDefinition.h"
-#include "EngineShaders/ClusterDeferredCS.h"
 #include "Math/MathHelper.h"
-
 #include "ShaderHelper/ShaderHelper.h"
 
+// shaders
+#include "CalcClusterFrustumCS.h"
+
 using namespace Math;
-
-
-static unsigned char gCalcClusterFrustumCSHlsl[] = {
-	#include "CalcClusterFrustumCS.hlsl.h"
-};
 
 namespace Eureka {
 

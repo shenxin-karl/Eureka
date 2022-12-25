@@ -1,22 +1,12 @@
 
-function get_dxc_program(target) 
-    local dxcdir = path.join(os.porjectdir(), "Ext", "dxc", "bin")
-    if target:is_arch("arm64") then
-        dxcdir = path.join(dxcdir, "arm64")
-    elseif target:is_arch("x86") then
-        dxcdir = path.join(dxcdir, "x86")
-    elseif target:is_arch("x64", "x86_64") then
-        dxcdir = path.join(dxcdir, "x64")
-    else
-        assert(false, "Unknown system architecture")
-    end
-    import("lib.detect.find_program")
-    local program = find_program("dxc.exe", { pathes = { dxcdir } })
-    return assert(program)
+function get_dxc_config(target) 
+    local configPath = assert(target:values("ShaderCompileConfigPath"))
+    includes(configPath)
+    return CompileShaderConfig
 end
 
 rule("utils.dxc")
-    set_extensions(".hlsl", "hlsli")
+    set_extensions(".hlsl")
     on_load(function (target)
         local headerdir = path.join(target:autogendir(), "rules", "utils", "dxc")
         if not os.isdir(headerdir) then
@@ -24,42 +14,65 @@ rule("utils.dxc")
         end
         target:add("includedirs", headerdir)
     end)
+
     before_buildcmd_file(function(target, batchcmds, sourcefile_bin, opt)
-        print(debug.traceback())
-        local entryPoint = opt.entryPoint
-        local target = opt.target
-        local macros = opt.macros
-        local outputFileName = opt.output
-
-        assert(entryPoint, "rule.utils.dxc.before_buildcmd_file invalid opt.entryPoint")
-        assert(target, "rule.utils.dxc.before_buildcmd_file invalid opt.target")
-
-        -- get header file
-        if not outputFileName then
-            outputFileName = path.filename(sourcefile_bin) .. entryPoint .. ".h"
+        function get_dxc_config(target) 
+            local configPath = assert(target:values("ShaderCompileConfigPath"))
+            local configName = assert(target:values("ShaderCompileConfigName"))
+            import(configName, { rootdir = configPath, alias = "config" })
+            return config
         end
 
-        local headerdir = path.join(target:autogendir(), "rules", "utils", "dxc")
-        local headerfile = path.join(headerdir, outputFileName)
+        local config = get_dxc_config(target)
+        local compile_infos = config.get_compile_infos(sourcefile_bin)
+        if not compile_infos then
+            return
+        end
+        
+        local headerdir = path.absolute(path.join(target:autogendir(), "rules", "utils", "dxc"))
         target:add("includedirs", headerdir)
+        batchcmds:mkdir(headerdir)
 
         -- add commands
         batchcmds:show_progress(opt.progress, "${color.build.object}generating.dxc %s", sourcefile_bin)
-        batchcmds:mkdir(headerdir)
 
-        local program = get_dxc_program(target)
-        
-        -- local argv = {"lua", "private.utils.bin2c", "-i", path(sourcefile_bin), "-o", path(headerfile)}
-        -- local linewidth = target:extraconf("rules", "utils.bin2c", "linewidth")
-        -- if linewidth then
-        --     table.insert(argv, "-w")
-        --     table.insert(argv, tostring(linewidth))
-        -- end
-        -- batchcmds:vrunv(os.programfile(), argv, {envs = {XMAKE_SKIP_HISTORY = "y"}})
+        -- find program
+        import("xmake.modules.find_dxc", { rootdir = os.projectdir() })
+        local program = find_dxc.find_program(target)
 
-        -- add deps
-        batchcmds:add_depfiles(sourcefile_bin)
-        batchcmds:set_depmtime(os.mtime(headerfile))
-        batchcmds:set_depcache(target:dependfile(headerfile))
+        for _, compile_info in ipairs(compile_infos) do
+            local args = { "/Qstrip_rootsignature", "/nologo", "/Zi" }
+            table.insert(args, "/E" .. compile_info.entryPoint)
+
+            local includedirs = config.get_include_dirs()
+            if includedirs then
+                for _, dir in ipairs(includedirs) do
+                    table.insert(args, "/I "..dir)
+                end
+            end
+            
+            if is_mode("debug") then
+                table.insert(args, "/Od")
+            end
+
+            for k, v in pairs(compile_info.macros or {}) do
+                table.insert(args, string.format("/D%s=%s", tostring(k), tostring(v)))
+            end
+
+            local output = compile_info.output or path.basename(sourcefile_bin)
+            local headerfile = path.join(headerdir, output .. ".h")
+            local outputPdbFileName =  path.join(headerdir, output .. ".pdb")
+            table.insert(args, "/Fh " .. headerfile)
+            table.insert(args, "/Fd " .. outputPdbFileName)
+            table.insert(args, "/Vn " .. ("g_" .. output))
+            table.insert(args, "/T" .. compile_info.target)
+            table.insert(args, path.absolute(sourcefile_bin))
+            batchcmds:vrunv(program, args)
+
+            -- add deps
+            batchcmds:add_depfiles(sourcefile_bin)
+            batchcmds:set_depmtime(os.mtime(headerfile))
+            batchcmds:set_depcache(target:dependfile(headerfile))
+        end
     end)
 rule_end()

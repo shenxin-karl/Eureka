@@ -1,14 +1,12 @@
 #include "CopyToBackPass.h"
-
-#include <EngineShaders/FXAA_PS.h>
-
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "EngineDefinition/EngineDefinition.h"
-
-#include "EngineShaders/CopyToBack_VS.h"
-#include "EngineShaders/CopyToBack_PS.h"
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "ShaderHelper/ShaderHelper.h"
+
+// shader
+#include "CopyToBack_VS.h"
+#include "CopyToBack_PS.h"
 
 namespace Eureka {
 

@@ -4,9 +4,11 @@
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "Dx12lib/Pipeline/RootSignature.h"
 #include "EngineDefinition/EngineDefinition.h"
-#include "EngineShaders/UpdatePointLightBoundingSphere_CS.h"
-#include "EngineShaders/UpdateSpotLightBoundingSphere_CS.h"
 #include "RenderGraph/Utility/Utility.h"
+
+// shaders
+#include "UpdatePointLightBoundingSphere_CS.h"
+#include "UpdateSpotLightBoundingSphere_CS.h"
 
 using namespace Math;
 

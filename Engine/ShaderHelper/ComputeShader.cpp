@@ -1,7 +1,6 @@
 #include "ComputeShader.h"
 #include <filesystem>
 #include <iostream>
-#include <sol/types.hpp>
 
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"

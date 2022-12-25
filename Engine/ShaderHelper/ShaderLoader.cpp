@@ -1,8 +1,5 @@
 #include "ShaderLoader.h"
 #include <fstream>
-#include <cmrc/cmrc.hpp>
-
-CMRC_DECLARE(Eureka);
 
 namespace Eureka {
 
@@ -12,12 +9,6 @@ auto ShaderLoader::instance() -> ShaderLoader *{
 }
 
 auto ShaderLoader::open(const std::string &path) -> std::string_view {
-    auto fs = cmrc::Eureka::get_filesystem();
-    if (fs.exists(path)) {
-        cmrc::file file = fs.open(path);
-        return { file.begin(), file.size() };
-    }
-
     auto iter = _shaderContentCache.find(path);
     if (iter != _shaderContentCache.end()) {
         auto &item = iter->second;

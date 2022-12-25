@@ -5,8 +5,9 @@
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "ShaderHelper/ShaderHelper.h"
 
-#include "EngineShaders/FXAA_PS.h"
-#include "EngineShaders/FXAA_VS.h"
+// shaders
+#include "FXAA_PS.h"
+#include "FXAA_VS.h"
 
 namespace Eureka {
 

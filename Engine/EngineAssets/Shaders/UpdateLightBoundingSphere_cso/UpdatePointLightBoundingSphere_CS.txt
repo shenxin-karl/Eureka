@@ -1,2 +1,0 @@
-#define UPDATE_POINT_LIGHT
-#include "UpdateLightBoundingSphere.hlsl"

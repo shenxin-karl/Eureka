@@ -46,7 +46,7 @@ WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
 #endif
 
 	auto path = std::filesystem::path(sourceName).lexically_normal();
-	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string(), EUREKA_HLSL_SHADER_PATH);
+	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string());
 
 	HRESULT hr = S_OK;
 	WRL::ComPtr<ID3DBlob> byteCode;

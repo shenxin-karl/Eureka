@@ -6,8 +6,9 @@
 #include "Dx12lib/Pipeline/RootSignature.h"
 #include "ShaderHelper/ShaderHelper.h"
 
-#include "EngineShaders/TAAResolveCS.h"
-#include "EngineShaders/SharpenTAACS.h"
+// shaders
+#include "TAAResolveCS.h"
+#include "SharpenTAACS.h"
 
 using namespace Math;
 
