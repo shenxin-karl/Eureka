@@ -18,7 +18,7 @@ function CompileEngineShader()
 end
 
 target("Engine")
-    set_languages("c++latest")
+    set_languages("c++20")
     set_kind("binary")
     add_cxflags("/MP")
     add_headerfiles("**.h")

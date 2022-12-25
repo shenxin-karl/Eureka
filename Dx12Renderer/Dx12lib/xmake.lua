@@ -1,6 +1,6 @@
 
 target("Dx12lib")
-    set_languages("c++latest")
+    set_languages("c++20")
     set_group("Dx12Renderer")
     set_kind("static")
     add_rules("utils.bin2c", {extensions = {".hlsl"}})

@@ -1,6 +1,6 @@
 
 target("RenderGraph")
-    set_languages("c++latest")
+    set_languages("c++20")
     set_group("Dx12Renderer")
     set_kind("static")
     add_cxflags("/MP")

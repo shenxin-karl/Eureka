@@ -2,13 +2,14 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <string_view>
 
 namespace Eureka {
 
 class ShaderLoader {
 public:
     static auto instance()->ShaderLoader *;
-    auto open(const std::string &path)->std::string_view;
+    auto open(const std::string &path) -> std::string_view;
 private:
     struct Item {
         size_t length;
