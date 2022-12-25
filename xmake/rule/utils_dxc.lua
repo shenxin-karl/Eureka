@@ -1,10 +1,4 @@
 
-function get_dxc_config(target) 
-    local configPath = assert(target:values("ShaderCompileConfigPath"))
-    includes(configPath)
-    return CompileShaderConfig
-end
-
 rule("utils.dxc")
     set_extensions(".hlsl")
     on_load(function (target)
