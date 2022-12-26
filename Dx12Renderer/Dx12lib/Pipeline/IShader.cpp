@@ -32,6 +32,10 @@ void IShader::addMacro(Macro macro) {
     _macros.push_back(std::move(macro));
 }
 
+auto IShader::getReflect() const -> WRL::ComPtr<ID3D12ShaderReflection> {
+    return _pShaderReflection;
+}
+
 void IShader::compileFormFile(ID3DInclude *pInclude) {
     std::ifstream fin(_fileName, std::ios::in);
     if (!fin.is_open())

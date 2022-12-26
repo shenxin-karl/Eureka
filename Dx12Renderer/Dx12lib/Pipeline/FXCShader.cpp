@@ -9,10 +9,6 @@ auto FXCShader::getByteCode() const -> D3D12_SHADER_BYTECODE {
     return { _pByteCode->GetBufferPointer(), _pByteCode->GetBufferSize() };
 }
 
-auto FXCShader::getReflect() const -> WRL::ComPtr<ID3D12ShaderReflection> {
-    return _pShaderReflection;
-}
-
 void FXCShader::compileFormMemory(const void *pData, size_t sizeInByte, ID3DInclude *pInclude) {
 	UINT compilesFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG) 

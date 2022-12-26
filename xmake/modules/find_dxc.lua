@@ -1,7 +1,7 @@
 
 find_dxc = find_dxc or {}
 function find_program(target) 
-    local dxcdir = path.join(os.projectdir(), "Ext", "dxc", "bin")
+    local dxcdir = path.join(os.projectdir(), "Dx12Renderer", "Ext", "dxc", "bin")
     if target:is_arch("arm64") then
         dxcdir = path.join(dxcdir, "arm64")
     elseif target:is_arch("x86") then

@@ -1,4 +1,19 @@
 
+function link_dxc_compiler() 
+    local dxcDir = path.join(DX12RENDERER_EXT_DIR, "dxc")
+    add_includedirs(path.join(dxcDir, "inc"), {public=true})
+    local libDir = nil
+    if is_arch("x86") then
+        libDir = path.join(dxcDir, "lib", "x86")
+    elseif is_arch("x64", "x86_64") then
+        libDir = path.join(dxcDir, "lib", "x64")
+    elseif is_arch("arm64") then
+        libDir = path.join(dxcDir, "lib", "arm64")
+    end
+    add_linkdirs(libDir)
+    add_links("dxcompiler.lib")
+end
+
 target("Dx12lib")
     set_languages("c++20")
     set_group("Dx12Renderer")
@@ -20,5 +35,6 @@ target("Dx12lib")
     add_links("dxgi")
     add_links("WinPixEventRuntime")
     add_deps("DirectXTex")
+    link_dxc_compiler()
 target_end()
 
