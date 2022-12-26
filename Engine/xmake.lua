@@ -20,7 +20,7 @@ end
 target("Engine")
     set_languages("c++20")
     set_kind("binary")
-    add_cxflags("/MP")
+    add_cxflags("/MP /std:c++latest")
     add_headerfiles("**.h")
     add_headerfiles("**.hpp")
     add_files("**.cpp")
