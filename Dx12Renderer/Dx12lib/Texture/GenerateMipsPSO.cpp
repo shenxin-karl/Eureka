@@ -22,7 +22,7 @@ GenerateMipsPSO::GenerateMipsPSO(std::weak_ptr<Device> pDevice) {
 		"GenerateMips_CS.hlsl",
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"main",
+		"CS",
 		"cs_5_1",
 		0,
 		0,

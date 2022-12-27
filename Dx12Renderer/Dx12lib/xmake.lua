@@ -11,7 +11,7 @@ function link_dxc_compiler()
         libDir = path.join(dxcDir, "lib", "arm64")
     end
     add_linkdirs(libDir)
-    add_links("dxcompiler.lib")
+    add_links("dxcompiler")
 end
 
 target("Dx12lib")
@@ -19,7 +19,7 @@ target("Dx12lib")
     set_group("Dx12Renderer")
     set_kind("static")
     add_rules("utils.bin2c", {extensions = {".hlsl"}})
-    add_cxflags("/MP")
+    add_cxflags("/MP /std:c++latest /Wall /sdl /W4")
     add_defines("_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING", {public=true})
     add_headerfiles("**.h")
     add_headerfiles("**.hpp")

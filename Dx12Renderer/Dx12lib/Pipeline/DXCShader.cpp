@@ -46,17 +46,17 @@ public:
     ID3DInclude *pInclude;
 };
 
-void DXCShader::compileFormMemory(const void *pData, size_t sizeInByte, ID3DInclude *pInclude) {
+void DXCShader::compileFormMemory(const CompileFormMemoryArgs &args) {
     WRL::ComPtr<IDxcUtils> pUtils;
     WRL::ComPtr<IDxcCompiler3> pCompiler;
     DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&pUtils));
     DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&pCompiler));
 
-    std::wstring filename = to_wstring(_fileName);
-    std::wstring target = to_wstring(_target);
-    std::wstring entryPoint = to_wstring(_entryPoint);
+    std::wstring filename = to_wstring(args.fileName);
+    std::wstring target = to_wstring(args.target);
+    std::wstring entryPoint = to_wstring(args.entryPoint);
 
-    std::vector<std::wstring> args = {
+    std::vector<std::wstring> compileFlags = {
         filename.c_str(),            // Optional shader source file name for error reporting and for PIX shader source view.  
         L"-E", entryPoint.c_str(),   // Entry point.
         L"-T", target.c_str(),       // Target.
@@ -71,33 +71,33 @@ void DXCShader::compileFormMemory(const void *pData, size_t sizeInByte, ID3DIncl
     args.push_back(L"-Od");
 #endif
 
-    for (auto &macro : _macros)
-        args.push_back(to_wstring(std::format("-D%s=%s", macro.name, macro.value)));
+    for (auto &macro : args.macros)
+        compileFlags.push_back(to_wstring(std::format("-D%s=%s", macro.name, macro.value)));
 
-    std::vector<LPCWCHAR> pszArgs(args.size());
-    for (size_t i = 0; i < args.size(); ++i)
-        pszArgs.push_back(args[i].c_str());
+    std::vector<LPCWCHAR> pszArgs(compileFlags.size());
+    for (size_t i = 0; i < compileFlags.size(); ++i)
+        pszArgs.push_back(compileFlags[i].c_str());
 
     IDxcIncludeHandler *pIncludeHandler;
     WRL::ComPtr<IDxcIncludeHandler> pIncludeHandleCom;
     std::unique_ptr<DXCInclude> pDxcInclude;
-    if (pInclude == D3D_COMPILE_STANDARD_FILE_INCLUDE) {
+    if (args.pInclude == D3D_COMPILE_STANDARD_FILE_INCLUDE) {
         pUtils->CreateDefaultIncludeHandler(&pIncludeHandleCom);
         pIncludeHandler = pIncludeHandleCom.Get();
     } else {
         pDxcInclude = std::make_unique<DXCInclude>();
         pDxcInclude->pUtils = pUtils;
-        pDxcInclude->pInclude = pInclude;
+        pDxcInclude->pInclude = args.pInclude;
         pIncludeHandler = pDxcInclude.get();
 	}
 
-    DxcBuffer Source;
-    Source.Ptr = pData;
-    Source.Size = sizeInByte;
-    Source.Encoding = DXC_CP_ACP; // Assume BOM says UTF8 or UTF16 or this is ANSI text.
+    DxcBuffer source;
+    source.Ptr = args.pData;
+    source.Size = args.sizeInByte;
+    source.Encoding = DXC_CP_ACP; // Assume BOM says UTF8 or UTF16 or this is ANSI text.
     WRL::ComPtr<IDxcResult> pResults;
     pCompiler->Compile(
-        &Source,                // Source buffer.
+        &source,                // Source buffer.
         pszArgs.data(),         // Array of pointers to arguments.
         pszArgs.size(),         // Number of arguments.
         pIncludeHandler,        // User-provided interface to handle #include directives (optional).
@@ -111,11 +111,41 @@ void DXCShader::compileFormMemory(const void *pData, size_t sizeInByte, ID3DIncl
     WRL::ComPtr<IDxcBlob> pReflectionData;
     pResults->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&pReflectionData), nullptr);
     if (pReflectionData != nullptr) {
+        DxcBuffer reflectionData;
+        reflectionData.Encoding = DXC_CP_ACP;
+        reflectionData.Ptr = pReflectionData->GetBufferPointer();
+        reflectionData.Size = pReflectionData->GetBufferSize();
+        pUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
+    }
+}
+
+void DXCShader::makeFromByteCode(const void *pData, size_t sizeInByte) {
+    WRL::ComPtr<IDxcUtils> pUtils;
+    WRL::ComPtr<IDxcCompiler3> pCompiler;
+    DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&pUtils));
+    DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&pCompiler));
+
+    WRL::ComPtr<IDxcBlobEncoding> pBlob;
+    pUtils->CreateBlob(pData, sizeInByte, DXC_CP_ACP, &pBlob);
+    _pByteCode = pBlob.Detach();
+
+    WRL::ComPtr<IDxcResult> pResults;
+    DxcBuffer source;
+    source.Ptr = pData;
+    source.Size = sizeInByte;
+    source.Encoding = DXC_CP_ACP; 
+    pCompiler->Disassemble(&source, IID_PPV_ARGS(&pResults));
+
+    WRL::ComPtr<IDxcBlob> pReflectionData;
+    pResults->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&pReflectionData), nullptr);
+    if (pReflectionData != nullptr) {
         DxcBuffer ReflectionData;
         ReflectionData.Encoding = DXC_CP_ACP;
         ReflectionData.Ptr = pReflectionData->GetBufferPointer();
         ReflectionData.Size = pReflectionData->GetBufferSize();
         pUtils->CreateReflection(&ReflectionData, IID_PPV_ARGS(&_pShaderReflection));
+    } else {
+	    _pShaderReflection = nullptr;
     }
 }
 

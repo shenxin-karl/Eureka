@@ -6,32 +6,34 @@
 
 namespace dx12lib {
 
+struct ShaderMacro {
+    std::string name;
+    std::string value;
+};
+
+struct CompileFormFileArgs {
+    std::string fileName;
+    std::string target;
+    std::string entryPoint;
+    ID3DInclude *pInclude = D3D_COMPILE_STANDARD_FILE_INCLUDE;
+    std::vector<ShaderMacro> macros;
+};
+
+struct CompileFormMemoryArgs : public CompileFormFileArgs {
+    const void *pData = nullptr;
+	size_t sizeInByte = 0;
+};
+
 class IShader {
 public:
-    struct Macro {
-	    std::string name;
-        std::string value;
-    };
     IShader() = default;
     virtual ~IShader() = default;
-    auto getFileName() const noexcept -> const std::string &;
-    auto getTarget() const noexcept -> const std::string &;
-    auto getEntryPoint() const noexcept -> const std::string &;
-    auto getMacros() const noexcept -> const std::vector<Macro> &;
-    void setFileName(std::string fileName);
-    void setTarget(std::string target);
-    void setEntryPoint(std::string entryPoint);
-    void setMacros(std::vector<Macro> macros);
-    void addMacro(Macro macro);
     auto getReflect() const -> WRL::ComPtr<ID3D12ShaderReflection>;
-    virtual void compileFormFile(ID3DInclude *pInclude = D3D_COMPILE_STANDARD_FILE_INCLUDE);
+    virtual void compileFormFile(const CompileFormFileArgs &args);
     virtual auto getByteCode() const -> D3D12_SHADER_BYTECODE = 0;
-    virtual void compileFormMemory(const void *pData, size_t sizeInByte, ID3DInclude *pInclude = D3D_COMPILE_STANDARD_FILE_INCLUDE) = 0;
+    virtual void compileFormMemory(const CompileFormMemoryArgs &args) = 0;
+    virtual void makeFromByteCode(const void *pData, size_t sizeInByte) = 0;;
 protected:
-    std::string _fileName;
-    std::string _target;
-    std::string _entryPoint;
-    std::vector<Macro> _macros;
     WRL::ComPtr<ID3D12ShaderReflection> _pShaderReflection;
 };
 
