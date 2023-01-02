@@ -6,14 +6,14 @@
 namespace Eureka {
 
 void ShaderManager::loading(std::weak_ptr<dx12lib::Device> pDevice) {
-	auto pDeferredPBR = std::make_shared<GraphicsShader>(pDevice, "EngineAssets/Shaders/DeferredPBR.hlsl");
+	auto pDeferredPBR = std::make_shared<GraphicsShader>(pDevice, "Engine/EngineAssets/Shaders/DeferredPBR.hlsl");
 	pDeferredPBR->setVertexShader("VS");
 	pDeferredPBR->setPixelShader("PS");
 	pDeferredPBR->setRenderTargetFormats({ kGBuffer0Format, kGBuffer1Format, kGBuffer2Format, kVelocityFormat });
 	pDeferredPBR->setDepthStencilFormat(kSwapChainDepthStencilFormat);
 	_graphicsShaders["DeferredPBR"] = pDeferredPBR;
 
-	auto pFXAAShader = std::make_shared<GraphicsShader>(pDevice, "EngineAssets/Shaders/FXAA.hlsl");
+	auto pFXAAShader = std::make_shared<GraphicsShader>(pDevice, "Engine/EngineAssets/Shaders/FXAA.hlsl");
 	pFXAAShader->setVertexShader("VS");
 	pFXAAShader->setPixelShader("PS");
 	pFXAAShader->setRenderTargetFormats({ kSwapChainRenderTargetFormat });
@@ -26,15 +26,15 @@ void ShaderManager::loading(std::weak_ptr<dx12lib::Device> pDevice) {
 	pFXAAShader->setRasterizerDesc(rasterizerDesc);
 	_graphicsShaders["FXAA"] = pFXAAShader;
 
-	auto pLightingShader = std::make_shared<ComputeShader>(pDevice, "EngineAssets/Shaders/LightingPassCS.hlsl");
+	auto pLightingShader = std::make_shared<ComputeShader>(pDevice, "Engine/EngineAssets/Shaders/LightingPassCS.hlsl");
 	pLightingShader->setComputeShader("CS");
 	_computeShaders["Lighting"] = pLightingShader;
 
-	auto pPostProcessingShader = std::make_shared<ComputeShader>(pDevice, "EngineAssets/Shaders/PostProcessing.hlsl");
+	auto pPostProcessingShader = std::make_shared<ComputeShader>(pDevice, "Engine/EngineAssets/Shaders/PostProcessing.hlsl");
 	pPostProcessingShader->setComputeShader("CS");
 	_computeShaders["PostProcessing"] = pPostProcessingShader;
 
-	auto pTileDeferred = std::make_shared<ComputeShader>(pDevice, "EngineAssets/Shaders/TiledDeferredCS.hlsl");
+	auto pTileDeferred = std::make_shared<ComputeShader>(pDevice, "Engine/EngineAssets/Shaders/TiledDeferredCS.hlsl");
 	pTileDeferred->setComputeShader("CS");
 	_computeShaders["TileDeferred"] = pTileDeferred;
 }

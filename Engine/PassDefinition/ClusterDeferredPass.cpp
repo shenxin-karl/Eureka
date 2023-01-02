@@ -7,6 +7,7 @@
 
 // shaders
 #include "CalcClusterFrustumCS_CS.h"
+#include "Dx12lib/Pipeline/DXCShader.h"
 
 using namespace Math;
 
@@ -29,7 +30,7 @@ ClusterDeferredPass::ClusterDeferredPass(const std::string &passName,
 
 	_pPipeline = pSharedDevice->createComputePSO("ClusterDeferredPass");
 #if 1 || defined(_DEBUG) || defined(DEBUG)
-	auto pBlob = ShaderHelper::compile("Engine/HlslShader/ClusterDeferredCS.hlsl", 
+	auto pBlob = ShaderHelper::DXCCompile("Engine/HlslShader/ClusterDeferredCS.hlsl", 
 		nullptr, 
 		"CS", 
 		"cs_5_1"
@@ -44,7 +45,7 @@ ClusterDeferredPass::ClusterDeferredPass(const std::string &passName,
 	_pCbParam = directCtx.createFRConstantBuffer<CbParam>();
 
 	_pCalcClusterFrustumPipeline = pSharedDevice->createComputePSO("CalcClusterFrustum");
-	_pCalcClusterFrustumPipeline->setComputeShader(g_CalcClusterFrustumCS_CS, sizeof(g_CalcClusterFrustumCS_CS));
+	_pCalcClusterFrustumPipeline->setComputeShader(dx12lib::DXCShader::make(g_CalcClusterFrustumCS_CS));
 	ShaderHelper::generateRootSignature(_pCalcClusterFrustumPipeline);
 	_pCalcClusterFrustumPipeline->finalize();
 }

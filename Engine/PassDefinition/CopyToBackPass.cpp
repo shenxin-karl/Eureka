@@ -7,6 +7,7 @@
 // shader
 #include "CopyToBack_VS.h"
 #include "CopyToBack_PS.h"
+#include "Dx12lib/Pipeline/DXCShader.h"
 
 namespace Eureka {
 
@@ -18,8 +19,8 @@ CopyToBackPass::CopyToBackPass(const std::string &passName, dx12lib::IDirectCont
 	auto pShaderDevice = directCtx.getDevice().lock();
 
 	_pPipeline = pShaderDevice->createGraphicsPSO("FXAA");
-	_pPipeline->setVertexShader(g_CopyToBack_VS, sizeof(g_CopyToBack_VS));
-	_pPipeline->setPixelShader(g_CopyToBack_PS, sizeof(g_CopyToBack_PS));
+	_pPipeline->setVertexShader(dx12lib::DXCShader::make(g_CopyToBack_VS));
+	_pPipeline->setPixelShader(dx12lib::DXCShader::make(g_CopyToBack_PS));
 	_pPipeline->setRenderTargetFormat(kSwapChainRenderTargetFormat, kSwapChainDepthStencilFormat);
 	CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc(D3D12_DEFAULT);
 	depthStencilDesc.DepthEnable = false;

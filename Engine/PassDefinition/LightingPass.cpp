@@ -7,6 +7,7 @@
 
 // shaders
 #include "LightingPassCS_CS.h"
+#include "Dx12lib/Pipeline/DXCShader.h"
 
 using namespace Math;
 
@@ -27,7 +28,7 @@ LightingPass::LightingPass(const std::string &passName, std::shared_ptr<dx12lib:
 	_pLightingPSO = pLightShader->getPSO();
 #else
 	_pLightingPSO = pDevice->createComputePSO("LightingPSO");
-	_pLightingPSO->setComputeShader(g_LightingPassCS_CS, sizeof(g_LightingPassCS_CS));
+	_pLightingPSO->setComputeShader(dx12lib::DXCShader::make(g_LightingPassCS_CS));
 	ShaderHelper::generateRootSignature(_pLightingPSO);
 	_pLightingPSO->finalize();
 #endif

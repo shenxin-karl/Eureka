@@ -48,13 +48,13 @@ auto ComputeShader::getPSO(const KeywordMask &keywordMask) const -> std::shared_
 		}
 	}
 	macros.push_back(D3D_SHADER_MACRO{ nullptr, nullptr });
-	auto pBinaryBlob = ShaderHelper::compile(
+	auto pBinaryBlob = ShaderHelper::DXCCompile(
 		_shaderContent.data(),
 		_shaderContent.length(),
 		_shaderFileName,
 		macros.data(),
 		_entryPoint,
-		"cs_5_1"
+		"cs_6_0"
 	);
 	auto pSharedDevice = _pDevice.lock();
 	auto pComputePSO = pSharedDevice->createComputePSO(key);

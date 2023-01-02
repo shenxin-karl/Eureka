@@ -8,6 +8,7 @@
 // shaders
 #include "FXAA_PS.h"
 #include "FXAA_VS.h"
+#include "Dx12lib/Pipeline/DXCShader.h"
 
 namespace Eureka {
 
@@ -19,8 +20,8 @@ FXAAPass::FXAAPass(const std::string &passName, dx12lib::IDirectContext &directC
 	auto pShaderDevice = directCtx.getDevice().lock();
 
 	_pPipeline = pShaderDevice->createGraphicsPSO("FXAA");
-	_pPipeline->setVertexShader(g_FXAA_VS, sizeof(g_FXAA_VS));
-	_pPipeline->setPixelShader(g_FXAA_PS, sizeof(g_FXAA_PS));
+	_pPipeline->setVertexShader(dx12lib::DXCShader::make(g_FXAA_VS));
+	_pPipeline->setPixelShader(dx12lib::DXCShader::make(g_FXAA_PS));
 	_pPipeline->setRenderTargetFormat(kSwapChainRenderTargetFormat, kSwapChainDepthStencilFormat);
 	CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc(D3D12_DEFAULT);
 	depthStencilDesc.DepthEnable = false; 

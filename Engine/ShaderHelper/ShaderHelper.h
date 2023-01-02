@@ -12,14 +12,28 @@ constexpr size_t kStaticSamplerCount = 8;
 
 class ShaderHelper {
 public:
-	static WRL::ComPtr<ID3DBlob> compile(
+	static std::shared_ptr<dx12lib::IShader> DXCCompile(
 		const std::string &fileName,
 		const D3D_SHADER_MACRO *defines,
 		const std::string &entryPoint,
 		const std::string &target
 	);
+	static std::shared_ptr<dx12lib::IShader> DXCCompile(
+		const char *fileContent,
+		std::size_t	sizeInByte,
+		const std::string &sourceName,
+		const D3D_SHADER_MACRO *defines,
+		const std::string &entryPoint,
+		const std::string &target
+	);
 
-	static WRL::ComPtr<ID3DBlob> compile(
+	static std::shared_ptr<dx12lib::IShader> FXCCompile(
+		const std::string &fileName,
+		const D3D_SHADER_MACRO *defines,
+		const std::string &entryPoint,
+		const std::string &target
+	);
+	static std::shared_ptr<dx12lib::IShader> FCXCompile(
 		const char *fileContent,
 		std::size_t	sizeInByte,
 		const std::string &sourceName,
@@ -29,7 +43,7 @@ public:
 	);
 
 	static void generateRootSignature(std::shared_ptr<dx12lib::Device> pDevice,
-		std::vector<WRL::ComPtr<ID3DBlob>> shaders,
+		std::vector<std::shared_ptr<dx12lib::IShader>> shaders,
 		std::shared_ptr<dx12lib::PSO> pso
 	);
 
@@ -49,6 +63,20 @@ public:
 	static CD3DX12_STATIC_SAMPLER_DESC getLinearShadowCompareStaticSampler(UINT shaderRegister);
 	static CD3DX12_STATIC_SAMPLER_DESC getPointShadowCompareStaticSampler(UINT shaderRegister);
 	static const std::array<CD3DX12_STATIC_SAMPLER_DESC, 8> &getStaticSamplers();
+private:
+	enum class ShaderType {
+		FXC,
+		DXC,
+	};
+	static std::shared_ptr<dx12lib::IShader> compileImpl(
+		ShaderType shaderType,
+		const char *fileContent,
+		std::size_t	sizeInByte,
+		const std::string &sourceName,
+		const D3D_SHADER_MACRO *defines,
+		const std::string &entryPoint,
+		const std::string &target
+	);
 };
 
 }

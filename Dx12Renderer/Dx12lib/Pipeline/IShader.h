@@ -16,7 +16,7 @@ struct CompileFormFileArgs {
     std::string target;
     std::string entryPoint;
     ID3DInclude *pInclude = D3D_COMPILE_STANDARD_FILE_INCLUDE;
-    std::vector<ShaderMacro> macros;
+    const D3D_SHADER_MACRO *pMacro = nullptr;
 };
 
 struct CompileFormMemoryArgs : public CompileFormFileArgs {

@@ -1,14 +1,23 @@
 #include "ShaderLoader.h"
 #include <fstream>
+#include "BuildInShader.h"
 
 namespace Eureka {
 
-auto ShaderLoader::instance() -> ShaderLoader *{
+ShaderLoader::ShaderLoader() {
+
+}
+
+auto ShaderLoader::instance() -> ShaderLoader * {
     static ShaderLoader sInstance;
     return &sInstance;
 }
 
 auto ShaderLoader::open(const std::string &path) -> std::string_view {
+    auto buildFile = BuildIn::filesystem::open(path);
+    if (buildFile != std::nullopt)
+	    return { reinterpret_cast<const char *>(buildFile->data()), buildFile->size() };
+
     auto iter = _shaderContentCache.find(path);
     if (iter != _shaderContentCache.end()) {
         auto &item = iter->second;

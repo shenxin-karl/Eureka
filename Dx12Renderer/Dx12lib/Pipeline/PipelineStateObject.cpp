@@ -3,11 +3,12 @@
 #include <Dx12lib/Device/Device.h>
 #include <Dx12lib/Tool/MakeObejctTool.hpp>
 
+#include "IShader.h"
+
 namespace dx12lib {
 
-PSO::PSO(std::weak_ptr<Device> pDevice, const std::string &name) : _name(name), _pDevice(std::move(pDevice)) {
-	std::hash<std::string> hasher;
-	_hashCode = hasher(name);
+PSO::PSO(std::weak_ptr<Device> pDevice, std::string name) : _name(std::move(name)), _pDevice(std::move(pDevice)) {
+
 }
 
 void PSO::setRootSignature(std::shared_ptr<RootSignature> pRootSignature) {
@@ -32,10 +33,6 @@ bool PSO::isDirty() const {
 	return _dirty;
 }
 
-auto PSO::getHashCode() const {
-	return _hashCode;
-}
-
 auto PSO::getBoundResource(const std::string &name) const -> std::optional<BoundResource> {
 	auto iter = _boundResourceMap.find(name);
 	if (iter != _boundResourceMap.end())
@@ -51,7 +48,7 @@ auto PSO::getDevice() const -> std::weak_ptr<Device> {
 	return _pDevice;
 }
 
-void PSO::generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders) {
+void PSO::generateBoundResourceMap(std::vector<std::shared_ptr<IShader>> shaders) {
 	auto pDevice = _pDevice.lock();
 	_boundResourceMap.clear();
 
@@ -61,12 +58,8 @@ void PSO::generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders) {
 		if (!shaders[i])
 			continue;
 
-		ThrowIfFailed(D3DReflect(shaders[i]->GetBufferPointer(),
-			shaders[i]->GetBufferSize(),
-			IID_PPV_ARGS(&shaderRefs[i])
-		));
-
-		if (!shaderRefs[i])
+		shaderRefs[i] = shaders[i]->getReflect();
+		if (shaderRefs[i] == nullptr)
 			continue;
 
 		D3D12_SHADER_DESC desc;
@@ -132,7 +125,7 @@ void PSO::generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders) {
 	}
 }
 
-GraphicsPSO::GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name) : PSO(pDevice, name) {
+GraphicsPSO::GraphicsPSO(std::weak_ptr<Device> pDevice, std::string name) : PSO(pDevice, std::move(name)) {
 	_pDevice = pDevice;
 	/// graphics pipeline static object has default state
 	std::memset(&_psoDesc, 0, sizeof(_psoDesc));
@@ -237,87 +230,50 @@ void GraphicsPSO::setPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE IBProps
 	_psoDesc.IBStripCutValue = IBProps;
 	_dirty = true;
 }
-void GraphicsPSO::setVertexShader(const void *pBinary, size_t size) {
-	_psoDesc.VS = cacheByteCode("VS", pBinary, size);
-}
-void GraphicsPSO::setPixelShader(const void *pBinary, size_t size) {
-	_psoDesc.PS = cacheByteCode("PS", pBinary, size);
-}
-void GraphicsPSO::setGeometryShader(const void *pBinary, size_t size) {
-	_psoDesc.GS = cacheByteCode("GS", pBinary, size);
-}
-void GraphicsPSO::setHullShader(const void *pBinary, size_t size) {
-	_psoDesc.HS = cacheByteCode("HS", pBinary, size);
-}
-void GraphicsPSO::setDomainShader(const void *pBinary, size_t size) {
-	_psoDesc.DS = cacheByteCode("DS", pBinary, size);
-}
-
 const D3D12_GRAPHICS_PIPELINE_STATE_DESC &GraphicsPSO::getDesc() const {
 	return _psoDesc;
 }
 
-void GraphicsPSO::setVertexShader(WRL::ComPtr<ID3DBlob> pByteCode) {
-	_psoDesc.VS = cacheByteCode("VS", pByteCode);
+static constexpr D3D12_SHADER_BYTECODE kNullByteCode = D3D12_SHADER_BYTECODE {
+	.pShaderBytecode = nullptr,
+	.BytecodeLength =  0,
+};
+
+void GraphicsPSO::setHullShader(std::shared_ptr<IShader> pShader) {
+	_psoDesc.HS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
+	_shaders[ShaderIndex::Hull] = std::move(pShader);
 }
-void GraphicsPSO::setPixelShader(WRL::ComPtr<ID3DBlob> pBytecode) {
-	_psoDesc.PS = cacheByteCode("PS", pBytecode);
+void GraphicsPSO::setDomainShader(std::shared_ptr<IShader> pShader) {
+	_psoDesc.DS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
+	_shaders[ShaderIndex::Domain] = std::move(pShader);
 }
-void GraphicsPSO::setGeometryShader(WRL::ComPtr<ID3DBlob> pByteCode) {
-	_psoDesc.GS = cacheByteCode("GS", pByteCode);
+void GraphicsPSO::setVertexShader(std::shared_ptr<IShader> pShader) {
+	_psoDesc.VS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
+	_shaders[ShaderIndex::Hull] = std::move(pShader);
 }
-void GraphicsPSO::setHullShader(WRL::ComPtr<ID3DBlob> pByteCode) {
-	_psoDesc.HS = cacheByteCode("HS", pByteCode);
+void GraphicsPSO::setPixelShader(std::shared_ptr<IShader> pShader) {
+	_psoDesc.PS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
+	_shaders[ShaderIndex::Hull] = std::move(pShader);
 }
-void GraphicsPSO::setDomainShader(WRL::ComPtr<ID3DBlob> pByteCode) {
-	_psoDesc.DS = cacheByteCode("DS", pByteCode);
+void GraphicsPSO::setGeometryShader(std::shared_ptr<IShader> pShader) {
+	_psoDesc.GS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
+	_shaders[ShaderIndex::Hull] = std::move(pShader);
 }
 
-void GraphicsPSO::setVertexShader(const D3D12_SHADER_BYTECODE &pByteCode) {
-	setVertexShader(pByteCode.pShaderBytecode, pByteCode.BytecodeLength);
+auto GraphicsPSO::getHullShader() const -> std::shared_ptr<IShader> {
+	return _shaders[ShaderIndex::Hull];
 }
-void GraphicsPSO::setPixelShader(const D3D12_SHADER_BYTECODE &pByteCode) {
-	setPixelShader(pByteCode.pShaderBytecode, pByteCode.BytecodeLength);
+auto GraphicsPSO::getDomainShader() const -> std::shared_ptr<IShader> {
+	return _shaders[ShaderIndex::Domain];
 }
-void GraphicsPSO::setGeometryShader(const D3D12_SHADER_BYTECODE &pByteCode) {
-	setGeometryShader(pByteCode.pShaderBytecode, pByteCode.BytecodeLength);
+auto GraphicsPSO::getVertexShader() const -> std::shared_ptr<IShader> {
+	return _shaders[ShaderIndex::Vertex];
 }
-void GraphicsPSO::setHullShader(const D3D12_SHADER_BYTECODE &pByteCode) {
-	setHullShader(pByteCode.pShaderBytecode, pByteCode.BytecodeLength);
+auto GraphicsPSO::getPixelShader() const -> std::shared_ptr<IShader> {
+	return _shaders[ShaderIndex::Pixel];;
 }
-void GraphicsPSO::setDomainShader(const D3D12_SHADER_BYTECODE &pByteCode) {
-	setDomainShader(pByteCode.pShaderBytecode, pByteCode.BytecodeLength);
-}
-
-auto GraphicsPSO::getVertexShader() const -> WRL::ComPtr<ID3DBlob> {
-	auto iter = _shaderByteCodeCache.find("VS");
-	if (iter != _shaderByteCodeCache.end())
-		return iter->second;
-	return nullptr;
-}
-auto GraphicsPSO::getPixelShader() const -> WRL::ComPtr<ID3DBlob> {
-	auto iter = _shaderByteCodeCache.find("PS");
-	if (iter != _shaderByteCodeCache.end())
-		return iter->second;
-	return nullptr;
-}
-auto GraphicsPSO::getGeometryShader() const -> WRL::ComPtr<ID3DBlob> {
-	auto iter = _shaderByteCodeCache.find("GS");
-	if (iter != _shaderByteCodeCache.end())
-		return iter->second;
-	return nullptr;
-}
-auto GraphicsPSO::getHullShader() const -> WRL::ComPtr<ID3DBlob> {
-	auto iter = _shaderByteCodeCache.find("HS");
-	if (iter != _shaderByteCodeCache.end())
-		return iter->second;
-	return nullptr;
-}
-auto GraphicsPSO::getDomainShader() const -> WRL::ComPtr<ID3DBlob> {
-	auto iter = _shaderByteCodeCache.find("DS");
-	if (iter != _shaderByteCodeCache.end())
-		return iter->second;
-	return nullptr;
+auto GraphicsPSO::getGeometryShader() const -> std::shared_ptr<IShader> {
+	return _shaders[ShaderIndex::Geometry];
 }
 
 auto GraphicsPSO::getInputLayout() const -> const std::vector<D3D12_INPUT_ELEMENT_DESC> & {
@@ -328,14 +284,7 @@ void GraphicsPSO::finalize() {
 	if (!_dirty)
 		return;
 
-	std::vector<WRL::ComPtr<ID3DBlob>> shaders {
-		getVertexShader(),
-		getHullShader(),
-		getDomainShader(),
-		getGeometryShader(),
-		getPixelShader()
-	};
-
+	std::vector<std::shared_ptr<IShader>> shaders(_shaders.begin(), _shaders.end());
 	assert(_pRootSignature != nullptr && "No root signature is provided");
 	generateBoundResourceMap(shaders);
 
@@ -349,70 +298,32 @@ void GraphicsPSO::finalize() {
 	_dirty = false;
 }
 
-std::shared_ptr<PSO> GraphicsPSO::clone(const std::string &name) {
+auto GraphicsPSO::clone(const std::string &name) -> std::shared_ptr<PSO> {
 	auto pRes = std::make_shared<dx12libTool::MakeGraphicsPSO>(_pDevice, name);
 	pRes->_dirty = this->_dirty;
 	pRes->_pPSO = this->_pPSO;
 	pRes->_psoDesc = this->_psoDesc;
 	pRes->_pRootSignature = this->_pRootSignature;
-	pRes->_shaderByteCodeCache = this->_shaderByteCodeCache;
+	pRes->_shaders = this->_shaders;
 	pRes->_inputLayout = this->_inputLayout;
 	return std::static_pointer_cast<PSO>(pRes);
 }
 
-D3D12_SHADER_BYTECODE GraphicsPSO::cacheByteCode(const std::string &name, const void *pData, size_t size) {
-	if (pData == nullptr) {
-		_shaderByteCodeCache.erase(name);
-		return { nullptr, 0 };
-	}
-	_dirty = true;
-	WRL::ComPtr<ID3DBlob> pBuffer;
-	ThrowIfFailed(D3DCreateBlob(size, &pBuffer));
-	std::memcpy(pBuffer->GetBufferPointer(), pData, size);
-	_shaderByteCodeCache[name] = pBuffer;
-	return { pBuffer->GetBufferPointer(), pBuffer->GetBufferSize() };
-}
-
-D3D12_SHADER_BYTECODE GraphicsPSO::cacheByteCode(const std::string &name, WRL::ComPtr<ID3DBlob> pByteCode) {
-	if (pByteCode == nullptr) {
-		_shaderByteCodeCache.erase(name);
-		return { nullptr, 0 };
-	}
-	_dirty = true;
-	_shaderByteCodeCache[name] = pByteCode;
-	return { pByteCode->GetBufferPointer(), pByteCode->GetBufferSize() };
-}
-
 /* ****************************************************************************************** */
 
-void ComputePSO::setComputeShader(const void *pBinary, size_t size) {
-	WRL::ComPtr<ID3DBlob> pBuffer;
-	ThrowIfFailed(D3DCreateBlob(size, &pBuffer));
-	std::memcpy(pBuffer->GetBufferPointer(), pBinary, size);
-	setComputeShader(pBuffer);
-}
-
-void ComputePSO::setComputeShader(const D3D12_SHADER_BYTECODE &Binary) {
-	WRL::ComPtr<ID3DBlob> pBuffer;
-	ThrowIfFailed(D3DCreateBlob(Binary.BytecodeLength, &pBuffer));
-	std::memcpy(pBuffer->GetBufferPointer(), Binary.pShaderBytecode, Binary.BytecodeLength);
-	setComputeShader(pBuffer);
-}
-
-void ComputePSO::setComputeShader(WRL::ComPtr<ID3DBlob> pByteCode) {
+void ComputePSO::setComputeShader(std::shared_ptr<IShader> pShader) {
 	_dirty = true;
-	_psoDesc.CS = { pByteCode->GetBufferPointer(), pByteCode->GetBufferSize() };
-	_pCSShaderByteCode = pByteCode;
+	_psoDesc.CS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
+	_pComputeShader = std::move(pShader);
 }
 
-auto ComputePSO::getComputeShader() const -> WRL::ComPtr<ID3DBlob> {
-	return _pCSShaderByteCode;
+auto ComputePSO::getComputeShader() const -> std::shared_ptr<IShader> {
+	return _pComputeShader;
 }
 
 auto ComputePSO::getThreadGroup() const -> std::array<UINT, 3> {
 	return _threadGroup;
 }
-
 
 static size_t divideByMultiple(size_t value, size_t alignment) {
 	return ((value + alignment - 1) / alignment);
@@ -432,23 +343,18 @@ auto ComputePSO::calcDispatchArgs(size_t x, size_t y, size_t z) const -> std::ar
 std::shared_ptr<PSO> ComputePSO::clone(const std::string &name) {
 	auto pRes = std::make_shared<dx12libTool::MakeComputePSO>(_pDevice, name);
 	pRes->_psoDesc = _psoDesc;
-	pRes->_pCSShaderByteCode = _pCSShaderByteCode;
+	pRes->_pComputeShader = _pComputeShader;
 	return pRes;
 }
 
 void ComputePSO::finalize() {
+	assert(_pComputeShader != nullptr);
 	auto pDevice = _pDevice.lock()->getD3DDevice();
 	_psoDesc.pRootSignature = _pRootSignature->getRootSignature().Get();
 
-	auto pComputeShader = getComputeShader();
-	generateBoundResourceMap({ pComputeShader });
-
-	WRL::ComPtr<ID3D12ShaderReflection> pShaderRef = nullptr;
-	ThrowIfFailed(D3DReflect(pComputeShader->GetBufferPointer(),
-		pComputeShader->GetBufferSize(),
-		IID_PPV_ARGS(&pShaderRef)
-	));
-
+	assert(_pComputeShader != nullptr);
+	generateBoundResourceMap({ _pComputeShader });
+	WRL::ComPtr<ID3D12ShaderReflection> pShaderRef = _pComputeShader->getReflect();
 	assert(pShaderRef != nullptr);
 	pShaderRef->GetThreadGroupSize(&_threadGroup[0], &_threadGroup[1], &_threadGroup[2]);
 

@@ -1,5 +1,6 @@
 #include "GenerateMipsPSO.h"
 #include "Dx12lib/Device/Device.h"
+#include "Dx12lib/Pipeline/FXCShader.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "Dx12lib/Pipeline/RootSignature.h"
 
@@ -15,25 +16,15 @@ GenerateMipsPSO::GenerateMipsPSO(std::weak_ptr<Device> pDevice) {
 		compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 	#endif
 
-	HRESULT hr = S_OK;
-	WRL::ComPtr<ID3DBlob> errors;
-	hr = D3DCompile(g_GenerateMips_CS_data,
-		sizeof(g_GenerateMips_CS_data),
-		"GenerateMips_CS.hlsl",
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"CS",
-		"cs_5_1",
-		0,
-		0,
-		&_pComputeShader,
-		&errors
-	);
+	_pComputeShader = std::make_shared<FXCShader>();
 
-	if (FAILED(hr)) {
-		OutputDebugString(static_cast<char *>(errors->GetBufferPointer()));
-		ThrowIfFailed(hr);
-	}
+	CompileFormMemoryArgs compileArgs;
+	compileArgs.fileName = "GenerateMips_CS.hlsl";
+	compileArgs.target = "cs_5_1";
+	compileArgs.entryPoint = "CS";
+	compileArgs.pData = g_GenerateMips_CS_data;
+	compileArgs.sizeInByte = sizeof(g_GenerateMips_CS_data);
+	_pComputeShader->compileFormMemory(compileArgs);
 
 	auto pSharedDevice = pDevice.lock();
 	auto pRootSignature = pSharedDevice->createRootSignature(3, 1);

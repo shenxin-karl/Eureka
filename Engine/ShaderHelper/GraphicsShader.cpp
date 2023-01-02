@@ -8,6 +8,7 @@
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
 #include "ShaderLoader.h"
+#include "Dx12lib/Pipeline/DXCShader.h"
 #include "Foundation/Exception.h"
 
 namespace Eureka {
@@ -129,7 +130,7 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 	}
 	macros.push_back(D3D_SHADER_MACRO{ nullptr, nullptr });
 	
-	using FuncType = void (dx12lib::GraphicsPSO:: *)(WRL::ComPtr<ID3DBlob>);
+	using FuncType = void (dx12lib::GraphicsPSO:: *)(std::shared_ptr<dx12lib::IShader>);
 	constexpr FuncType setterList[] = {
 		&dx12lib::GraphicsPSO::setVertexShader,
 		&dx12lib::GraphicsPSO::setHullShader,
@@ -138,14 +139,29 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 		&dx12lib::GraphicsPSO::setPixelShader,
 	};
 
-	std::string versionList[] = { "vs_5_1", "hs_5_1", "ds_5_1", "gs_5_1", "ps_5_1" };
+	std::string versionList[] = { "vs_6_0", "hs_6_0", "ds_6_0", "gs_6_0", "ps_6_0" };
 
 	auto pSharedDevice = _pDevice.lock();
 	auto pGraphicsPSO = pSharedDevice->createGraphicsPSO(key);
 	auto pGraphicsPSOPtr = pGraphicsPSO.get();
+
+	auto path = std::filesystem::path(_shaderFileName).lexically_normal();
+	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string());
+
 	for (auto &entry : _entryPoints) {
 		size_t index = static_cast<size_t>(entry.shaderType);
-		auto pBinaryBlob = ShaderHelper::compile(
+		auto pShader = std::make_shared<dx12lib::DXCShader>();
+		dx12lib::CompileFormMemoryArgs compileArgs;
+		compileArgs.fileName = _shaderFileName;
+		compileArgs.target = versionList[index];
+		compileArgs.entryPoint = entry.entryPoint;
+		compileArgs.pInclude = pShaderInclude.get();
+		compileArgs.pMacro = macros.data();
+		compileArgs.pData = _shaderContent.data();
+		compileArgs.sizeInByte = _shaderContent.length();
+		pShader->compileFormMemory(compileArgs);
+
+		auto pBinaryBlob = ShaderHelper::DXCCompile(
 			_shaderContent.data(),
 			_shaderContent.length(),
 			_shaderFileName,

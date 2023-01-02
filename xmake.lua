@@ -18,5 +18,7 @@ end
 
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
 includes("xmake/rule/utils_dxc.lua")
+includes("xmake/rule/utiles_build_in.lua")
+
 includes("Dx12Renderer/xmake.lua")
 includes("Engine/xmake.lua")

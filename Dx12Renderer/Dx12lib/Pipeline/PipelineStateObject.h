@@ -42,7 +42,7 @@ class PSO {
 public:
 	using BoundResourceMap	= std::unordered_map<std::string, BoundResource>;
 public:
-	explicit PSO(std::weak_ptr<Device> pDevice, const std::string &name);
+	explicit PSO(std::weak_ptr<Device> pDevice, std::string name);
 	PSO(const PSO &) = delete;
 	PSO &operator=(const PSO &) = delete;
 	void setRootSignature(std::shared_ptr<RootSignature> pRootSignature);
@@ -50,7 +50,6 @@ public:
 	WRL::ComPtr<ID3D12PipelineState> getPipelineStateObject() const;
 	const std::string &getName() const;
 	bool isDirty() const;
-	auto getHashCode() const;
 	auto getBoundResource(const std::string &name) const -> std::optional<BoundResource>;
 	auto getBoundResourceMap() const -> const BoundResourceMap &;
 	auto getDevice() const -> std::weak_ptr<Device>;
@@ -58,11 +57,10 @@ public:
 	virtual std::shared_ptr<PSO> clone(const std::string &name) = 0;
 	virtual ~PSO() = default;
 protected:
-	void generateBoundResourceMap(std::vector<WRL::ComPtr<ID3DBlob>> shaders);
+	void generateBoundResourceMap(std::vector<std::shared_ptr<IShader>> shaders);
 protected:
 	bool                             _dirty = true;
 	std::string                      _name;
-	std::size_t						 _hashCode;
 	std::shared_ptr<RootSignature>   _pRootSignature;
 	WRL::ComPtr<ID3D12PipelineState> _pPSO;
 	std::weak_ptr<Device>            _pDevice;
@@ -83,53 +81,44 @@ public:
 	void setInputLayout(std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout);
 	void setInputLayout(const std::initializer_list<D3D12_INPUT_ELEMENT_DESC> &inputLayout);
 	void setPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE IBProps);
-	
-	void setVertexShader(const void *pBinary, size_t size);
-	void setPixelShader(const void *pBinary, size_t size);
-	void setGeometryShader(const void *pBinary, size_t size);
-	void setHullShader(const void *pBinary, size_t size);
-	void setDomainShader(const void *pBinary, size_t size);
 
-	void setVertexShader(WRL::ComPtr<ID3DBlob> pByteCode);
-	void setPixelShader(WRL::ComPtr<ID3DBlob> pByteCode);
-	void setGeometryShader(WRL::ComPtr<ID3DBlob> pByteCode);
-	void setHullShader(WRL::ComPtr<ID3DBlob> pByteCode);
-	void setDomainShader(WRL::ComPtr<ID3DBlob> pByteCode);
+	void setVertexShader(std::shared_ptr<IShader> pShader);
+	void setPixelShader(std::shared_ptr<IShader> pShader);
+	void setGeometryShader(std::shared_ptr<IShader> pShader);
+	void setHullShader(std::shared_ptr<IShader> pShader);
+	void setDomainShader(std::shared_ptr<IShader> pShader);
 
-	void setVertexShader(const D3D12_SHADER_BYTECODE &pByteCode);
-	void setPixelShader(const D3D12_SHADER_BYTECODE &pByteCode);
-	void setGeometryShader(const D3D12_SHADER_BYTECODE &pByteCode);
-	void setHullShader(const D3D12_SHADER_BYTECODE &pByteCode);
-	void setDomainShader(const D3D12_SHADER_BYTECODE &pByteCode);
-
-	auto getVertexShader() const->WRL::ComPtr<ID3DBlob>;
-	auto getPixelShader() const->WRL::ComPtr<ID3DBlob>;
-	auto getGeometryShader() const->WRL::ComPtr<ID3DBlob>;
-	auto getHullShader() const->WRL::ComPtr<ID3DBlob>;
-	auto getDomainShader() const -> WRL::ComPtr<ID3DBlob>;
+	auto getHullShader() const -> std::shared_ptr<IShader>;
+	auto getDomainShader() const -> std::shared_ptr<IShader>;
+	auto getVertexShader() const -> std::shared_ptr<IShader>;
+	auto getGeometryShader() const -> std::shared_ptr<IShader>;
+	auto getPixelShader() const -> std::shared_ptr<IShader>;
 	auto getInputLayout() const -> const std::vector<D3D12_INPUT_ELEMENT_DESC> &;
 
 	const D3D12_GRAPHICS_PIPELINE_STATE_DESC &getDesc() const;
-	virtual void finalize() override;
-	virtual std::shared_ptr<PSO> clone(const std::string &name) override; 
+	void finalize() override;
+	auto clone(const std::string &name) -> std::shared_ptr<PSO> override; 
 protected:
-	explicit GraphicsPSO(std::weak_ptr<Device> pDevice, const std::string &name);
+	explicit GraphicsPSO(std::weak_ptr<Device> pDevice, std::string name);
+	enum ShaderIndex {
+		Hull     = 0,
+		Domain   = 1,
+		Vertex   = 2,
+		Geometry = 3,
+		Pixel    = 4,
+		ShaderCount = Pixel+1
+	};
 private:
-	D3D12_SHADER_BYTECODE cacheByteCode(const std::string &name, const void *pData, size_t size);
-	D3D12_SHADER_BYTECODE cacheByteCode(const std::string &name, WRL::ComPtr<ID3DBlob> pByteCode);
-private:
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC            _psoDesc;
-	std::vector<D3D12_INPUT_ELEMENT_DESC>		  _inputLayout;
-	std::map<std::string, WRL::ComPtr<ID3DBlob>>  _shaderByteCodeCache;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC  _psoDesc;
+	std::vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
+	std::array<std::shared_ptr<IShader>, ShaderCount> _shaders;
 };
 
 
 class ComputePSO : public PSO {
 public:
-	void setComputeShader(const void *pBinary, size_t size);
-	void setComputeShader(const D3D12_SHADER_BYTECODE &Binary);
-	void setComputeShader(WRL::ComPtr<ID3DBlob> pByteCode);
-	auto getComputeShader() const -> WRL::ComPtr<ID3DBlob>;
+	void setComputeShader(std::shared_ptr<IShader> pShader);
+	auto getComputeShader() const -> std::shared_ptr<IShader>;
 	auto getThreadGroup() const -> std::array<UINT, 3>;
 	auto calcDispatchArgs(size_t x, size_t y = 1, size_t z = 1) const -> std::array<size_t, 3>;
 	std::shared_ptr<PSO> clone(const std::string &name) override;
@@ -137,8 +126,8 @@ public:
 protected:
 	ComputePSO(std::weak_ptr<Device> pDevice, const std::string &name);
 private:
-	WRL::ComPtr<ID3DBlob> _pCSShaderByteCode;
 	std::array<UINT, 3> _threadGroup = { 1, 1, 1 };
+	std::shared_ptr<IShader> _pComputeShader;
 	D3D12_COMPUTE_PIPELINE_STATE_DESC _psoDesc;
 };
 

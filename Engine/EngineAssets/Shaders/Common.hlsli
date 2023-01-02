@@ -10,7 +10,7 @@ cbuffer CbPrePass : register(b8, PRE_PASS_SPACE) {
 	float4x4 gMatInvView;
 	float4x4 gMatProj;
 	float4x4 gMatInvProj;
-	float4x4 gMatViewProj;
+	float4x4 gMatViewProj; 
 	float4x4 gMatInvViewProj;
 	float3   gCameraPos;
 	float	 gNearClip;

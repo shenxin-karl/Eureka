@@ -9,6 +9,7 @@
 // shaders
 #include "UpdatePointLightBoundingSphere_CS.h"
 #include "UpdateSpotLightBoundingSphere_CS.h"
+#include "Dx12lib/Pipeline/DXCShader.h"
 
 using namespace Math;
 
@@ -39,18 +40,12 @@ TileBased::TileBased(const std::string &passName,
 	pRootSignature->finalize();
 
 	_pUpdatePointLightBoundingSpherePipeline = pSharedDevice->createComputePSO("UpdateSpotLightBoundingSpherePSO");
-	_pUpdatePointLightBoundingSpherePipeline->setComputeShader(
-		g_UpdatePointLightBoundingSphere_CS,
-		sizeof(g_UpdatePointLightBoundingSphere_CS)
-	);
+	_pUpdatePointLightBoundingSpherePipeline->setComputeShader(dx12lib::DXCShader::make(g_UpdatePointLightBoundingSphere_CS));
 	_pUpdatePointLightBoundingSpherePipeline->setRootSignature(pRootSignature);
 	_pUpdatePointLightBoundingSpherePipeline->finalize();
 
 	_pUpdateSpotLightBoundingSpherePipeline = pSharedDevice->createComputePSO("UpdateSpotLightBoundingSpherePipePSO");
-	_pUpdateSpotLightBoundingSpherePipeline->setComputeShader(
-		g_UpdateSpotLightBoundingSphere_CS,
-		sizeof(g_UpdateSpotLightBoundingSphere_CS)
-	);
+	_pUpdateSpotLightBoundingSpherePipeline->setComputeShader(dx12lib::DXCShader::make(g_UpdateSpotLightBoundingSphere_CS));
 	_pUpdateSpotLightBoundingSpherePipeline->setRootSignature(pRootSignature);
 	_pUpdateSpotLightBoundingSpherePipeline->finalize();
 }

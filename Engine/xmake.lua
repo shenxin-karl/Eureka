@@ -41,9 +41,8 @@ function CopyEngineDLL(target)
 end
 
 target("Engine")
-    set_languages("c++20")
+    set_languages("c++latest")
     set_kind("binary")
-    add_cxflags("/MP /std:c++latest /Wall /sdl /W4")
     add_headerfiles("**.h")
     add_headerfiles("**.hpp")
     add_files("**.cpp")
@@ -57,4 +56,27 @@ target("Engine")
 
     set_values("EUREKA_RENDERER_DIR", EUREKA_RENDERER_DIR)
     before_run(CopyEngineDLL)
+
+    add_deps("BuildInShader")
+    add_links("BuildInShader")
+target_end()
+
+
+target("BuildInShader")
+    set_languages("c++20")
+    set_kind("static")
+
+    local include_dir = path.join(os.scriptdir(), "EngineAssets", "BuildInShader")
+    add_includedirs(include_dir, { public = true })
+    add_rules("utils.build_in", {
+        extensions = { ".hlsl", ".hlsli" },
+        namespace = "BuildIn",
+        output = "BuildInShader",
+        include_path = include_dir
+    })
+
+    add_files("**.hlsl")
+    add_files("**.hlsli")
+    add_headerfiles("**.hlsl")
+    add_headerfiles("**.hlsli")
 target_end()

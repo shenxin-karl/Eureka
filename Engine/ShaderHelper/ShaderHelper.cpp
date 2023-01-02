@@ -8,21 +8,21 @@
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
 #include "ShaderLoader.h"
+#include "Dx12lib/Pipeline/DXCShader.h"
+#include "Dx12lib/Pipeline/FXCShader.h"
 #include "Foundation/Exception.h"
 
 namespace Eureka {
 
-WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
-	const std::string &fileName,
-	const D3D_SHADER_MACRO *defines,
-	const std::string &entryPoint,
-	const std::string &target)
+std::shared_ptr<dx12lib::IShader> ShaderHelper::DXCCompile(const std::string &fileName, const D3D_SHADER_MACRO *defines,
+	const std::string &entryPoint, const std::string &target)
 {
 	auto shaderContentView = ShaderLoader::instance()->open(fileName);
 	if (shaderContentView.empty())
 		Exception::Throw("ShaderHelper::compile can't open the file {}", fileName);
 
-	return compile(
+	return compileImpl(
+		ShaderType::DXC,
 		shaderContentView.data(),
 		shaderContentView.length(),
 		fileName,
@@ -32,48 +32,57 @@ WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
 	);
 }
 
-WRL::ComPtr<ID3DBlob> ShaderHelper::compile(
-	const char *fileContent,
-	std::size_t sizeInByte,
-	const std::string &sourceName,
-	const D3D_SHADER_MACRO *defines,
-	const std::string &entryPoint,
+std::shared_ptr<dx12lib::IShader> ShaderHelper::DXCCompile(const char *fileContent, std::size_t sizeInByte,
+	const std::string &sourceName, const D3D_SHADER_MACRO *defines, const std::string &entryPoint,
 	const std::string &target)
 {
-	UINT compilesFlags = 0;
-#if defined(DEBUG) || defined(_DEBUG) 
-	compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-
-	auto path = std::filesystem::path(sourceName).lexically_normal();
-	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string());
-
-	HRESULT hr = S_OK;
-	WRL::ComPtr<ID3DBlob> byteCode;
-	WRL::ComPtr<ID3DBlob> errors;
-	hr = D3DCompile(fileContent,
+	return compileImpl(
+		ShaderType::DXC,
+		fileContent,
 		sizeInByte,
-		sourceName.c_str(),
+		sourceName,
 		defines,
-		pShaderInclude.get(),
-		entryPoint.c_str(),
-		target.c_str(),
-		compilesFlags,
-		0,
-		&byteCode,
-		&errors
+		entryPoint,
+		target
 	);
+}
 
-	if (FAILED(hr)) {
-		OutputDebugString(static_cast<char *>(errors->GetBufferPointer()));
-		ThrowIfFailed(hr);
-	}
-	return byteCode;
+std::shared_ptr<dx12lib::IShader> ShaderHelper::FXCCompile(const std::string &fileName, const D3D_SHADER_MACRO *defines,
+	const std::string &entryPoint, const std::string &target)
+{
+	auto shaderContentView = ShaderLoader::instance()->open(fileName);
+	if (shaderContentView.empty())
+		Exception::Throw("ShaderHelper::compile can't open the file {}", fileName);
+
+	return compileImpl(
+		ShaderType::FXC,
+		shaderContentView.data(),
+		shaderContentView.length(),
+		fileName,
+		defines,
+		entryPoint,
+		target
+	);
+}
+
+std::shared_ptr<dx12lib::IShader> ShaderHelper::FCXCompile(const char *fileContent, std::size_t sizeInByte,
+	const std::string &sourceName, const D3D_SHADER_MACRO *defines, const std::string &entryPoint,
+	const std::string &target)
+{
+	return compileImpl(
+		ShaderType::FXC,
+		fileContent,
+		sizeInByte,
+		sourceName,
+		defines,
+		entryPoint,
+		target
+	);
 }
 
 void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevice,
-	std::vector<WRL::ComPtr<ID3DBlob>> shaders,
-	std::shared_ptr<dx12lib::PSO> pso) 
+	std::vector<std::shared_ptr<dx12lib::IShader>> shaders,
+    std::shared_ptr<dx12lib::PSO> pso) 
 {
 	std::vector<WRL::ComPtr<ID3D12ShaderReflection>> shaderRefs(shaders.size(), nullptr);
 	std::unordered_map<std::string, D3D12_SHADER_INPUT_BIND_DESC> boundResources;
@@ -81,12 +90,8 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevic
 		if (!shaders[i])
 			continue;
 
-		ThrowIfFailed(D3DReflect(shaders[i]->GetBufferPointer(),
-			shaders[i]->GetBufferSize(),
-			IID_PPV_ARGS(&shaderRefs[i])
-		));
-
-		if (!shaderRefs[i])
+		shaderRefs[i] = shaders[i]->getReflect();
+		if (shaderRefs[i] == nullptr)
 			continue;
 
 		D3D12_SHADER_DESC desc;
@@ -192,7 +197,7 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevic
 }
 
 void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::GraphicsPSO> pso) {
-	std::vector<WRL::ComPtr<ID3DBlob>> shaders {
+	std::vector<std::shared_ptr<dx12lib::IShader>> shaders {
 		pso->getVertexShader(),
 		pso->getHullShader(),
 		pso->getHullShader(),
@@ -203,17 +208,13 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::GraphicsPSO> p
 }
 
 void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::ComputePSO> pso) {
-	std::vector<WRL::ComPtr<ID3DBlob>> shaders{ pso->getComputeShader() };
+	std::vector<std::shared_ptr<dx12lib::IShader>> shaders{ pso->getComputeShader() };
 	generateRootSignature(pso->getDevice().lock(), shaders, pso);
 }
 
 void ShaderHelper::generateVertexInput(std::shared_ptr<dx12lib::GraphicsPSO> pGraphicsPSO) {
-	WRL::ComPtr<ID3D12ShaderReflection> pShaderRef;
 	auto pVertexBuffer = pGraphicsPSO->getVertexShader();
-	ThrowIfFailed(D3DReflect(pVertexBuffer->GetBufferPointer(),
-		pVertexBuffer->GetBufferSize(),
-		IID_PPV_ARGS(&pShaderRef)
-	));
+	WRL::ComPtr<ID3D12ShaderReflection> pShaderRef = pVertexBuffer->getReflect();
 
 	assert(pShaderRef != nullptr);
 	D3D12_SHADER_DESC desc;
@@ -344,6 +345,30 @@ const std::array<CD3DX12_STATIC_SAMPLER_DESC, 8> &ShaderHelper::getStaticSampler
 		getPointShadowCompareStaticSampler(7)
 	};
 	return samplers;
+}
+
+std::shared_ptr<dx12lib::IShader> ShaderHelper::compileImpl(ShaderType shaderType, const char *fileContent,
+	std::size_t sizeInByte, const std::string &sourceName, const D3D_SHADER_MACRO *defines,
+	const std::string &entryPoint, const std::string &target)
+{
+	std::shared_ptr<dx12lib::IShader> pShader;
+	if (shaderType == ShaderType::DXC)
+		pShader = std::make_shared<dx12lib::DXCShader>();
+	else
+		pShader = std::make_shared<dx12lib::FXCShader>();
+
+	auto path = std::filesystem::path(sourceName).lexically_normal();
+	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string());
+	dx12lib::CompileFormMemoryArgs compileArgs;
+	compileArgs.fileName = sourceName;
+	compileArgs.target = target;
+	compileArgs.entryPoint = entryPoint;
+	compileArgs.pInclude = pShaderInclude.get();
+	compileArgs.pMacro = defines;
+	compileArgs.pData = fileContent;
+	compileArgs.sizeInByte = sizeInByte;
+	pShader->compileFormMemory(compileArgs);
+	return pShader;
 }
 
 

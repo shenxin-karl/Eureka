@@ -71,8 +71,12 @@ void DXCShader::compileFormMemory(const CompileFormMemoryArgs &args) {
     args.push_back(L"-Od");
 #endif
 
-    for (auto &macro : args.macros)
-        compileFlags.push_back(to_wstring(std::format("-D%s=%s", macro.name, macro.value)));
+    while (args.pMacro != nullptr) {
+	    if (args.pMacro->Name == nullptr && args.pMacro->Definition == nullptr)
+            break;
+        auto flag = std::format("-D%s=%s", args.pMacro->Name, args.pMacro->Definition);
+        compileFlags.push_back(to_wstring(flag));
+    }
 
     std::vector<LPCWCHAR> pszArgs(compileFlags.size());
     for (size_t i = 0; i < compileFlags.size(); ++i)

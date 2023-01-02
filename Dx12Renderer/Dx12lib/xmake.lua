@@ -15,11 +15,10 @@ function link_dxc_compiler()
 end
 
 target("Dx12lib")
-    set_languages("c++20")
+    set_languages("c++latest")
     set_group("Dx12Renderer")
     set_kind("static")
     add_rules("utils.bin2c", {extensions = {".hlsl"}})
-    add_cxflags("/MP /std:c++latest /Wall /sdl /W4")
     add_defines("_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING", {public=true})
     add_headerfiles("**.h")
     add_headerfiles("**.hpp")

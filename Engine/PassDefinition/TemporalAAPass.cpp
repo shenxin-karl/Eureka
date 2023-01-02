@@ -9,6 +9,7 @@
 // shaders
 #include "TAAResolveCS_CS.h"
 #include "SharpenTAACS_CS.h"
+#include "Dx12lib/Pipeline/DXCShader.h"
 
 using namespace Math;
 
@@ -51,7 +52,7 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 	);
 	_pTemporalPipeline->setComputeShader(pBlob);
 #else
-	_pTemporalPipeline->setComputeShader(g_TAAResolveCS_CS, sizeof(g_TAAResolveCS_CS));
+	_pTemporalPipeline->setComputeShader(dx12lib::DXCShader::make(g_TAAResolveCS_CS));
 #endif
 	_pTemporalPipeline->setRootSignature(pRootSignature);
 	_pTemporalPipeline->finalize();
@@ -76,7 +77,7 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 	);
 	_pSharpenPipeline->setComputeShader(pBlob1);
 #else
-	_pSharpenPipeline->setComputeShader(g_SharpenTAACS_CS, sizeof(g_SharpenTAACS_CS));
+	_pSharpenPipeline->setComputeShader(dx12lib::DXCShader::make(g_SharpenTAACS_CS));
 #endif
 	_pSharpenPipeline->setRootSignature(pSharpenRootSignature);
 	_pSharpenPipeline->finalize();
