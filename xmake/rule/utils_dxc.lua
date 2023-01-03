@@ -35,22 +35,22 @@ rule("utils.dxc")
         local program = find_dxc.find_program(target)
 
         for _, compile_info in ipairs(compile_infos) do
-            local args = { "/Qstrip_rootsignature", "/nologo", "/Zi" }
-            table.insert(args, "/E" .. compile_info.entryPoint)
+            local args = { "-Qstrip_rootsignature", "-nologo", "-Zi" }
+            table.insert(args, "-E" .. compile_info.entryPoint)
 
             local includedirs = config.get_include_dirs()
             if includedirs then
                 for _, dir in ipairs(includedirs) do
-                    table.insert(args, "/I "..dir)
+                    table.insert(args, "-I "..dir)
                 end
             end
             
             if is_mode("debug") then
-                table.insert(args, "/Od")
+                table.insert(args, "-Od")
             end
 
             for k, v in pairs(compile_info.macros or {}) do
-                table.insert(args, string.format("/D%s=%s", tostring(k), tostring(v)))
+                table.insert(args, string.format("-D%s=%s", tostring(k), tostring(v)))
             end
 
             local output = compile_info.output
@@ -59,11 +59,13 @@ rule("utils.dxc")
             end
             
             local headerfile = path.join(headerdir, output .. ".h")
-            local outputPdbFileName =  path.join(headerdir, output .. ".pdb")
-            table.insert(args, "/Fh " .. headerfile)
-            table.insert(args, "/Fd " .. outputPdbFileName)
-            table.insert(args, "/Vn " .. ("g_" .. output))
-            table.insert(args, "/T" .. compile_info.target)
+            local outputPdbFileName = path.join(headerdir, output .. ".pdb")
+            local outputRefFileName = path.join(headerdir, output .. ".re")
+            table.insert(args, "-Fh " .. headerfile)
+            table.insert(args, "-Fd " .. outputPdbFileName)
+            table.insert(args, "-Vn " .. ("g_" .. output))
+            table.insert(args, "-T" .. compile_info.target)
+            table.insert(args, "-Fre ".. outputRefFileName)
             table.insert(args, path.absolute(sourcefile_bin))
             batchcmds:vrunv(program, args)
 
