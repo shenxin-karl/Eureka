@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
 target("Math")
-    set_kind("headeronly")
+    set_kind("static")
     set_group("Dx12Renderer")
     add_headerfiles("**.h")
     add_headerfiles("**.hpp")

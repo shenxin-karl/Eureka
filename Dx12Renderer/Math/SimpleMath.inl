@@ -2039,7 +2039,7 @@ inline Matrix& Matrix::operator*= (const Matrix& M) noexcept
     using namespace DirectX;
     const XMMATRIX M1 = XMLoadFloat4x4(this);
     const XMMATRIX M2 = XMLoadFloat4x4(&M);
-    const XMMATRIX X = XMMatrixMultiply(M1, M2);
+    const XMMATRIX X = XMMatrixMultiply(M2, M1);
     XMStoreFloat4x4(this, X);
     return *this;
 }
@@ -2198,7 +2198,7 @@ inline Matrix operator* (const Matrix& M1, const Matrix& M2) noexcept
     using namespace DirectX;
     const XMMATRIX m1 = XMLoadFloat4x4(&M1);
     const XMMATRIX m2 = XMLoadFloat4x4(&M2);
-    const XMMATRIX X = XMMatrixMultiply(m1, m2);
+    const XMMATRIX X = XMMatrixMultiply(m2, m1);
 
     Matrix R;
     XMStoreFloat4x4(&R, X);
