@@ -12,8 +12,8 @@
 #include "InputSystem/window.h"
 #include "GameTimer/GameTimer.h"
 #include "Model/MeshManager.h"
-#include "ShaderHelper/GraphicsShader.h"
-#include "ShaderHelper/ShaderManager.h"
+#include "ShaderHelper/GraphicsPipeline.h"
+#include "ShaderHelper/PipelineManager.h"
 #include "AssimpLoader/ALTree.h"
 #include "Camera/Camera.h"
 #include "Camera/FPSCameraControl.h"
@@ -42,12 +42,12 @@ EurekaApplication::~EurekaApplication() {
 void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	MeshManager::SingletionEmplace();
 	TextureManager::SingletionEmplace();
-	ShaderManager::SingletionEmplace();
+	PipelineManager::SingletionEmplace();
 	GeometryGenerator::SingletionEmplace();
 
 	_pSwapChain->setVerticalSync(true);
 
-	ShaderManager::instance()->loading(_pDevice);
+	PipelineManager::instance()->initialize(_pDevice);
 	GeometryGenerator::instance()->loading();
 
 	CameraDesc cameraDesc;
@@ -94,13 +94,13 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	//	_models.push_back(std::move(pSphereModel));
 	//}
 
-	// loading
+	// initialize
 	loading(pDirectCtx);
 }
 
 void EurekaApplication::onDestroy() {
 	GeometryGenerator::SingletionDestory();
-	ShaderManager::SingletionDestory();
+	PipelineManager::SingletionDestory();
 	TextureManager::SingletionDestory();
 	MeshManager::SingletionDestory();
 }

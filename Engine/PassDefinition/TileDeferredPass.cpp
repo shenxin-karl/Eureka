@@ -1,8 +1,8 @@
 #include "TileDeferredPass.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "EngineDefinition/EngineDefinition.h"
-#include "ShaderHelper/ComputeShader.h"
-#include "ShaderHelper/ShaderManager.h"
+#include "ShaderHelper/ComputePipeline.h"
+#include "ShaderHelper/PipelineManager.h"
 
 using namespace Math;
 
@@ -15,7 +15,7 @@ TileDeferredPass::TileDeferredPass(const std::string &passName, dx12lib::IDirect
 , pDepthMap(this, "DepthMap")
 {
 	_pCbTile = directCtx.createFRConstantBuffer<CbTile>();
-	auto pTileDeferredShader = ShaderManager::instance()->getComputeShader("TileDeferred");
+	auto pTileDeferredShader = PipelineManager::instance()->getComputePipeline("TileDeferred");
 	_pPipeline = pTileDeferredShader->getPSO();
 }
 

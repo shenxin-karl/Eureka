@@ -6,10 +6,10 @@
 
 namespace Eureka {
 
-class ComputeShader {
+class ComputePipeline {
 	using ComputePSOMap = std::unordered_map<KeywordMask, std::shared_ptr<dx12lib::ComputePSO>, KeywordMask::Hasher>;
 public:
-	ComputeShader(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName);
+	ComputePipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName);
 	void setComputeShader(const std::string &entryPoints);
 	auto getPSO() const -> std::shared_ptr<dx12lib::ComputePSO>;
 	auto getPSO(const KeywordMask &keywordMask) const -> std::shared_ptr<dx12lib::ComputePSO>;

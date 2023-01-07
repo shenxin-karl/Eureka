@@ -25,7 +25,7 @@ struct ShaderEntryPoint {
 
 class GraphicsPipeline {
 public:
-	GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFilePath);
+	GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName);
 	~GraphicsPipeline();
 	void setDepthStencilFormat(DXGI_FORMAT depthStencilFormat);
 	void setRenderTargetFormat(DXGI_FORMAT renderTargetFormat);

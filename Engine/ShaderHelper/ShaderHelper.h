@@ -13,7 +13,7 @@ constexpr size_t kStaticSamplerCount = 8;
 class ShaderHelper {
 public:
 	static std::shared_ptr<dx12lib::IShader> DXCCompile(
-		const std::string &fileName,
+		const std::string &filePath,
 		const D3D_SHADER_MACRO *defines,
 		const std::string &entryPoint,
 		const std::string &target
@@ -21,14 +21,14 @@ public:
 	static std::shared_ptr<dx12lib::IShader> DXCCompile(
 		const char *fileContent,
 		std::size_t	sizeInByte,
-		const std::string &sourceName,
+		const std::string &sourcePath,
 		const D3D_SHADER_MACRO *defines,
 		const std::string &entryPoint,
 		const std::string &target
 	);
 
 	static std::shared_ptr<dx12lib::IShader> FXCCompile(
-		const std::string &fileName,
+		const std::string &filePath,
 		const D3D_SHADER_MACRO *defines,
 		const std::string &entryPoint,
 		const std::string &target
@@ -36,7 +36,7 @@ public:
 	static std::shared_ptr<dx12lib::IShader> FCXCompile(
 		const char *fileContent,
 		std::size_t	sizeInByte,
-		const std::string &sourceName,
+		const std::string &sourcePath,
 		const D3D_SHADER_MACRO *defines,
 		const std::string &entryPoint,
 		const std::string &target
@@ -46,6 +46,8 @@ public:
 		std::vector<std::shared_ptr<dx12lib::IShader>> shaders,
 		std::shared_ptr<dx12lib::PSO> pso
 	);
+
+	static std::shared_ptr<dx12lib::IShader> loadDxcShader(const std::string &path);
 
 	static void generateRootSignature(std::shared_ptr<dx12lib::GraphicsPSO> pso);
 	static void generateRootSignature(std::shared_ptr<dx12lib::ComputePSO> pso);
@@ -72,7 +74,7 @@ private:
 		ShaderType shaderType,
 		const char *fileContent,
 		std::size_t	sizeInByte,
-		const std::string &sourceName,
+		const std::string &sourcePath,
 		const D3D_SHADER_MACRO *defines,
 		const std::string &entryPoint,
 		const std::string &target

@@ -1,6 +1,6 @@
 #include "FXAAPass.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
-#include "ShaderHelper/GraphicsShader.h"
+#include "ShaderHelper/GraphicsPipeline.h"
 #include "Model/MeshManager.h"
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "ShaderHelper/ShaderHelper.h"

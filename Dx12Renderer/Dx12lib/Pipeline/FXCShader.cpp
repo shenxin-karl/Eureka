@@ -20,7 +20,7 @@ void FXCShader::compileFormMemory(const CompileFormMemoryArgs &args) {
 	WRL::ComPtr<ID3DBlob> errors;
 	hr = D3DCompile(args.pData,
 		args.sizeInByte,
-		args.fileName.c_str(),
+		args.filePath.c_str(),
 		args.pMacro,
 		args.pInclude,
 		args.entryPoint.c_str(),

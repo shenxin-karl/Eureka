@@ -98,7 +98,7 @@ std::weak_ptr<dx12lib::Device> CommandList::getDevice() const {
 std::shared_ptr<Texture> CommandList::createTextureFromFile(const std::wstring &fileName, bool sRGB, size_t genMip) {
 	auto pos = fileName.find_last_of(L".");
 	if (pos == std::wstring::npos) {
-		assert(false);
+		Exception::Throw("Cannot get the type of texture");
 		return nullptr;
 	}
 
@@ -153,7 +153,7 @@ void CommandList::setDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType,
 }
 
 void CommandList::setConstantBufferView(const ShaderRegister &sr, const ConstantBufferView &cbv) {
-	assert(_currentGPUState.pRootSignature != nullptr);
+	Exception::Assert(_currentGPUState.pRootSignature != nullptr, "RootSignature is nullptr");
 	assert(sr.slot.isCBV());
 	assert(cbv.valid());
 #ifdef DEBUG_MODE

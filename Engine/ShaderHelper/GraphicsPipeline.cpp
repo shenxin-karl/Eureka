@@ -1,10 +1,8 @@
-#include <iostream>
 #include <cassert>
-#include <Dx12lib/Tool/D3Dx12.h>
 #include <Dx12lib/Device/Device.h>
 #include <filesystem>
 #include <Dx12lib/Pipeline/PipelineStateObject.h>
-#include "GraphicsShader.h"
+#include "GraphicsPipeline.h"
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
 #include "ShaderLoader.h"
@@ -13,110 +11,110 @@
 
 namespace Eureka {
 
-GraphicsShader::GraphicsShader(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName) 
-: _shaderFileName(shaderFileName), _pDevice(std::move(pDevice)) 
+GraphicsPipeline::GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFilePath)
+: _shaderFilePath(shaderFilePath), _pDevice(std::move(pDevice))
 {
-	_shaderContent = ShaderLoader::instance()->open(shaderFileName);
+	_shaderContent = ShaderLoader::instance()->open(shaderFilePath);
 	if (_shaderContent.empty())
-		Exception::Throw("Can't open the file {}", _shaderFileName);
+		Exception::Throw("Can't open the file {}", _shaderFilePath);
 	_keywordMask.handleShaderContent(_shaderContent.data());
 }
 
-GraphicsShader::~GraphicsShader() {
+GraphicsPipeline::~GraphicsPipeline() {
 }
 
-void GraphicsShader::setDepthStencilFormat(DXGI_FORMAT depthStencilFormat) {
+void GraphicsPipeline::setDepthStencilFormat(DXGI_FORMAT depthStencilFormat) {
 	_DSVFormat = depthStencilFormat;
 }
 
-void GraphicsShader::setRenderTargetFormat(DXGI_FORMAT renderTargetFormat) {
+void GraphicsPipeline::setRenderTargetFormat(DXGI_FORMAT renderTargetFormat) {
 	_RTVFormats.clear();
 	_RTVFormats.push_back(renderTargetFormat);
 }
 
-void GraphicsShader::setRenderTargetFormats(std::vector<DXGI_FORMAT> renderTargetFormats) {
+void GraphicsPipeline::setRenderTargetFormats(std::vector<DXGI_FORMAT> renderTargetFormats) {
 	_RTVFormats = std::move(renderTargetFormats);
 }
 
-void GraphicsShader::addShaderFeatures(KeywordMask::FeatureKeywords featureKeywords) {
+void GraphicsPipeline::addShaderFeatures(KeywordMask::FeatureKeywords featureKeywords) {
 	_keywordMask.addShaderFeatures(std::move(featureKeywords));
 }
 
-void GraphicsShader::setVertexShader(const std::string &entryPoint) {
+void GraphicsPipeline::setVertexShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::VS));
 	_entryPoints.push_back({ ShaderType::VS, entryPoint });
 }
 
-void GraphicsShader::setHullShader(const std::string &entryPoint) {
+void GraphicsPipeline::setHullShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::VS));
 	_entryPoints.push_back({ ShaderType::VS, entryPoint });
 }
 
-void GraphicsShader::setDomainShader(const std::string &entryPoint) {
+void GraphicsPipeline::setDomainShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::DS));
 	_entryPoints.push_back({ ShaderType::DS, entryPoint });
 }
 
-void GraphicsShader::setGeometryShader(const std::string &entryPoint) {
+void GraphicsPipeline::setGeometryShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::GS));
 	_entryPoints.push_back({ ShaderType::GS, entryPoint });
 }
 
-void GraphicsShader::setPixelShader(const std::string &entryPoint) {
+void GraphicsPipeline::setPixelShader(const std::string &entryPoint) {
 	assert(!hasShader(ShaderType::PS));
 	_entryPoints.push_back({ ShaderType::PS, entryPoint });
 }
 
-void GraphicsShader::setBlendDesc(const D3D12_BLEND_DESC &blendDesc) {
+void GraphicsPipeline::setBlendDesc(const D3D12_BLEND_DESC &blendDesc) {
 	_blendDesc = blendDesc;
 }
 
-void GraphicsShader::setRasterizerDesc(const D3D12_RASTERIZER_DESC &rasterizerDesc) {
+void GraphicsPipeline::setRasterizerDesc(const D3D12_RASTERIZER_DESC &rasterizerDesc) {
 	_rasterizerDesc = rasterizerDesc;
 }
 
-void GraphicsShader::setDepthStencilDesc(const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc) {
+void GraphicsPipeline::setDepthStencilDesc(const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc) {
 	_depthStencilDesc = depthStencilDesc;
 }
 
-void GraphicsShader::setPrimitiveType(D3D12_PRIMITIVE_TOPOLOGY_TYPE type) {
+void GraphicsPipeline::setPrimitiveType(D3D12_PRIMITIVE_TOPOLOGY_TYPE type) {
 	_primitiveType = type;
 }
 
-auto GraphicsShader::getShaderContent() const -> std::string_view {
+auto GraphicsPipeline::getShaderContent() const -> std::string_view {
 	return _shaderContent;
 }
 
-auto GraphicsShader::getEntryPoints() const -> const std::vector<ShaderEntryPoint> & {
+auto GraphicsPipeline::getEntryPoints() const -> const std::vector<ShaderEntryPoint> &{
 	return _entryPoints;
 }
 
-auto GraphicsShader::getBlendDesc() const -> const D3D12_BLEND_DESC & {
+auto GraphicsPipeline::getBlendDesc() const -> const D3D12_BLEND_DESC &{
 	return _blendDesc;
 }
 
-auto GraphicsShader::getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC & {
+auto GraphicsPipeline::getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &{
 	return _rasterizerDesc;
 }
 
-auto GraphicsShader::getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC & {
+auto GraphicsPipeline::getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &{
 	return _depthStencilDesc;
 }
 
-auto GraphicsShader::getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE {
+auto GraphicsPipeline::getPrimitiveType() const -> D3D12_PRIMITIVE_TOPOLOGY_TYPE {
 	return _primitiveType;
 }
 
-auto GraphicsShader::getPSO() const -> std::shared_ptr<dx12lib::GraphicsPSO> {
+auto GraphicsPipeline::getPSO() const -> std::shared_ptr<dx12lib::GraphicsPSO> {
 	return getPSO(_keywordMask);
 }
 
-auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared_ptr<dx12lib::GraphicsPSO> {
+auto GraphicsPipeline::getPSO(const KeywordMask &keywordMask) const -> std::shared_ptr<dx12lib::GraphicsPSO> {
 	auto iter = _psoMap.find(keywordMask);
 	if (iter != _psoMap.end())
 		return iter->second;
 
-	std::string key = _shaderFileName;
+	std::string key = _shaderFilePath;
 	std::vector<D3D_SHADER_MACRO> macros;
 	for (size_t i = 0; i < kMaxKeyword; ++i) {
 		if (keywordMask.getBitMask().test(i)) {
@@ -125,11 +123,11 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 			macros.push_back(D3D_SHADER_MACRO{
 				.Name = pKeyword->c_str(),
 				.Definition = nullptr
-			});
+				});
 		}
 	}
 	macros.push_back(D3D_SHADER_MACRO{ nullptr, nullptr });
-	
+
 	using FuncType = void (dx12lib::GraphicsPSO:: *)(std::shared_ptr<dx12lib::IShader>);
 	constexpr FuncType setterList[] = {
 		&dx12lib::GraphicsPSO::setVertexShader,
@@ -145,14 +143,14 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 	auto pGraphicsPSO = pSharedDevice->createGraphicsPSO(key);
 	auto pGraphicsPSOPtr = pGraphicsPSO.get();
 
-	auto path = std::filesystem::path(_shaderFileName).lexically_normal();
+	auto path = std::filesystem::path(_shaderFilePath).lexically_normal();
 	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string());
 
 	for (auto &entry : _entryPoints) {
 		size_t index = static_cast<size_t>(entry.shaderType);
 		auto pShader = std::make_shared<dx12lib::DXCShader>();
 		dx12lib::CompileFormMemoryArgs compileArgs;
-		compileArgs.fileName = _shaderFileName;
+		compileArgs.filePath = _shaderFilePath;
 		compileArgs.target = versionList[index];
 		compileArgs.entryPoint = entry.entryPoint;
 		compileArgs.pInclude = pShaderInclude.get();
@@ -164,7 +162,7 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 		auto pBinaryBlob = ShaderHelper::DXCCompile(
 			_shaderContent.data(),
 			_shaderContent.length(),
-			_shaderFileName,
+			_shaderFilePath,
 			macros.data(),
 			entry.entryPoint,
 			versionList[index]
@@ -184,11 +182,11 @@ auto GraphicsShader::getPSO(const KeywordMask &keywordMask) const -> std::shared
 	return pGraphicsPSO;
 }
 
-auto GraphicsShader::getKeywordMask() const -> const KeywordMask & {
+auto GraphicsPipeline::getKeywordMask() const -> const KeywordMask &{
 	return _keywordMask;
 }
 
-bool GraphicsShader::hasShader(ShaderType shaderType) const {
+bool GraphicsPipeline::hasShader(ShaderType shaderType) const {
 	for (auto &entry : _entryPoints) {
 		if (entry.shaderType == shaderType)
 			return true;

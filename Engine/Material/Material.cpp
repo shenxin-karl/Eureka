@@ -1,6 +1,6 @@
 #include "Material.h"
-#include "ShaderHelper/ShaderManager.h"
-#include "ShaderHelper/GraphicsShader.h"
+#include "ShaderHelper/PipelineManager.h"
+#include "ShaderHelper/GraphicsPipeline.h"
 #include "AssimpLoader/ALTree.h"
 #include "PassDefinition/SetupRenderGraph.h"
 #include <RenderGraph/Bindable/SamplerTextureBindable.h>
@@ -53,7 +53,7 @@ Material::Material(const MaterialDesc &desc) : rgph::Material(desc.materialName)
 	data.alphaCutoff = pALMaterial->getAlphaCutoff();
 	pCbMaterial = graphicsCtx.createFRConstantBuffer<CbMaterial>(data);
 
-	auto pDeferredPBRShader = ShaderManager::instance()->getGraphicsShader("DeferredPBR");
+	auto pDeferredPBRShader = PipelineManager::instance()->getGraphicsPipeline("DeferredPBR");
 	auto pGBufferTechnique = std::make_shared<rgph::Technique>("GBuffer", kTechGBuffer);
 	{
 		auto keywordMask = pDeferredPBRShader->getKeywordMask();

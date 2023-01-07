@@ -1,8 +1,8 @@
 #include "PostProcessingPass.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "EngineDefinition/EngineDefinition.h"
-#include "ShaderHelper/ComputeShader.h"
-#include "ShaderHelper/ShaderManager.h"
+#include "ShaderHelper/ComputePipeline.h"
+#include "ShaderHelper/PipelineManager.h"
 
 namespace Eureka {
 
@@ -11,7 +11,7 @@ PostProcessingPass::PostProcessingPass(const std::string &passName)
 	, pScreenMap(this, "ScreenMap")
 	, pOutputMap(this, "OutputMap")
 {
-	_pPipeline = ShaderManager::instance()->getComputeShader("PostProcessing");
+	_pPipeline = PipelineManager::instance()->getComputePipeline("PostProcessing");
 }
 
 void PostProcessingPass::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {

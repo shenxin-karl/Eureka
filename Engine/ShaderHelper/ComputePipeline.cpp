@@ -1,7 +1,5 @@
-#include "ComputeShader.h"
 #include <filesystem>
-#include <iostream>
-
+#include "ComputePipeline.h"
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
 #include "ShaderLoader.h"
@@ -11,8 +9,7 @@
 
 namespace Eureka {
 
-
-ComputeShader::ComputeShader(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName)
+ComputePipeline::ComputePipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName)
 : _shaderFileName(shaderFileName), _pDevice(pDevice)
 {
 	_shaderContent = ShaderLoader::instance()->open(shaderFileName);
@@ -21,15 +18,15 @@ ComputeShader::ComputeShader(std::weak_ptr<dx12lib::Device> pDevice, const std::
 	_keywordMask.handleShaderContent(_shaderContent.data());
 }
 
-void ComputeShader::setComputeShader(const std::string &entryPoints) {
+void ComputePipeline::setComputeShader(const std::string &entryPoints) {
 	_entryPoint = entryPoints;
 }
 
-auto ComputeShader::getPSO() const -> std::shared_ptr<dx12lib::ComputePSO> {
+auto ComputePipeline::getPSO() const -> std::shared_ptr<dx12lib::ComputePSO> {
 	return getPSO(_keywordMask);
 }
 
-auto ComputeShader::getPSO(const KeywordMask &keywordMask) const -> std::shared_ptr<dx12lib::ComputePSO> {
+auto ComputePipeline::getPSO(const KeywordMask &keywordMask) const -> std::shared_ptr<dx12lib::ComputePSO> {
 	auto iter = _psoMap.find(keywordMask);
 	if (iter != _psoMap.end())
 		return iter->second;
@@ -66,7 +63,7 @@ auto ComputeShader::getPSO(const KeywordMask &keywordMask) const -> std::shared_
 	return pComputePSO;
 }
 
-auto ComputeShader::getKeywordMask() const -> const KeywordMask & {
+auto ComputePipeline::getKeywordMask() const -> const KeywordMask & {
 	return _keywordMask;
 }
 

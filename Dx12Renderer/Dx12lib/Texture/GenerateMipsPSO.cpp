@@ -19,7 +19,7 @@ GenerateMipsPSO::GenerateMipsPSO(std::weak_ptr<Device> pDevice) {
 	_pComputeShader = std::make_shared<FXCShader>();
 
 	CompileFormMemoryArgs compileArgs;
-	compileArgs.fileName = "GenerateMips_CS.hlsl";
+	compileArgs.filePath = "GenerateMips_CS.hlsl";
 	compileArgs.target = "cs_5_1";
 	compileArgs.entryPoint = "CS";
 	compileArgs.pData = g_GenerateMips_CS_data;

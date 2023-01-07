@@ -1,8 +1,8 @@
 #include "LightingPass.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "EngineDefinition/EngineDefinition.h"
-#include "ShaderHelper/ShaderManager.h"
-#include "ShaderHelper/ComputeShader.h"
+#include "ShaderHelper/PipelineManager.h"
+#include "ShaderHelper/ComputePipeline.h"
 #include "ShaderHelper/ShaderHelper.h"
 
 // shaders
@@ -24,7 +24,7 @@ LightingPass::LightingPass(const std::string &passName, std::shared_ptr<dx12lib:
 	, pTileLightLists(this, "TileLightLists")
 {
 #if defined(_DEBUG) || defined(DEBUG)
-	auto pLightShader = ShaderManager::instance()->getComputeShader("Lighting");
+	auto pLightShader = PipelineManager::instance()->getComputePipeline("Lighting");
 	_pLightingPSO = pLightShader->getPSO();
 #else
 	_pLightingPSO = pDevice->createComputePSO("LightingPSO");
