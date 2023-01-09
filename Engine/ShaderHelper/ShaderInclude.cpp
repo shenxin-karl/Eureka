@@ -3,14 +3,16 @@
 #include <cassert>
 #include <iostream>
 #include "ShaderInclude.h"
+
+#include "ShaderContentLoader.h"
 #include "ShaderLoader.h"
 #include "Foundation/Exception.h"
 
 
 namespace Eureka {
 
-ShaderInclude::ShaderInclude(std::string &&shaderDir)
-: _shaderDir(std::move(shaderDir)) {
+ShaderInclude::ShaderInclude(fs::path parentDirectory)
+: _parentDirectory(std::move(parentDirectory)) {
 
 }
 
@@ -20,8 +22,8 @@ HRESULT ShaderInclude::Open(D3D_INCLUDE_TYPE IncludeType,
     LPCVOID *ppData,
     UINT *pBytes)
 {
-    std::string finalPath = _shaderDir + "/" + pFileName;
-    auto view = ShaderLoader::instance()->open(finalPath);
+    fs::path finalPath = _parentDirectory / pFileName;
+    auto view = ShaderContentLoader::instance()->open(finalPath);
     if (view.length() > 0) {
         *ppData = view.data();
         *pBytes = static_cast<UINT>(view.size());

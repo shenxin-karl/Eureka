@@ -145,7 +145,7 @@ auto Transform::getWorldTransform() const -> const Math::float4x4 & {
 
 void Transform::removeChild(Transform *pChild) {
 	if (pChild == nullptr) {
-		Exception::Assert(pChild != nullptr, "Transform::removeChild pChild is nullptr");
+		Exception::Throw(pChild != nullptr, "Transform::removeChild pChild is nullptr");
 		return;
 	}
 	auto iter = std::ranges::find(_children, pChild);
@@ -157,7 +157,7 @@ void Transform::removeChild(Transform *pChild) {
 
 void Transform::addChild(Transform *pChild) {
 	if (pChild == nullptr) {
-		Exception::Assert(pChild != nullptr, "Transform::addChild pChild is nullptr");
+		Exception::Throw(pChild != nullptr, "Transform::addChild pChild is nullptr");
 		return;
 	}
 	for (auto *child : _children) {

@@ -1,9 +1,9 @@
 #pragma once
-#define  NOMINMAX
 #include <exception>
 #include <string>
 #include <source_location>
 #include <format>
+#include <Windows.h>
 
 namespace dx12lib {
 
@@ -41,11 +41,9 @@ public:
 		throw Exception(std::move(message), fmtAndLocation.location);
 	}
 	template<typename ...Args>
-	static void Assert(bool cond, const FormatAndLocation &fmtAndLocation, Args&&...args) {
-#if !defined(NDEBUG)
+	static void Throw(bool cond, const FormatAndLocation &fmtAndLocation, Args&&...args) {
 		if (!cond)
 			Exception::Throw(fmtAndLocation, std::forward<Args>(args)...);
-#endif
 	}
 protected:
 	int	         _line;
@@ -58,15 +56,25 @@ protected:
 class D3DException : public std::exception {
 public:
 	D3DException(HRESULT hr, const char *file, int line);
+	D3DException(HRESULT hr, const std::string &errorMessage, const char *file, int line);
 	auto what() const noexcept -> const char* override;
-	auto getErrorString() const -> std::string;
-	static void Throw(HRESULT hr, const std::source_location &sourceLocation = std::source_location::current()) {
-		throw D3DException(hr, sourceLocation.file_name(), sourceLocation.line());
+	auto getHResultMessage() const -> std::string;
+	auto getErrorMessage() const -> const std::string &;
+	static void Throw(HRESULT hr, std::source_location sourceLocation = std::source_location::current()) {
+		if (FAILED(hr)) {
+			throw D3DException(hr, sourceLocation.file_name(), sourceLocation.line());
+		}
+	}
+	static void Throw(HRESULT hr, const std::string &errorMessage, std::source_location sourceLocation = std::source_location::current()) {
+		if (FAILED(hr)) {
+			throw D3DException(hr, errorMessage, sourceLocation.file_name(), sourceLocation.line());
+		}
 	}
 private:
 	HRESULT				_hr;
 	int					_line;
 	const char *		_file;
+	std::string			_errorMessage;
 	mutable std::string _whatBuffer;
 };
 

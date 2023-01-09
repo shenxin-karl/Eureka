@@ -10,6 +10,7 @@
 #include "TAAResolveCS_CS.h"
 #include "SharpenTAACS_CS.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
+#include "ShaderHelper/ShaderLoader.h"
 
 using namespace Math;
 
@@ -42,21 +43,13 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 	});
 	pRootSignature->finalize();
 	_pTemporalPipeline = pSharedDevice->createComputePSO("TemporalPipeline");
-
-#if defined(DEBUG) || defined(_DEBUG)
-	auto pBlob = ShaderHelper::compile(
-		"EngineAssets/Shaders/TAAResolveCS.hlsl",
-		nullptr, 
-		"CS", 
-		"cs_5_1"
-	);
-	_pTemporalPipeline->setComputeShader(pBlob);
-#else
-	_pTemporalPipeline->setComputeShader(dx12lib::DXCShader::make(g_TAAResolveCS_CS));
-#endif
+	_pTemporalPipeline->setComputeShader(ShaderLoader::dxc(
+		"Assets/Shaders/TAAResolveCS.hlsl",
+		"CS",
+		"cs_6_0"
+	));
 	_pTemporalPipeline->setRootSignature(pRootSignature);
 	_pTemporalPipeline->finalize();
-
 
 	auto pSharpenRootSignature = pSharedDevice->createRootSignature(2, 8);
 	pSharpenRootSignature->at(0).initAsConstants(dx12lib::RegisterSlot::CBV0, 5);
@@ -68,17 +61,11 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 	pSharpenRootSignature->finalize();
 
 	_pSharpenPipeline = pSharedDevice->createComputePSO("SharpenPipeline");
-#if defined(DEBUG) || defined(_DEBUG)
-	auto pBlob1 = ShaderHelper::compile(
-		"EngineAssets/Shaders/SharpenTAACS.hlsl",
-		nullptr, 
-		"CS", 
-		"cs_5_1"
-	);
-	_pSharpenPipeline->setComputeShader(pBlob1);
-#else
-	_pSharpenPipeline->setComputeShader(dx12lib::DXCShader::make(g_SharpenTAACS_CS));
-#endif
+	_pSharpenPipeline->setComputeShader(ShaderLoader::dxc(
+		"Assets/Shaders/SharpenTAACS.hlsl",
+		"CS",
+		"cs_6_0"
+	));
 	_pSharpenPipeline->setRootSignature(pSharpenRootSignature);
 	_pSharpenPipeline->finalize();
 }

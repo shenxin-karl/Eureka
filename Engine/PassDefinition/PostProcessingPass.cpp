@@ -24,8 +24,7 @@ void PostProcessingPass::execute(dx12lib::IDirectContext &directCtx, const rgph:
 		pso = _pPipeline->getPSO(keyword);
 		directCtx.setComputePSO(pso);
 		directCtx.setShaderResourceView(StringName("gColorLutMap"), _pColorLutMap->get2dSRV());
-	}
-	else {
+	} else {
 		pso = _pPipeline->getPSO(keyword);
 		directCtx.setComputePSO(pso);
 	}

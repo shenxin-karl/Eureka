@@ -1,5 +1,4 @@
 #pragma once
-#define  NOMINMAX
 #include <windows.h>
 #include <memory>
 #include <string>
@@ -70,7 +69,7 @@ public:
 	WindowClass();
 	~WindowClass();
 	static HINSTANCE getInstance();
-	static const char *getClassName();
+	static const wchar_t *getClassName();
 	static inline HandleMessageFuncType pHandleMessageFunc = &(DefWindowProc);
 };
 

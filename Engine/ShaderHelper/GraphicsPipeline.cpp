@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <Dx12lib/Pipeline/PipelineStateObject.h>
 #include "GraphicsPipeline.h"
+#include "ShaderContentLoader.h"
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
 #include "ShaderLoader.h"
@@ -14,7 +15,7 @@ namespace Eureka {
 GraphicsPipeline::GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFilePath)
 : _shaderFilePath(shaderFilePath), _pDevice(std::move(pDevice))
 {
-	_shaderContent = ShaderLoader::instance()->open(shaderFilePath);
+	_shaderContent = ShaderContentLoader::instance()->open(shaderFilePath);
 	if (_shaderContent.empty())
 		Exception::Throw("Can't open the file {}", _shaderFilePath);
 	_keywordMask.handleShaderContent(_shaderContent.data());
@@ -148,24 +149,11 @@ auto GraphicsPipeline::getPSO(const KeywordMask &keywordMask) const -> std::shar
 
 	for (auto &entry : _entryPoints) {
 		size_t index = static_cast<size_t>(entry.shaderType);
-		auto pShader = std::make_shared<dx12lib::DXCShader>();
-		dx12lib::CompileFormMemoryArgs compileArgs;
-		compileArgs.filePath = _shaderFilePath;
-		compileArgs.target = versionList[index];
-		compileArgs.entryPoint = entry.entryPoint;
-		compileArgs.pInclude = pShaderInclude.get();
-		compileArgs.pMacro = macros.data();
-		compileArgs.pData = _shaderContent.data();
-		compileArgs.sizeInByte = _shaderContent.length();
-		pShader->compileFormMemory(compileArgs);
-
-		auto pBinaryBlob = ShaderHelper::DXCCompile(
-			_shaderContent.data(),
-			_shaderContent.length(),
+		auto pBinaryBlob = ShaderLoader::dxc(
 			_shaderFilePath,
-			macros.data(),
 			entry.entryPoint,
-			versionList[index]
+			versionList[index],
+			macros.data()
 		);
 		(pGraphicsPSOPtr->*setterList[index])(pBinaryBlob);
 	}

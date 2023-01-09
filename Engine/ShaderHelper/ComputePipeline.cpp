@@ -1,5 +1,6 @@
 #include <filesystem>
 #include "ComputePipeline.h"
+#include "ShaderContentLoader.h"
 #include "ShaderHelper.h"
 #include "ShaderInclude.h"
 #include "ShaderLoader.h"
@@ -12,7 +13,7 @@ namespace Eureka {
 ComputePipeline::ComputePipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName)
 : _shaderFileName(shaderFileName), _pDevice(pDevice)
 {
-	_shaderContent = ShaderLoader::instance()->open(shaderFileName);
+	_shaderContent = ShaderContentLoader::instance()->open(shaderFileName);
 	if (_shaderContent.empty())
 		Exception::Throw("Can't open the file {}", _shaderFileName);
 	_keywordMask.handleShaderContent(_shaderContent.data());
@@ -45,17 +46,15 @@ auto ComputePipeline::getPSO(const KeywordMask &keywordMask) const -> std::share
 		}
 	}
 	macros.push_back(D3D_SHADER_MACRO{ nullptr, nullptr });
-	auto pBinaryBlob = ShaderHelper::DXCCompile(
-		_shaderContent.data(),
-		_shaderContent.length(),
+	auto pShader = ShaderLoader::dxc(
 		_shaderFileName,
-		macros.data(),
 		_entryPoint,
-		"cs_6_0"
+		"cs_6_0",
+		macros.data()
 	);
 	auto pSharedDevice = _pDevice.lock();
 	auto pComputePSO = pSharedDevice->createComputePSO(key);
-	pComputePSO->setComputeShader(pBinaryBlob);
+	pComputePSO->setComputeShader(pShader);
 	ShaderHelper::generateRootSignature(pComputePSO);
 	pComputePSO->finalize();
 

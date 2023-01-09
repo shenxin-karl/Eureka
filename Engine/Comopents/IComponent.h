@@ -13,7 +13,7 @@ public:
 	virtual ~IComponent() = default;
 protected:
 	IComponent(GameObject *pGameObject) {
-		Exception::Assert(pGameObject != nullptr, "IComponent::setGameObject pGameObject is nullptr");
+		Exception::Throw(pGameObject != nullptr, "IComponent::setGameObject pGameObject is nullptr");
 		_pGameObject = pGameObject;
 	}
 public:

@@ -4,10 +4,7 @@
 #include "EngineDefinition/EngineDefinition.h"
 #include "Math/MathHelper.h"
 #include "ShaderHelper/ShaderHelper.h"
-
-// shaders
-#include "CalcClusterFrustumCS_CS.h"
-#include "Dx12lib/Pipeline/DXCShader.h"
+#include "ShaderHelper/ShaderLoader.h"
 
 using namespace Math;
 
@@ -29,23 +26,21 @@ ClusterDeferredPass::ClusterDeferredPass(const std::string &passName,
 	pRootSignature->finalize();
 
 	_pPipeline = pSharedDevice->createComputePSO("ClusterDeferredPass");
-#if 1 || defined(_DEBUG) || defined(DEBUG)
-	auto pBlob = ShaderHelper::DXCCompile("Engine/HlslShader/ClusterDeferredCS.hlsl", 
-		nullptr, 
-		"CS", 
-		"cs_5_1"
-	);
-	_pPipeline->setComputeShader(pBlob);
-#else
-	_pPipeline->setComputeShader(g_ClusterDeferredCS, sizeof(g_ClusterDeferredCS));
-#endif
+	_pPipeline->setComputeShader(ShaderLoader::dxc("Engine/HlslShader/ClusterDeferredCS.hlsl",
+		"CS",
+		"cs_6_0"
+	));
 	_pPipeline->setRootSignature(pRootSignature);
 	_pPipeline->finalize();
 
 	_pCbParam = directCtx.createFRConstantBuffer<CbParam>();
 
 	_pCalcClusterFrustumPipeline = pSharedDevice->createComputePSO("CalcClusterFrustum");
-	_pCalcClusterFrustumPipeline->setComputeShader(dx12lib::DXCShader::make(g_CalcClusterFrustumCS_CS));
+	_pCalcClusterFrustumPipeline->setComputeShader(ShaderLoader::dxc(
+		"Assets/Shaders/CalcClusterFrustumCS.hlsl",
+		"CS",
+		"cs_6_0"
+	));
 	ShaderHelper::generateRootSignature(_pCalcClusterFrustumPipeline);
 	_pCalcClusterFrustumPipeline->finalize();
 }

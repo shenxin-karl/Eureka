@@ -3,11 +3,8 @@
 #include "EngineDefinition/EngineDefinition.h"
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "ShaderHelper/ShaderHelper.h"
-
-// shader
-#include "CopyToBack_VS.h"
-#include "CopyToBack_PS.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
+#include "ShaderHelper/ShaderLoader.h"
 
 namespace Eureka {
 
@@ -19,8 +16,16 @@ CopyToBackPass::CopyToBackPass(const std::string &passName, dx12lib::IDirectCont
 	auto pShaderDevice = directCtx.getDevice().lock();
 
 	_pPipeline = pShaderDevice->createGraphicsPSO("FXAA");
-	_pPipeline->setVertexShader(dx12lib::DXCShader::make(g_CopyToBack_VS));
-	_pPipeline->setPixelShader(dx12lib::DXCShader::make(g_CopyToBack_PS));
+	_pPipeline->setVertexShader(ShaderLoader::dxc(
+		"Assets/Shaders/CopyToBack.hlsl",
+		"VS",
+		"vs_6_0"
+	));
+	_pPipeline->setPixelShader(ShaderLoader::dxc(
+		"Assets/Shaders/CopyToBack.hlsl",
+		"PS",
+		"ps_6_0"
+	));
 	_pPipeline->setRenderTargetFormat(kSwapChainRenderTargetFormat, kSwapChainDepthStencilFormat);
 	CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc(D3D12_DEFAULT);
 	depthStencilDesc.DepthEnable = false;

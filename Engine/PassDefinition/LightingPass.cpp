@@ -23,15 +23,8 @@ LightingPass::LightingPass(const std::string &passName, std::shared_ptr<dx12lib:
 	, pPointLightLists(this, "PointLightLists")
 	, pTileLightLists(this, "TileLightLists")
 {
-#if defined(_DEBUG) || defined(DEBUG)
 	auto pLightShader = PipelineManager::instance()->getComputePipeline("Lighting");
 	_pLightingPSO = pLightShader->getPSO();
-#else
-	_pLightingPSO = pDevice->createComputePSO("LightingPSO");
-	_pLightingPSO->setComputeShader(dx12lib::DXCShader::make(g_LightingPassCS_CS));
-	ShaderHelper::generateRootSignature(_pLightingPSO);
-	_pLightingPSO->finalize();
-#endif
 }
 
 void LightingPass::execute(dx12lib::IDirectContext &directCtx, const rgph::RenderView &view) {

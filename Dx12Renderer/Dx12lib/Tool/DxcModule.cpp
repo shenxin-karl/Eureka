@@ -6,16 +6,20 @@ DxcModule::DxcModule() {
 	DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&_pCompiler));
 	DxcCreateInstance(CLSID_DxcLinker, IID_PPV_ARGS(&_pLinker));
 	DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&_pUtils));
+	DxcCreateInstance(CLSID_DxcLibrary, IID_PPV_ARGS(&_pLibrary));
 }
-auto DxcModule::getDxcCompiler3() const -> IDxcCompiler3 * {
+auto DxcModule::getCompiler3() const -> IDxcCompiler3 * {
 	return _pCompiler.Get();
 }
-auto DxcModule::getDxcLinker() const -> IDxcLinker * {
+auto DxcModule::getLinker() const -> IDxcLinker * {
 	return _pLinker.Get();
 }
-auto DxcModule::getDxcUtils() const -> IDxcUtils * {
+auto DxcModule::getUtils() const -> IDxcUtils * {
 	return _pUtils.Get();
 
+}
+auto DxcModule::getLibrary() const -> IDxcLibrary * {
+	return _pLibrary.Get();
 }
 
 }

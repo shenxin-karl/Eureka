@@ -138,8 +138,8 @@ void RootSignature::finalize(D3D12_ROOT_SIGNATURE_FLAGS flags) {
 	);
 
 	if (FAILED(hr)) {
-		OutputDebugString(static_cast<const char *>(errorBlob->GetBufferPointer()));
-		ThrowIfFailed(hr);
+		std::string errorMessage(static_cast<const char*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize());
+		D3DException::Throw(hr, errorMessage);
 	}
 
 	ThrowIfFailed(_pDevice.lock()->getD3DDevice()->CreateRootSignature(

@@ -13,7 +13,7 @@ auto DXCShader::getByteCode() const -> D3D12_SHADER_BYTECODE {
 	return { _pByteCode->GetBufferPointer(), _pByteCode->GetBufferSize() };
 }
 
-struct DXCInclude : public IDxcIncludeHandler {
+struct DxcInclude : public IDxcIncludeHandler {
     ULONG STDMETHODCALLTYPE AddRef(void) final {
 	    return 0;
     }
@@ -24,7 +24,6 @@ struct DXCInclude : public IDxcIncludeHandler {
         ppvObject = nullptr;
         return E_FAIL;
     }
-
 	HRESULT STDMETHODCALLTYPE LoadSource(
         _In_z_ LPCWSTR pFilename,                                 // Candidate filename.
         _COM_Outptr_result_maybenull_ IDxcBlob **ppIncludeSource  // Resultant source object for included file, nullptr if not found.
@@ -40,99 +39,123 @@ struct DXCInclude : public IDxcIncludeHandler {
         }
 
         WRL::ComPtr<IDxcBlobEncoding> pSource;
-        gDxcModel.getDxcUtils()->CreateBlob(pData, bytes, DXC_CP_ACP, &pSource);
+        gDxcModel.getUtils()->CreateBlob(pData, bytes, DXC_CP_ACP, &pSource);
         *ppIncludeSource = pSource.Detach();
         return hr;
 	}
 public:
-    ID3DInclude *pInclude;
+    ID3DInclude *pInclude = nullptr;
 };
 
-void DXCShader::compileFormMemory(const CompileFormMemoryArgs &args) {
-    auto *pUtils = gDxcModel.getDxcUtils();
-    auto *pCompiler = gDxcModel.getDxcCompiler3();
-
-    std::wstring filePath = to_wstring(args.filePath);
-    std::wstring target = to_wstring(args.target);
-    std::wstring entryPoint = to_wstring(args.entryPoint);
-    
-    auto catchInfo = calcShaderCacheInfo(args);
-    auto pdbFilePath = to_wstring(catchInfo.pdbFilePath);
-    auto csoFilePath = to_wstring(catchInfo.csoFilePath);
-    auto reFilePath = to_wstring(catchInfo.reFilePath);
-
+void DXCShader::compile(const ShaderCompileDesc &desc) {
     std::vector<std::wstring> compileFlags = {
-        filePath.c_str(),           
-        L"-E", entryPoint.c_str(),  
-        L"-T", target.c_str(),      
-        L"-Fo", csoFilePath.c_str(), 
-        L"-Fd", pdbFilePath.c_str(),
-        L"-Fre", reFilePath.c_str(),
-        L"-Zi",                     
-        L"-Qstrip_rootsignature",
-    	L"-nologo",
+	    L"-E", to_wstring(desc.entryPoint),
+	    L"-T", to_wstring(desc.target),
+	    L"-Zi",
+	    L"-Qstrip_rootsignature",
+	    L"-nologo",
     };
 
-#if defined(DEBUG) || defined(_DEBUG) 
-    args.push_back(L"-Od");
-#endif
-
-    if (args.pMacro != nullptr) {
-	    size_t i = 0;
-	    while (args.pMacro[i].Name != nullptr) {
-            auto key = args.pMacro[i].Name;
-            auto value = args.pMacro[i].Definition == nullptr ? "1" : args.pMacro[i].Definition;
-	        auto flag = std::format("-D%s=%s", key, value);
-	        compileFlags.push_back(to_wstring(flag));
+    if (desc.pShaderCacheInfo != nullptr) {
+        if (!desc.pShaderCacheInfo->csoFilePath.empty()) {
+			compileFlags.push_back(L"-Fo");
+            compileFlags.push_back(to_wstring(desc.pShaderCacheInfo->csoFilePath.string()));
+        }
+        if (!desc.pShaderCacheInfo->pdbFilePath.empty()) {
+            compileFlags.push_back(L"-Fd");
+            compileFlags.push_back(to_wstring(desc.pShaderCacheInfo->pdbFilePath.string()));
+        }
+        if (!desc.pShaderCacheInfo->reFilePath.empty()) {
+            compileFlags.push_back(L"-Fre");
+            compileFlags.push_back(to_wstring(desc.pShaderCacheInfo->reFilePath.string()));
         }
     }
 
-    std::vector<LPCWCHAR> pszArgs(compileFlags.size());
-    for (size_t i = 0; i < compileFlags.size(); ++i)
-        pszArgs.push_back(compileFlags[i].c_str());
+    std::vector<LPCWSTR> arguments;
+    for (const auto &flag : compileFlags)
+        arguments.push_back(flag.c_str());
+
+    Exception::Throw(desc.pShaderCacheInfo != nullptr, "DXCShader::compile desc.pShaderSource is nullptr");
+    Exception::Throw(desc.sizeInByte != 0, "DXCShader::compile desc.sizeInByte is zero");
+
+    DxcBuffer source {
+        .Ptr = desc.pShaderSource,
+        .Size = desc.sizeInByte,
+        .Encoding =  DXC_CP_ACP,
+    };
 
     IDxcIncludeHandler *pIncludeHandler;
     WRL::ComPtr<IDxcIncludeHandler> pIncludeHandleCom;
-    std::unique_ptr<DXCInclude> pDxcInclude;
-    if (args.pInclude == D3D_COMPILE_STANDARD_FILE_INCLUDE) {
-        pUtils->CreateDefaultIncludeHandler(&pIncludeHandleCom);
+    std::unique_ptr<DxcInclude> pDxcInclude;
+    if (desc.pInclude == D3D_COMPILE_STANDARD_FILE_INCLUDE) {
+        gDxcModel.getUtils()->CreateDefaultIncludeHandler(&pIncludeHandleCom);
         pIncludeHandler = pIncludeHandleCom.Get();
     } else {
-        pDxcInclude = std::make_unique<DXCInclude>();
-        pDxcInclude->pInclude = args.pInclude;
+        pDxcInclude = std::make_unique<DxcInclude>();
+        pDxcInclude->pInclude = desc.pInclude;
         pIncludeHandler = pDxcInclude.get();
-	}
+    }
 
-    DxcBuffer source;
-    source.Ptr = args.pData;
-    source.Size = args.sizeInByte;
-    source.Encoding = DXC_CP_ACP; // Assume BOM says UTF8 or UTF16 or this is ANSI text.
     WRL::ComPtr<IDxcResult> pResults;
-    pCompiler->Compile(
-        &source,                // Source buffer.
-        pszArgs.data(),         // Array of pointers to arguments.
-        pszArgs.size(),         // Number of arguments.
-        pIncludeHandler,        // User-provided interface to handle #include directives (optional).
-        IID_PPV_ARGS(&pResults) // Compiler output status, buffer, and errors.
+    gDxcModel.getCompiler3()->Compile(
+        &source,                
+        arguments.data(),
+        arguments.size(),
+        pIncludeHandler,        
+        IID_PPV_ARGS(&pResults) 
     );
 
-    HRESULT hrStatus;
-    pResults->GetStatus(&hrStatus);
-	ThrowIfFailed(hrStatus);
+    HRESULT compileStatus;
+    pResults->GetStatus(&compileStatus);
+    if (FAILED(compileStatus)) {
+        WRL::ComPtr<IDxcBlobUtf8> pErrorMsg;
+        pResults->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&pErrorMsg), nullptr);
+        std::string errorMessage(
+            static_cast<char*>(pErrorMsg->GetBufferPointer()), 
+            pErrorMsg->GetBufferSize()
+        );
+        D3DException::Throw(compileStatus, errorMessage);
+    }
 
     WRL::ComPtr<IDxcBlob> pReflectionData;
     pResults->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&pReflectionData), nullptr);
     if (pReflectionData != nullptr) {
-        DxcBuffer reflectionData;
-        reflectionData.Encoding = DXC_CP_ACP;
-        reflectionData.Ptr = pReflectionData->GetBufferPointer();
-        reflectionData.Size = pReflectionData->GetBufferSize();
-        pUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
+        DxcBuffer reflectionData {
+            .Ptr = pReflectionData->GetBufferPointer(),
+            .Size = pReflectionData->GetBufferSize(),
+            .Encoding = DXC_CP_ACP,
+        };
+        gDxcModel.getUtils()->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
     }
 }
 
-void DXCShader::makeFromByteCode(const void *pData, size_t sizeInByte) {
-    NotImplementedException::Throw();
+void DXCShader::load(const ShaderCacheInfo &cacheInfo) {
+    std::wstring csoFilePath = to_wstring(cacheInfo.csoFilePath.string());
+    std::wstring reFilePath = to_wstring(cacheInfo.reFilePath.string());
+
+    // load cso info
+    WRL::ComPtr<IDxcBlobEncoding> pCsoBlob;
+    gDxcModel.getLibrary()->CreateBlobFromFile(
+        csoFilePath.c_str(),
+        DXC_CP_ACP,
+        &pCsoBlob
+    );
+    _pByteCode = pCsoBlob.Detach();
+
+    // load shader reflection info
+    WRL::ComPtr<IDxcBlobEncoding> pReflectionData;
+    gDxcModel.getLibrary()->CreateBlobFromFile(
+        csoFilePath.c_str(),
+        DXC_CP_ACP,
+        &pReflectionData
+    );
+    Exception::Throw(pReflectionData != nullptr, "DXCShader::load pReflectionData == nullptr");
+    DxcBuffer reflectionData{
+	    .Ptr = pReflectionData->GetBufferPointer(),
+	    .Size = pReflectionData->GetBufferSize(),
+	    .Encoding = DXC_CP_ACP,
+    };
+    gDxcModel.getUtils()->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
 }
 
 }

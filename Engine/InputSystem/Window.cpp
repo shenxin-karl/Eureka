@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "InputSystem.h"
 #include "Mouse.h"
+#include "Dx12lib/dx12libStd.h"
 #include "GameTimer/GameTimer.h"
 
 namespace Eureka {
@@ -25,7 +26,9 @@ Window::Window(int width, int height, const std::string &title, InputSystem *pIn
 	wr.bottom = wr.top + height;
 	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
 	_hwnd = CreateWindowEx(
-		0, WindowClass::getClassName(), title.c_str(),
+		0, 
+		WindowClass::getClassName(), 
+		dx12lib::to_wstring(title).c_str(),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		wr.right - wr.left, wr.bottom - wr.top,
@@ -86,7 +89,7 @@ const std::string & Window::getTitle() const {
 void Window::setShowTitle(const std::string &title) {
 	if (_title != title) {
 		_title = title;
-		SetWindowText(_hwnd, title.c_str());
+		SetWindowText(_hwnd, dx12lib::to_wstring(title).c_str());
 	}
 }
 
@@ -257,8 +260,8 @@ Window::WindowClass::~WindowClass() {
 
 }
 
-const char *Window::WindowClass::getClassName() {
-	return "WindowClass";
+const wchar_t *Window::WindowClass::getClassName() {
+	return L"WindowClass";
 }
 
 HINSTANCE Window::WindowClass::getInstance() {

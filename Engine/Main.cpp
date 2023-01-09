@@ -17,6 +17,7 @@ int main() {
 		app.destroy();
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
-		MessageBox(nullptr, e.what(), "Error", MB_OK | MB_ICONHAND);
+		std::wstring message = dx12lib::to_wstring(e.what());
+		MessageBox(nullptr, message.c_str(), L"Error", MB_OK | MB_ICONHAND);
 	}
 }

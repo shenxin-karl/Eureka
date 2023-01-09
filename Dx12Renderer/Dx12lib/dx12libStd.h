@@ -1,5 +1,4 @@
 ﻿#pragma once
-#define NOMINMAX
 #include <cassert>
 #include <cstdint>
 #include <wrl.h>

@@ -16,15 +16,14 @@ GenerateMipsPSO::GenerateMipsPSO(std::weak_ptr<Device> pDevice) {
 		compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 	#endif
 
+	ShaderCompileDesc desc;
+	desc.entryPoint = "CS";
+	desc.target = "cs_5_1";
+	desc.pShaderSource = g_GenerateMips_CS_data;
+	desc.sizeInByte = sizeof(g_GenerateMips_CS_data);
+	desc.hintName = "GenerateMips_CS.hlsl";
 	_pComputeShader = std::make_shared<FXCShader>();
-
-	CompileFormMemoryArgs compileArgs;
-	compileArgs.filePath = "GenerateMips_CS.hlsl";
-	compileArgs.target = "cs_5_1";
-	compileArgs.entryPoint = "CS";
-	compileArgs.pData = g_GenerateMips_CS_data;
-	compileArgs.sizeInByte = sizeof(g_GenerateMips_CS_data);
-	_pComputeShader->compileFormMemory(compileArgs);
+	_pComputeShader->compile(desc);
 
 	auto pSharedDevice = pDevice.lock();
 	auto pRootSignature = pSharedDevice->createRootSignature(3, 1);

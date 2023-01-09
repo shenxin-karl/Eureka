@@ -153,7 +153,7 @@ void CommandList::setDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType,
 }
 
 void CommandList::setConstantBufferView(const ShaderRegister &sr, const ConstantBufferView &cbv) {
-	Exception::Assert(_currentGPUState.pRootSignature != nullptr, "RootSignature is nullptr");
+	Exception::Throw(_currentGPUState.pRootSignature != nullptr, "RootSignature is nullptr");
 	assert(sr.slot.isCBV());
 	assert(cbv.valid());
 #ifdef DEBUG_MODE

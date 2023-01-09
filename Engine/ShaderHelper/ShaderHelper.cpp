@@ -6,6 +6,7 @@
 #include <Dx12lib/Pipeline/RootSignature.h>
 #include <RenderGraph/Job/ShaderLayout.h>
 #include "ShaderHelper.h"
+#include "ShaderContentLoader.h"
 #include "ShaderInclude.h"
 #include "ShaderLoader.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
@@ -13,72 +14,6 @@
 #include "Foundation/Exception.h"
 
 namespace Eureka {
-
-std::shared_ptr<dx12lib::IShader> ShaderHelper::DXCCompile(const std::string &filePath, const D3D_SHADER_MACRO *defines,
-	const std::string &entryPoint, const std::string &target)
-{
-	auto shaderContentView = ShaderLoader::instance()->open(filePath);
-	if (shaderContentView.empty())
-		Exception::Throw("ShaderHelper::compile can't open the file {}", filePath);
-
-	return compileImpl(
-		ShaderType::DXC,
-		shaderContentView.data(),
-		shaderContentView.length(),
-		filePath,
-		defines,
-		entryPoint,
-		target
-	);
-}
-
-std::shared_ptr<dx12lib::IShader> ShaderHelper::DXCCompile(const char *fileContent, std::size_t sizeInByte,
-	const std::string &sourcePath, const D3D_SHADER_MACRO *defines, const std::string &entryPoint,
-	const std::string &target)
-{
-	return compileImpl(
-		ShaderType::DXC,
-		fileContent,
-		sizeInByte,
-		sourcePath,
-		defines,
-		entryPoint,
-		target
-	);
-}
-
-std::shared_ptr<dx12lib::IShader> ShaderHelper::FXCCompile(const std::string &filePath, const D3D_SHADER_MACRO *defines,
-	const std::string &entryPoint, const std::string &target)
-{
-	auto shaderContentView = ShaderLoader::instance()->open(filePath);
-	if (shaderContentView.empty())
-		Exception::Throw("ShaderHelper::compile can't open the file {}", filePath);
-
-	return compileImpl(
-		ShaderType::FXC,
-		shaderContentView.data(),
-		shaderContentView.length(),
-		filePath,
-		defines,
-		entryPoint,
-		target
-	);
-}
-
-std::shared_ptr<dx12lib::IShader> ShaderHelper::FCXCompile(const char *fileContent, std::size_t sizeInByte,
-	const std::string &sourcePath, const D3D_SHADER_MACRO *defines, const std::string &entryPoint,
-	const std::string &target)
-{
-	return compileImpl(
-		ShaderType::FXC,
-		fileContent,
-		sizeInByte,
-		sourcePath,
-		defines,
-		entryPoint,
-		target
-	);
-}
 
 void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevice,
 	std::vector<std::shared_ptr<dx12lib::IShader>> shaders,
@@ -346,30 +281,5 @@ const std::array<CD3DX12_STATIC_SAMPLER_DESC, 8> &ShaderHelper::getStaticSampler
 	};
 	return samplers;
 }
-
-std::shared_ptr<dx12lib::IShader> ShaderHelper::compileImpl(ShaderType shaderType, const char *fileContent,
-	std::size_t sizeInByte, const std::string &sourcePath, const D3D_SHADER_MACRO *defines,
-	const std::string &entryPoint, const std::string &target)
-{
-	std::shared_ptr<dx12lib::IShader> pShader;
-	if (shaderType == ShaderType::DXC)
-		pShader = std::make_shared<dx12lib::DXCShader>();
-	else
-		pShader = std::make_shared<dx12lib::FXCShader>();
-
-	auto path = std::filesystem::path(sourcePath).lexically_normal();
-	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string());
-	dx12lib::CompileFormMemoryArgs compileArgs;
-	compileArgs.filePath = sourcePath;
-	compileArgs.target = target;
-	compileArgs.entryPoint = entryPoint;
-	compileArgs.pInclude = pShaderInclude.get();
-	compileArgs.pMacro = defines;
-	compileArgs.pData = fileContent;
-	compileArgs.sizeInByte = sizeInByte;
-	pShader->compileFormMemory(compileArgs);
-	return pShader;
-}
-
 
 }

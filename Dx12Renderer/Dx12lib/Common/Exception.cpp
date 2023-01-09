@@ -1,6 +1,8 @@
 #include <comdef.h>
 #include "Exception.h"
 
+#include "Dx12lib/dx12libStd.h"
+
 namespace dx12lib {
 
 Exception::Exception(const std::string &message, const std::source_location &sourceLocation)
@@ -36,16 +38,25 @@ D3DException::D3DException(HRESULT hr, const char *file, int line)
 	
 }
 
+D3DException::D3DException(HRESULT hr, const std::string &errorMessage, const char *file, int line)
+: _hr(hr), _line(line), _file(file), _errorMessage(errorMessage) {
+
+}
+
 const char *D3DException::what() const noexcept {
 	if (_whatBuffer.empty())
-		_whatBuffer = std::format("file: {} line: {} message: {}", _file, _line, getErrorString());
+		_whatBuffer = std::format("file: {} line: {} message: {}", _file, _line, getHResultMessage());
 	return _whatBuffer.c_str();
 }
 
-std::string D3DException::getErrorString() const {
+std::string D3DException::getHResultMessage() const {
 	_com_error err(_hr);
-	std::string msg = err.ErrorMessage();
+	std::string msg(to_string(err.ErrorMessage()));
 	return msg;
+}
+
+auto D3DException::getErrorMessage() const -> const std::string & {
+	return _errorMessage;
 }
 
 NotImplementedException::NotImplementedException(const char *func) : _func(func) {

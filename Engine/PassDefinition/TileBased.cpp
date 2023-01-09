@@ -1,15 +1,11 @@
 #include "TileBased.h"
-
 #include "Dx12lib/Context/ContextProxy.hpp"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "Dx12lib/Pipeline/RootSignature.h"
 #include "EngineDefinition/EngineDefinition.h"
 #include "RenderGraph/Utility/Utility.h"
-
-// shaders
-#include "UpdatePointLightBoundingSphere_CS.h"
-#include "UpdateSpotLightBoundingSphere_CS.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
+#include "ShaderHelper/ShaderLoader.h"
 
 using namespace Math;
 
@@ -40,12 +36,31 @@ TileBased::TileBased(const std::string &passName,
 	pRootSignature->finalize();
 
 	_pUpdatePointLightBoundingSpherePipeline = pSharedDevice->createComputePSO("UpdateSpotLightBoundingSpherePSO");
-	_pUpdatePointLightBoundingSpherePipeline->setComputeShader(dx12lib::DXCShader::make(g_UpdatePointLightBoundingSphere_CS));
+
+	D3D_SHADER_MACRO pointLightShaderMacros[] = {
+		{ "UPDATE_POINT_LIGHT", "1" },
+		{ nullptr, nullptr }
+	};
+	_pUpdatePointLightBoundingSpherePipeline->setComputeShader(ShaderLoader::dxc(
+		"Assets/Shaders/UpdateLightBoundingSphere.hlsl",
+		"CS",
+		"cs_6_0",
+		pointLightShaderMacros
+	));
 	_pUpdatePointLightBoundingSpherePipeline->setRootSignature(pRootSignature);
 	_pUpdatePointLightBoundingSpherePipeline->finalize();
 
+	D3D_SHADER_MACRO spotLightShaderMacros[] = {
+		{ "UPDATE_SPOT_LIGHT", "1" },
+		{ nullptr, nullptr }
+	};
 	_pUpdateSpotLightBoundingSpherePipeline = pSharedDevice->createComputePSO("UpdateSpotLightBoundingSpherePipePSO");
-	_pUpdateSpotLightBoundingSpherePipeline->setComputeShader(dx12lib::DXCShader::make(g_UpdateSpotLightBoundingSphere_CS));
+	_pUpdateSpotLightBoundingSpherePipeline->setComputeShader(ShaderLoader::dxc(
+		"Assets/Shaders/UpdateLightBoundingSphere.hlsl",
+		"CS",
+		"cs_6_0",
+		spotLightShaderMacros
+	));
 	_pUpdateSpotLightBoundingSpherePipeline->setRootSignature(pRootSignature);
 	_pUpdateSpotLightBoundingSpherePipeline->finalize();
 }
