@@ -10,9 +10,9 @@ namespace dx12lib {
 namespace fs = std::filesystem;
 
 struct ShaderCacheInfo {
-    fs::path pdbFilePath;
-    fs::path csoFilePath;
-    fs::path reFilePath;
+    fs::path pdbFilePath;           // program database data
+    fs::path csoFilePath;           // byte code data
+    fs::path refFilePath;           // reflection data
 };
 
 struct ShaderCompileDesc {

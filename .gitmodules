@@ -4,3 +4,6 @@
 [submodule "Ext/sol2"]
 	path = Ext/sol2
 	url = https://github.com/ThePhD/sol2.git
+[submodule "Ext/stduuid"]
+	path = Ext/stduuid
+	url = https://github.com/mariusbancila/stduuid.git

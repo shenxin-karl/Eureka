@@ -1,6 +1,7 @@
 #include "DXCShader.h"
 #include <format>
 #include <filesystem>
+#include <fstream>
 #include "Dx12lib/Tool/DxcModule.h"
 
 namespace dx12lib {
@@ -53,7 +54,6 @@ void DXCShader::compile(const ShaderCompileDesc &desc) {
 	    L"-T", to_wstring(desc.target),
 	    L"-Zi",
 	    L"-Qstrip_rootsignature",
-	    L"-nologo",
     };
 
     if (desc.pShaderCacheInfo != nullptr) {
@@ -65,9 +65,9 @@ void DXCShader::compile(const ShaderCompileDesc &desc) {
             compileFlags.push_back(L"-Fd");
             compileFlags.push_back(to_wstring(desc.pShaderCacheInfo->pdbFilePath.string()));
         }
-        if (!desc.pShaderCacheInfo->reFilePath.empty()) {
+        if (!desc.pShaderCacheInfo->refFilePath.empty()) {
             compileFlags.push_back(L"-Fre");
-            compileFlags.push_back(to_wstring(desc.pShaderCacheInfo->reFilePath.string()));
+            compileFlags.push_back(to_wstring(desc.pShaderCacheInfo->refFilePath.string()));
         }
     }
 
@@ -117,21 +117,54 @@ void DXCShader::compile(const ShaderCompileDesc &desc) {
         D3DException::Throw(compileStatus, errorMessage);
     }
 
+    // byteCode
+    WRL::ComPtr<IDxcBlob> pByteCode = nullptr;
+    pResults->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&pByteCode), nullptr);
+    D3DException::Throw(pByteCode != nullptr, "DXCShader::compile pByteCode is nullptr");
+    _pByteCode = pByteCode.Detach();
+
+    // reflection 
     WRL::ComPtr<IDxcBlob> pReflectionData;
     pResults->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&pReflectionData), nullptr);
-    if (pReflectionData != nullptr) {
-        DxcBuffer reflectionData {
-            .Ptr = pReflectionData->GetBufferPointer(),
-            .Size = pReflectionData->GetBufferSize(),
-            .Encoding = DXC_CP_ACP,
-        };
-        gDxcModel.getUtils()->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
+    D3DException::Throw(pReflectionData != nullptr, "DXCShader::compile pReflectionData is nullptr");
+    DxcBuffer reflectionData {
+        .Ptr = pReflectionData->GetBufferPointer(),
+        .Size = pReflectionData->GetBufferSize(),
+        .Encoding = DXC_CP_ACP,
+    };
+    gDxcModel.getUtils()->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
+
+    // pdb
+    WRL::ComPtr<IDxcBlob> pdb = nullptr;
+    pResults->GetOutput(DXC_OUT_PDB, IID_PPV_ARGS(&pdb), nullptr);
+    D3DException::Throw(pdb != nullptr, "DXCShader::compile pdb is nullptr");
+
+    // white to file
+    if (desc.pShaderCacheInfo != nullptr) {
+        if (!desc.pShaderCacheInfo->csoFilePath.empty()) {
+            std::fstream csoFile(desc.pShaderCacheInfo->csoFilePath, std::ios::binary | std::ios::out);
+            Exception::Throw(csoFile.is_open(), "can not write cso file {}", desc.pShaderCacheInfo->csoFilePath.string());
+            csoFile.write(static_cast<const char*>(_pByteCode->GetBufferPointer()), _pByteCode->GetBufferSize());
+            csoFile.close();
+        }
+        if (!desc.pShaderCacheInfo->pdbFilePath.empty()) {
+            std::fstream pdbFile(desc.pShaderCacheInfo->pdbFilePath, std::ios::binary | std::ios::out);
+            Exception::Throw(pdbFile.is_open(), "can not write pdb file {}", desc.pShaderCacheInfo->pdbFilePath.string());
+            pdbFile.write(static_cast<const char *>(pdb->GetBufferPointer()), pdb->GetBufferSize());
+            pdbFile.close();
+        }
+        if (!desc.pShaderCacheInfo->refFilePath.empty()) {
+            std::fstream pdbFile(desc.pShaderCacheInfo->refFilePath, std::ios::binary | std::ios::out);
+            Exception::Throw(pdbFile.is_open(), "can not write pdb file {}", desc.pShaderCacheInfo->refFilePath.string());
+            pdbFile.write(static_cast<const char *>(pReflectionData->GetBufferPointer()), pReflectionData->GetBufferSize());
+            pdbFile.close();
+        }
     }
 }
 
 void DXCShader::load(const ShaderCacheInfo &cacheInfo) {
     std::wstring csoFilePath = to_wstring(cacheInfo.csoFilePath.string());
-    std::wstring reFilePath = to_wstring(cacheInfo.reFilePath.string());
+    std::wstring reFilePath = to_wstring(cacheInfo.refFilePath.string());
 
     // load cso info
     WRL::ComPtr<IDxcBlobEncoding> pCsoBlob;

@@ -2,10 +2,12 @@
 ENGINE_DIR = path.join(EUREKA_DIR, "Engine")
 
 includes(path.join(EUREKA_EXT_DIR, "xmake", "assimp.lua"))
+includes(path.join(EUREKA_EXT_DIR, "xmake", "stduuid.lua"))
 
 local isDebug = is_mode("debug")
 local vsRuntime = isDebug and "MDd" or "MD"
 add_requires("assimp", { configs = { debug = isDebug, vs_runtime = vsRuntime }})
+add_requires("stduuid", { configs = { debug = isDebug, vs_runtime = vsRuntime }})
 
 function CompileEngineShader() 
     add_rules("utils.dxc")
@@ -34,6 +36,7 @@ function CopyEngineDLL(target)
     local srcFilename1 = path.join(binDir, "dxil.dll")
     local dstFilename0 = path.join(target:targetdir(), "dxcompiler.dll")
     local dstFilename1 = path.join(target:targetdir(), "dxil.dll")
+    print("CopyEngineDLL ")
     if not os.exists(dstFilename0) or not os.exists(dstFilename1) then
         os.cp(srcFilename0, target:targetdir())
         os.cp(srcFilename1, target:targetdir())
@@ -47,7 +50,10 @@ target("Engine")
     add_headerfiles("**.hpp")
     add_files("**.cpp")
     add_includedirs(ENGINE_DIR)
+    
     add_packages("assimp")
+    add_packages("stduuid")
+
     add_deps("RenderGraph")
 
     set_targetdir(EUREKA_BINARY_DIR)
@@ -56,27 +62,4 @@ target("Engine")
 
     set_values("EUREKA_RENDERER_DIR", EUREKA_RENDERER_DIR)
     before_run(CopyEngineDLL)
-
-    add_deps("BuildInShader")
-    add_links("BuildInShader")
-target_end()
-
-
-target("BuildInShader")
-    set_languages("c++20")
-    set_kind("static")
-
-    local include_dir = path.join(os.scriptdir(), "EngineAssets", "BuildInShader")
-    add_includedirs(include_dir, { public = true })
-    add_rules("utils.build_in", {
-        extensions = { ".hlsl", ".hlsli" },
-        namespace = "BuildIn",
-        output = "BuildInShader",
-        include_path = include_dir
-    })
-
-    add_files("**.hlsl")
-    add_files("**.hlsli")
-    add_headerfiles("**.hlsl")
-    add_headerfiles("**.hlsli")
 target_end()

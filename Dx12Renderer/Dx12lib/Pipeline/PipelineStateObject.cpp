@@ -249,15 +249,15 @@ void GraphicsPSO::setDomainShader(std::shared_ptr<IShader> pShader) {
 }
 void GraphicsPSO::setVertexShader(std::shared_ptr<IShader> pShader) {
 	_psoDesc.VS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
-	_shaders[ShaderIndex::Hull] = std::move(pShader);
+	_shaders[ShaderIndex::Vertex] = std::move(pShader);
 }
 void GraphicsPSO::setPixelShader(std::shared_ptr<IShader> pShader) {
 	_psoDesc.PS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
-	_shaders[ShaderIndex::Hull] = std::move(pShader);
+	_shaders[ShaderIndex::Pixel] = std::move(pShader);
 }
 void GraphicsPSO::setGeometryShader(std::shared_ptr<IShader> pShader) {
 	_psoDesc.GS = pShader != nullptr ? pShader->getByteCode() : kNullByteCode;
-	_shaders[ShaderIndex::Hull] = std::move(pShader);
+	_shaders[ShaderIndex::Geometry] = std::move(pShader);
 }
 
 auto GraphicsPSO::getHullShader() const -> std::shared_ptr<IShader> {

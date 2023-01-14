@@ -20,7 +20,7 @@ auto ShaderContentLoader::open(const fs::path &filePath) -> std::string_view {
 	}
 
 	std::fstream fin(filePath);
-	Exception::Throw(!fin.is_open(), "can't not open the file {}", filePath.string());
+	Exception::Throw(fin.is_open(), "can't not open the file {}", filePath.string());
 
 	std::stringstream sbuf;
 	sbuf << fin.rdbuf();
