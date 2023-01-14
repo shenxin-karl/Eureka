@@ -124,7 +124,7 @@ auto GraphicsPipeline::getPSO(const KeywordMask &keywordMask) const -> std::shar
 			macros.push_back(D3D_SHADER_MACRO{
 				.Name = pKeyword->c_str(),
 				.Definition = nullptr
-				});
+			});
 		}
 	}
 	macros.push_back(D3D_SHADER_MACRO{ nullptr, nullptr });

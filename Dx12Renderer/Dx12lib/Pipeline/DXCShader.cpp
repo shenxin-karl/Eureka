@@ -71,6 +71,12 @@ void DXCShader::compile(const ShaderCompileDesc &desc) {
         }
     }
 
+    for (size_t i = 0; desc.pMacro != nullptr && desc.pMacro[i].Name != nullptr; ++i) {
+        auto key = desc.pMacro[i].Name;
+        auto value = desc.pMacro[i].Definition == nullptr ? "1" : desc.pMacro[i].Definition;
+        compileFlags.emplace_back(to_wstring(std::format("-D{}={}", key, value)));
+    }
+
     std::vector<LPCWSTR> arguments;
     for (const auto &flag : compileFlags)
         arguments.push_back(flag.c_str());
