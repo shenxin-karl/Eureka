@@ -4,9 +4,6 @@
 #include "ShaderHelper/PipelineManager.h"
 #include "ShaderHelper/ComputePipeline.h"
 #include "ShaderHelper/ShaderHelper.h"
-
-// shaders
-#include "LightingPassCS_CS.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
 
 using namespace Math;

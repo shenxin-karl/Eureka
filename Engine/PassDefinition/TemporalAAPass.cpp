@@ -5,10 +5,6 @@
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
 #include "Dx12lib/Pipeline/RootSignature.h"
 #include "ShaderHelper/ShaderHelper.h"
-
-// shaders
-#include "TAAResolveCS_CS.h"
-#include "SharpenTAACS_CS.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
 #include "ShaderHelper/ShaderLoader.h"
 

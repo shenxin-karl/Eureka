@@ -6,41 +6,60 @@ includes(path.join(EUREKA_EXT_DIR, "xmake", "stduuid.lua"))
 
 local isDebug = is_mode("debug")
 local vsRuntime = isDebug and "MDd" or "MD"
-add_requires("assimp", { configs = { debug = isDebug, vs_runtime = vsRuntime }})
-add_requires("stduuid", { configs = { debug = isDebug, vs_runtime = vsRuntime }})
-
-function CompileEngineShader() 
-    add_rules("utils.dxc")
-    set_values("ShaderCompileConfigPath", path.absolute("EngineAssets/Shaders"))
-    set_values("ShaderCompileConfigName", "CompileShaderConfig")
-    add_headerfiles("EngineAssets/Shaders/CompileShaderConfig.lua")
-    add_files("**.hlsl")
-    add_headerfiles("**.hlsl")
-    add_headerfiles("**.hlsli")
-end
+add_requires("assimp",  { verify = false, configs = { shared = true }})
+add_requires("stduuid", { configs = { vs_runtime = vsRuntime }})
 
 function CopyEngineDLL(target) 
-    local dxcDir = path.join(target:values("EUREKA_RENDERER_DIR"), "Ext", "dxc")
-    local binDir = nil
-    if is_arch("x86") then
-        binDir = path.join(dxcDir, "bin", "x86")
-    elseif is_arch("x64", "x86_64") then
-        binDir = path.join(dxcDir, "bin", "x64")
-    elseif is_arch("arm64") then
-        binDir = path.join(dxcDir, "bin", "arm64")
-    else 
-        assert(false)
+    function CopyDxcDLL(target) 
+        local dxcDir = path.join(target:values("EUREKA_RENDERER_DIR"), "Ext", "dxc")
+        local binDir = nil
+        if is_arch("x86") then
+            binDir = path.join(dxcDir, "bin", "x86")
+        elseif is_arch("x64", "x86_64") then
+            binDir = path.join(dxcDir, "bin", "x64")
+        elseif is_arch("arm64") then
+            binDir = path.join(dxcDir, "bin", "arm64")
+        else 
+            assert(false)
+        end
+        local srcFilename0 = path.join(binDir, "dxcompiler.dll")
+        local srcFilename1 = path.join(binDir, "dxil.dll")
+        local dstFilename0 = path.join(target:targetdir(), "dxcompiler.dll")
+        local dstFilename1 = path.join(target:targetdir(), "dxil.dll")
+        if not os.exists(dstFilename0) or not os.exists(dstFilename1) then
+            os.cp(srcFilename0, dstFilename0)
+            os.cp(srcFilename1, dstFilename1)
+        end
+    end
+    function CopyPixDLL(target) 
+        local binDir = nil
+        local pixDir = path.join(
+            target:values("EUREKA_RENDERER_DIR"), 
+            "Ext", 
+            "WinPixEventRuntime", 
+            "winpixeventruntime.1.0.22081000"
+        )
+        if is_arch("x64", "x86_64") then
+            binDir = path.join(pixDir, "bin", "x64")
+        elseif is_arch("arm64") then
+            binDir = path.join(pixDir, "bin", "ARM64")
+        else 
+            assert(false)
+        end
+    
+        local srcFilename = path.join(binDir, "WinPixEventRuntime.dll")
+        local dstFilename = path.join(target:targetdir(), "WinPixEventRuntime.dll")
+        if not os.exists(dstFilename) then
+            os.cp(srcFilename, dstFilename)
+        end
+    end 
+
+    if not os.isdir(target:values("EUREKA_RENDERER_DIR")) then
+        os.mkdir(target:values("EUREKA_RENDERER_DIR"))
     end
 
-    local srcFilename0 = path.join(binDir, "dxcompiler.dll")
-    local srcFilename1 = path.join(binDir, "dxil.dll")
-    local dstFilename0 = path.join(target:targetdir(), "dxcompiler.dll")
-    local dstFilename1 = path.join(target:targetdir(), "dxil.dll")
-    print("CopyEngineDLL ")
-    if not os.exists(dstFilename0) or not os.exists(dstFilename1) then
-        os.cp(srcFilename0, target:targetdir())
-        os.cp(srcFilename1, target:targetdir())
-    end
+    CopyDxcDLL(target)
+    CopyPixDLL(target)
 end
 
 target("Engine")
@@ -58,8 +77,8 @@ target("Engine")
 
     set_targetdir(EUREKA_BINARY_DIR)
     set_rundir(EUREKA_WORK_DIR)
-    CompileEngineShader()
 
     set_values("EUREKA_RENDERER_DIR", EUREKA_RENDERER_DIR)
     before_run(CopyEngineDLL)
+    on_install(CopyEngineDLL)
 target_end()
