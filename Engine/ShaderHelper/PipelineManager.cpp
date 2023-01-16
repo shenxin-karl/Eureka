@@ -1,19 +1,26 @@
 #include "PipelineManager.h"
 #include "EngineDefinition/EngineDefinition.h"
+#include "PathManager/PathManager.h"
 #include "ShaderHelper/ComputePipeline.h"
 #include "ShaderHelper/GraphicsPipeline.h"
 
 namespace Eureka {
 
 void PipelineManager::initialize(std::weak_ptr<dx12lib::Device> pDevice) {
-	auto pDeferredPBR = std::make_shared<GraphicsPipeline>(pDevice, "Assets/Shaders/DeferredPBR.hlsl");
+	auto pDeferredPBR = std::make_shared<GraphicsPipeline>(
+		pDevice, 
+		PathManager::toAssetPath("Shaders/DeferredPBR.hlsl")
+	);
 	pDeferredPBR->setVertexShader("VS");
 	pDeferredPBR->setPixelShader("PS");
 	pDeferredPBR->setRenderTargetFormats({ kGBuffer0Format, kGBuffer1Format, kGBuffer2Format, kVelocityFormat });
 	pDeferredPBR->setDepthStencilFormat(kSwapChainDepthStencilFormat);
 	_graphicsShaders["DeferredPBR"] = pDeferredPBR;
 
-	auto pFXAAShader = std::make_shared<GraphicsPipeline>(pDevice, "Assets/Shaders/FXAA.hlsl");
+	auto pFXAAShader = std::make_shared<GraphicsPipeline>(
+		pDevice, 
+		PathManager::toAssetPath("Shaders/FXAA.hlsl")
+	);
 	pFXAAShader->setVertexShader("VS");
 	pFXAAShader->setPixelShader("PS");
 	pFXAAShader->setRenderTargetFormats({ kSwapChainRenderTargetFormat });
@@ -26,15 +33,24 @@ void PipelineManager::initialize(std::weak_ptr<dx12lib::Device> pDevice) {
 	pFXAAShader->setRasterizerDesc(rasterizerDesc);
 	_graphicsShaders["FXAA"] = pFXAAShader;
 
-	auto pLightingShader = std::make_shared<ComputePipeline>(pDevice, "Assets/Shaders/LightingPassCS.hlsl");
+	auto pLightingShader = std::make_shared<ComputePipeline>(
+		pDevice, 
+		PathManager::toAssetPath("Shaders/LightingPassCS.hlsl")
+	);
 	pLightingShader->setComputeShader("CS");
 	_computeShaders["Lighting"] = pLightingShader;
 
-	auto pPostProcessingShader = std::make_shared<ComputePipeline>(pDevice, "Assets/Shaders/PostProcessing.hlsl");
+	auto pPostProcessingShader = std::make_shared<ComputePipeline>(
+		pDevice, 
+		PathManager::toAssetPath("Shaders/PostProcessing.hlsl")
+	);
 	pPostProcessingShader->setComputeShader("CS");
 	_computeShaders["PostProcessing"] = pPostProcessingShader;
 
-	auto pTileDeferred = std::make_shared<ComputePipeline>(pDevice, "Assets/Shaders/TiledDeferredCS.hlsl");
+	auto pTileDeferred = std::make_shared<ComputePipeline>(
+		pDevice,
+		PathManager::toAssetPath("Shaders/TiledDeferredCS.hlsl")
+	);
 	pTileDeferred->setComputeShader("CS");
 	_computeShaders["TileDeferred"] = pTileDeferred;
 }

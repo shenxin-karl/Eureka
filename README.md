@@ -1,21 +1,17 @@
 # Eureka
 
 ## Build
+需要先安装 xmake 构建工具
 
 ```shell
 git clone --recursive https://github.com/shenxin-karl/Eureka.git
 cd Eureka
-start build.bat
+xmake run
 ```
-
-
-
-## 
 
 ## Features:
 
 - [x] **Based on the dx12**
-
 - [x] **Shader Resource Binding System**
 - [x] **Resource State Tracking System**
 - [x] **Render Graph System**

@@ -12,12 +12,12 @@
 
 namespace Eureka {
 
-GraphicsPipeline::GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFilePath)
-: _shaderFilePath(shaderFilePath), _pDevice(std::move(pDevice))
+GraphicsPipeline::GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, fs::path shaderPath)
+: _shaderFilePath(std::move(shaderPath)), _pDevice(std::move(pDevice))
 {
-	_shaderContent = ShaderContentLoader::instance()->open(shaderFilePath);
+	_shaderContent = ShaderContentLoader::instance()->open(_shaderFilePath);
 	if (_shaderContent.empty())
-		Exception::Throw("Can't open the file {}", _shaderFilePath);
+		Exception::Throw("Can't open the file {}", _shaderFilePath.string());
 	_keywordMask.handleShaderContent(_shaderContent.data());
 }
 
@@ -115,7 +115,7 @@ auto GraphicsPipeline::getPSO(const KeywordMask &keywordMask) const -> std::shar
 	if (iter != _psoMap.end())
 		return iter->second;
 
-	std::string key = _shaderFilePath;
+	std::string key = _shaderFilePath.string();
 	std::vector<D3D_SHADER_MACRO> macros;
 	for (size_t i = 0; i < kMaxKeyword; ++i) {
 		if (keywordMask.getBitMask().test(i)) {

@@ -4,6 +4,9 @@
 #include <vector>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 namespace Eureka {
 
@@ -58,7 +61,7 @@ public:
 		aiProcess_OptimizeGraph		              |
 		aiProcess_GenBoundingBoxes
 	);
-	ALTree(const std::string &path, int flag = kDefaultLoadFlag);
+	ALTree(const fs::path &path, int flag = kDefaultLoadFlag);
 	~ALTree();
 	ALTree(const ALTree &) = delete;
 	size_t getNumMaterial() const;

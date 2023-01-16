@@ -97,10 +97,10 @@ bool ALMaterial::processTexture(ALTexture &texture,
 	return texture.valid();
 }
 
-ALTree::ALTree(const std::string &path, int flag) {
+ALTree::ALTree(const fs::path &path, int flag) {
 	Assimp::Importer importer;
 	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
-	const aiScene *pAiScene = importer.ReadFile(path, flag);
+	const aiScene *pAiScene = importer.ReadFile(path.string(), flag);
 	if (pAiScene == nullptr || pAiScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || pAiScene->mRootNode == nullptr) {
 		assert(false);
 		return;
@@ -123,7 +123,8 @@ ALTree::ALTree(const std::string &path, int flag) {
 		flags[pAiMesh->mMaterialIndex] = true;
 	}
 
-	std::string_view modelPath(path.c_str(), path.length());
+	auto stringPath = path.string();
+	std::string_view modelPath(stringPath.c_str(), stringPath.length());
 	_pRootNode = std::make_unique<ALNode>(this, modelPath, 0, pAiScene, pAiScene->mRootNode);
 }
 

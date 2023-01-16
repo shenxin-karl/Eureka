@@ -10,7 +10,7 @@
 #include "EurekaApplication.h"
 #include "InputSystem/InputSystem.h"
 #include "InputSystem/window.h"
-#include "GameTimer/GameTimer.h"
+#include "Foundation/GameTimer.h"
 #include "Model/MeshManager.h"
 #include "ShaderHelper/GraphicsPipeline.h"
 #include "ShaderHelper/PipelineManager.h"
@@ -25,6 +25,7 @@
 #include "PassDefinition/ClusterDeferredPass.h"
 #include "RenderGraph/RenderGraph/RenderGraph.h"
 #include "PassDefinition/SetupRenderGraph.h"
+#include "PathManager/PathManager.h"
 #include "TextureManager/TextureManager.h"
 
 using namespace Math;
@@ -40,6 +41,8 @@ EurekaApplication::~EurekaApplication() {
 }
 
 void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
+	PathManager::setAssetPath("../../Assets");
+	PathManager::setProjectPath("../../");
 	MeshManager::SingletionEmplace();
 	TextureManager::SingletionEmplace();
 	PipelineManager::SingletionEmplace();
@@ -196,7 +199,9 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 		return std::make_shared<Material>(materialDesc);
 	};
 
-	auto pSponzaPBR = std::make_shared<ALTree>("Assets/Models/SponzaPBR/Sponza.gltf");
+	fs::path resourcePath;
+	resourcePath = PathManager::toAssetPath("Models/SponzaPBR/Sponza.gltf");
+	auto pSponzaPBR = std::make_shared<ALTree>(resourcePath);
 	auto pModel = std::make_unique<MeshModel>(*pDirectCtx, pSponzaPBR);
 	pModel->createMaterial(*pDirectCtx, materialCreator);
 	pModel->setModelTransform(static_cast<float4x4>(Matrix4::makeScale(2.f)));
@@ -228,7 +233,8 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	pSphereModel->setModelTransform(static_cast<float4x4>(Matrix4::makeTranslation(-5, 1, 0)));
 	_models.push_back(std::move(pSphereModel));
 
-	auto pSkullTree = std::make_shared<ALTree>("Assets/Models/Human skull.glb");
+	resourcePath = PathManager::toAssetPath("Models/Human skull.glb");
+	auto pSkullTree = std::make_shared<ALTree>(resourcePath);
 	auto pSkullModel = std::make_unique<MeshModel>(*pDirectCtx, pSkullTree);
 	auto scale = Matrix4::makeScale(50.f);
 	auto rotate = Matrix4::makeYRotationByDegree(-90.f);

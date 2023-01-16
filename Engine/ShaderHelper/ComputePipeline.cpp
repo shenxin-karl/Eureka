@@ -10,12 +10,12 @@
 
 namespace Eureka {
 
-ComputePipeline::ComputePipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName)
-: _shaderFileName(shaderFileName), _pDevice(pDevice)
+ComputePipeline::ComputePipeline(std::weak_ptr<dx12lib::Device> pDevice, fs::path shaderPath)
+: _shaderFilePath(std::move(shaderPath)), _pDevice(std::move(pDevice))
 {
-	_shaderContent = ShaderContentLoader::instance()->open(shaderFileName);
+	_shaderContent = ShaderContentLoader::instance()->open(_shaderFilePath);
 	if (_shaderContent.empty())
-		Exception::Throw("Can't open the file {}", _shaderFileName);
+		Exception::Throw("Can't open the file {}", _shaderFilePath.string());
 	_keywordMask.handleShaderContent(_shaderContent.data());
 }
 
@@ -33,7 +33,7 @@ auto ComputePipeline::getPSO(const KeywordMask &keywordMask) const -> std::share
 		return iter->second;
 
 	assert(!_entryPoint.empty());
-	std::string key = _shaderFileName;
+	std::string key = _shaderFilePath.string();
 	std::vector<D3D_SHADER_MACRO> macros;
 	for (size_t i = 0; i < kMaxKeyword; ++i) {
 		if (keywordMask.getBitMask().test(i)) {
@@ -47,7 +47,7 @@ auto ComputePipeline::getPSO(const KeywordMask &keywordMask) const -> std::share
 	}
 	macros.push_back(D3D_SHADER_MACRO{ nullptr, nullptr });
 	auto pShader = ShaderLoader::dxc(
-		_shaderFileName,
+		_shaderFilePath,
 		_entryPoint,
 		"cs_6_0",
 		macros.data()

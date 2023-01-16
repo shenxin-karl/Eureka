@@ -1,4 +1,4 @@
-#include "GameTimer/GameTimer.h"
+#include "Foundation/GameTimer.h"
 #include "InputSystem/InputSystem.h"
 #include "InputSystem/Window.h"
 #include "InputSystem/Mouse.h"

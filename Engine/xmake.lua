@@ -6,8 +6,8 @@ includes(path.join(EUREKA_EXT_DIR, "xmake", "stduuid.lua"))
 
 local isDebug = is_mode("debug")
 local vsRuntime = isDebug and "MDd" or "MD"
-add_requires("assimp",  { verify = false, configs = { shared = true }})
-add_requires("stduuid", { configs = { vs_runtime = vsRuntime }})
+add_requires("assimp",  { configs = { debug = isDebug, vs_runtime = vsRuntime, shared = false }})
+add_requires("stduuid", { configs = { debug = isDebug, vs_runtime = vsRuntime }})
 
 function CopyEngineDLL(target) 
     function CopyDxcDLL(target) 
@@ -76,7 +76,6 @@ target("Engine")
     add_deps("RenderGraph")
 
     set_targetdir(EUREKA_BINARY_DIR)
-    set_rundir(EUREKA_WORK_DIR)
 
     set_values("EUREKA_RENDERER_DIR", EUREKA_RENDERER_DIR)
     before_run(CopyEngineDLL)

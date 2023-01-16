@@ -1,9 +1,12 @@
 #include <iostream>
 #include "Application/EurekaApplication.h"
-#include "GameTimer/GameTimer.h"
+#include "Foundation/GameTimer.h"
 #include "Math/MathHelper.h"
+#include <filesystem>
 
-int main() {
+namespace fs = std::filesystem;
+
+int main(int argc, char *argv[]) {
 	Eureka::EurekaApplication app;
 	try {
 		auto pGameTimer = std::make_shared<Eureka::GameTimer>();

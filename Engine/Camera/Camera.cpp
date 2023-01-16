@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include "Camera.h"
-#include "GameTimer/GameTimer.h"
+#include "Foundation/GameTimer.h"
 #include "InputSystem/Mouse.h"
 #include "InputSystem/Keyboard.h"
 

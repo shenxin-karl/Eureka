@@ -4,7 +4,7 @@
 #include "InputSystem.h"
 #include "Mouse.h"
 #include "Dx12lib/dx12libStd.h"
-#include "GameTimer/GameTimer.h"
+#include "Foundation/GameTimer.h"
 
 namespace Eureka {
 

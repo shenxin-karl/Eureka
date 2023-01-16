@@ -7,6 +7,9 @@
 #include <Dx12lib/dx12libStd.h>
 #include <Dx12lib/Tool/D3Dx12.h>
 #include "ShaderHelper/KeywordMask.h"
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 namespace Eureka {
 
@@ -25,7 +28,7 @@ struct ShaderEntryPoint {
 
 class GraphicsPipeline {
 public:
-	GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, const std::string &shaderFileName);
+	GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, fs::path shaderPath);
 	~GraphicsPipeline();
 	void setDepthStencilFormat(DXGI_FORMAT depthStencilFormat);
 	void setRenderTargetFormat(DXGI_FORMAT renderTargetFormat);
@@ -51,8 +54,8 @@ public:
 	auto getKeywordMask() const -> const KeywordMask &;
 	bool hasShader(ShaderType shaderType) const;
 private:
+	fs::path _shaderFilePath;
 	KeywordMask _keywordMask;
-	std::string _shaderFilePath;
 	std::string_view _shaderContent;
 	DXGI_FORMAT _DSVFormat = DXGI_FORMAT_UNKNOWN;
 	std::vector<DXGI_FORMAT> _RTVFormats;

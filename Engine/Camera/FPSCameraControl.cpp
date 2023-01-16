@@ -3,7 +3,7 @@
 #include "InputSystem/InputSystem.h"
 #include "InputSystem/Mouse.h"
 #include "InputSystem/Keyboard.h"
-#include "GameTimer/GameTimer.h"
+#include "Foundation/GameTimer.h"
 #include "Math/MathStd.hpp"
 
 using namespace Math;

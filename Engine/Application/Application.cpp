@@ -3,7 +3,7 @@
 #include "InputSystem/window.h"
 #include <dx12lib/Device/DeviceStd.h>
 #include <dx12lib/Context/ContextStd.h>
-#include "GameTimer/GameTimer.h"
+#include "Foundation/GameTimer.h"
 #include "EngineDefinition/EngineDefinition.h"
 
 using namespace Math;

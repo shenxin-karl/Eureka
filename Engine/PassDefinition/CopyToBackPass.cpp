@@ -4,6 +4,7 @@
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "ShaderHelper/ShaderHelper.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
+#include "PathManager/PathManager.h"
 #include "ShaderHelper/ShaderLoader.h"
 
 namespace Eureka {
@@ -17,12 +18,12 @@ CopyToBackPass::CopyToBackPass(const std::string &passName, dx12lib::IDirectCont
 
 	_pPipeline = pShaderDevice->createGraphicsPSO("FXAA");
 	_pPipeline->setVertexShader(ShaderLoader::dxc(
-		"Assets/Shaders/CopyToBack.hlsl",
+		PathManager::toAssetPath("Shaders/CopyToBack.hlsl"),
 		"VS",
 		"vs_6_0"
 	));
 	_pPipeline->setPixelShader(ShaderLoader::dxc(
-		"Assets/Shaders/CopyToBack.hlsl",
+		PathManager::toAssetPath("Shaders/CopyToBack.hlsl"),
 		"PS",
 		"ps_6_0"
 	));

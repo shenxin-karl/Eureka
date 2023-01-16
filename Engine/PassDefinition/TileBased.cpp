@@ -5,6 +5,7 @@
 #include "EngineDefinition/EngineDefinition.h"
 #include "RenderGraph/Utility/Utility.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
+#include "PathManager/PathManager.h"
 #include "ShaderHelper/ShaderLoader.h"
 
 using namespace Math;
@@ -42,7 +43,7 @@ TileBased::TileBased(const std::string &passName,
 		{ nullptr, nullptr }
 	};
 	_pUpdatePointLightBoundingSpherePipeline->setComputeShader(ShaderLoader::dxc(
-		"Assets/Shaders/UpdateLightBoundingSphere.hlsl",
+		 PathManager::toAssetPath("Shaders/UpdateLightBoundingSphere.hlsl"),
 		"CS",
 		"cs_6_0",
 		pointLightShaderMacros
@@ -56,7 +57,7 @@ TileBased::TileBased(const std::string &passName,
 	};
 	_pUpdateSpotLightBoundingSpherePipeline = pSharedDevice->createComputePSO("UpdateSpotLightBoundingSpherePipePSO");
 	_pUpdateSpotLightBoundingSpherePipeline->setComputeShader(ShaderLoader::dxc(
-		"Assets/Shaders/UpdateLightBoundingSphere.hlsl",
+		PathManager::toAssetPath("Shaders/UpdateLightBoundingSphere.hlsl"),
 		"CS",
 		"cs_6_0",
 		spotLightShaderMacros

@@ -6,6 +6,7 @@
 #include "Dx12lib/Pipeline/RootSignature.h"
 #include "ShaderHelper/ShaderHelper.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
+#include "PathManager/PathManager.h"
 #include "ShaderHelper/ShaderLoader.h"
 
 using namespace Math;
@@ -40,7 +41,7 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 	pRootSignature->finalize();
 	_pTemporalPipeline = pSharedDevice->createComputePSO("TemporalPipeline");
 	_pTemporalPipeline->setComputeShader(ShaderLoader::dxc(
-		"Assets/Shaders/TAAResolveCS.hlsl",
+		PathManager::toAssetPath("Shaders/TAAResolveCS.hlsl"),
 		"CS",
 		"cs_6_0"
 	));
@@ -58,7 +59,7 @@ TemporalAAPass::TemporalAAPass(const std::string &passName, dx12lib::IDirectCont
 
 	_pSharpenPipeline = pSharedDevice->createComputePSO("SharpenPipeline");
 	_pSharpenPipeline->setComputeShader(ShaderLoader::dxc(
-		"Assets/Shaders/SharpenTAACS.hlsl",
+		PathManager::toAssetPath("Shaders/SharpenTAACS.hlsl"),
 		"CS",
 		"cs_6_0"
 	));

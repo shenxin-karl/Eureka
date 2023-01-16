@@ -4,6 +4,9 @@
 #include <source_location>
 #include <format>
 #include <Windows.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 namespace dx12lib {
 

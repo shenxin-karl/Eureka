@@ -12,7 +12,7 @@ auto UUIDRandomGenerator::instance() -> UUIDRandomGenerator *{
 }
 
 auto UUIDRandomGenerator::newUUID() -> UUID128 {
-	return (*pInst->_pUuidGenerator)();
+	return UUID128{ (*pInst->_pUuidGenerator)() };
 }
 
 UUIDRandomGenerator::UUIDRandomGenerator() {
@@ -31,7 +31,7 @@ UUIDNameGenerator::UUIDNameGenerator(const UUID128 &kind) {
 }
 
 auto UUIDNameGenerator::newUUID(const std::string &name) -> UUID128 {
-	return (*_pUuidGenerator)(name);
+	return UUID128{ (*_pUuidGenerator)(name) };
 }
 
 #pragma endregion UUID_Name_Generator
