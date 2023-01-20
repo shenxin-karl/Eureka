@@ -28,8 +28,15 @@ package("assimp")
             "-DASSIMP_WARNINGS_AS_ERRORS=OFF",
             "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF",
         }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        if is_mode("debug") then
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
+        elseif is_mode("release") then
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=Release")
+        else
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=RelWithDebInfo")
+        end
 
         local function add_config_arg(config_name, cmake_name)
             table.insert(configs, "-D" .. cmake_name .. "=" .. (package:config(config_name) and "ON" or "OFF"))

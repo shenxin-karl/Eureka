@@ -13,7 +13,7 @@ if is_mode("debug") then
     add_defines("DEBUG", "_DEBUG")
     EUREKA_BINARY_DIR = path.join(EUREKA_BINARY_DIR, "Debug", "bin")
 elseif is_mode("release") then
-    set_runtimes("MD")
+    set_runtimes("MT")
     add_defines("RELEASE", "_RELEASE")
     EUREKA_BINARY_DIR = path.join(EUREKA_BINARY_DIR, "Release", "bin")
 else 

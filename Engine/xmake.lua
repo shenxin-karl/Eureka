@@ -5,7 +5,7 @@ includes(path.join(EUREKA_EXT_DIR, "xmake", "assimp.lua"))
 includes(path.join(EUREKA_EXT_DIR, "xmake", "stduuid.lua"))
 
 local isDebug = is_mode("debug")
-local vsRuntime = isDebug and "MDd" or "MD"
+local vsRuntime = is_mode("release") and "MT" or "MDd"
 add_requires("assimp",  { configs = { debug = isDebug, vs_runtime = vsRuntime, shared = false }})
 add_requires("stduuid", { configs = { debug = isDebug, vs_runtime = vsRuntime }})
 

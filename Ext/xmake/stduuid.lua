@@ -2,10 +2,15 @@
 package("stduuid")
     add_deps("cmake")
     set_sourcedir(path.join(os.projectdir(), "Ext", "stduuid"))
-    set_policy("package.install_always", true)
     on_install(function (package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        if is_mode("debug") then
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
+        elseif is_mode("release") then
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=Release")
+        else
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=RelWithDebInfo")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 package_end()
