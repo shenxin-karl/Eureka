@@ -3,14 +3,18 @@
 #include "ShaderInclude.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
 #include "Foundation/Exception.h"
+#include "PathManager/PathManager.h"
 
 namespace Eureka {
+
+const std::string ShaderLoader::CompileMode = EUREKA_COMPILE_MODE;
 
 std::unique_ptr<ShaderLoader> ShaderLoader::pInst = std::make_unique<ShaderLoader>();
 
 ShaderLoader::ShaderLoader() : _uuidGenerator(classUUID) {
-    if (!fs::exists(outputDirectory)) {
-	    fs::create_directory(outputDirectory);
+    auto targetDirectory = PathManager::getProjectPath() / outputDirectory;
+    if (!fs::exists(targetDirectory)) {
+	    fs::create_directory(targetDirectory);
     }
 }
 
@@ -100,13 +104,13 @@ dx12lib::ShaderCacheInfo ShaderLoader::getShaderCacheInfo(const std::string &sha
     auto csoUUID = UUID::to_string(pInst->_uuidGenerator.newUUID(shaderCacheKey + ".cso"));
     auto pdbUUID = UUID::to_string(pInst->_uuidGenerator.newUUID(shaderCacheKey + ".pdb"));
     auto refUUID = UUID::to_string(pInst->_uuidGenerator.newUUID(shaderCacheKey + ".ref"));
-    std::string csoFileName = csoUUID + ".cso";
-    std::string pdbFileName = pdbUUID + ".pdb";
-    std::string refFileName = refUUID + ".ref";
+    std::string csoFileName = std::format("{}_{}.cso", CompileMode, csoUUID);
+    std::string pdbFileName = std::format("{}_{}.pdb", CompileMode, pdbUUID);
+    std::string refFileName = std::format("{}_{}.ref", CompileMode, refUUID);
     dx12lib::ShaderCacheInfo cacheInfo;
-    cacheInfo.csoFilePath = outputDirectory / csoFileName;
-    cacheInfo.pdbFilePath = outputDirectory / pdbFileName;
-    cacheInfo.refFilePath = outputDirectory / refFileName;
+    cacheInfo.csoFilePath = PathManager::getProjectPath() / outputDirectory / csoFileName;
+    cacheInfo.pdbFilePath = PathManager::getProjectPath() / outputDirectory / pdbFileName;
+    cacheInfo.refFilePath = PathManager::getProjectPath() / outputDirectory / refFileName;
     return cacheInfo;
 }
 

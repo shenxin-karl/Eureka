@@ -10,15 +10,15 @@ add_defines("NOMINMAX", "UNICODE", "_UNICODE")
 
 if is_mode("debug") then
     set_runtimes("MDd")
-    add_defines("DEBUG", "_DEBUG")
+    add_defines("DEBUG", "_DEBUG", "EUREKA_COMPILE_MODE=\"Debug\"")
     EUREKA_BINARY_DIR = path.join(EUREKA_BINARY_DIR, "Debug", "bin")
 elseif is_mode("release") then
     set_runtimes("MT")
-    add_defines("RELEASE", "_RELEASE")
+    add_defines("RELEASE", "_RELEASE", "EUREKA_COMPILE_MODE=\"Release\"")
     EUREKA_BINARY_DIR = path.join(EUREKA_BINARY_DIR, "Release", "bin")
 else 
     set_runtimes("MDd")
-    add_defines("RELWITHDEBINFO", "_RELWITHDEBINFO")
+    add_defines("RELWITHDEBINFO", "_RELWITHDEBINFO", "EUREKA_COMPILE_MODE=\"ReleaseDbg\"")
     EUREKA_BINARY_DIR = path.join(EUREKA_BINARY_DIR, "ReleaseDbg", "bin")
 end 
 
