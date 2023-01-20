@@ -16,7 +16,7 @@ void PartModel::submit(const IBounding &bounding, const rgph::TechniqueFlag &tec
 	if (_transformDirty) {
 		_transformDirty = false;
 		_pTransformCBuffer.setMatWorld(_transform);
-		_pRenderItem->setTransform(Matrix4(_transform));
+		_pRenderItem->setTransform(Matrix(_transform));
 	}
 
 	const auto &worldBoundBox = _pRenderItem->getWorldAABB();

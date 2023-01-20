@@ -54,7 +54,7 @@ void Transform::setLocalRotate(const Math::float4 &quaternion) {
 void Transform::setWorldPosition(const Math::float3 &worldPosition) {
 	if (_transformData.worldPosition != worldPosition) {
 		if (_parent != nullptr) {
-			Matrix4 parentInverse(_parent->getWorldTransform());
+			Matrix parentInverse(_parent->getWorldTransform());
 			parentInverse = inverse(parentInverse);
 			Vector4 localPosition = parentInverse * Vector4(worldPosition, 1.f);
 			_transformData.localPosition = float3(localPosition);
@@ -70,7 +70,8 @@ void Transform::setWorldRotate(const Math::float4 &quaternion) {
 	if (_transformData.worldRotate != quaternion) {
 		if (_parent != nullptr) {
 			Quaternion q(_parent->getWorldRotate());
-			_transformData.localRotate = float4(inverse(q) * Quaternion(quaternion));
+			auto tQ = inverse(q) * Quaternion(quaternion);
+			//_transformData.localRotate = float4();
 		} else {
 			_transformData.localRotate = quaternion;
 		}
@@ -93,7 +94,7 @@ auto Transform::getLocalRotate() const -> const Math::float4 & {
 
 auto Transform::getWorldPosition() const -> const Math::float3 & {
 	if (_dirtyFlag.test(WorldPositionDirty)) {
-		Vector3 parentPosition((_parent != nullptr) ? _parent->getWorldPosition() : float3::zero());
+		Vector3 parentPosition((_parent != nullptr) ? _parent->getWorldPosition() : float3::Zero);
 		_transformData.worldPosition = float3(parentPosition + Vector3(_transformData.localPosition));
 		_dirtyFlag.reset(WorldPositionDirty);
 	}
@@ -102,7 +103,7 @@ auto Transform::getWorldPosition() const -> const Math::float3 & {
 
 auto Transform::getWorldScale() const -> const Math::float3 & {
 	if (_dirtyFlag.test(WorldScaleDirty)) {
-		Vector3 parentScale((_parent != nullptr) ? _parent->getWorldScale() : float3::one());
+		Vector3 parentScale((_parent != nullptr) ? _parent->getWorldScale() : float3::One);
 		_transformData.worldScale = float3(parentScale * Vector3(_transformData.localScale));
 		_dirtyFlag.reset(WorldScaleDirty);
 	}
@@ -111,8 +112,8 @@ auto Transform::getWorldScale() const -> const Math::float3 & {
 
 auto Transform::getWorldRotate() const -> const Math::float4 & {
 	if (_dirtyFlag.test(WorldRotateDirty)) {
-		Quaternion parentRotate((_parent != nullptr) ? _parent->getWorldRotate() : float4::QuaternionIdentity());
-		_transformData.worldRotate = float4(Quaternion(_transformData.localRotate) * parentRotate);
+		Quaternion parentRotate((_parent != nullptr) ? _parent->getWorldRotate() : float4::QuaternionIdentity);
+		_transformData.worldRotate = (Quaternion(_transformData.localRotate) * parentRotate).store();
 		_dirtyFlag.reset(WorldRotateDirty);
 	}
 	return _transformData.worldRotate;
@@ -123,7 +124,7 @@ auto Transform::getLocalTransform() const -> const Math::float4x4 & {
 		Vector3 translation(getLocalPosition());
 		Vector3 scale(getLocalScale());
 		Quaternion rotateQuat(getLocalRotate());
-		_transformData.localTransform = float4x4(Matrix4::Affine(translation, rotateQuat, scale));
+		_transformData.localTransform = Matrix::CreateAffine(translation, rotateQuat, scale).store();
 		_dirtyFlag.reset(LocalMatrixDirty);
 	}
 	return _transformData.localTransform;
@@ -134,8 +135,8 @@ auto Transform::getWorldTransform() const -> const Math::float4x4 & {
 		if (_parent == nullptr) {
 			_transformData.worldTransform = getLocalTransform();
 		} else {
-			Matrix4 localTransform(getLocalTransform());
-			Matrix4 parentTransform(_parent->getWorldTransform());
+			Matrix localTransform(getLocalTransform());
+			Matrix parentTransform(_parent->getWorldTransform());
 			_transformData.worldTransform = float4x4(localTransform * parentTransform);
 			_dirtyFlag.reset(WorldMatrixDirty);
 		}

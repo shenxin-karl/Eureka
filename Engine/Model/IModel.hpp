@@ -24,7 +24,7 @@ interface INode : protected dx12lib::NonCopyable {
 	virtual void submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const = 0;
 	virtual size_t getNumRenderItem() const = 0;
 	virtual RenderItem *getRenderItem(size_t idx) const = 0;
-	virtual void setParentTransform(const Math::Matrix4 &matWorld) = 0;
+	virtual void setParentTransform(const Math::Matrix &matWorld) = 0;
 	virtual const rgph::TransformCBufferPtr &getTransformCBuffer() const = 0;
 	virtual std::shared_ptr<rgph::IMesh> getMesh(size_t idx) const = 0;
 };

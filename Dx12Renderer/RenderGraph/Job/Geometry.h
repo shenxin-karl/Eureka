@@ -47,7 +47,7 @@ public:
 	std::shared_ptr<dx12lib::IndexBuffer> getIndexBuffer() const;
 	std::shared_ptr<IMesh> getMesh() const;
 	void setDrawArgs(const DrawArgs &drawArgs);
-	void applyTransform(const Math::Matrix4 &matWorld);
+	void applyTransform(const Math::Matrix &matWorld);
 	void setTopology(D3D_PRIMITIVE_TOPOLOGY topology);
 	const DrawArgs &getDrawArgs() const;
 	const Math::BoundingBox &getWorldAABB() const;

@@ -53,7 +53,7 @@ void Geometry::setDrawArgs(const DrawArgs &drawArgs) {
 	_drawArgs = drawArgs;
 }
 
-void Geometry::applyTransform(const Matrix4 &matWorld) {
+void Geometry::applyTransform(const Matrix &matWorld) {
 	if (_pMesh != nullptr) {
 		auto localAABB = _pMesh->getBoundingBox();
 		_worldAABB = localAABB.transform(matWorld);

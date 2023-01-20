@@ -57,7 +57,7 @@ public:
 	void drawInstanced(size_t vertCount, size_t instanceCount, size_t baseVertexLocation, size_t startInstanceLocation) final;
 	void drawIndexedInstanced(size_t indexCountPerInstance, size_t instanceCount, size_t startIndexLocation, size_t baseVertexLocation, size_t startInstanceLocation) final;
 
-	void clearColor(const RenderTargetView &rtv, Math::float4 color) final;
+	void clearColor(const RenderTargetView &rtv, Math::Color color) final;
 	void clearColor(const RenderTargetView &rtv, const float colors[4]) final;
 	void clearDepth(const DepthStencilView &dsv, float depth) final;
 	void clearStencil(const DepthStencilView &dsv, UINT stencil) final;

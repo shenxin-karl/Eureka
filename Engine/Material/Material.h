@@ -14,7 +14,7 @@ struct MaterialDesc {
 };
 
 struct CbMaterial {
-	Math::float4 diffuseAlbedo	= Math::float4(DX::Colors::White);
+	Math::Color diffuseAlbedo	= Math::Color(DX::Colors::White);
 	float roughness				= 0.5f;
 	float metallic				= 0.5f;
 	float ambientOcclusion		= 1.f;

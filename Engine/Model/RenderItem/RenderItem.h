@@ -14,7 +14,7 @@ public:
 	void setMaterial(dx12lib::IDirectContext &directCtx, std::shared_ptr<Material> pMaterial);
 	void submit(const rgph::TechniqueFlag &techniqueFlag) const override;
 	auto getWorldAABB() const -> const Math::BoundingBox &;
-	void setTransform(const Math::Matrix4 &matWorld);
+	void setTransform(const Math::Matrix &matWorld);
 	static bool buildIndexDataInput(dx12lib::IDirectContext &directCtx, rgph::Geometry *pGeometry);
 	static bool buildVertexDataInput(dx12lib::IDirectContext &directCtx,
 		rgph::Geometry *pGeometry,

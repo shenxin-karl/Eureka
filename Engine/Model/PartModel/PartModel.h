@@ -16,7 +16,7 @@ public:
 	);
 private:
 	mutable bool _transformDirty = true;
-	Math::float4x4 _transform = Math::float4x4::identity();
+	Math::float4x4 _transform = Math::float4x4::Identity;
 	std::unique_ptr<RenderItem> _pRenderItem;
 	mutable rgph::TransformCBufferPtr _pTransformCBuffer;
 };

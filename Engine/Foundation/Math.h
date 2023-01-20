@@ -4,9 +4,8 @@
 #include <DirectXCollision.h>
 #include <cmath>
 #include <ostream>
-#include <array>
 
-namespace Math {
+namespace Eureka {
 
 #define FORCEINLINE __forceinline
 
@@ -110,7 +109,6 @@ class BoundingFrustum;
 		static const float4 UnitY;
 		static const float4 UnitZ;
 		static const float4 UnitW;
-		static const float4 QuaternionIdentity;
 	};
 
 #pragma endregion
@@ -185,7 +183,6 @@ class BoundingFrustum;
 		float4x4(const DirectX::XMFLOAT4X4 &M) noexcept;
 		float4x4(const DirectX::XMFLOAT3X3 &M) noexcept;
 		float4x4(const DirectX::XMFLOAT4X3 &M) noexcept;
-		explicit float4x4(const Matrix &matrix) noexcept;
 		explicit float4x4(_In_reads_(16) const float *pArray) noexcept;
 		friend bool operator == (const float4x4 &lhs, const float4x4 &rhs) noexcept;
 		friend bool operator != (const float4x4 &lhs, const float4x4 &rhs) noexcept;
@@ -210,7 +207,7 @@ class BoundingFrustum;
 		Swizzle() noexcept = default;
 		Swizzle(const Swizzle &) = delete;
 		template<typename = void> requires(EnableAssign)
-			FORCEINLINE T &operator=(const T &other) noexcept;
+		FORCEINLINE T &operator=(const T &other) noexcept;
 		FORCEINLINE operator T() const noexcept;
 		FORCEINLINE decltype(auto) store() const noexcept {
 			return (operator T()).store();
@@ -242,7 +239,7 @@ class BoundingFrustum;
 		FORCEINLINE explicit Vector2(const Vector4 &v4) noexcept;
 		FORCEINLINE Vector2 &operator=(const Vector2 &other) noexcept;
 		FORCEINLINE float2   store() const noexcept;
-		FORCEINLINE float &operator[](size_t index) noexcept;
+		FORCEINLINE float   &operator[](size_t index) noexcept;
 		FORCEINLINE float    operator[](size_t index) const noexcept;
 
 		FORCEINLINE Vector2 &operator+=(const Vector2 &rhs) noexcept;
@@ -311,9 +308,9 @@ class BoundingFrustum;
 				float x;
 				float y;
 			};
-#define VEC2
-#include "VectorMember.ini"
-#undef VEC2
+			#define VEC2
+			#include "VectorMember.ini"
+			#undef VEC2
 		};
 	};
 
@@ -328,12 +325,11 @@ class BoundingFrustum;
 		FORCEINLINE Vector3(const float2 &f2, float z) noexcept;
 		FORCEINLINE Vector3(const Vector2 &v2, float z) noexcept;
 		FORCEINLINE Vector3(const Vector3 &v3) noexcept;
-		FORCEINLINE explicit Vector3(const float3 &f3) noexcept;
 		FORCEINLINE explicit Vector3(float val) noexcept;
 		FORCEINLINE explicit Vector3(const Vector4 &v4) noexcept;
 		FORCEINLINE Vector3 &operator=(const Vector3 &other) noexcept;
 		FORCEINLINE float3   store() const noexcept;
-		FORCEINLINE float &operator[](size_t index) noexcept;
+		FORCEINLINE float   &operator[](size_t index) noexcept;
 		FORCEINLINE float    operator[](size_t index) const noexcept;
 
 		FORCEINLINE Vector3 &operator+=(const Vector3 &rhs) noexcept;
@@ -387,7 +383,6 @@ class BoundingFrustum;
 		FORCEINLINE friend Vector3 max(const Vector3 &lhs, const Vector3 &rhs) noexcept;
 		FORCEINLINE friend Vector3 clamp(const Vector3 &v, const Vector3 &a, const Vector3 &b) noexcept;
 		FORCEINLINE friend Vector3 normalize(const Vector3 &self) noexcept;
-		FORCEINLINE friend Vector3 cross(const Vector3 &lhs, const Vector3 &rhs) noexcept;
 		FORCEINLINE friend float   dot(const Vector3 &lhs, const Vector3 &rhs) noexcept;
 		FORCEINLINE friend float   lengthSquare(const Vector3 &self) noexcept;
 		FORCEINLINE friend float   length(const Vector3 &self) noexcept;
@@ -413,9 +408,9 @@ class BoundingFrustum;
 			};
 			DirectX::XMVECTOR vec;
 
-#define VEC3
-#include "VectorMember.ini"
-#undef VEC3
+			#define VEC3
+			#include "VectorMember.ini"
+			#undef VEC3
 		};
 	};
 
@@ -435,7 +430,7 @@ class BoundingFrustum;
 		FORCEINLINE Vector4(const Vector4 &v4) noexcept;
 		FORCEINLINE Vector4 &operator=(const Vector4 &other) noexcept;
 		FORCEINLINE float4   store() const noexcept;
-		FORCEINLINE float &operator[](size_t index) noexcept;
+		FORCEINLINE float   &operator[](size_t index) noexcept;
 		FORCEINLINE float    operator[](size_t index) const noexcept;
 
 		FORCEINLINE Vector4 &operator+=(const Vector4 &rhs) noexcept;
@@ -510,9 +505,9 @@ class BoundingFrustum;
 			};
 			DirectX::XMVECTOR vec;
 
-#define VEC4
-#include "VectorMember.ini"
-#undef VEC4
+			#define VEC4
+			#include "VectorMember.ini"
+			#undef VEC4
 		};
 	};
 
@@ -547,11 +542,6 @@ class BoundingFrustum;
 		// Unary operators
 		FORCEINLINE Quaternion operator+ () const  noexcept { return *this; }
 		FORCEINLINE Quaternion operator- () const noexcept;
-
-		FORCEINLINE friend Quaternion operator+(const Quaternion &lhs, const Quaternion &rhs) noexcept;
-		FORCEINLINE friend Quaternion operator-(const Quaternion &lhs, const Quaternion &rhs) noexcept;
-		FORCEINLINE friend Quaternion operator*(const Quaternion &lhs, const Quaternion &rhs) noexcept;
-		FORCEINLINE friend Quaternion operator/(const Quaternion &lhs, const Quaternion &rhs) noexcept;
 
 		FORCEINLINE friend float length(const Quaternion &self) noexcept;
 		FORCEINLINE friend float lengthSquare(const Quaternion &self) noexcept;
@@ -601,7 +591,6 @@ class BoundingFrustum;
 		FORCEINLINE Matrix(const Vector3 &r0, const Vector3 &r1, const Vector3 &r2);
 		FORCEINLINE Matrix(const Vector4 &r0, const Vector4 &r1, const Vector4 &r2, const Vector4 &r3);
 		FORCEINLINE explicit Matrix(_In_reads_(16) const float *pArray) noexcept;
-		FORCEINLINE explicit Matrix(const float4x4 &store) noexcept;
 		FORCEINLINE bool operator == (const Matrix &M) const noexcept;
 		FORCEINLINE bool operator != (const Matrix &M) const noexcept;
 		FORCEINLINE Matrix &operator+= (const Matrix &M) noexcept;
@@ -612,14 +601,13 @@ class BoundingFrustum;
 		FORCEINLINE Matrix &operator/= (float S) noexcept;
 		FORCEINLINE Matrix operator+ () const noexcept;
 		FORCEINLINE Matrix operator- () const noexcept;
-		FORCEINLINE float4x4       store() const noexcept;
 		FORCEINLINE friend bool    decompose(const Matrix &m, Vector3 &scale, Quaternion &rotation, Vector3 &translation) noexcept;
 		FORCEINLINE friend Matrix  transpose(const Matrix &m);
 		FORCEINLINE friend Matrix  inverse(const Matrix &m);
 		FORCEINLINE friend float   determinant(const Matrix &m);
 		FORCEINLINE friend Vector3 toEuler(const Matrix &m);
 		FORCEINLINE static Matrix CreateBillboard(
-			const Vector3 &objectPos,
+			const Vector3 &objectPos, 
 			const Vector3 &cameraPos,
 			const Vector3 &cameraUp,
 			_In_opt_ const Vector3 *cameraForward = nullptr) noexcept;
@@ -655,7 +643,6 @@ class BoundingFrustum;
 
 		FORCEINLINE static Matrix CreateFromYawPitchRoll(float yaw, float pitch, float roll) noexcept;
 		FORCEINLINE static Matrix CreateFromYawPitchRoll(const Vector3 &angles) noexcept;
-		FORCEINLINE static Matrix CreateAffine(const Vector3 &translation, const Quaternion &rotate, const Vector3 &scale) noexcept;
 
 		//FORCEINLINE static Matrix CreateShadow(const Vector3 &lightDir, const Plane &plane) noexcept;
 		//FORCEINLINE static Matrix CreateReflection(const Plane &plane) noexcept;
@@ -789,11 +776,11 @@ class BoundingFrustum;
 	FORCEINLINE Vector2 float2::load() const noexcept {
 		return { x, y };
 	}
-	FORCEINLINE auto float2::operator[](size_t index) -> float &{
+	FORCEINLINE auto float2::operator[](size_t index) -> float & {
 		assert(index < 2);
 		return reinterpret_cast<float *>(this)[index];
 	}
-	FORCEINLINE auto float2::operator[](size_t index) const -> const float &{
+	FORCEINLINE auto float2::operator[](size_t index) const -> const float & {
 		assert(index < 2);
 		return reinterpret_cast<const float *>(this)[index];
 	}
@@ -803,12 +790,12 @@ class BoundingFrustum;
 	FORCEINLINE bool operator!=(const float2 &lhs, const float2 &rhs) {
 		return !(lhs == rhs);
 	}
-	FORCEINLINE std::ostream &operator<<(std::ostream &os, const float2 &f2) noexcept {
+	FORCEINLINE std::ostream & operator<<(std::ostream &os, const float2 &f2) noexcept {
 		os << "(" << f2.x << ", " << f2.y << ")";
 		return os;
 	}
-	inline const float2 float2::Zero{ 0.f, 0.f };
-	inline const float2 float2::One{ 1.f, 1.f };
+	inline const float2 float2::Zero { 0.f, 0.f };
+	inline const float2 float2::One  { 1.f, 1.f };
 	inline const float2 float2::UnitX{ 1.f, 0.f };
 	inline const float2 float2::UnitY{ 0.f, 1.f };
 
@@ -832,11 +819,11 @@ class BoundingFrustum;
 	FORCEINLINE Vector3 float3::load() const noexcept {
 		return { x, y, z };
 	}
-	FORCEINLINE auto float3::operator[](size_t index) -> float &{
+	FORCEINLINE auto float3::operator[](size_t index) -> float & {
 		assert(index < 3);
 		return reinterpret_cast<float *>(this)[index];
 	}
-	FORCEINLINE auto float3::operator[](size_t index) const -> const float &{
+	FORCEINLINE auto float3::operator[](size_t index) const -> const float & {
 		assert(index < 3);
 		return reinterpret_cast<const float *>(this)[index];
 	}
@@ -846,23 +833,23 @@ class BoundingFrustum;
 	FORCEINLINE bool operator!=(const float3 &lhs, const float3 &rhs) {
 		return !(lhs == rhs);
 	}
-	FORCEINLINE std::ostream &operator<<(std::ostream &os, const float3 &f3) noexcept {
+	FORCEINLINE std::ostream & operator<<(std::ostream &os, const float3 &f3) noexcept {
 		os << "(" << f3.x << ", " << f3.y << ", " << f3.z << ")";
 		return os;
 	}
-	inline const float3 float3::Zero{ 0.f, 0.f, 0.f };
-	inline const float3 float3::One{ 1.f, 1.f, 1.f };
+	inline const float3 float3::Zero { 0.f, 0.f, 0.f };
+	inline const float3 float3::One  { 1.f, 1.f, 1.f };
 	inline const float3 float3::UnitX{ 1.f, 0.f, 0.f };
 	inline const float3 float3::UnitY{ 0.f, 1.f, 0.f };
 	inline const float3 float3::UnitZ{ 0.f, 0.f, 1.f };
 
-	inline const float3 float3::Up{ 0.f, +1.f, 0.f };
-	inline const float3 float3::Down{ 0.f, -1.f, 0.f };
+	inline const float3 float3::Up   { 0.f, +1.f, 0.f };
+	inline const float3 float3::Down { 0.f, -1.f, 0.f };
 
 	inline const float3 float3::Right{ +1.f, 0.f, 0.f };
-	inline const float3 float3::Left{ -1.f, 0.f, 0.f };
+	inline const float3 float3::Left { -1.f, 0.f, 0.f };
 
-	inline const float3 float3::Forward{ 0.f, 0.f, +1.f };
+	inline const float3 float3::Forward { 0.f, 0.f, +1.f };
 	inline const float3 float3::Backward{ 0.f, 0.f, -1.f };
 
 #pragma endregion
@@ -884,11 +871,11 @@ class BoundingFrustum;
 	FORCEINLINE Vector4 float4::load() const noexcept {
 		return { x, y, z, w };
 	}
-	FORCEINLINE auto float4::operator[](size_t index) -> float &{
+	FORCEINLINE auto float4::operator[](size_t index) -> float & {
 		assert(index < 4);
 		return reinterpret_cast<float *>(this)[index];
 	}
-	FORCEINLINE auto float4::operator[](size_t index) const -> const float &{
+	FORCEINLINE auto float4::operator[](size_t index) const -> const float & {
 		assert(index < 4);
 		return reinterpret_cast<const float *>(this)[index];
 	}
@@ -905,7 +892,6 @@ class BoundingFrustum;
 	inline const float4 float4::UnitY{ 0.f, 1.f, 0.f, 0.f };
 	inline const float4 float4::UnitZ{ 0.f, 0.f, 1.f, 0.f };
 	inline const float4 float4::UnitW{ 0.f, 0.f, 0.f, 1.f };
-	inline const float4 float4::QuaternionIdentity{ 0.f, 0.f, 0.f, 1.f };
 
 #pragma endregion
 
@@ -938,27 +924,27 @@ class BoundingFrustum;
 		XMStoreFloat4(&this->f4, XMVectorAdd(c1, c2));
 		return *this;
 	}
-	FORCEINLINE Color &Color::operator-=(const Color &c) noexcept {
+	FORCEINLINE Color & Color::operator-=(const Color &c) noexcept {
 		using namespace DirectX;
 		const XMVECTOR c1 = XMLoadFloat4(&this->f4);
 		const XMVECTOR c2 = XMLoadFloat4(&c.f4);
 		XMStoreFloat4(&this->f4, XMVectorSubtract(c1, c2));
 		return *this;
 	}
-	FORCEINLINE Color &Color::operator*=(const Color &c) noexcept {
+	FORCEINLINE Color & Color::operator*=(const Color &c) noexcept {
 		using namespace DirectX;
 		const XMVECTOR c1 = XMLoadFloat4(&this->f4);
 		const XMVECTOR c2 = XMLoadFloat4(&c.f4);
 		XMStoreFloat4(&this->f4, XMVectorMultiply(c1, c2));
 		return *this;
 	}
-	FORCEINLINE Color &Color::operator*=(float S) noexcept {
+	FORCEINLINE Color & Color::operator*=(float S) noexcept {
 		using namespace DirectX;
 		const XMVECTOR c = XMLoadFloat4(&this->f4);
 		XMStoreFloat4(&this->f4, XMVectorScale(c, S));
 		return *this;
 	}
-	FORCEINLINE Color &Color::operator/=(const Color &c) noexcept {
+	FORCEINLINE Color & Color::operator/=(const Color &c) noexcept {
 		using namespace DirectX;
 		const XMVECTOR c1 = XMLoadFloat4(&this->f4);
 		const XMVECTOR c2 = XMLoadFloat4(&c.f4);
@@ -1037,7 +1023,7 @@ class BoundingFrustum;
 		XMStoreFloat4(&toReturn.f4, XMVectorLerp(C0, C1, t));
 		return toReturn;
 	}
-	FORCEINLINE std::ostream &operator<<(std::ostream &os, const Color &c) noexcept {
+	FORCEINLINE std::ostream & operator<<(std::ostream &os, const Color &c) noexcept {
 		os << "(" << c.r << ", " << c.g << ", " << c.b << ", " << c.a << ")";
 		return os;
 	}
@@ -1047,33 +1033,33 @@ class BoundingFrustum;
 #pragma region Float4x4Implement
 
 	FORCEINLINE float4x4::float4x4()
-		: XMFLOAT4X4(float4x4::Identity)
+	: XMFLOAT4X4(float4x4::Identity)
 	{
 	}
 	FORCEINLINE float4x4::float4x4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13,
 		float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33) noexcept
-		: XMFLOAT4X4(m00, m01, m02, m03,
-			m10, m11, m12, m13,
-			m20, m21, m22, m23,
-			m30, m31, m32, m33)
+	: XMFLOAT4X4(m00, m01, m02, m03,
+		m10, m11, m12, m13,
+		m20, m21, m22, m23,
+		m30, m31, m32, m33)
 	{
 	}
 	FORCEINLINE float4x4::float4x4(const float3 &r0, const float3 &r1, const float3 &r2) noexcept
-		: XMFLOAT4X4(r0.x, r0.y, r0.z, 0.f,
-			r1.x, r1.y, r1.z, 0.f,
-			r2.x, r2.y, r2.z, 0.f,
-			0.f, 0.f, 0.f, 1.f)
+	: XMFLOAT4X4(r0.x, r0.y, r0.z, 0.f,
+		r1.x, r1.y, r1.z, 0.f,
+		r2.x, r2.y, r2.z, 0.f,
+		0.f, 0.f, 0.f, 1.f)
 	{
 	}
 	FORCEINLINE float4x4::float4x4(const float4 &r0, const float4 &r1, const float4 &r2, const float4 &r3) noexcept
-		: XMFLOAT4X4(r0.x, r0.y, r0.z, r0.w,
-			r1.x, r1.y, r1.z, r1.w,
-			r2.x, r2.y, r2.z, r2.w,
-			r3.x, r3.y, r3.z, r3.w)
+	: XMFLOAT4X4(r0.x, r0.y, r0.z, r0.w,
+		r1.x, r1.y, r1.z, r1.w,
+		r2.x, r2.y, r2.z, r2.w,
+		r3.x, r3.y, r3.z, r3.w)
 	{
 	}
 	FORCEINLINE float4x4::float4x4(const DirectX::XMFLOAT4X4 &M) noexcept
-		: XMFLOAT4X4(M) {
+	: XMFLOAT4X4(M) {
 
 	}
 	FORCEINLINE float4x4::float4x4(const DirectX::XMFLOAT3X3 &M) noexcept {
@@ -1087,8 +1073,6 @@ class BoundingFrustum;
 		_21 = M._21; _22 = M._22; _23 = M._23; _24 = 0.f;
 		_31 = M._31; _32 = M._32; _33 = M._33; _34 = 0.f;
 		_41 = M._41; _42 = M._42; _43 = M._43; _44 = 1.f;
-	}
-	FORCEINLINE float4x4::float4x4(const Matrix &matrix) noexcept : XMFLOAT4X4(matrix.store()) {
 	}
 	FORCEINLINE float4x4::float4x4(const float *pArray) noexcept : XMFLOAT4X4(pArray) {
 
@@ -1148,7 +1132,7 @@ class BoundingFrustum;
 	FORCEINLINE float3 float4x4::getTranslation() const {
 		return { _41, _42, _43 };
 	}
-	inline const float4x4 float4x4::Identity{
+	inline const float4x4 float4x4::Identity {
 		1.f, 0.f, 0.f, 0.f,
 		0.f, 1.f, 0.f, 0.f,
 		0.f, 0.f, 1.f, 0.f,
@@ -1161,7 +1145,7 @@ class BoundingFrustum;
 
 	template<typename T, bool EnableAssign, size_t... I>
 	template<typename> requires (EnableAssign)
-		FORCEINLINE T &Swizzle<T, EnableAssign, I...>::operator=(const T &other) noexcept {
+	FORCEINLINE T &Swizzle<T, EnableAssign, I...>::operator=(const T &other) noexcept {
 		constexpr size_t idx = indices[0];
 		if constexpr (sizeof...(I) > 1)
 			((at<I>() = other[I]), ...);
@@ -1177,7 +1161,7 @@ class BoundingFrustum;
 
 	template<typename T, bool EnableAssign, size_t... I>
 	template<size_t Idx>
-	float &Swizzle<T, EnableAssign, I...>::at() noexcept {
+	float & Swizzle<T, EnableAssign, I...>::at() noexcept {
 		return reinterpret_cast<float *>(this)[Idx];
 	}
 
@@ -1396,15 +1380,15 @@ class BoundingFrustum;
 		auto len = length(self);
 		return (len > 0.f) ? 1.f / len : 0.f;
 	}
-	FORCEINLINE std::ostream &operator<<(std::ostream &os, const Vector2 &v2) noexcept {
+	FORCEINLINE std::ostream & operator<<(std::ostream &os, const Vector2 &v2) noexcept {
 		os << "(" << v2.x << ", " << v2.y << ")";
 		return os;
 	}
 
-	inline const Vector2 Vector2::Zero{ 0.f, 0.f };
-	inline const Vector2 Vector2::One{ 1.f, 1.f };
-	inline const Vector2 Vector2::UnitX{ 1.f, 0.f };
-	inline const Vector2 Vector2::UnitY{ 0.f, 1.f };
+	inline const Vector2 Vector2::Zero  { 0.f, 0.f };
+	inline const Vector2 Vector2::One   { 1.f, 1.f };
+	inline const Vector2 Vector2::UnitX { 1.f, 0.f };
+	inline const Vector2 Vector2::UnitY { 0.f, 1.f };
 
 #pragma endregion
 
@@ -1421,9 +1405,6 @@ class BoundingFrustum;
 	}
 	FORCEINLINE Vector3::Vector3(const Vector3 &v3) noexcept {
 		vec = DirectX::XMVectorSet(v3.x, v3.y, v3.z, 0.f);
-	}
-	FORCEINLINE Vector3::Vector3(const float3 &f3) noexcept {
-		vec = DirectX::XMVectorSet(f3.x, f3.y, f3.z, 0.f);
 	}
 	FORCEINLINE Vector3::Vector3(float val) noexcept {
 		vec = DirectX::XMVectorSet(val, val, val, 0.f);
@@ -1649,11 +1630,6 @@ class BoundingFrustum;
 		toReturn.vec = DirectX::XMVector3Normalize(self.vec);
 		return toReturn;
 	}
-	FORCEINLINE Vector3 cross(const Vector3 &lhs, const Vector3 &rhs) noexcept {
-		Vector3 toReturn;
-		toReturn.vec = DirectX::XMVector3Cross(lhs.vec, rhs.vec);
-		return toReturn;
-	}
 	FORCEINLINE float dot(const Vector3 &lhs, const Vector3 &rhs) noexcept {
 		auto vec = DirectX::XMVector3Dot(lhs.vec, rhs.vec);
 		return DirectX::XMVectorGetX(vec);
@@ -1671,24 +1647,24 @@ class BoundingFrustum;
 		auto len = DirectX::XMVectorGetX(vec);
 		return (len > 0.f) ? 1.f / len : 0.f;
 	}
-	FORCEINLINE std::ostream &operator<<(std::ostream &os, const Vector3 &v3) noexcept {
+	FORCEINLINE std::ostream & operator<<(std::ostream &os, const Vector3 &v3) noexcept {
 		os << "(" << v3.x << ", " << v3.y << ", " << v3.z << ")";
 		return os;
 	}
 
-	inline const Vector3 Vector3::Zero{ 0.f, 0.f, 0.f };
-	inline const Vector3 Vector3::One{ 1.f, 1.f, 1.f };
+	inline const Vector3 Vector3::Zero { 0.f, 0.f, 0.f };
+	inline const Vector3 Vector3::One  { 1.f, 1.f, 1.f };
 	inline const Vector3 Vector3::UnitX{ 1.f, 0.f, 0.f };
 	inline const Vector3 Vector3::UnitY{ 0.f, 1.f, 0.f };
 	inline const Vector3 Vector3::UnitZ{ 0.f, 0.f, 1.f };
 
-	inline const Vector3 Vector3::Up{ 0.f, +1.f, 0.f };
-	inline const Vector3 Vector3::Down{ 0.f, -1.f, 0.f };
+	inline const Vector3 Vector3::Up   { 0.f, +1.f, 0.f };
+	inline const Vector3 Vector3::Down { 0.f, -1.f, 0.f };
 
 	inline const Vector3 Vector3::Right{ +1.f, 0.f, 0.f };
-	inline const Vector3 Vector3::Left{ -1.f, 0.f, 0.f };
+	inline const Vector3 Vector3::Left { -1.f, 0.f, 0.f };
 
-	inline const Vector3 Vector3::Forward{ 0.f, 0.f, +1.f };
+	inline const Vector3 Vector3::Forward { 0.f, 0.f, +1.f };
 	inline const Vector3 Vector3::Backward{ 0.f, 0.f, -1.f };
 
 #pragma endregion
@@ -1945,13 +1921,13 @@ class BoundingFrustum;
 		auto len = DirectX::XMVectorGetX(vec);
 		return (len > 0.f) ? 1.f / len : 0.f;
 	}
-	FORCEINLINE std::ostream &operator<<(std::ostream &os, const Vector4 &v4) noexcept {
+	FORCEINLINE std::ostream & operator<<(std::ostream &os, const Vector4 &v4) noexcept {
 		os << "(" << v4.x << ", " << v4.y << ", " << v4.z << ", " << v4.w << ")";
 		return os;
 	}
 
-	inline const Vector4 Vector4::Zero{ 0.f, 0.f, 0.f, 0.f };
-	inline const Vector4 Vector4::One{ 1.f, 1.f, 1.f, 0.f };
+	inline const Vector4 Vector4::Zero { 0.f, 0.f, 0.f, 0.f };
+	inline const Vector4 Vector4::One  { 1.f, 1.f, 1.f, 0.f };
 	inline const Vector4 Vector4::UnitX{ 1.f, 0.f, 0.f, 0.f };
 	inline const Vector4 Vector4::UnitY{ 0.f, 1.f, 0.f, 0.f };
 	inline const Vector4 Vector4::UnitZ{ 0.f, 0.f, 1.f, 0.f };
@@ -2005,22 +1981,6 @@ class BoundingFrustum;
 		Quaternion toReturn;
 		toReturn.vec = DirectX::XMVectorNegate(vec);
 		return toReturn;
-	}
-	FORCEINLINE Quaternion operator+(const Quaternion &lhs, const Quaternion &rhs) noexcept {
-		Quaternion lhs1(lhs);
-		return lhs1 += rhs;
-	}
-	FORCEINLINE Quaternion operator-(const Quaternion &lhs, const Quaternion &rhs) noexcept {
-		Quaternion lhs1(lhs);
-		return lhs1 -= rhs;
-	}
-	FORCEINLINE Quaternion operator*(const Quaternion &lhs, const Quaternion &rhs) noexcept {
-		Quaternion lhs1(lhs);
-		return lhs1 *= rhs;
-	}
-	FORCEINLINE Quaternion operator/(const Quaternion &lhs, const Quaternion &rhs) noexcept {
-		Quaternion lhs1(lhs);
-		return lhs1 /= rhs;
 	}
 	FORCEINLINE float length(const Quaternion &self) noexcept {
 		using namespace DirectX;
@@ -2095,8 +2055,7 @@ class BoundingFrustum;
 			const float m12 = 2.f * x * y + 2.f * z * w;
 			const float m22 = 1.f - 2.f * xx - 2.f * zz;
 			return Vector3(cx, atan2f(m31, m33), atan2f(m12, m22));
-		}
-		else {
+		} else {
 			const float m11 = 1.f - 2.f * yy - 2.f * zz;
 			const float m21 = 2.f * x * y - 2.f * z * w;
 			return Vector3(cx, 0.f, atan2f(-m21, m11));
@@ -2115,7 +2074,7 @@ class BoundingFrustum;
 	FORCEINLINE Quaternion Quaternion::CreateFromYawPitchRoll(const Vector3 &angles) noexcept {
 		Quaternion toReturn;
 		toReturn.vec = DirectX::XMQuaternionRotationRollPitchYawFromVector(angles.vec);
-		return toReturn;
+			return toReturn;
 	}
 	FORCEINLINE Quaternion Quaternion::CreateFromRotationMatrix(const Matrix &M) noexcept {
 		Quaternion toReturn;
@@ -2161,9 +2120,6 @@ class BoundingFrustum;
 	FORCEINLINE Matrix::Matrix(const float *pArray) noexcept {
 		auto m = DirectX::XMFLOAT4X4(pArray);
 		mat = DirectX::XMLoadFloat4x4(&m);
-	}
-	FORCEINLINE Matrix::Matrix(const float4x4 &store) noexcept {
-		mat = DirectX::XMLoadFloat4x4(&store);
 	}
 	FORCEINLINE bool Matrix::operator==(const Matrix &M) const noexcept {
 		float4x4 m0;
@@ -2296,11 +2252,6 @@ class BoundingFrustum;
 		x3.vec = XMVectorNegate(x3.vec);
 		x4.vec = XMVectorNegate(x4.vec);
 		return Matrix(x1, x2, x3, x4);
-	}
-	FORCEINLINE float4x4 Matrix::store() const noexcept {
-		float4x4 toReturn;
-		DirectX::XMStoreFloat4x4(&toReturn, mat);
-		return toReturn;
 	}
 	FORCEINLINE bool decompose(const Matrix &m, Vector3 &scale, Quaternion &rotation, Vector3 &translation) noexcept {
 		if (!DirectX::XMMatrixDecompose(
@@ -2616,20 +2567,6 @@ class BoundingFrustum;
 		toReturn.mat = DirectX::XMMatrixRotationRollPitchYawFromVector(angles.vec);
 		return toReturn;
 	}
-	FORCEINLINE Matrix Matrix::CreateAffine(
-		const Vector3 &translation, 
-		const Quaternion &rotate,
-		const Vector3 &scale) noexcept
-	{
-		Matrix toReturn;
-		toReturn.mat = DirectX::XMMatrixAffineTransformation(
-			scale.vec, 
-			Vector3::Zero.vec, 
-			rotate.vec, 
-			translation.vec
-		);
-		return toReturn;
-	}
 	FORCEINLINE Matrix Matrix::Transform(const Matrix &M, const Quaternion &rotation) noexcept {
 		using namespace DirectX;
 		Matrix toReturn;
@@ -2718,7 +2655,7 @@ class BoundingFrustum;
 		return toReturn;
 	}
 	FORCEINLINE BoundingBox BoundingBox::transform(
-		float scale,
+		float scale, 
 		const Quaternion &rotate,
 		const Vector3 &translation) const noexcept
 	{
@@ -2798,7 +2735,7 @@ class BoundingFrustum;
 
 	FORCEINLINE BoundingFrustum::BoundingFrustum(const Vector3 &origin, const Quaternion &orientation, float rightSlope,
 		float leftSlope, float topSlope, float bottomSlope, float zNear, float zFar) noexcept
-		: Base(origin.store(), orientation.store(), rightSlope, leftSlope, topSlope, bottomSlope, zNear, zFar)
+	: Base(origin.store(), orientation.store(), rightSlope, leftSlope, topSlope, bottomSlope, zNear, zFar)
 	{
 	}
 	FORCEINLINE BoundingFrustum::BoundingFrustum(const Matrix &projection) noexcept : Base(projection.mat) {
@@ -2809,7 +2746,7 @@ class BoundingFrustum;
 		return toReturn;
 	}
 	FORCEINLINE BoundingFrustum BoundingFrustum::transform(
-		float scale,
+		float scale, 
 		const Quaternion &rotate,
 		const Vector3 &translation) const noexcept
 	{

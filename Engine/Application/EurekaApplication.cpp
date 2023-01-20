@@ -68,7 +68,7 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	pCbPrePass = pDirectCtx->createFRConstantBuffer<CbPrePass>();
 	pCbLighting = pDirectCtx->createFRConstantBuffer<CbLighting>();
 	auto visitor = pCbLighting->visit();
-	visitor->gDirectionalLight.direction = normalize(Vector3(0.1f, 0.7f, 0.3f)).xyz;
+	visitor->gDirectionalLight.direction = normalize(Vector3(0.1f, 0.7f, 0.3f)).store();
 	visitor->gDirectionalLight.directionalColor = float3(1.f);
 	visitor->gDirectionalLight.directionalIntensity = 5.f;
 	visitor->gDirectionalLight.ambientColor = float3(0.1f);
@@ -134,14 +134,14 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 
 	float fWidth = static_cast<float>(_width);
 	float fHeight = static_cast<float>(_height);
-	Matrix4 matClipToNdc = Matrix4::makeTranslation(0.5f, 0.5f, 0.f) * Matrix4::makeScale(0.5f, -0.5f, 1.f);
-	Matrix4 preFrameViewProj(_pCamera->getMatPreviousViewProj());
+	Matrix matClipToNdc = Matrix::CreateTranslation(0.5f, 0.5f, 0.f) * Matrix::CreateScale(0.5f, -0.5f, 1.f);
+	Matrix preFrameViewProj(_pCamera->getMatPreviousViewProj());
 
 	uint64_t frameIndex = dx12lib::FrameIndexProxy::getFrameIndex();
 	float2 jitterOffset = kHalton23[frameIndex % 8];
 	xJitter = jitterOffset.x / fWidth;
 	yJitter = jitterOffset.y / fHeight;
-	Matrix4 translation = Matrix4::makeTranslation(xJitter, yJitter, 0.f);
+	Matrix translation = Matrix::CreateTranslation(xJitter, yJitter, 0.f);
 
 	pCbPrePassVisitor->gMatJitterViewProj = (float4x4)(translation * _pCamera->getMatViewProj());
 	pCbPrePassVisitor->gMatViewport = float4x4(matClipToNdc * _pCamera->getMatViewProj());
@@ -204,13 +204,13 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	auto pSponzaPBR = std::make_shared<ALTree>(resourcePath);
 	auto pModel = std::make_unique<MeshModel>(*pDirectCtx, pSponzaPBR);
 	pModel->createMaterial(*pDirectCtx, materialCreator);
-	pModel->setModelTransform(static_cast<float4x4>(Matrix4::makeScale(2.f)));
+	pModel->setModelTransform(static_cast<float4x4>(Matrix::CreateScale(2.f)));
 	_models.push_back(std::move(pModel));
 
 	auto pCubeMesh = GeometryGenerator::instance()->createBox(0.5, 0.5, 0.5f, 1);
 	auto pCubeModel = std::make_unique<PartModel>(*pDirectCtx, pCubeMesh);
 	pCubeModel->createMaterial(*pDirectCtx, materialCreator);
-	pCubeModel->setModelTransform(static_cast<float4x4>(Matrix4::makeTranslation(-3, 2, 1)));
+	pCubeModel->setModelTransform(static_cast<float4x4>(Matrix::CreateTranslation(-3, 2, 1)));
 	_models.push_back(std::move(pCubeModel));
 
 	auto pCylinderMesh = GeometryGenerator::instance()->createCylinder(
@@ -220,24 +220,24 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 	);
 	auto pCylinderModel = std::make_unique<PartModel>(*pDirectCtx, pCylinderMesh);
 	pCylinderModel->createMaterial(*pDirectCtx, materialCreator);
-	pCylinderModel->setModelTransform(static_cast<float4x4>(Matrix4::makeTranslation(0, 1, 1)));
+	pCylinderModel->setModelTransform(static_cast<float4x4>(Matrix::CreateTranslation(0, 1, 1)));
 	auto pCylinderMaterial = pCylinderModel->getMaterial();
 	auto visitor = pCylinderMaterial->pCbMaterial->visit();
-	visitor->diffuseAlbedo = float4(DirectX::Colors::DarkRed);
+	visitor->diffuseAlbedo = Color(DirectX::Colors::DarkRed);
 	_models.push_back(std::move(pCylinderModel));
 
 
 	auto pSphereMesh = GeometryGenerator::instance()->createSphere(1.f, 5);
 	auto pSphereModel = std::make_unique<PartModel>(*pDirectCtx, pSphereMesh);
 	pSphereModel->createMaterial(*pDirectCtx, materialCreator);
-	pSphereModel->setModelTransform(static_cast<float4x4>(Matrix4::makeTranslation(-5, 1, 0)));
+	pSphereModel->setModelTransform(static_cast<float4x4>(Matrix::CreateTranslation(-5, 1, 0)));
 	_models.push_back(std::move(pSphereModel));
 
 	resourcePath = PathManager::toAssetPath("Models/Human skull.glb");
 	auto pSkullTree = std::make_shared<ALTree>(resourcePath);
 	auto pSkullModel = std::make_unique<MeshModel>(*pDirectCtx, pSkullTree);
-	auto scale = Matrix4::makeScale(50.f);
-	auto rotate = Matrix4::makeYRotationByDegree(-90.f);
+	auto scale = Matrix::CreateScale(50.f);
+	auto rotate = Matrix::CreateRotationY(DX::XMConvertToRadians(-90.f));
 
 	pSkullModel->setModelTransform(static_cast<float4x4>(scale * rotate));
 	pSkullModel->createMaterial(*pDirectCtx, materialCreator);
@@ -264,7 +264,7 @@ void EurekaApplication::initLight(dx12lib::DirectContextProxy pDirectCtx) {
 		PointLight pointLight;
 		pointLight.color = float3(dis(gen), dis(gen), dis(gen));
 		pointLight.intensity = 5.f;
-		pointLight.position = ((Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f) * kRadius).xyz;
+		pointLight.position = ((Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f) * kRadius).store();
 		pointLight.position.y = MathHelper::lerp(0.f, 13.f, dis(gen));
 		pointLight.range = MathHelper::lerp(kMinRange, kMaxRange, dis(gen));
 		pointLights.push_back(pointLight);
@@ -279,10 +279,10 @@ void EurekaApplication::initLight(dx12lib::DirectContextProxy pDirectCtx) {
 		SpotLight spotLight;
 		spotLight.color = float3(dis(gen), dis(gen), dis(gen));
 		spotLight.intensity = 5.f;
-		spotLight.position = ((Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f) * kRadius).xyz;
+		spotLight.position = ((Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f) * kRadius).store();
 		spotLight.position.y = MathHelper::lerp(0.f, 13.f, dis(gen));
 		spotLight.range = MathHelper::lerp(kMinRange, kMaxRange, dis(gen));
-		spotLight.direction = normalize(Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f).xyz;
+		spotLight.direction = normalize(Vector3(dis(gen), dis(gen), dis(gen)) * 2.f - 1.f).store();
 
 		float innerConeAngle = MathHelper::lerp(kMinInnerConeAngle, kMaxInnerConeAngle, dis(gen));
 		float outerConeAngle = innerConeAngle + 15.f;

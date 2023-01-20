@@ -31,8 +31,8 @@ struct LoopEdgeHasher {
 
 SubDivVertex middleVertex(const SubDivVertex &lhs, const SubDivVertex &rhs) {
 	return {
-		lerp(Vector3(lhs.position), Vector3(rhs.position), 0.5f).xyz,
-		lerp(Vector2(lhs.texcoord), Vector2(rhs.texcoord), 0.5f).xy,
+		lerp(Vector3(lhs.position), Vector3(rhs.position), 0.5f).store(),
+		lerp(Vector2(lhs.texcoord), Vector2(rhs.texcoord), 0.5f).store(),
 	};
 }
 
@@ -136,8 +136,8 @@ static void generateTangentAndNormal(const std::vector<SubDivVertex> &vertices,
 		if (dot(cross(n, t), bitangents[i]) < 0.f)
 			det = -1.f;
 
-		outNormals.emplace_back(n.xyz);
-		outTangents.emplace_back(t.xyz, det);
+		outNormals.emplace_back(n.store());
+		outTangents.emplace_back(t.store(), det);
 	}
 }
 

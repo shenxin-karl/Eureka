@@ -7,14 +7,14 @@
 namespace Eureka {
 
 struct TransformData {
-	Math::float3   localPosition  = Math::float3::zero();
-	Math::float3   worldPosition  = Math::float3::zero();
-	Math::float3   localScale     = Math::float3::one();
-	Math::float3   worldScale     = Math::float3::one();
-	Math::float4   localRotate    = Math::float4::QuaternionIdentity();
-	Math::float4   worldRotate    = Math::float4::QuaternionIdentity();;
-	Math::float4x4 localTransform = Math::float4x4::identity();
-	Math::float4x4 worldTransform = Math::float4x4::identity();
+	Math::float3   localPosition  = Math::float3::Zero;
+	Math::float3   worldPosition  = Math::float3::Zero;
+	Math::float3   localScale     = Math::float3::One;
+	Math::float3   worldScale     = Math::float3::One;
+	Math::float4   localRotate    = Math::float4::QuaternionIdentity;
+	Math::float4   worldRotate    = Math::float4::QuaternionIdentity;;
+	Math::float4x4 localTransform = Math::float4x4::Identity;
+	Math::float4x4 worldTransform = Math::float4x4::Identity;
 };
 
 class GameObject;

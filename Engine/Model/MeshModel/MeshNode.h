@@ -11,7 +11,7 @@ public:
 	void submit(const IBounding &bounding, const rgph::TechniqueFlag &techniqueFlag) const override;
 	size_t getNumRenderItem() const override;
 	RenderItem *getRenderItem(size_t idx) const override;
-	void setParentTransform(const Math::Matrix4 &matWorld) override;
+	void setParentTransform(const Math::Matrix &matWorld) override;
 	const rgph::TransformCBufferPtr &getTransformCBuffer() const override;
 	std::shared_ptr<rgph::IMesh> getMesh(size_t idx) const override;
 	void createMaterial(dx12lib::IDirectContext &directCtx, 

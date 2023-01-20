@@ -147,7 +147,7 @@ auto RenderItem::getWorldAABB() const -> const BoundingBox & {
 	return _pGeometry->getWorldAABB();
 }
 
-void RenderItem::setTransform(const Matrix4 &matWorld) {
+void RenderItem::setTransform(const Matrix &matWorld) {
 	_pGeometry->applyTransform(matWorld);
 }
 

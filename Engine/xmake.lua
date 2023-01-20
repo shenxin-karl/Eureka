@@ -67,6 +67,7 @@ target("Engine")
     set_kind("binary")
     add_headerfiles("**.h")
     add_headerfiles("**.hpp")
+    add_headerfiles("**.inc")
     add_files("**.cpp")
     add_includedirs(ENGINE_DIR)
     

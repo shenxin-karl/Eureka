@@ -5,11 +5,11 @@
 namespace rgph {
 
 struct TransformStore {
-	Math::float4x4 matWorld		    = Math::float4x4::identity();
-	Math::float4x4 matInvWorld      = Math::float4x4::identity();
-	Math::float4x4 matNormal        = Math::float4x4::identity();;
-	Math::float4x4 matInvNormal     = Math::float4x4::identity();;
-	Math::float4x4 matPreFrameWorld = Math::float4x4::identity();;
+	Math::float4x4 matWorld		    = Math::float4x4::Identity;
+	Math::float4x4 matInvWorld      = Math::float4x4::Identity;
+	Math::float4x4 matNormal		= Math::float4x4::Identity;
+	Math::float4x4 matInvNormal		= Math::float4x4::Identity;
+	Math::float4x4 matPreFrameWorld = Math::float4x4::Identity;
 };
 
 class TransformCBufferPtr {

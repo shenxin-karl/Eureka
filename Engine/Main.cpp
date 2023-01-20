@@ -4,8 +4,6 @@
 #include "Math/MathHelper.h"
 #include <filesystem>
 
-namespace fs = std::filesystem;
-
 int main(int argc, char *argv[]) {
 	Eureka::EurekaApplication app;
 	try {

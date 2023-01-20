@@ -20,7 +20,7 @@ protected:
 	bool _needUpdateTile = true;
 	size_t _maxSpotLights;
 	size_t _maxPointLights;
-	Math::float4x4 _matView = Math::float4x4::identity();					
+	Math::float4x4 _matView = Math::float4x4::Identity;					
 	std::shared_ptr<dx12lib::UAStructuredBuffer> _pSpotLightBoundingSpheres;
 	std::shared_ptr<dx12lib::UAStructuredBuffer> _pPointLightBoundingSpheres;
 	std::shared_ptr<dx12lib::ComputePSO> _pUpdateSpotLightBoundingSpherePipeline;

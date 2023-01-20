@@ -28,12 +28,12 @@ public:
 	const Math::float4x4 &getInvViewProj() const;
 	const Math::float4x4 &getMatPreviousViewProj() const;
 	void update();
-	Math::Matrix4 getMatView() const;
-	Math::Matrix4 getMatProj() const;
-	Math::Matrix4 getMatViewProj() const;
-	Math::Matrix4 getMatInvView() const;
-	Math::Matrix4 getMatInvProj() const;
-	Math::Matrix4 getMatInvViewProj() const;
+	Math::Matrix getMatView() const;
+	Math::Matrix getMatProj() const;
+	Math::Matrix getMatViewProj() const;
+	Math::Matrix getMatInvView() const;
+	Math::Matrix getMatInvProj() const;
+	Math::Matrix getMatInvViewProj() const;
 	void setLookFrom(const Math::float3 &lookFrom);
 	void setLookUp(const Math::float3 &lookUp);
 	void setLookAt(const Math::float3 &lookAt);

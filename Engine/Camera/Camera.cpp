@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include <algorithm>
 #include <iostream>
 #include "Camera.h"
@@ -17,7 +16,7 @@ Camera::Camera(const CameraDesc &desc) {
 	Vector3 v = cross(w, u);
 
 	_cameraData.lookFrom = desc.lookFrom;
-	_cameraData.lookUpDir = v.xyz;
+	_cameraData.lookUpDir = v.xyz.store();
 	_cameraData.lookAtDir = desc.lookAt;
 	_cameraData.zNear = desc.nearClip;
 	_cameraData.zFar = desc.farClip;
@@ -63,18 +62,18 @@ void Camera::update() {
 	Vector3 lookFrom(_cameraData.lookFrom);
 	Vector3 lookAt(_cameraData.lookAtDir);
 	Vector3 lookUp(_cameraData.lookUpDir);
-	Matrix4 view = DirectX::XMMatrixLookAtLH(lookFrom, lookFrom + lookAt, lookUp);
-	Matrix4 proj = DirectX::XMMatrixPerspectiveFovLH(
+	Matrix view = Matrix::CreateLookAt(lookFrom, lookFrom + lookAt, lookUp);
+	Matrix proj = Matrix::CreatePerspectiveFieldOfView(
 		DirectX::XMConvertToRadians(_cameraData.fov),
 		_cameraData.aspect,
 		_cameraData.zNear,
 		_cameraData.zFar
 	);
-	Matrix4 viewProj = proj * view;
+	Matrix viewProj = proj * view;
 
-	Matrix4 invView = inverse(view);
-	Matrix4 invProj = inverse(proj);
-	Matrix4 invViewProj = inverse(viewProj);
+	Matrix invView = inverse(view);
+	Matrix invProj = inverse(proj);
+	Matrix invViewProj = inverse(viewProj);
 
 
 	_cameraData.matPreviousViewProj = _cameraData.matViewProj;
@@ -85,32 +84,32 @@ void Camera::update() {
 	_cameraData.matInvView = float4x4(invView);
 	_cameraData.matInvProj = float4x4(invProj);
 	_cameraData.matInvViewProj = float4x4(invViewProj);
-	_cameraData.projSpaceFrustum = { proj };
+	_cameraData.projSpaceFrustum = Math::BoundingFrustum(proj);
 	_cameraData.viewSpaceFrustum = _cameraData.projSpaceFrustum.transform(invView);
 }
 
-Matrix4 Camera::getMatView() const {
-	return Matrix4(getView());
+Matrix Camera::getMatView() const {
+	return Matrix(getView());
 }
 
-Matrix4 Camera::getMatProj() const {
-	return Matrix4(getProj());
+Matrix Camera::getMatProj() const {
+	return Matrix(getProj());
 }
 
-Matrix4 Camera::getMatViewProj() const {
-	return Matrix4(getViewProj());
+Matrix Camera::getMatViewProj() const {
+	return Matrix(getViewProj());
 }
 
-Matrix4 Camera::getMatInvView() const {
-	return Matrix4(getInvView());
+Matrix Camera::getMatInvView() const {
+	return Matrix(getInvView());
 }
 
-Matrix4 Camera::getMatInvProj() const {
-	return Matrix4(getInvProj());
+Matrix Camera::getMatInvProj() const {
+	return Matrix(getInvProj());
 }
 
-Matrix4 Camera::getMatInvViewProj() const {
-	return Matrix4(getInvViewProj());
+Matrix Camera::getMatInvViewProj() const {
+	return Matrix(getInvViewProj());
 }
 
 void Camera::setLookFrom(const Math::float3 &lookFrom) {

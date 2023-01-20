@@ -53,9 +53,9 @@ RenderItem * MeshNode::getRenderItem(size_t idx) const {
 	return _renderItems[idx].get();
 }
 
-void MeshNode::setParentTransform(const Matrix4 &matWorld) {
-	Matrix4 localTransform(_nodeLocalTransform);
-	Matrix4 applyTransform = localTransform * matWorld;
+void MeshNode::setParentTransform(const Matrix &matWorld) {
+	Matrix localTransform(_nodeLocalTransform);
+	Matrix applyTransform = localTransform * matWorld;
 	_applyTransform = float4x4(applyTransform);
 	_transformDirty = true;
 	for (auto &pChildren : _children)

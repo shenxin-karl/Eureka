@@ -95,7 +95,7 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 	if (elevationRise != 0.f) 
 		lookFrom.y = lookFrom.y + elevationRise * cameraMoveSpeed * deltaTime;
 
-	_pCamera->setLookFrom(lookFrom.xyz);
+	_pCamera->setLookFrom(lookFrom.store());
 	float radianPitch = DirectX::XMConvertToRadians(_pitch);
 	float radianYaw = DirectX::XMConvertToRadians(_yaw);
 	float sinPitch = std::sin(radianPitch);
@@ -108,14 +108,13 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 		cosPitch * sinYaw,
 	};
 
-	Vector3 lookAt = normalize(target) + lookFrom;
 	float radianRoll = DirectX::XMConvertToRadians(_roll);
 	float sinRoll = std::sin(radianRoll);
 	float cosRoll = std::cos(radianRoll);
 	Vector3 lookUp = Vector3(cosRoll, sinRoll, 0.f);
 
-	_pCamera->setLookAt(target.xyz);
-	_pCamera->setLookUp(lookUp.xyz);
+	_pCamera->setLookAt(target.store());
+	_pCamera->setLookUp(lookUp.store());
 	_pCamera->update();
 }
 

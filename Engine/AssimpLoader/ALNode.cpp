@@ -21,12 +21,11 @@ ALNode::ALNode(ALTree *pTree, std::string_view modelPath, int id, const aiScene 
 	aiQuaternion rotate;
 	pAiNode->mTransformation.Decompose(scale, rotate, position);
 
-	_nodeTransform = float4x4(Matrix4(DirectX::XMMatrixAffineTransformation(
-		Vector3(scale.x, scale.y, scale.z),
-		Vector3(0.f),
+	_nodeTransform = Matrix::CreateAffine(
+		Vector3(position.x, position.y, position.z),
 		Quaternion(rotate.x, rotate.y, rotate.z, rotate.w),
-		Vector3(position.x, position.y, position.z)
-	)));
+		Vector3(scale.x, scale.y, scale.z)
+	).store();
 
 	for (size_t i = 0; i < pAiNode->mNumChildren; ++i) {
 		++id;

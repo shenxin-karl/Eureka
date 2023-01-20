@@ -28,10 +28,10 @@ void TransformCBufferPtr::bind(dx12lib::IGraphicsContext &graphicsCtx, const dx1
 }
 
 void TransformCBufferPtr::setMatWorld(const Math::float4x4 &world) {
-	Matrix4 matWorld(world);
-	Matrix4 matInvWorld = inverse(matWorld);
-	Matrix4 matNormal = transpose(inverse(matWorld));
-	Matrix4 matInvNormal = inverse(matNormal);
+	Matrix matWorld(world);
+	Matrix matInvWorld = inverse(matWorld);
+	Matrix matNormal = transpose(inverse(matWorld));
+	Matrix matInvNormal = inverse(matNormal);
 	rgph::TransformStore store {
 		.matWorld = float4x4(matWorld),
 		.matInvWorld = float4x4(matInvWorld),
