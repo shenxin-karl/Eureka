@@ -3,10 +3,12 @@ ENGINE_DIR = path.join(EUREKA_DIR, "Engine")
 
 includes(path.join(EUREKA_EXT_DIR, "xmake", "assimp.lua"))
 includes(path.join(EUREKA_EXT_DIR, "xmake", "stduuid.lua"))
+includes(path.join(EUREKA_EXT_DIR, "xmake", "antlr4.lua"))
 
 local isDebug = is_mode("debug")
 local vsRuntime = is_mode("release") and "MT" or "MDd"
 add_requires("assimp",  { configs = { debug = isDebug, vs_runtime = vsRuntime, shared = false }})
+add_requires("antlr4",  { configs = { debug = isDebug, vs_runtime = vsRuntime, shared = false }})
 add_requires("stduuid", { configs = { debug = isDebug, vs_runtime = vsRuntime }})
 
 function CopyEngineDLL(target) 
@@ -73,6 +75,7 @@ target("Engine")
     
     add_packages("assimp")
     add_packages("stduuid")
+    add_packages("antlr4")
 
     add_deps("RenderGraph")
 
@@ -80,5 +83,4 @@ target("Engine")
 
     set_values("EUREKA_RENDERER_DIR", EUREKA_RENDERER_DIR)
     before_run(CopyEngineDLL)
-    on_install(CopyEngineDLL)
 target_end()

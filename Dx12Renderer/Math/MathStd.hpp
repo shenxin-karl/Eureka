@@ -331,9 +331,9 @@ class BoundingFrustum;
 		FORCEINLINE explicit Vector3(const float3 &f3) noexcept;
 		FORCEINLINE explicit Vector3(float val) noexcept;
 		FORCEINLINE explicit Vector3(const Vector4 &v4) noexcept;
-		FORCEINLINE Vector3 &operator=(const Vector3 &other) noexcept;
 		FORCEINLINE float3   store() const noexcept;
-		FORCEINLINE float &operator[](size_t index) noexcept;
+		FORCEINLINE Vector3 &operator=(const Vector3 &other) noexcept;
+		FORCEINLINE float   &operator[](size_t index) noexcept;
 		FORCEINLINE float    operator[](size_t index) const noexcept;
 
 		FORCEINLINE Vector3 &operator+=(const Vector3 &rhs) noexcept;
@@ -433,9 +433,9 @@ class BoundingFrustum;
 		FORCEINLINE Vector4(const Vector3 &v3, float w) noexcept;
 		FORCEINLINE explicit Vector4(float val) noexcept;
 		FORCEINLINE Vector4(const Vector4 &v4) noexcept;
-		FORCEINLINE Vector4 &operator=(const Vector4 &other) noexcept;
 		FORCEINLINE float4   store() const noexcept;
-		FORCEINLINE float &operator[](size_t index) noexcept;
+		FORCEINLINE Vector4 &operator=(const Vector4 &other) noexcept;
+		FORCEINLINE float   &operator[](size_t index) noexcept;
 		FORCEINLINE float    operator[](size_t index) const noexcept;
 
 		FORCEINLINE Vector4 &operator+=(const Vector4 &rhs) noexcept;
