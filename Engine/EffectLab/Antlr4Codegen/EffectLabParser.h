@@ -7,7 +7,7 @@
 #include "antlr4-runtime.h"
 
 
-namespace Eureka {
+namespace Eureka::ParserDetails {
 
 
 class  EffectLabParser : public antlr4::Parser {
@@ -96,7 +96,8 @@ public:
   public:
     Property_blockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    Property_itemContext *property_item();
+    std::vector<Property_itemContext *> property_item();
+    Property_itemContext* property_item(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -304,4 +305,4 @@ public:
 private:
 };
 
-}  // namespace Eureka
+}  // namespace Eureka::ParserDetails

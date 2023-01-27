@@ -7,7 +7,7 @@
 
 using namespace antlr4;
 
-using namespace Eureka;
+using namespace Eureka::ParserDetails;
 
 
 using namespace antlr4;

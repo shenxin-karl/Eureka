@@ -4,7 +4,7 @@
 #include "Model/GeometryGenerator/GeometryGenerator.h"
 #include "ShaderHelper/ShaderHelper.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
-#include "PathManager/PathManager.h"
+#include "Objects/PathManager.h"
 #include "ShaderHelper/ShaderLoader.h"
 
 namespace Eureka {

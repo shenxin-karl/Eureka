@@ -1,6 +1,6 @@
 #include "PipelineManager.h"
 #include "EngineDefinition/EngineDefinition.h"
-#include "PathManager/PathManager.h"
+#include "Objects/PathManager.h"
 #include "ShaderHelper/ComputePipeline.h"
 #include "ShaderHelper/GraphicsPipeline.h"
 

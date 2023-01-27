@@ -8,7 +8,7 @@
 #include "EffectLabVisitor.h"
 
 
-namespace Eureka {
+namespace Eureka::ParserDetails {
 
 /**
  * This class provides an empty implementation of EffectLabVisitor, which can be
@@ -80,4 +80,4 @@ public:
 
 };
 
-}  // namespace Eureka
+}  // namespace Eureka::ParserDetails

@@ -3,7 +3,7 @@ grammar EffectLab;
 effect : source_path property_block?;
 
 source_path     : 'SourcePath' ':' String ';';
-property_block  : 'Properties' '{' property_item? '}';
+property_block  : 'Properties' '{' property_item+ '}';
 
 number_val      : IntVal | FloatVal;
 

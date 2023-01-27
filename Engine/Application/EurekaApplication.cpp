@@ -25,8 +25,9 @@
 #include "PassDefinition/ClusterDeferredPass.h"
 #include "RenderGraph/RenderGraph/RenderGraph.h"
 #include "PassDefinition/SetupRenderGraph.h"
-#include "PathManager/PathManager.h"
-#include "TextureManager/TextureManager.h"
+#include "Objects/PathManager.h"
+#include "Objects/TextureManager.h"
+#include "EffectLab/EffectCompiler.h"
 
 using namespace Math;
 
@@ -99,6 +100,10 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 
 	// initialize
 	loading(pDirectCtx);
+
+
+	EffectCompiler compiler;
+	auto pEffect = compiler.compile("Assets/Effects/ShaderLabExample.shader");
 }
 
 void EurekaApplication::onDestroy() {

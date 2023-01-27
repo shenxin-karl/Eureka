@@ -7,9 +7,11 @@ namespace dx12lib {
 
 Exception::Exception(const std::string &message, const std::source_location &sourceLocation)
 : _line(sourceLocation.line()), _file(sourceLocation.file_name())
-, _func(sourceLocation.function_name()) {
-	_whatBuffer = std::format("[File]: {}\n[Line]: {}\n[Function]: {}, [Message]: {}",
-		_file, _line, _func, message
+, _func(sourceLocation.function_name())
+{
+	_message = message;
+	_whatBuffer = std::format("[Message]: {}\n[Function]: {}\n[File]: {}\n[Line]: {}\n",
+		message, _func, _file, _line
 	);
 }
 

@@ -13,7 +13,7 @@
 #include <RenderGraph/Pass/SubPass.h>
 #include <RenderGraph/Bindable/ConstantBufferBindable.h>
 #include "ShaderHelper/ShaderHelper.h"
-#include "TextureManager/TextureManager.h"
+#include "Objects/TextureManager.h"
 
 namespace Eureka {
 

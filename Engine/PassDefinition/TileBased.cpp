@@ -5,7 +5,7 @@
 #include "EngineDefinition/EngineDefinition.h"
 #include "RenderGraph/Utility/Utility.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
-#include "PathManager/PathManager.h"
+#include "Objects/PathManager.h"
 #include "ShaderHelper/ShaderLoader.h"
 
 using namespace Math;

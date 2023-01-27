@@ -5,5 +5,5 @@
 #include "EffectLabListener.h"
 
 
-using namespace Eureka;
+using namespace Eureka::ParserDetails;
 

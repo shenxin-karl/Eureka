@@ -7,7 +7,7 @@
 #include "antlr4-runtime.h"
 
 
-namespace Eureka {
+namespace Eureka::ParserDetails {
 
 
 class  EffectLabLexer : public antlr4::Lexer {
@@ -52,4 +52,4 @@ private:
 
 };
 
-}  // namespace Eureka
+}  // namespace Eureka::ParserDetails

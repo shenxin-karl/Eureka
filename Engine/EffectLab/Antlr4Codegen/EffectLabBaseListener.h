@@ -8,7 +8,7 @@
 #include "EffectLabListener.h"
 
 
-namespace Eureka {
+namespace Eureka::ParserDetails {
 
 /**
  * This class provides an empty implementation of EffectLabListener,
@@ -71,4 +71,4 @@ public:
 
 };
 
-}  // namespace Eureka
+}  // namespace Eureka::ParserDetails

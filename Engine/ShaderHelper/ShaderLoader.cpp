@@ -3,7 +3,7 @@
 #include "ShaderInclude.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
 #include "Foundation/Exception.h"
-#include "PathManager/PathManager.h"
+#include "Objects/PathManager.h"
 
 namespace Eureka {
 

@@ -8,7 +8,7 @@
 #include "EffectLabParser.h"
 
 
-namespace Eureka {
+namespace Eureka::ParserDetails {
 
 /**
  * This interface defines an abstract listener for a parse tree produced by EffectLabParser.
@@ -64,4 +64,4 @@ public:
 
 };
 
-}  // namespace Eureka
+}  // namespace Eureka::ParserDetails
