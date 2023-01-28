@@ -44,11 +44,21 @@ public:
 
     virtual std::any visitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *context) = 0;
 
-    virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *context) = 0;
+    virtual std::any visitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *context) = 0;
 
-    virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *context) = 0;
+    virtual std::any visitPropertyItemInt(EffectLabParser::PropertyItemIntContext *context) = 0;
 
-    virtual std::any visitProperty_item(EffectLabParser::Property_itemContext *context) = 0;
+    virtual std::any visitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *context) = 0;
+
+    virtual std::any visitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *context) = 0;
+
+    virtual std::any visitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *context) = 0;
+
+    virtual std::any visitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *context) = 0;
+
+    virtual std::any visitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *context) = 0;
+
+    virtual std::any visitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *context) = 0;
 
 
 };

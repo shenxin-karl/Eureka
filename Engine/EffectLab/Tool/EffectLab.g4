@@ -13,20 +13,24 @@ property_float_val      : number_val;
 property_float2_val     : '(' number_val ',' number_val ')';
 property_float3_val     : '(' number_val ',' number_val ',' number_val ')';
 property_float4_val     : '(' number_val ',' number_val ',' number_val ',' number_val ')';
-property_texture_val    : String '{' '}';
+property_texture_val    : (KWWhite | KWBlack | KWBump );
 property_matrix_val     : KWIdentity;
 
-property_name        : Identity;
-property_description : String;
-property_item : property_name '(' property_description ',' ('bool'  | 'Bool') ')' ')' '=' property_bool_val
-              | property_name '(' property_description ',' ('Int'   | 'int')  ')' ')' '=' property_int_val
-              | property_name '(' property_description ',' ('Float' | 'float ')   ')' '=' property_float_val
+// UniformName(Description, Type) = Value
+property_item : Identity '(' String ',' ('bool'  | 'Bool')   ')' '=' property_bool_val       # PropertyItemBool
+              | Identity '(' String ',' ('int'   | 'Int')    ')' '=' property_int_val        # PropertyItemInt
+              | Identity '(' String ',' ('float' | 'Float')  ')' '=' property_float_val      # PropertyItemFloat
+              | Identity '(' String ',' ('float2'| 'Float2') ')' '=' property_float2_val     # PropertyItemFloat2
+              | Identity '(' String ',' ('float3'| 'Float3') ')' '=' property_float3_val     # PropertyItemFloat3
+              | Identity '(' String ',' ('float4'| 'Float4') ')' '=' property_float4_val     # PropertyItemFloat4
+              | Identity '(' String ',' ('2d'    | '2D')     ')' '=' property_texture_val    # PropertyItemTexture
+              | Identity '(' String ',' ('matrix'| 'Matrix') ')' '=' property_matrix_val     # PropertyItemMatrix
               ;
 
 // lex
 BoolVal     : KWTrue | KWFalse;
-IntVal      : [1-9][0-9]*;
-FloatVal    : [0-9]+ . [0-9]* 'f'?;
+IntVal      : [+-]? [1-9][0-9]*;
+FloatVal    : [+-]? [0-9]+ '.' [0-9]* 'f'?;
 
 String      : '"' .*? '"' ;
 Identity    : [_a-zA-Z][a-zA-Z0-9_]*;
@@ -34,9 +38,9 @@ Identity    : [_a-zA-Z][a-zA-Z0-9_]*;
 KWIdentity  : 'identity';
 KWTrue      : 'true';
 KWFalse     : 'false';
-KWWhite     : 'white';
-KWBlack     : 'black';
-KWBump      : 'bump';
+KWWhite     : 'white' | 'White';
+KWBlack     : 'black' | 'Black';
+KWBump      : 'bump'  | 'Bump';
 
 WhiteSpace  : [ \t\n\r]+          -> skip;
 LineComment : '//' .*? '\r'? '\n' -> skip;

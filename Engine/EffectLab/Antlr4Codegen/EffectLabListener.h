@@ -52,14 +52,29 @@ public:
   virtual void enterProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) = 0;
   virtual void exitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) = 0;
 
-  virtual void enterProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
-  virtual void exitProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
+  virtual void enterPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) = 0;
+  virtual void exitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) = 0;
 
-  virtual void enterProperty_description(EffectLabParser::Property_descriptionContext *ctx) = 0;
-  virtual void exitProperty_description(EffectLabParser::Property_descriptionContext *ctx) = 0;
+  virtual void enterPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) = 0;
+  virtual void exitPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) = 0;
 
-  virtual void enterProperty_item(EffectLabParser::Property_itemContext *ctx) = 0;
-  virtual void exitProperty_item(EffectLabParser::Property_itemContext *ctx) = 0;
+  virtual void enterPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) = 0;
+  virtual void exitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) = 0;
+
+  virtual void enterPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) = 0;
+  virtual void exitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) = 0;
+
+  virtual void enterPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) = 0;
+  virtual void exitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) = 0;
+
+  virtual void enterPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) = 0;
+  virtual void exitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) = 0;
+
+  virtual void enterPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) = 0;
+  virtual void exitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) = 0;
+
+  virtual void enterPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) = 0;
+  virtual void exitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) = 0;
 
 
 };

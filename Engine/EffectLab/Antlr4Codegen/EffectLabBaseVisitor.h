@@ -65,15 +65,35 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *ctx) override {
+  virtual std::any visitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *ctx) override {
+  virtual std::any visitPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitProperty_item(EffectLabParser::Property_itemContext *ctx) override {
+  virtual std::any visitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) override {
     return visitChildren(ctx);
   }
 

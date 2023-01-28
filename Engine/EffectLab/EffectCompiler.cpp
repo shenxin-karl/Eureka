@@ -6,6 +6,7 @@
 #include "Effect.h"
 #include "Pass.h"
 #include "PropertyBlock.h"
+#include "PropertyBlock.h"
 #include "Math/MathStd.hpp"
 #include "Objects/PathManager.h"
 
@@ -85,7 +86,7 @@ std::any EffectCompiler::visitProperty_block(pd::EffectLabParser::Property_block
 
 	auto *pPropertyBlock = make_any_unique_ptr<PropertyBlock>();
 	for (auto *pPropertyItem : context->property_item()) {
-		
+		pPropertyItem->accept(this);
 	}
 }
 
@@ -145,16 +146,5 @@ std::any EffectCompiler::visitProperty_matrix_val(pd::EffectLabParser::Property_
 	return {};
 }
 
-std::any EffectCompiler::visitProperty_name(pd::EffectLabParser::Property_nameContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_description(pd::EffectLabParser::Property_descriptionContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_item(pd::EffectLabParser::Property_itemContext *context) {
-	return {};
-}
 
 }

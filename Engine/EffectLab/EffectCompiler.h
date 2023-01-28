@@ -41,9 +41,6 @@ private:
 	std::any visitProperty_float4_val(pd::EffectLabParser::Property_float4_valContext *context) override;
 	std::any visitProperty_texture_val(pd::EffectLabParser::Property_texture_valContext *context) override;
 	std::any visitProperty_matrix_val(pd::EffectLabParser::Property_matrix_valContext *context) override;
-	std::any visitProperty_name(pd::EffectLabParser::Property_nameContext *context) override;
-	std::any visitProperty_description(pd::EffectLabParser::Property_descriptionContext *context) override;
-	std::any visitProperty_item(pd::EffectLabParser::Property_itemContext *context) override;
 
 	template<typename T, typename...Args>
 	static T *make_any_unique_ptr(Args&&...args) noexcept {

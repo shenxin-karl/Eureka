@@ -15,17 +15,18 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
-    T__14 = 15, T__15 = 16, BoolVal = 17, IntVal = 18, FloatVal = 19, String = 20, 
-    Identity = 21, KWIdentity = 22, KWTrue = 23, KWFalse = 24, KWWhite = 25, 
-    KWBlack = 26, KWBump = 27, WhiteSpace = 28, LineComment = 29, Comment = 30
+    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
+    T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, T__25 = 26, 
+    BoolVal = 27, IntVal = 28, FloatVal = 29, String = 30, Identity = 31, 
+    KWIdentity = 32, KWTrue = 33, KWFalse = 34, KWWhite = 35, KWBlack = 36, 
+    KWBump = 37, WhiteSpace = 38, LineComment = 39, Comment = 40
   };
 
   enum {
     RuleEffect = 0, RuleSource_path = 1, RuleProperty_block = 2, RuleNumber_val = 3, 
     RuleProperty_bool_val = 4, RuleProperty_int_val = 5, RuleProperty_float_val = 6, 
     RuleProperty_float2_val = 7, RuleProperty_float3_val = 8, RuleProperty_float4_val = 9, 
-    RuleProperty_texture_val = 10, RuleProperty_matrix_val = 11, RuleProperty_name = 12, 
-    RuleProperty_description = 13, RuleProperty_item = 14
+    RuleProperty_texture_val = 10, RuleProperty_matrix_val = 11, RuleProperty_item = 12
   };
 
   explicit EffectLabParser(antlr4::TokenStream *input);
@@ -57,8 +58,6 @@ public:
   class Property_float4_valContext;
   class Property_texture_valContext;
   class Property_matrix_valContext;
-  class Property_nameContext;
-  class Property_descriptionContext;
   class Property_itemContext; 
 
   class  EffectContext : public antlr4::ParserRuleContext {
@@ -221,7 +220,9 @@ public:
   public:
     Property_texture_valContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *String();
+    antlr4::tree::TerminalNode *KWWhite();
+    antlr4::tree::TerminalNode *KWBlack();
+    antlr4::tree::TerminalNode *KWBump();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -247,51 +248,121 @@ public:
 
   Property_matrix_valContext* property_matrix_val();
 
-  class  Property_nameContext : public antlr4::ParserRuleContext {
-  public:
-    Property_nameContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *Identity();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  Property_nameContext* property_name();
-
-  class  Property_descriptionContext : public antlr4::ParserRuleContext {
-  public:
-    Property_descriptionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *String();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  Property_descriptionContext* property_description();
-
   class  Property_itemContext : public antlr4::ParserRuleContext {
   public:
     Property_itemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    Property_nameContext *property_name();
-    Property_descriptionContext *property_description();
-    Property_bool_valContext *property_bool_val();
-    Property_int_valContext *property_int_val();
-    Property_float_valContext *property_float_val();
+   
+    Property_itemContext() = default;
+    void copyFrom(Property_itemContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
 
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  PropertyItemIntContext : public Property_itemContext {
+  public:
+    PropertyItemIntContext(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_int_valContext *property_int_val();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
+  };
+
+  class  PropertyItemFloat4Context : public Property_itemContext {
+  public:
+    PropertyItemFloat4Context(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_float4_valContext *property_float4_val();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PropertyItemBoolContext : public Property_itemContext {
+  public:
+    PropertyItemBoolContext(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_bool_valContext *property_bool_val();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PropertyItemMatrixContext : public Property_itemContext {
+  public:
+    PropertyItemMatrixContext(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_matrix_valContext *property_matrix_val();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PropertyItemFloat2Context : public Property_itemContext {
+  public:
+    PropertyItemFloat2Context(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_float2_valContext *property_float2_val();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PropertyItemFloat3Context : public Property_itemContext {
+  public:
+    PropertyItemFloat3Context(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_float3_valContext *property_float3_val();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PropertyItemFloatContext : public Property_itemContext {
+  public:
+    PropertyItemFloatContext(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_float_valContext *property_float_val();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PropertyItemTextureContext : public Property_itemContext {
+  public:
+    PropertyItemTextureContext(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_texture_valContext *property_texture_val();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
   Property_itemContext* property_item();

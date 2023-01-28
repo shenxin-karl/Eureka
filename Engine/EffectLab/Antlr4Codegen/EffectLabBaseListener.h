@@ -54,14 +54,29 @@ public:
   virtual void enterProperty_matrix_val(EffectLabParser::Property_matrix_valContext * /*ctx*/) override { }
   virtual void exitProperty_matrix_val(EffectLabParser::Property_matrix_valContext * /*ctx*/) override { }
 
-  virtual void enterProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
-  virtual void exitProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
+  virtual void enterPropertyItemBool(EffectLabParser::PropertyItemBoolContext * /*ctx*/) override { }
+  virtual void exitPropertyItemBool(EffectLabParser::PropertyItemBoolContext * /*ctx*/) override { }
 
-  virtual void enterProperty_description(EffectLabParser::Property_descriptionContext * /*ctx*/) override { }
-  virtual void exitProperty_description(EffectLabParser::Property_descriptionContext * /*ctx*/) override { }
+  virtual void enterPropertyItemInt(EffectLabParser::PropertyItemIntContext * /*ctx*/) override { }
+  virtual void exitPropertyItemInt(EffectLabParser::PropertyItemIntContext * /*ctx*/) override { }
 
-  virtual void enterProperty_item(EffectLabParser::Property_itemContext * /*ctx*/) override { }
-  virtual void exitProperty_item(EffectLabParser::Property_itemContext * /*ctx*/) override { }
+  virtual void enterPropertyItemFloat(EffectLabParser::PropertyItemFloatContext * /*ctx*/) override { }
+  virtual void exitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context * /*ctx*/) override { }
+  virtual void exitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context * /*ctx*/) override { }
+
+  virtual void enterPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context * /*ctx*/) override { }
+  virtual void exitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context * /*ctx*/) override { }
+
+  virtual void enterPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context * /*ctx*/) override { }
+  virtual void exitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context * /*ctx*/) override { }
+
+  virtual void enterPropertyItemTexture(EffectLabParser::PropertyItemTextureContext * /*ctx*/) override { }
+  virtual void exitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext * /*ctx*/) override { }
+  virtual void exitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
