@@ -16,15 +16,15 @@ public:
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
     T__14 = 15, T__15 = 16, BoolVal = 17, IntVal = 18, FloatVal = 19, String = 20, 
-    Identity = 21, KWIdentity = 22, KWTrue = 23, KWFalse = 24, WhiteSpace = 25, 
-    LineComment = 26, Comment = 27
+    Identity = 21, KWIdentity = 22, KWTrue = 23, KWFalse = 24, KWWhite = 25, 
+    KWBlack = 26, KWBump = 27, WhiteSpace = 28, LineComment = 29, Comment = 30
   };
 
   enum {
     RuleEffect = 0, RuleSource_path = 1, RuleProperty_block = 2, RuleNumber_val = 3, 
     RuleProperty_bool_val = 4, RuleProperty_int_val = 5, RuleProperty_float_val = 6, 
     RuleProperty_float2_val = 7, RuleProperty_float3_val = 8, RuleProperty_float4_val = 9, 
-    RuleProperty_texture_val = 10, RuleProperty_matrix = 11, RuleProperty_name = 12, 
+    RuleProperty_texture_val = 10, RuleProperty_matrix_val = 11, RuleProperty_name = 12, 
     RuleProperty_description = 13, RuleProperty_item = 14
   };
 
@@ -56,7 +56,7 @@ public:
   class Property_float3_valContext;
   class Property_float4_valContext;
   class Property_texture_valContext;
-  class Property_matrixContext;
+  class Property_matrix_valContext;
   class Property_nameContext;
   class Property_descriptionContext;
   class Property_itemContext; 
@@ -232,9 +232,9 @@ public:
 
   Property_texture_valContext* property_texture_val();
 
-  class  Property_matrixContext : public antlr4::ParserRuleContext {
+  class  Property_matrix_valContext : public antlr4::ParserRuleContext {
   public:
-    Property_matrixContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    Property_matrix_valContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KWIdentity();
 
@@ -245,7 +245,7 @@ public:
    
   };
 
-  Property_matrixContext* property_matrix();
+  Property_matrix_valContext* property_matrix_val();
 
   class  Property_nameContext : public antlr4::ParserRuleContext {
   public:

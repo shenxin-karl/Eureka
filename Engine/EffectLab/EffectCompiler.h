@@ -10,46 +10,51 @@
 namespace Eureka {
 
 namespace fs = std::filesystem;
+namespace pd = ParserDetails;
 
 class EffectErrorListener : public antlr4::BaseErrorListener {
 public:
-	void syntaxError(antlr4::Recognizer *recognizer, 
+	void syntaxError(antlr4::Recognizer *recognizer,
 		antlr4::Token *offendingSymbol,
-		size_t line, 
-		size_t charPositionInLine, 
-		const std::string &msg, 
+		size_t line,
+		size_t charPositionInLine,
+		const std::string &msg,
 		std::exception_ptr e
 	) override;
 };
 
-class EffectCompiler : ParserDetails::EffectLabVisitor {
+class EffectCompiler : pd::EffectLabVisitor {
 public:
 	EffectCompiler();
 	~EffectCompiler() override;
-	auto compile(const fs::path &effectSourcePath) -> std::unique_ptr<Effect>;
+	auto compile(const fs::path &effectSourcePath)->std::unique_ptr<Effect>;
 private:
-	std::any visitEffect(ParserDetails::EffectLabParser::EffectContext *context) override;
-	std::any visitSource_path(ParserDetails::EffectLabParser::Source_pathContext *context) override;
-	std::any visitProperty_block(ParserDetails::EffectLabParser::Property_blockContext *context) override;
-	std::any visitNumber_val(ParserDetails::EffectLabParser::Number_valContext *context) override;
-	std::any visitProperty_bool_val(ParserDetails::EffectLabParser::Property_bool_valContext *context) override;
-	std::any visitProperty_int_val(ParserDetails::EffectLabParser::Property_int_valContext *context) override;
-	std::any visitProperty_float_val(ParserDetails::EffectLabParser::Property_float_valContext *context) override;
-	std::any visitProperty_float2_val(ParserDetails::EffectLabParser::Property_float2_valContext *context) override;
-	std::any visitProperty_float3_val(ParserDetails::EffectLabParser::Property_float3_valContext *context) override;
-	std::any visitProperty_float4_val(ParserDetails::EffectLabParser::Property_float4_valContext *context) override;
-	std::any visitProperty_texture_val(ParserDetails::EffectLabParser::Property_texture_valContext *context) override;
-	std::any visitProperty_matrix(ParserDetails::EffectLabParser::Property_matrixContext *context) override;
-	std::any visitProperty_name(ParserDetails::EffectLabParser::Property_nameContext *context) override;
-	std::any visitProperty_description(ParserDetails::EffectLabParser::Property_descriptionContext *context) override;
-	std::any visitProperty_item(ParserDetails::EffectLabParser::Property_itemContext *context) override;
+	std::any visitEffect(pd::EffectLabParser::EffectContext *context) override;
+	std::any visitSource_path(pd::EffectLabParser::Source_pathContext *context) override;
+	std::any visitProperty_block(pd::EffectLabParser::Property_blockContext *context) override;
+	std::any visitNumber_val(pd::EffectLabParser::Number_valContext *context) override;
+	std::any visitProperty_bool_val(pd::EffectLabParser::Property_bool_valContext *context) override;
+	std::any visitProperty_int_val(pd::EffectLabParser::Property_int_valContext *context) override;
+	std::any visitProperty_float_val(pd::EffectLabParser::Property_float_valContext *context) override;
+	std::any visitProperty_float2_val(pd::EffectLabParser::Property_float2_valContext *context) override;
+	std::any visitProperty_float3_val(pd::EffectLabParser::Property_float3_valContext *context) override;
+	std::any visitProperty_float4_val(pd::EffectLabParser::Property_float4_valContext *context) override;
+	std::any visitProperty_texture_val(pd::EffectLabParser::Property_texture_valContext *context) override;
+	std::any visitProperty_matrix_val(pd::EffectLabParser::Property_matrix_valContext *context) override;
+	std::any visitProperty_name(pd::EffectLabParser::Property_nameContext *context) override;
+	std::any visitProperty_description(pd::EffectLabParser::Property_descriptionContext *context) override;
+	std::any visitProperty_item(pd::EffectLabParser::Property_itemContext *context) override;
 
 	template<typename T, typename...Args>
-	T *make_any_unique_ptr(Args&&...args) {
+	static T *make_any_unique_ptr(Args&&...args) noexcept {
 		return new T{ std::forward<Args>(args)... };
 	}
+	template<typename T>
+	constexpr static T *make_any_nullptr() noexcept {
+		return nullptr;
+	}
 	template<typename T, typename AnyType> requires(std::is_same_v<std::decay_t<AnyType>, std::any>)
-	std::unique_ptr<T> any_to_unique_ptr(AnyType&& any) {
+	static std::unique_ptr<T> any_to_unique_ptr(AnyType&& any) noexcept {
 		return std::unique_ptr<T>(std::any_cast<T *>(std::forward<AnyType>(any)));
 	}
 private:

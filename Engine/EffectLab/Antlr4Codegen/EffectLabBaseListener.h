@@ -51,8 +51,8 @@ public:
   virtual void enterProperty_texture_val(EffectLabParser::Property_texture_valContext * /*ctx*/) override { }
   virtual void exitProperty_texture_val(EffectLabParser::Property_texture_valContext * /*ctx*/) override { }
 
-  virtual void enterProperty_matrix(EffectLabParser::Property_matrixContext * /*ctx*/) override { }
-  virtual void exitProperty_matrix(EffectLabParser::Property_matrixContext * /*ctx*/) override { }
+  virtual void enterProperty_matrix_val(EffectLabParser::Property_matrix_valContext * /*ctx*/) override { }
+  virtual void exitProperty_matrix_val(EffectLabParser::Property_matrix_valContext * /*ctx*/) override { }
 
   virtual void enterProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
   virtual void exitProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }

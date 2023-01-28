@@ -14,7 +14,7 @@ property_float2_val     : '(' number_val ',' number_val ')';
 property_float3_val     : '(' number_val ',' number_val ',' number_val ')';
 property_float4_val     : '(' number_val ',' number_val ',' number_val ',' number_val ')';
 property_texture_val    : String '{' '}';
-property_matrix         : KWIdentity;
+property_matrix_val     : KWIdentity;
 
 property_name        : Identity;
 property_description : String;
@@ -30,9 +30,13 @@ FloatVal    : [0-9]+ . [0-9]* 'f'?;
 
 String      : '"' .*? '"' ;
 Identity    : [_a-zA-Z][a-zA-Z0-9_]*;
-KWIdentity  : 'Identity';
+
+KWIdentity  : 'identity';
 KWTrue      : 'true';
 KWFalse     : 'false';
+KWWhite     : 'white';
+KWBlack     : 'black';
+KWBump      : 'bump';
 
 WhiteSpace  : [ \t\n\r]+          -> skip;
 LineComment : '//' .*? '\r'? '\n' -> skip;

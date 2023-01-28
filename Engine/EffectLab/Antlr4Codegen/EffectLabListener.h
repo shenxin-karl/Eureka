@@ -49,8 +49,8 @@ public:
   virtual void enterProperty_texture_val(EffectLabParser::Property_texture_valContext *ctx) = 0;
   virtual void exitProperty_texture_val(EffectLabParser::Property_texture_valContext *ctx) = 0;
 
-  virtual void enterProperty_matrix(EffectLabParser::Property_matrixContext *ctx) = 0;
-  virtual void exitProperty_matrix(EffectLabParser::Property_matrixContext *ctx) = 0;
+  virtual void enterProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) = 0;
+  virtual void exitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) = 0;
 
   virtual void enterProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
   virtual void exitProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;

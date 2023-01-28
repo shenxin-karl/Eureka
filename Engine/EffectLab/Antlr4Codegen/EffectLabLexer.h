@@ -16,8 +16,8 @@ public:
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
     T__14 = 15, T__15 = 16, BoolVal = 17, IntVal = 18, FloatVal = 19, String = 20, 
-    Identity = 21, KWIdentity = 22, KWTrue = 23, KWFalse = 24, WhiteSpace = 25, 
-    LineComment = 26, Comment = 27
+    Identity = 21, KWIdentity = 22, KWTrue = 23, KWFalse = 24, KWWhite = 25, 
+    KWBlack = 26, KWBump = 27, WhiteSpace = 28, LineComment = 29, Comment = 30
   };
 
   explicit EffectLabLexer(antlr4::CharStream *input);

@@ -2,9 +2,10 @@
 
 namespace Eureka {
 
+class PropertyItem;
 class PropertyBlock {
-public:
-
+private:
+	std::vector<std::unique_ptr<PropertyItem>> _items;
 };
 	
 }

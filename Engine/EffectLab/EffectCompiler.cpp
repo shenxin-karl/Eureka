@@ -6,6 +6,7 @@
 #include "Effect.h"
 #include "Pass.h"
 #include "PropertyBlock.h"
+#include "Math/MathStd.hpp"
 #include "Objects/PathManager.h"
 
 namespace Eureka {
@@ -37,9 +38,9 @@ auto EffectCompiler::compile(const fs::path &effectSourcePath) -> std::unique_pt
 
 	try {
 		antlr4::ANTLRInputStream input(fin);
-		ParserDetails::EffectLabLexer lexer(&input);
+		pd::EffectLabLexer lexer(&input);
 		antlr4::CommonTokenStream tokens(&lexer);
-		ParserDetails::EffectLabParser parser(&tokens);
+		pd::EffectLabParser parser(&tokens);
 
 		EffectErrorListener errorListener;
 		parser.removeErrorListeners();
@@ -54,7 +55,7 @@ auto EffectCompiler::compile(const fs::path &effectSourcePath) -> std::unique_pt
 	return nullptr;
 }
 
-std::any EffectCompiler::visitEffect(ParserDetails::EffectLabParser::EffectContext *context) {
+std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context) {
 	auto pEffect = make_any_unique_ptr<Effect>();
 	pEffect->_sourcePath = std::any_cast<fs::path>(visitSource_path(context->source_path()));
 	if (!PathManager::exist(pEffect->_sourcePath)) {
@@ -72,60 +73,87 @@ std::any EffectCompiler::visitEffect(ParserDetails::EffectLabParser::EffectConte
 	return pEffect;
 }
 
-std::any EffectCompiler::visitSource_path(ParserDetails::EffectLabParser::Source_pathContext *context) {
+std::any EffectCompiler::visitSource_path(pd::EffectLabParser::Source_pathContext *context) {
 	fs::path sourcePath = context->String()->getText();
 	return sourcePath;
 }
 
-std::any EffectCompiler::visitProperty_block(ParserDetails::EffectLabParser::Property_blockContext *context) {
+std::any EffectCompiler::visitProperty_block(pd::EffectLabParser::Property_blockContext *context) {
+	if (context->property_item().empty()) {
+		return make_any_nullptr<PropertyBlock>();
+	}
+
+	auto *pPropertyBlock = make_any_unique_ptr<PropertyBlock>();
+	for (auto *pPropertyItem : context->property_item()) {
+		
+	}
+}
+
+std::any EffectCompiler::visitNumber_val(pd::EffectLabParser::Number_valContext *context) {
+	if (context->IntVal()) {
+		return static_cast<float>(std::stoi(context->IntVal()->getText()));
+	}
+	if (context->FloatVal()) {
+		return std::stof(context->FloatVal()->getText());
+	}
+	return 0.f;
+}
+
+std::any EffectCompiler::visitProperty_bool_val(pd::EffectLabParser::Property_bool_valContext *context) {
+	auto text = context->BoolVal()->getText();
+	return text == "true";
+}
+
+std::any EffectCompiler::visitProperty_int_val(pd::EffectLabParser::Property_int_valContext *context) {
+	auto text = context->IntVal()->getText();
+	return std::stoi(text);
+}
+
+std::any EffectCompiler::visitProperty_float_val(pd::EffectLabParser::Property_float_valContext *context) {
+	return visitNumber_val(context->number_val());
+}
+
+std::any EffectCompiler::visitProperty_float2_val(pd::EffectLabParser::Property_float2_valContext *context) {
+	return Math::float2 {
+		std::any_cast<float>(visitNumber_val(context->number_val(0))),
+		std::any_cast<float>(visitNumber_val(context->number_val(1))),
+	};
+}
+
+std::any EffectCompiler::visitProperty_float3_val(pd::EffectLabParser::Property_float3_valContext *context) {
+	return Math::float3 {
+		std::any_cast<float>(visitNumber_val(context->number_val(0))),
+		std::any_cast<float>(visitNumber_val(context->number_val(1))),
+		std::any_cast<float>(visitNumber_val(context->number_val(2))),
+	};
+}
+
+std::any EffectCompiler::visitProperty_float4_val(pd::EffectLabParser::Property_float4_valContext *context) {
+	return Math::float4 {
+		std::any_cast<float>(visitNumber_val(context->number_val(0))),
+		std::any_cast<float>(visitNumber_val(context->number_val(1))),
+		std::any_cast<float>(visitNumber_val(context->number_val(2))),
+		std::any_cast<float>(visitNumber_val(context->number_val(3))),
+	};
+}
+
+std::any EffectCompiler::visitProperty_texture_val(pd::EffectLabParser::Property_texture_valContext *context) {
 	return {};
 }
 
-std::any EffectCompiler::visitNumber_val(ParserDetails::EffectLabParser::Number_valContext *context) {
+std::any EffectCompiler::visitProperty_matrix_val(pd::EffectLabParser::Property_matrix_valContext *context) {
 	return {};
 }
 
-std::any EffectCompiler::visitProperty_bool_val(ParserDetails::EffectLabParser::Property_bool_valContext *context) {
+std::any EffectCompiler::visitProperty_name(pd::EffectLabParser::Property_nameContext *context) {
 	return {};
 }
 
-std::any EffectCompiler::visitProperty_int_val(ParserDetails::EffectLabParser::Property_int_valContext *context) {
+std::any EffectCompiler::visitProperty_description(pd::EffectLabParser::Property_descriptionContext *context) {
 	return {};
 }
 
-std::any EffectCompiler::visitProperty_float_val(ParserDetails::EffectLabParser::Property_float_valContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_float2_val(ParserDetails::EffectLabParser::Property_float2_valContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_float3_val(ParserDetails::EffectLabParser::Property_float3_valContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_float4_val(ParserDetails::EffectLabParser::Property_float4_valContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_texture_val(ParserDetails::EffectLabParser::Property_texture_valContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_matrix(ParserDetails::EffectLabParser::Property_matrixContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_name(ParserDetails::EffectLabParser::Property_nameContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_description(ParserDetails::EffectLabParser::Property_descriptionContext *context) {
-	return {};
-}
-
-std::any EffectCompiler::visitProperty_item(ParserDetails::EffectLabParser::Property_itemContext *context) {
+std::any EffectCompiler::visitProperty_item(pd::EffectLabParser::Property_itemContext *context) {
 	return {};
 }
 

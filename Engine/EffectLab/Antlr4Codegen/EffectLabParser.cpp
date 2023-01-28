@@ -47,22 +47,24 @@ void effectlabParserInitialize() {
     std::vector<std::string>{
       "effect", "source_path", "property_block", "number_val", "property_bool_val", 
       "property_int_val", "property_float_val", "property_float2_val", "property_float3_val", 
-      "property_float4_val", "property_texture_val", "property_matrix", 
+      "property_float4_val", "property_texture_val", "property_matrix_val", 
       "property_name", "property_description", "property_item"
     },
     std::vector<std::string>{
       "", "'SourcePath'", "':'", "';'", "'Properties'", "'{'", "'}'", "'('", 
       "','", "')'", "'bool'", "'Bool'", "'='", "'Int'", "'int'", "'Float'", 
-      "'float '", "", "", "", "", "", "'Identity'", "'true'", "'false'"
+      "'float '", "", "", "", "", "", "'identity'", "'true'", "'false'", 
+      "'white'", "'black'", "'bump'"
     },
     std::vector<std::string>{
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
       "BoolVal", "IntVal", "FloatVal", "String", "Identity", "KWIdentity", 
-      "KWTrue", "KWFalse", "WhiteSpace", "LineComment", "Comment"
+      "KWTrue", "KWFalse", "KWWhite", "KWBlack", "KWBump", "WhiteSpace", 
+      "LineComment", "Comment"
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,27,122,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,30,122,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
   	14,1,0,1,0,3,0,33,8,0,1,1,1,1,1,1,1,1,1,1,1,2,1,2,1,2,4,2,43,8,2,11,2,
   	12,2,44,1,2,1,2,1,3,1,3,1,4,1,4,1,5,1,5,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,
@@ -918,44 +920,44 @@ EffectLabParser::Property_texture_valContext* EffectLabParser::property_texture_
   return _localctx;
 }
 
-//----------------- Property_matrixContext ------------------------------------------------------------------
+//----------------- Property_matrix_valContext ------------------------------------------------------------------
 
-EffectLabParser::Property_matrixContext::Property_matrixContext(ParserRuleContext *parent, size_t invokingState)
+EffectLabParser::Property_matrix_valContext::Property_matrix_valContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* EffectLabParser::Property_matrixContext::KWIdentity() {
+tree::TerminalNode* EffectLabParser::Property_matrix_valContext::KWIdentity() {
   return getToken(EffectLabParser::KWIdentity, 0);
 }
 
 
-size_t EffectLabParser::Property_matrixContext::getRuleIndex() const {
-  return EffectLabParser::RuleProperty_matrix;
+size_t EffectLabParser::Property_matrix_valContext::getRuleIndex() const {
+  return EffectLabParser::RuleProperty_matrix_val;
 }
 
-void EffectLabParser::Property_matrixContext::enterRule(tree::ParseTreeListener *listener) {
+void EffectLabParser::Property_matrix_valContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EffectLabListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterProperty_matrix(this);
+    parserListener->enterProperty_matrix_val(this);
 }
 
-void EffectLabParser::Property_matrixContext::exitRule(tree::ParseTreeListener *listener) {
+void EffectLabParser::Property_matrix_valContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EffectLabListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitProperty_matrix(this);
+    parserListener->exitProperty_matrix_val(this);
 }
 
 
-std::any EffectLabParser::Property_matrixContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any EffectLabParser::Property_matrix_valContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<EffectLabVisitor*>(visitor))
-    return parserVisitor->visitProperty_matrix(this);
+    return parserVisitor->visitProperty_matrix_val(this);
   else
     return visitor->visitChildren(this);
 }
 
-EffectLabParser::Property_matrixContext* EffectLabParser::property_matrix() {
-  Property_matrixContext *_localctx = _tracker.createInstance<Property_matrixContext>(_ctx, getState());
-  enterRule(_localctx, 22, EffectLabParser::RuleProperty_matrix);
+EffectLabParser::Property_matrix_valContext* EffectLabParser::property_matrix_val() {
+  Property_matrix_valContext *_localctx = _tracker.createInstance<Property_matrix_valContext>(_ctx, getState());
+  enterRule(_localctx, 22, EffectLabParser::RuleProperty_matrix_val);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {

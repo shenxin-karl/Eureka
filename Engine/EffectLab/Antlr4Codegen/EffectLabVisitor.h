@@ -42,7 +42,7 @@ public:
 
     virtual std::any visitProperty_texture_val(EffectLabParser::Property_texture_valContext *context) = 0;
 
-    virtual std::any visitProperty_matrix(EffectLabParser::Property_matrixContext *context) = 0;
+    virtual std::any visitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *context) = 0;
 
     virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *context) = 0;
 

@@ -61,7 +61,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitProperty_matrix(EffectLabParser::Property_matrixContext *ctx) override {
+  virtual std::any visitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) override {
     return visitChildren(ctx);
   }
 
