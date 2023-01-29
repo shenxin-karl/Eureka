@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <bitset>
 #include <queue>
-#include "ITick/ITick.h"
+#include "Foundation/ITick.h"
 
 namespace Eureka {
 

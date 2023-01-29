@@ -71,7 +71,7 @@ void Transform::setWorldRotate(const Math::float4 &quaternion) {
 		if (_parent != nullptr) {
 			Quaternion q(_parent->getWorldRotate());
 			auto tQ = inverse(q) * Quaternion(quaternion);
-			//_transformData.localRotate = float4();
+			_transformData.localRotate = tQ.store();
 		} else {
 			_transformData.localRotate = quaternion;
 		}

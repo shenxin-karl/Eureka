@@ -44,6 +44,7 @@ EurekaApplication::~EurekaApplication() {
 void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	PathManager::setAssetPath("../../Assets");
 	PathManager::setProjectPath("../../");
+	PathManager::setTempPath("../../.temp/");
 	MeshManager::SingletionEmplace();
 	TextureManager::SingletionEmplace();
 	PipelineManager::SingletionEmplace();

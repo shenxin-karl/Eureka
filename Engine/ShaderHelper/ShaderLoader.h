@@ -12,7 +12,7 @@ namespace Eureka {
 
 namespace fs = std::filesystem;
 class ShaderLoader {
-    static inline const fs::path outputDirectory = ".shaderCache";
+    static inline const fs::path outputDirectory = "shaderCache";
     static inline const UUID128 classUUID = UUID128::from_string("{CF296646-0975-41BB-9006-D0423E2479D4}").value();
     static const std::string CompileMode;
 public:

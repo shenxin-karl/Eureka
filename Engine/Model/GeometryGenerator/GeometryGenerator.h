@@ -1,7 +1,7 @@
 #pragma once
 #include "PartMesh.h"
 #include "EngineDefinition/EngineDefinition.h"
-#include "Singletion/Singletion.hpp"
+#include "Foundation/Singletion.hpp"
 
 namespace Eureka {
 

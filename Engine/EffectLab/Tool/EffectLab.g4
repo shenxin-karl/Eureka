@@ -30,7 +30,7 @@ property_item : Identity '(' String ',' ('bool'  | 'Bool')   ')' '=' property_bo
 // lex
 BoolVal     : KWTrue | KWFalse;
 IntVal      : [+-]? [1-9][0-9]*;
-FloatVal    : [+-]? [0-9]+ '.' [0-9]* 'f'?;
+FloatVal    : [+-]? [0-9]+ '.' [0-9]*? [fF]?;
 
 String      : '"' .*? '"' ;
 Identity    : [_a-zA-Z][a-zA-Z0-9_]*;

@@ -2,7 +2,7 @@
 #include <memory>
 #include <Dx12lib/dx12libStd.h>
 #include <Dx12lib/Context/ContextProxy.hpp>
-#include "Singletion/Singletion.hpp"
+#include "Foundation/Singletion.hpp"
 
 namespace Eureka {
 

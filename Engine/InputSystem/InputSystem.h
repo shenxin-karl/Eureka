@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
-#include "ITick/ITick.h"
+#include "Foundation/ITick.h"
 
 namespace Eureka {
 

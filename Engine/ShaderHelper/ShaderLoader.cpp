@@ -12,7 +12,7 @@ const std::string ShaderLoader::CompileMode = EUREKA_COMPILE_MODE;
 std::unique_ptr<ShaderLoader> ShaderLoader::pInst = std::make_unique<ShaderLoader>();
 
 ShaderLoader::ShaderLoader() : _uuidGenerator(classUUID) {
-    auto targetDirectory = PathManager::getProjectPath() / outputDirectory;
+    auto targetDirectory = PathManager::toTempPath(outputDirectory);
     if (!fs::exists(targetDirectory)) {
 	    fs::create_directory(targetDirectory);
     }
@@ -76,7 +76,6 @@ bool ShaderLoader::checkShaderCacheValid(const fs::path &sourcePath, const dx12l
 std::string ShaderLoader::calcShaderCacheKey(const fs::path &filePath, const D3D_SHADER_MACRO *defines,
                                              const std::string &entryPoint, const std::string &target)
 {
-    fs::path cachePath = outputDirectory;
     std::error_code errorCode;
     if (!fs::exists(filePath, errorCode)) {
         Exception::Throw("DXCShader::compileFormMemory args.filePath {} not exist", filePath.string());
@@ -108,9 +107,10 @@ dx12lib::ShaderCacheInfo ShaderLoader::getShaderCacheInfo(const std::string &sha
     std::string pdbFileName = std::format("{}_{}.pdb", CompileMode, pdbUUID);
     std::string refFileName = std::format("{}_{}.ref", CompileMode, refUUID);
     dx12lib::ShaderCacheInfo cacheInfo;
-    cacheInfo.csoFilePath = PathManager::getProjectPath() / outputDirectory / csoFileName;
-    cacheInfo.pdbFilePath = PathManager::getProjectPath() / outputDirectory / pdbFileName;
-    cacheInfo.refFilePath = PathManager::getProjectPath() / outputDirectory / refFileName;
+    auto cachePath = PathManager::toTempPath(outputDirectory);
+    cacheInfo.csoFilePath = cachePath / csoFileName;
+    cacheInfo.pdbFilePath = cachePath / pdbFileName;
+    cacheInfo.refFilePath = cachePath / refFileName;
     return cacheInfo;
 }
 

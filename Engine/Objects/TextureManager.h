@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <Dx12lib/Texture/Texture.h>
-#include "Singletion/Singletion.hpp"
+#include "Foundation/Singletion.hpp"
 
 namespace Eureka {
 
