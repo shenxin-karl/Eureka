@@ -28,8 +28,32 @@ public:
   virtual void enterNumber_val(EffectLabParser::Number_valContext *ctx) = 0;
   virtual void exitNumber_val(EffectLabParser::Number_valContext *ctx) = 0;
 
+  virtual void enterProperty_bool_type(EffectLabParser::Property_bool_typeContext *ctx) = 0;
+  virtual void exitProperty_bool_type(EffectLabParser::Property_bool_typeContext *ctx) = 0;
+
+  virtual void enterProperty_int_type(EffectLabParser::Property_int_typeContext *ctx) = 0;
+  virtual void exitProperty_int_type(EffectLabParser::Property_int_typeContext *ctx) = 0;
+
   virtual void enterProperty_range_type(EffectLabParser::Property_range_typeContext *ctx) = 0;
   virtual void exitProperty_range_type(EffectLabParser::Property_range_typeContext *ctx) = 0;
+
+  virtual void enterProperty_float_type(EffectLabParser::Property_float_typeContext *ctx) = 0;
+  virtual void exitProperty_float_type(EffectLabParser::Property_float_typeContext *ctx) = 0;
+
+  virtual void enterProperty_float2_type(EffectLabParser::Property_float2_typeContext *ctx) = 0;
+  virtual void exitProperty_float2_type(EffectLabParser::Property_float2_typeContext *ctx) = 0;
+
+  virtual void enterProperty_float3_type(EffectLabParser::Property_float3_typeContext *ctx) = 0;
+  virtual void exitProperty_float3_type(EffectLabParser::Property_float3_typeContext *ctx) = 0;
+
+  virtual void enterProperty_float4_type(EffectLabParser::Property_float4_typeContext *ctx) = 0;
+  virtual void exitProperty_float4_type(EffectLabParser::Property_float4_typeContext *ctx) = 0;
+
+  virtual void enterProperty_texture_2d_type(EffectLabParser::Property_texture_2d_typeContext *ctx) = 0;
+  virtual void exitProperty_texture_2d_type(EffectLabParser::Property_texture_2d_typeContext *ctx) = 0;
+
+  virtual void enterProperty_matrix_type(EffectLabParser::Property_matrix_typeContext *ctx) = 0;
+  virtual void exitProperty_matrix_type(EffectLabParser::Property_matrix_typeContext *ctx) = 0;
 
   virtual void enterProperty_range_val(EffectLabParser::Property_range_valContext *ctx) = 0;
   virtual void exitProperty_range_val(EffectLabParser::Property_range_valContext *ctx) = 0;
@@ -52,11 +76,17 @@ public:
   virtual void enterProperty_float4_val(EffectLabParser::Property_float4_valContext *ctx) = 0;
   virtual void exitProperty_float4_val(EffectLabParser::Property_float4_valContext *ctx) = 0;
 
+  virtual void enterProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) = 0;
+  virtual void exitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) = 0;
+
   virtual void enterProperty_texture_val(EffectLabParser::Property_texture_valContext *ctx) = 0;
   virtual void exitProperty_texture_val(EffectLabParser::Property_texture_valContext *ctx) = 0;
 
-  virtual void enterProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) = 0;
-  virtual void exitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) = 0;
+  virtual void enterProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
+  virtual void exitProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
+
+  virtual void enterProperty_description(EffectLabParser::Property_descriptionContext *ctx) = 0;
+  virtual void exitProperty_description(EffectLabParser::Property_descriptionContext *ctx) = 0;
 
   virtual void enterPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) = 0;
   virtual void exitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) = 0;

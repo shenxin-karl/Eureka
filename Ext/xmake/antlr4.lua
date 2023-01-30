@@ -2,7 +2,7 @@ package("antlr4")
     add_deps("cmake")
     set_sourcedir(path.join(os.projectdir(), "Ext", "antlr4", "runtime", "Cpp"))
     add_includedirs("include/antlr4-runtime")
-    add_defines("ANTLR4CPP_STATIC")
+    add_defines("ANTLR4CPP_STATIC", { public = true })
     on_install(function (package)
         local configs = { "-DANTLR_BUILD_CPP_TESTS=OFF" }
         if is_mode("debug") then

@@ -69,7 +69,8 @@ std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context
 }
 
 std::any EffectCompiler::visitSource_path(pd::EffectLabParser::Source_pathContext *context) {
-	fs::path sourcePath = context->String()->getText();
+	auto text = context->StringLiteral()->getText();
+	fs::path sourcePath = text.substr(1, text.length()-2);
 	return sourcePath;
 }
 
@@ -86,11 +87,11 @@ std::any EffectCompiler::visitProperty_block(pd::EffectLabParser::Property_block
 }
 
 std::any EffectCompiler::visitNumber_val(pd::EffectLabParser::Number_valContext *context) {
-	if (context->IntVal()) {
-		return static_cast<float>(std::stoi(context->IntVal()->getText()));
+	if (context->IntLiteral()) {
+		return static_cast<float>(std::stoi(context->IntLiteral()->getText()));
 	}
-	if (context->FloatVal()) {
-		return std::stof(context->FloatVal()->getText());
+	if (context->FloatLiteral()) {
+		return std::stof(context->FloatLiteral()->getText());
 	}
 	return 0.f;
 }
@@ -107,12 +108,12 @@ std::any EffectCompiler::visitProperty_range_val(ParserDetails::EffectLabParser:
 }
 
 std::any EffectCompiler::visitProperty_bool_val(pd::EffectLabParser::Property_bool_valContext *context) {
-	auto text = context->BoolVal()->getText();
+	auto text = context->getText();
 	return text == "true";
 }
 
 std::any EffectCompiler::visitProperty_int_val(pd::EffectLabParser::Property_int_valContext *context) {
-	auto text = context->IntVal()->getText();
+	auto text = context->IntLiteral()->getText();
 	return std::stoi(text);
 }
 
@@ -145,14 +146,15 @@ std::any EffectCompiler::visitProperty_float4_val(pd::EffectLabParser::Property_
 }
 
 std::any EffectCompiler::visitProperty_texture_val(pd::EffectLabParser::Property_texture_valContext *context) {
-	if (context->KWWhite()) {
+	auto text = context->getText();
+	if (text == "white" || text == "White") {
 		return PropertyTexture::White;
 	}
-	if (context->KWBlack()) {
+	if (text == "black" || text == "Black") {
 		return PropertyTexture::Black;
 	}
-	if (context->KWBump()) {
-		return PropertyTexture::Black;
+	if (text == "bump" || text == "Bump") {
+		return PropertyTexture::Bump;
 	}
 	return PropertyTexture::None;
 }
@@ -161,25 +163,39 @@ std::any EffectCompiler::visitProperty_matrix_val(pd::EffectLabParser::Property_
 	return PropertyMatrix::Identity;
 }
 
+std::any EffectCompiler::visitProperty_name(ParserDetails::EffectLabParser::Property_nameContext *context) {
+	return context->Identity()->getText();
+}
+
+std::any EffectCompiler::visitProperty_description(ParserDetails::EffectLabParser::Property_descriptionContext *context) {
+	return context->StringLiteral()->getText();
+}
+
 std::any EffectCompiler::visitPropertyItemBool(ParserDetails::EffectLabParser::PropertyItemBoolContext *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
 	auto val = std::any_cast<bool>(visitProperty_bool_val(context->property_bool_val()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(std::move(name));
+	pPropertyItem->setDescription(std::move(description));
 	pPropertyItem->setBool(val);
 	return pPropertyItem;
 }
 
 std::any EffectCompiler::visitPropertyItemInt(ParserDetails::EffectLabParser::PropertyItemIntContext *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
 	auto val = std::any_cast<int>(visitProperty_int_val(context->property_int_val()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(std::move(name));
+	pPropertyItem->setDescription(std::move(description));
 	pPropertyItem->setInt(val);
 	return pPropertyItem;
 }
 
 std::any EffectCompiler::visitPropertyItemRange(ParserDetails::EffectLabParser::PropertyItemRangeContext *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(name);
+	pPropertyItem->setDescription(std::move(description));
 	auto rangeType = std::any_cast<std::pair<float, float>>(
 		visitProperty_range_type(context->property_range_type())
 	);
@@ -192,49 +208,61 @@ std::any EffectCompiler::visitPropertyItemRange(ParserDetails::EffectLabParser::
 }
 
 std::any EffectCompiler::visitPropertyItemFloat(ParserDetails::EffectLabParser::PropertyItemFloatContext *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
 	auto val = std::any_cast<float>(visitProperty_float_val(context->property_float_val()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(std::move(name));
+	pPropertyItem->setDescription(std::move(description));
 	pPropertyItem->setFloat(val);
 	return pPropertyItem;
 }
 
 std::any EffectCompiler::visitPropertyItemFloat2(ParserDetails::EffectLabParser::PropertyItemFloat2Context *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
 	auto val = std::any_cast<Math::float2>(visitProperty_float2_val(context->property_float2_val()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(std::move(name));
+	pPropertyItem->setDescription(std::move(description));
 	pPropertyItem->setFloat2(val);
 	return pPropertyItem;
 }
 
 std::any EffectCompiler::visitPropertyItemFloat3(ParserDetails::EffectLabParser::PropertyItemFloat3Context *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
 	auto val = std::any_cast<Math::float3>(visitProperty_float3_val(context->property_float3_val()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(std::move(name));
+	pPropertyItem->setDescription(std::move(description));
 	pPropertyItem->setFloat3(val);
 	return pPropertyItem;
 }
 
 std::any EffectCompiler::visitPropertyItemFloat4(ParserDetails::EffectLabParser::PropertyItemFloat4Context *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
 	auto val = std::any_cast<Math::float4>(visitProperty_float4_val(context->property_float4_val()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(std::move(name));
+	pPropertyItem->setDescription(std::move(description));
 	pPropertyItem->setFloat4(val);
 	return pPropertyItem;
 }
 
 std::any EffectCompiler::visitPropertyItemTexture(ParserDetails::EffectLabParser::PropertyItemTextureContext *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
 	auto val = std::any_cast<PropertyTexture>(visitProperty_texture_val(context->property_texture_val()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(std::move(name));
+	pPropertyItem->setDescription(std::move(description));
 	pPropertyItem->setTexture2D(val);
 	return pPropertyItem;
 }
 
 std::any EffectCompiler::visitPropertyItemMatrix(ParserDetails::EffectLabParser::PropertyItemMatrixContext *context) {
-	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(context->Identity()->getText());
-	pPropertyItem->setDescription(context->String()->getText());
+	auto name = std::any_cast<std::string>(visitProperty_name(context->property_name()));
+	auto description = std::any_cast<std::string>(visitProperty_description(context->property_description()));
 	auto val = std::any_cast<PropertyMatrix>(visitProperty_matrix_val(context->property_matrix_val()));
+	auto pPropertyItem = make_any_unique_ptr<PropertyItem>(std::move(name));
+	pPropertyItem->setDescription(std::move(description));
 	pPropertyItem->setMatrix(val);
 	return pPropertyItem;
 }

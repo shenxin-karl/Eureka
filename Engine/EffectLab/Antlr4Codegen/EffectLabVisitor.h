@@ -28,7 +28,23 @@ public:
 
     virtual std::any visitNumber_val(EffectLabParser::Number_valContext *context) = 0;
 
+    virtual std::any visitProperty_bool_type(EffectLabParser::Property_bool_typeContext *context) = 0;
+
+    virtual std::any visitProperty_int_type(EffectLabParser::Property_int_typeContext *context) = 0;
+
     virtual std::any visitProperty_range_type(EffectLabParser::Property_range_typeContext *context) = 0;
+
+    virtual std::any visitProperty_float_type(EffectLabParser::Property_float_typeContext *context) = 0;
+
+    virtual std::any visitProperty_float2_type(EffectLabParser::Property_float2_typeContext *context) = 0;
+
+    virtual std::any visitProperty_float3_type(EffectLabParser::Property_float3_typeContext *context) = 0;
+
+    virtual std::any visitProperty_float4_type(EffectLabParser::Property_float4_typeContext *context) = 0;
+
+    virtual std::any visitProperty_texture_2d_type(EffectLabParser::Property_texture_2d_typeContext *context) = 0;
+
+    virtual std::any visitProperty_matrix_type(EffectLabParser::Property_matrix_typeContext *context) = 0;
 
     virtual std::any visitProperty_range_val(EffectLabParser::Property_range_valContext *context) = 0;
 
@@ -44,9 +60,13 @@ public:
 
     virtual std::any visitProperty_float4_val(EffectLabParser::Property_float4_valContext *context) = 0;
 
+    virtual std::any visitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *context) = 0;
+
     virtual std::any visitProperty_texture_val(EffectLabParser::Property_texture_valContext *context) = 0;
 
-    virtual std::any visitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *context) = 0;
+    virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *context) = 0;
+
+    virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *context) = 0;
 
     virtual std::any visitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *context) = 0;
 

@@ -33,7 +33,39 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitProperty_bool_type(EffectLabParser::Property_bool_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_int_type(EffectLabParser::Property_int_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitProperty_range_type(EffectLabParser::Property_range_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_float_type(EffectLabParser::Property_float_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_float2_type(EffectLabParser::Property_float2_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_float3_type(EffectLabParser::Property_float3_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_float4_type(EffectLabParser::Property_float4_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_texture_2d_type(EffectLabParser::Property_texture_2d_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_matrix_type(EffectLabParser::Property_matrix_typeContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -65,11 +97,19 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitProperty_texture_val(EffectLabParser::Property_texture_valContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitProperty_matrix_val(EffectLabParser::Property_matrix_valContext *ctx) override {
+  virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -57,9 +57,10 @@ public:
 		}
 	}
 	void release() {
-		for (auto *deleteFunc : _deleters) {
-			deleteFunc();
+		for (auto iter = _deleters.rbegin(); iter != _deleters.rend(); ++iter) {
+			(*iter)();
 		}
+		_deleters.clear();
 		_singletions.clear();
 	}
 	~SingletionCollector() {

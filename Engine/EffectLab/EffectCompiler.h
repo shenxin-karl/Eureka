@@ -2,7 +2,7 @@
 #pragma push_macro("ERROR")
 #undef ERROR
 
-#include "Antlr4Codegen/EffectLabVisitor.h"
+#include "Antlr4Codegen/EffectLabBaseVisitor.h"
 #include "Effect.h"
 #include "Pass.h"
 #include "PropertyItem.h"
@@ -27,7 +27,7 @@ public:
 	) override;
 };
 
-class EffectCompiler : pd::EffectLabVisitor {
+class EffectCompiler : public pd::EffectLabBaseVisitor {
 public:
 	EffectCompiler();
 	~EffectCompiler() override;
@@ -47,6 +47,8 @@ public:
 	std::any visitProperty_float4_val(pd::EffectLabParser::Property_float4_valContext *context) override;
 	std::any visitProperty_texture_val(pd::EffectLabParser::Property_texture_valContext *context) override;
 	std::any visitProperty_matrix_val(pd::EffectLabParser::Property_matrix_valContext *context) override;
+	std::any visitProperty_name(ParserDetails::EffectLabParser::Property_nameContext *context) override;
+	std::any visitProperty_description(ParserDetails::EffectLabParser::Property_descriptionContext *context) override;
 	std::any visitPropertyItemBool(ParserDetails::EffectLabParser::PropertyItemBoolContext *context) override;
 	std::any visitPropertyItemInt(ParserDetails::EffectLabParser::PropertyItemIntContext *context) override;
 	std::any visitPropertyItemRange(ParserDetails::EffectLabParser::PropertyItemRangeContext *context) override;
@@ -57,7 +59,6 @@ public:
 	std::any visitPropertyItemTexture(ParserDetails::EffectLabParser::PropertyItemTextureContext *context) override;
 	std::any visitPropertyItemMatrix(ParserDetails::EffectLabParser::PropertyItemMatrixContext *context) override;
 private:
-
 	template<typename T, typename...Args>
 	static T *make_any_unique_ptr(Args&&...args) noexcept {
 		return new T{ std::forward<Args>(args)... };
@@ -70,6 +71,12 @@ private:
 	static std::unique_ptr<T> any_to_unique_ptr(AnyType&& any) noexcept {
 		return std::unique_ptr<T>(std::any_cast<T *>(std::forward<AnyType>(any)));
 	}
+
+	struct PropertyVar {
+		std::string name;
+		int line = 0;
+		int column = 0;
+	};
 private:
 	fs::path _effectSourcePath;
 };

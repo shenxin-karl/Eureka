@@ -75,10 +75,7 @@ target("Engine")
     
     add_packages("assimp")
     add_packages("stduuid")
-
-    add_defines("ANTLR4CPP_STATIC")
     add_packages("antlr4")
-
     add_deps("RenderGraph")
 
     set_targetdir(EUREKA_BINARY_DIR)

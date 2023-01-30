@@ -51,14 +51,23 @@ auto PathManager::toTempPath(const fs::path &relativePath) -> fs::path {
 }
 
 bool PathManager::exist(const fs::path &filePath, bool checkTempFile) {
-	if (fs::exists(filePath))
+	if (fs::exists(filePath)) {
 		return true;
-	if (fs::exists(toAssetPath(filePath)))
+	}
+
+	auto assetPath = toAssetPath(filePath);
+	if (fs::exists(assetPath)) {
 		return true;
-	if (fs::exists(toProjectPath(filePath)))
+	}
+
+	auto projectPath = toProjectPath(filePath);
+	if (fs::exists(projectPath)) {
 		return true;
-	if (checkTempFile && fs::exists(toTempPath(filePath)))
+	}
+
+	if (checkTempFile && fs::exists(toTempPath(filePath))) {
 		return true;
+	}
 	return false;
 }
 

@@ -2,49 +2,69 @@ grammar EffectLab;
 
 effect : source_path property_block?;
 
-source_path     : 'SourcePath' ':' String;
-property_block  : 'Properties' '{' property_item+ '}';
+source_path    : 'SourcePath' ':' StringLiteral;
+property_block : 'Properties' '{' property_item+ '}';
 
-number_val      : IntVal | FloatVal;
+number_val 
+    : IntLiteral 
+    | FloatLiteral
+    ;
 
-property_range_type     : ('range' | 'Range') '(' number_val ',' number_val ')';
+property_bool_type       : ('bool'  | 'Bool');
+property_int_type        : ('int'   | 'Int');
+property_range_type      : ('range' | 'Range') '(' number_val ',' number_val ')';
+property_float_type      : ('float' | 'Float');
+property_float2_type     : ('float2'| 'Float2');
+property_float3_type     : ('float3'| 'Float3');
+property_float4_type     : ('float4'| 'Float4');
+property_texture_2d_type : ('2d'    | '2D');
+property_matrix_type     : ('matrix'| 'Matrix');
+
 property_range_val      : number_val;
-property_bool_val       : BoolVal;
-property_int_val        : IntVal;
+property_bool_val       : BooleanLiteral;
+property_int_val        : IntLiteral;
 property_float_val      : number_val;
 property_float2_val     : '(' number_val ',' number_val ')';
 property_float3_val     : '(' number_val ',' number_val ',' number_val ')';
 property_float4_val     : '(' number_val ',' number_val ',' number_val ',' number_val ')';
-property_texture_val    : KWWhite | KWBlack | KWBump;
-property_matrix_val     : KWIdentity;
+property_matrix_val     : 'identity';
+property_texture_val    
+    : ('white' | 'White') 
+    | ('black' | 'Black') 
+    | ('bump'  | 'Bump')
+    ;
 
-// UniformName(Description, Type) = Value
-property_item : Identity '(' String ',' ('bool'  | 'Bool')   ')' '=' property_bool_val       # PropertyItemBool
-              | Identity '(' String ',' ('int'   | 'Int')    ')' '=' property_int_val        # PropertyItemInt
-              | Identity '(' String ',' property_range_type  ')' '=' property_range_val      # PropertyItemRange
-              | Identity '(' String ',' ('float' | 'Float')  ')' '=' property_float_val      # PropertyItemFloat
-              | Identity '(' String ',' ('float2'| 'Float2') ')' '=' property_float2_val     # PropertyItemFloat2
-              | Identity '(' String ',' ('float3'| 'Float3') ')' '=' property_float3_val     # PropertyItemFloat3
-              | Identity '(' String ',' ('float4'| 'Float4') ')' '=' property_float4_val     # PropertyItemFloat4
-              | Identity '(' String ',' ('2d'    | '2D')     ')' '=' property_texture_val    # PropertyItemTexture
-              | Identity '(' String ',' ('matrix'| 'Matrix') ')' '=' property_matrix_val     # PropertyItemMatrix
-              ;
+property_name        : Identity;
+property_description : StringLiteral;
+property_item 
+    : property_name '(' property_description ',' property_bool_type       ')' '=' property_bool_val    # PropertyItemBool
+    | property_name '(' property_description ',' property_int_type        ')' '=' property_int_val     # PropertyItemInt
+    | property_name '(' property_description ',' property_range_type      ')' '=' property_range_val   # PropertyItemRange
+    | property_name '(' property_description ',' property_float_type      ')' '=' property_float_val   # PropertyItemFloat
+    | property_name '(' property_description ',' property_float2_type     ')' '=' property_float2_val  # PropertyItemFloat2
+    | property_name '(' property_description ',' property_float3_type     ')' '=' property_float3_val  # PropertyItemFloat3
+    | property_name '(' property_description ',' property_float4_type     ')' '=' property_float4_val  # PropertyItemFloat4
+    | property_name '(' property_description ',' property_texture_2d_type ')' '=' property_texture_val # PropertyItemTexture
+    | property_name '(' property_description ',' property_matrix_type     ')' '=' property_matrix_val  # PropertyItemMatrix
+    ;
 
 // lex
-BoolVal     : (KWTrue | KWFalse);
-IntVal      : [+-]? [1-9][0-9]*;
-FloatVal    : [+-]? [0-9]+ '.' [0-9]*? [fF]?;
+IntLiteral 
+    : [+-]? [1-9][0-9]*
+    | '0'
+    ;
+FloatLiteral 
+    : [+-]? [0-9]+ '.' [0-9]* [fF]?
+    | '.' [0-9]+ [fF]?
+    ;
+BooleanLiteral
+	: 'false'
+	| 'true'
+	;
 
-String      : '"' .*? '"' ;
-Identity    : [_a-zA-Z][a-zA-Z0-9_]*;
+StringLiteral : '"' .*? '"' ;
+Identity      : [_a-zA-Z][a-zA-Z0-9_]*; 
 
-KWIdentity  : 'identity';
-KWTrue      : 'true';
-KWFalse     : 'false';
-KWWhite     : ('white' | 'White');
-KWBlack     : ('black' | 'Black');
-KWBump      : ('bump'  | 'Bump');
-
-WhiteSpace  : [ \t\n\r]+          -> skip;
-LineComment : '//' .*? '\r'? '\n' -> skip;
-Comment     : '/*' .*? '*/'       -> skip;
+WhiteSpace   : [ \t\n\r]+          -> skip;
+LineComment  : '//' .*? '\r'? '\n' -> skip;
+BlockComment : '/*' .*? '*/'       -> skip;
