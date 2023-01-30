@@ -11,13 +11,13 @@
 namespace Eureka {
 
 namespace fs = std::filesystem;
-class ShaderLoader {
+class ShaderLoader : public Singletion<ShaderLoader> {
     static inline const fs::path outputDirectory = "shaderCache";
     static inline const UUID128 classUUID = UUID128::from_string("{CF296646-0975-41BB-9006-D0423E2479D4}").value();
     static const std::string CompileMode;
 public:
     ShaderLoader();
-    static auto instance() -> ShaderLoader *;
+    void initialize() override;
     static std::shared_ptr<dx12lib::DXCShader> dxc(const fs::path &filePath,
         const std::string &entryPoint,
         const std::string &target,
@@ -30,7 +30,6 @@ private:
         const std::string &target);
     static dx12lib::ShaderCacheInfo getShaderCacheInfo(const std::string &shaderCacheKey);
 private:
-    static std::unique_ptr<ShaderLoader> pInst;
     UUIDNameGenerator _uuidGenerator;
 };
 

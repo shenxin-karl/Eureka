@@ -9,17 +9,14 @@ namespace Eureka {
 
 const std::string ShaderLoader::CompileMode = EUREKA_COMPILE_MODE;
 
-std::unique_ptr<ShaderLoader> ShaderLoader::pInst = std::make_unique<ShaderLoader>();
-
 ShaderLoader::ShaderLoader() : _uuidGenerator(classUUID) {
-    auto targetDirectory = PathManager::toTempPath(outputDirectory);
-    if (!fs::exists(targetDirectory)) {
-	    fs::create_directory(targetDirectory);
-    }
 }
 
-auto ShaderLoader::instance() -> ShaderLoader * {
-    return pInst.get();
+void ShaderLoader::initialize() {
+    auto targetDirectory = PathManager::toTempPath(outputDirectory);
+    if (!fs::exists(targetDirectory)) {
+        fs::create_directory(targetDirectory);
+    }
 }
 
 std::shared_ptr<dx12lib::DXCShader> ShaderLoader::dxc(const fs::path &filePath,
@@ -100,9 +97,9 @@ std::string ShaderLoader::calcShaderCacheKey(const fs::path &filePath, const D3D
 }
 
 dx12lib::ShaderCacheInfo ShaderLoader::getShaderCacheInfo(const std::string &shaderCacheKey) {
-    auto csoUUID = UUID::to_string(pInst->_uuidGenerator.newUUID(shaderCacheKey + ".cso"));
-    auto pdbUUID = UUID::to_string(pInst->_uuidGenerator.newUUID(shaderCacheKey + ".pdb"));
-    auto refUUID = UUID::to_string(pInst->_uuidGenerator.newUUID(shaderCacheKey + ".ref"));
+    auto csoUUID = UUID::to_string(instance()->_uuidGenerator.newUUID(shaderCacheKey + ".cso"));
+    auto pdbUUID = UUID::to_string(instance()->_uuidGenerator.newUUID(shaderCacheKey + ".pdb"));
+    auto refUUID = UUID::to_string(instance()->_uuidGenerator.newUUID(shaderCacheKey + ".ref"));
     std::string csoFileName = std::format("{}_{}.cso", CompileMode, csoUUID);
     std::string pdbFileName = std::format("{}_{}.pdb", CompileMode, pdbUUID);
     std::string refFileName = std::format("{}_{}.ref", CompileMode, refUUID);

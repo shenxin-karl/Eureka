@@ -28,6 +28,12 @@ public:
   virtual void enterNumber_val(EffectLabParser::Number_valContext *ctx) = 0;
   virtual void exitNumber_val(EffectLabParser::Number_valContext *ctx) = 0;
 
+  virtual void enterProperty_range_type(EffectLabParser::Property_range_typeContext *ctx) = 0;
+  virtual void exitProperty_range_type(EffectLabParser::Property_range_typeContext *ctx) = 0;
+
+  virtual void enterProperty_range_val(EffectLabParser::Property_range_valContext *ctx) = 0;
+  virtual void exitProperty_range_val(EffectLabParser::Property_range_valContext *ctx) = 0;
+
   virtual void enterProperty_bool_val(EffectLabParser::Property_bool_valContext *ctx) = 0;
   virtual void exitProperty_bool_val(EffectLabParser::Property_bool_valContext *ctx) = 0;
 
@@ -57,6 +63,9 @@ public:
 
   virtual void enterPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) = 0;
   virtual void exitPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) = 0;
+
+  virtual void enterPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) = 0;
+  virtual void exitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) = 0;
 
   virtual void enterPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) = 0;
   virtual void exitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) = 0;

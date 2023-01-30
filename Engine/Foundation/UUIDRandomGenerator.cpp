@@ -5,14 +5,8 @@ namespace Eureka {
 
 #pragma region UUID_Random_Generator
 
-std::unique_ptr<UUIDRandomGenerator> UUIDRandomGenerator::pInst = std::make_unique<UUIDRandomGenerator>();
-
-auto UUIDRandomGenerator::instance() -> UUIDRandomGenerator *{
-	return pInst.get();
-}
-
 auto UUIDRandomGenerator::newUUID() -> UUID128 {
-	return UUID128{ (*pInst->_pUuidGenerator)() };
+	return UUID128{ (*instance()->_pUuidGenerator)() };
 }
 
 UUIDRandomGenerator::UUIDRandomGenerator() {

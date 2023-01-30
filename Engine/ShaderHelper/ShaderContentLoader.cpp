@@ -4,11 +4,6 @@
 
 namespace Eureka {
 
-auto ShaderContentLoader::instance() -> ShaderContentLoader * {
-	static ShaderContentLoader inst;
-	return &inst;
-}
-
 auto ShaderContentLoader::open(const fs::path &filePath) -> std::string_view {
 	auto iter = _contentMap.find(filePath);
 	if (iter != _contentMap.end()) {

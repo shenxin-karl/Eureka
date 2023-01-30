@@ -6,9 +6,9 @@
 
 namespace Eureka {
 
-void PipelineManager::initialize(std::weak_ptr<dx12lib::Device> pDevice) {
+void PipelineManager::initialize() {
 	auto pDeferredPBR = std::make_shared<GraphicsPipeline>(
-		pDevice, 
+		_pDevice, 
 		PathManager::toAssetPath("Shaders/DeferredPBR.hlsl")
 	);
 	pDeferredPBR->setVertexShader("VS");
@@ -18,7 +18,7 @@ void PipelineManager::initialize(std::weak_ptr<dx12lib::Device> pDevice) {
 	_graphicsShaders["DeferredPBR"] = pDeferredPBR;
 
 	auto pFXAAShader = std::make_shared<GraphicsPipeline>(
-		pDevice, 
+		_pDevice,
 		PathManager::toAssetPath("Shaders/FXAA.hlsl")
 	);
 	pFXAAShader->setVertexShader("VS");
@@ -34,25 +34,29 @@ void PipelineManager::initialize(std::weak_ptr<dx12lib::Device> pDevice) {
 	_graphicsShaders["FXAA"] = pFXAAShader;
 
 	auto pLightingShader = std::make_shared<ComputePipeline>(
-		pDevice, 
+		_pDevice,
 		PathManager::toAssetPath("Shaders/LightingPassCS.hlsl")
 	);
 	pLightingShader->setComputeShader("CS");
 	_computeShaders["Lighting"] = pLightingShader;
 
 	auto pPostProcessingShader = std::make_shared<ComputePipeline>(
-		pDevice, 
+		_pDevice,
 		PathManager::toAssetPath("Shaders/PostProcessing.hlsl")
 	);
 	pPostProcessingShader->setComputeShader("CS");
 	_computeShaders["PostProcessing"] = pPostProcessingShader;
 
 	auto pTileDeferred = std::make_shared<ComputePipeline>(
-		pDevice,
+		_pDevice,
 		PathManager::toAssetPath("Shaders/TiledDeferredCS.hlsl")
 	);
 	pTileDeferred->setComputeShader("CS");
 	_computeShaders["TileDeferred"] = pTileDeferred;
+}
+
+PipelineManager::PipelineManager(std::weak_ptr<dx12lib::Device> pDevice) {
+	_pDevice = std::move(pDevice);
 }
 
 auto PipelineManager::getComputePipeline(const std::string &key) const -> std::shared_ptr<ComputePipeline> {

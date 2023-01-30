@@ -1,5 +1,6 @@
 #pragma once
 #include <uuid.h>
+#include "Singletion.hpp"
 
 namespace Eureka {
 
@@ -13,13 +14,11 @@ public:
 	}
 };
 
-class UUIDRandomGenerator {
+class UUIDRandomGenerator : public Singletion<UUIDRandomGenerator> {
 public:
 	UUIDRandomGenerator();
-	static auto instance() -> UUIDRandomGenerator *;
 	static auto newUUID() -> UUID128;
 private:
-	static std::unique_ptr<UUIDRandomGenerator> pInst;
 	std::unique_ptr<uuids::uuid_random_generator> _pUuidGenerator;
 };
 

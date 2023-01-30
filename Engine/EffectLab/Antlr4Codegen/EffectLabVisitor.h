@@ -28,6 +28,10 @@ public:
 
     virtual std::any visitNumber_val(EffectLabParser::Number_valContext *context) = 0;
 
+    virtual std::any visitProperty_range_type(EffectLabParser::Property_range_typeContext *context) = 0;
+
+    virtual std::any visitProperty_range_val(EffectLabParser::Property_range_valContext *context) = 0;
+
     virtual std::any visitProperty_bool_val(EffectLabParser::Property_bool_valContext *context) = 0;
 
     virtual std::any visitProperty_int_val(EffectLabParser::Property_int_valContext *context) = 0;
@@ -47,6 +51,8 @@ public:
     virtual std::any visitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *context) = 0;
 
     virtual std::any visitPropertyItemInt(EffectLabParser::PropertyItemIntContext *context) = 0;
+
+    virtual std::any visitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *context) = 0;
 
     virtual std::any visitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *context) = 0;
 

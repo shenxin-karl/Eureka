@@ -37,16 +37,18 @@ public:
 	template<typename ...Args>
 	static void Throw(const FormatAndLocation &fmtAndLocation, Args&&...args) {
 		std::string message;
-		if constexpr (sizeof...(Args))
+		if constexpr (sizeof...(Args)) {
 			message = std::vformat(fmtAndLocation.fmt, std::make_format_args(args...));
-		else
+		} else {
 			message = fmtAndLocation.fmt.data();
+		}
 		throw Exception(std::move(message), fmtAndLocation.location);
 	}
 	template<typename ...Args>
 	static void Throw(bool cond, const FormatAndLocation &fmtAndLocation, Args&&...args) {
-		if (!cond)
+		if (!cond) {
 			Exception::Throw(fmtAndLocation, std::forward<Args>(args)...);
+		}
 	}
 protected:
 	int	         _line;

@@ -476,7 +476,7 @@ auto GeometryGenerator::createQuadGeometry(dx12lib::IDirectContext &directCtx, r
 	return createGeometry(directCtx, mask, _pQuadMesh);
 }
 
-void GeometryGenerator::loading() {
+void GeometryGenerator::initialize() {
 	_pBoxMesh = createBox(1.f, 1.f, 1.f, 0);
 	_pSphereMesh = createSphere(0.5f, 3);
 	_pGridMesh = createGrid(0.5f, 0.5f, 10, 10);

@@ -16,7 +16,7 @@ public:
 	auto createSphereGeometry(dx12lib::IDirectContext &directCtx, rgph::ShaderLayoutMask mask) const -> std::shared_ptr<rgph::Geometry>;
 	auto createGridGeometry(dx12lib::IDirectContext &directCtx, rgph::ShaderLayoutMask mask) const -> std::shared_ptr<rgph::Geometry>;
 	auto createQuadGeometry(dx12lib::IDirectContext &directCtx, rgph::ShaderLayoutMask mask) const -> std::shared_ptr<rgph::Geometry>;
-	void loading();
+	void initialize() override;
 	auto createGeometry(dx12lib::IDirectContext &directCtx, 
 		rgph::ShaderLayoutMask mask, 
 		std::shared_ptr<PartMesh> pPartMesh

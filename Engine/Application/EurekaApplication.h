@@ -1,5 +1,6 @@
 #pragma once
 #include "Application/Application.h"
+#include "Foundation/Singletion.hpp"
 #include "Model/MeshModel/MeshModel.h"
 #include "ShaderHelper/CBufferStruct.h"
 
@@ -19,6 +20,8 @@ public:
 	void onEndTick(std::shared_ptr<GameTimer> pGameTimer) final;
 	void onResize(dx12lib::DirectContextProxy pDirectCtx, int width, int height) final;
 private:
+	void constructInstance();
+	void destructInstance();
 	void loading(dx12lib::DirectContextProxy pDirectCtx);
 	void initLight(dx12lib::DirectContextProxy pDirectCtx);
 	void initRenderGraph(dx12lib::DirectContextProxy pDirectCtx);
@@ -27,6 +30,7 @@ private:
 	std::vector<std::unique_ptr<IModel>> _models;
 	std::shared_ptr<Camera>				_pCamera;
 	std::shared_ptr<FPSCameraControl>	_pCameraControl;
+	SingletionCollector					_singletionCollector;
 public:
 	std::shared_ptr<dx12lib::Texture>	pGBuffer0;
 	std::shared_ptr<dx12lib::Texture>	pGBuffer1;

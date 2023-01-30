@@ -1,12 +1,14 @@
 #pragma once 
 #include <filesystem>
+#include "Foundation/Singletion.hpp"
 
 namespace fs = std::filesystem;
 
 namespace Eureka {
 
-class PathManager {
+class PathManager : public Singletion<PathManager> {
 public:
+	PathManager(fs::path projectPath, fs::path assetPath, fs::path tempPath);
 	static auto getProjectPath() -> const fs::path &;
 	static auto getAssetPath() -> const fs::path &;
 	static auto getTempPath() -> const fs::path &;

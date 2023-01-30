@@ -4,30 +4,38 @@
 
 namespace Eureka {
 
-static std::unique_ptr<PathManager> pInst = std::make_unique<PathManager>();
+
+PathManager::PathManager(fs::path projectPath, fs::path assetPath, fs::path tempPath) {
+	_projectPath = std::move(projectPath);
+	_assetPath = std::move(assetPath);
+	_tempPath = std::move(tempPath);
+	if (!fs::exists(_tempPath)) {
+		fs::create_directory(_tempPath);
+	}
+}
 
 auto PathManager::getProjectPath() -> const fs::path & {
-	return pInst->_projectPath;
+	return instance()->_projectPath;
 }
 
 auto PathManager::getAssetPath() -> const fs::path & {
-	return pInst->_assetPath;
+	return instance()->_assetPath;
 }
 
 auto PathManager::getTempPath() -> const fs::path & {
-	return pInst->_tempPath;
+	return instance()->_tempPath;
 }
 
 void PathManager::setProjectPath(fs::path projectPath) {
-	pInst->_projectPath = std::move(projectPath);
+	instance()->_projectPath = std::move(projectPath);
 }
 
 void PathManager::setAssetPath(fs::path assetPath) {
-	pInst->_assetPath = std::move(assetPath);
+	instance()->_assetPath = std::move(assetPath);
 }
 
 void PathManager::setTempPath(fs::path tempPath) {
-	pInst->_tempPath = std::move(tempPath);
+	instance()->_tempPath = std::move(tempPath);
 }
 
 auto PathManager::toAssetPath(const fs::path &relativePath) -> fs::path {

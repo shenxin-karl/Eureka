@@ -33,6 +33,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitProperty_range_type(EffectLabParser::Property_range_typeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_range_val(EffectLabParser::Property_range_valContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitProperty_bool_val(EffectLabParser::Property_bool_valContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -70,6 +78,10 @@ public:
   }
 
   virtual std::any visitPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) override {
     return visitChildren(ctx);
   }
 

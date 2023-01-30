@@ -17,16 +17,17 @@ public:
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
     T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
     T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, T__25 = 26, 
-    BoolVal = 27, IntVal = 28, FloatVal = 29, String = 30, Identity = 31, 
-    KWIdentity = 32, KWTrue = 33, KWFalse = 34, KWWhite = 35, KWBlack = 36, 
-    KWBump = 37, WhiteSpace = 38, LineComment = 39, Comment = 40
+    T__26 = 27, BoolVal = 28, IntVal = 29, FloatVal = 30, String = 31, Identity = 32, 
+    KWIdentity = 33, KWTrue = 34, KWFalse = 35, KWWhite = 36, KWBlack = 37, 
+    KWBump = 38, WhiteSpace = 39, LineComment = 40, Comment = 41
   };
 
   enum {
     RuleEffect = 0, RuleSource_path = 1, RuleProperty_block = 2, RuleNumber_val = 3, 
-    RuleProperty_bool_val = 4, RuleProperty_int_val = 5, RuleProperty_float_val = 6, 
-    RuleProperty_float2_val = 7, RuleProperty_float3_val = 8, RuleProperty_float4_val = 9, 
-    RuleProperty_texture_val = 10, RuleProperty_matrix_val = 11, RuleProperty_item = 12
+    RuleProperty_range_type = 4, RuleProperty_range_val = 5, RuleProperty_bool_val = 6, 
+    RuleProperty_int_val = 7, RuleProperty_float_val = 8, RuleProperty_float2_val = 9, 
+    RuleProperty_float3_val = 10, RuleProperty_float4_val = 11, RuleProperty_texture_val = 12, 
+    RuleProperty_matrix_val = 13, RuleProperty_item = 14
   };
 
   explicit EffectLabParser(antlr4::TokenStream *input);
@@ -50,6 +51,8 @@ public:
   class Source_pathContext;
   class Property_blockContext;
   class Number_valContext;
+  class Property_range_typeContext;
+  class Property_range_valContext;
   class Property_bool_valContext;
   class Property_int_valContext;
   class Property_float_valContext;
@@ -122,6 +125,37 @@ public:
   };
 
   Number_valContext* number_val();
+
+  class  Property_range_typeContext : public antlr4::ParserRuleContext {
+  public:
+    Property_range_typeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<Number_valContext *> number_val();
+    Number_valContext* number_val(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Property_range_typeContext* property_range_type();
+
+  class  Property_range_valContext : public antlr4::ParserRuleContext {
+  public:
+    Property_range_valContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    Number_valContext *number_val();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Property_range_valContext* property_range_val();
 
   class  Property_bool_valContext : public antlr4::ParserRuleContext {
   public:
@@ -307,6 +341,20 @@ public:
     antlr4::tree::TerminalNode *Identity();
     antlr4::tree::TerminalNode *String();
     Property_matrix_valContext *property_matrix_val();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PropertyItemRangeContext : public Property_itemContext {
+  public:
+    PropertyItemRangeContext(Property_itemContext *ctx);
+
+    antlr4::tree::TerminalNode *Identity();
+    antlr4::tree::TerminalNode *String();
+    Property_range_typeContext *property_range_type();
+    Property_range_valContext *property_range_val();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 

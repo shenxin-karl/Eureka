@@ -28,6 +28,9 @@
 #include "Objects/PathManager.h"
 #include "Objects/TextureManager.h"
 #include "EffectLab/EffectCompiler.h"
+#include "Foundation/UUIDRandomGenerator.h"
+#include "ShaderHelper/ShaderContentLoader.h"
+#include "ShaderHelper/ShaderLoader.h"
 
 using namespace Math;
 
@@ -42,18 +45,9 @@ EurekaApplication::~EurekaApplication() {
 }
 
 void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
-	PathManager::setAssetPath("../../Assets");
-	PathManager::setProjectPath("../../");
-	PathManager::setTempPath("../../.temp/");
-	MeshManager::SingletionEmplace();
-	TextureManager::SingletionEmplace();
-	PipelineManager::SingletionEmplace();
-	GeometryGenerator::SingletionEmplace();
+	constructInstance();
 
 	_pSwapChain->setVerticalSync(true);
-
-	PipelineManager::instance()->initialize(_pDevice);
-	GeometryGenerator::instance()->loading();
 
 	CameraDesc cameraDesc;
 	cameraDesc.lookAt = float3(0, 0, 0);
@@ -103,15 +97,12 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	loading(pDirectCtx);
 
 
-	EffectCompiler compiler;
-	auto pEffect = compiler.compile("Assets/Effects/ShaderLabExample.shader");
+	//EffectCompiler compiler;
+	//auto pEffect = compiler.compile("Assets/Effects/ShaderLabExample.shader");
 }
 
 void EurekaApplication::onDestroy() {
-	GeometryGenerator::SingletionDestory();
-	PipelineManager::SingletionDestory();
-	TextureManager::SingletionDestory();
-	MeshManager::SingletionDestory();
+	destructInstance();
 }
 
 void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
@@ -191,6 +182,27 @@ void EurekaApplication::onResize(dx12lib::DirectContextProxy pDirectCtx, int wid
 	_pCamera->setAspect(static_cast<float>(width) / static_cast<float>(height));
 	resizeBuffers(pDirectCtx, width, height);
 	pRenderGraph->onResize(pDirectCtx, width, height);
+}
+
+void EurekaApplication::constructInstance() {
+	fs::path projectPath("../../");
+	fs::path assetPath("../../Assets");
+	fs::path tempPath("../../.temp/");
+
+	_singletionCollector.add<UUIDRandomGenerator>();
+	_singletionCollector.add<PathManager>(projectPath, assetPath, tempPath);
+	_singletionCollector.add<ShaderContentLoader>();
+	_singletionCollector.add<ShaderLoader>();
+	_singletionCollector.add<MeshManager>();
+	_singletionCollector.add<TextureManager>();
+	_singletionCollector.add<PipelineManager>(_pDevice);
+	_singletionCollector.add<GeometryGenerator>();
+	_singletionCollector.initialize();
+}
+
+void EurekaApplication::destructInstance() {
+	_singletionCollector.destroy();
+	_singletionCollector.release();
 }
 
 void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {

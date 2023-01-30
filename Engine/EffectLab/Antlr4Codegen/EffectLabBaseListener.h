@@ -30,6 +30,12 @@ public:
   virtual void enterNumber_val(EffectLabParser::Number_valContext * /*ctx*/) override { }
   virtual void exitNumber_val(EffectLabParser::Number_valContext * /*ctx*/) override { }
 
+  virtual void enterProperty_range_type(EffectLabParser::Property_range_typeContext * /*ctx*/) override { }
+  virtual void exitProperty_range_type(EffectLabParser::Property_range_typeContext * /*ctx*/) override { }
+
+  virtual void enterProperty_range_val(EffectLabParser::Property_range_valContext * /*ctx*/) override { }
+  virtual void exitProperty_range_val(EffectLabParser::Property_range_valContext * /*ctx*/) override { }
+
   virtual void enterProperty_bool_val(EffectLabParser::Property_bool_valContext * /*ctx*/) override { }
   virtual void exitProperty_bool_val(EffectLabParser::Property_bool_valContext * /*ctx*/) override { }
 
@@ -59,6 +65,9 @@ public:
 
   virtual void enterPropertyItemInt(EffectLabParser::PropertyItemIntContext * /*ctx*/) override { }
   virtual void exitPropertyItemInt(EffectLabParser::PropertyItemIntContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemRange(EffectLabParser::PropertyItemRangeContext * /*ctx*/) override { }
+  virtual void exitPropertyItemRange(EffectLabParser::PropertyItemRangeContext * /*ctx*/) override { }
 
   virtual void enterPropertyItemFloat(EffectLabParser::PropertyItemFloatContext * /*ctx*/) override { }
   virtual void exitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext * /*ctx*/) override { }
