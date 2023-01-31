@@ -1,6 +1,6 @@
 grammar EffectLab;
 
-effect : source_path property_block?;
+effect : source_path property_block? pass+;
 
 source_path    : 'SourcePath' ':' StringLiteral;
 property_block : 'Properties' '{' property_item+ '}';
@@ -48,6 +48,40 @@ property_item
     | property_name '(' property_description ',' property_matrix_type     ')' '=' property_matrix_val  # PropertyItemMatrix
     ;
 
+pass_tag : StringLiteral;
+pass     : 'Pass' '(' pass_tag ')' '{' pass_block_item+ '}';
+
+pass_vertex_shader   : 'VertexShader'   ':' StringLiteral;
+pass_geometry_shader : 'GeometryShader' ':' StringLiteral;
+pass_hull_shader     : 'HullShader'     ':' StringLiteral;
+pass_domain_shader   : 'DomainShader'   ':' StringLiteral;
+pass_fragment_shader : 'PixelShader'    ':' StringLiteral;
+
+pass_render_queue 
+    : 'BackGround'
+    | 'Geometry'
+    | 'Opaque'
+    | 'AlphaTest'
+    | 'Transparent'
+    | 'Overlay'
+    ;
+
+pass_shader_feature : 'ShaderFeature' Identity+;    
+pass_cull_mode      : 'Cull' CullModeLabel;
+pass_zclip_mode     : 'ZClip' ZClipModeLabel;
+
+pass_block_item 
+    : pass_vertex_shader
+    | pass_geometry_shader
+    | pass_hull_shader
+    | pass_domain_shader
+    | pass_fragment_shader
+    | pass_render_queue
+    | pass_shader_feature
+    | pass_cull_mode
+    | pass_zclip_mode
+    ;
+
 // lex
 IntLiteral 
     : [+-]? [1-9][0-9]*
@@ -61,6 +95,17 @@ BooleanLiteral
 	: 'false'
 	| 'true'
 	;
+
+CullModeLabel
+    : 'Off'    
+    | 'Front'
+    | 'Back'
+    ;
+
+ZClipModeLabel 
+    : 'True'
+    | 'False'
+    ;    
 
 StringLiteral : '"' .*? '"' ;
 Identity      : [_a-zA-Z][a-zA-Z0-9_]*; 

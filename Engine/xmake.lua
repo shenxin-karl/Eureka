@@ -81,5 +81,5 @@ target("Engine")
     set_targetdir(EUREKA_BINARY_DIR)
 
     set_values("EUREKA_RENDERER_DIR", EUREKA_RENDERER_DIR)
-    before_run(CopyEngineDLL)
+    after_link(CopyEngineDLL)
 target_end()

@@ -24,30 +24,22 @@ EffectCompiler::~EffectCompiler() {
 }
 
 auto EffectCompiler::compile(const fs::path &effectSourcePath) -> std::unique_ptr<Effect> {
-	_effectSourcePath = effectSourcePath;
+	_effectSourcePath = effectSourcePath.string();
 
 	std::ifstream fin;
 	if (!PathManager::open(effectSourcePath, fin, std::ios::in)) {
 		Exception::Throw("can't open the file {}!", effectSourcePath.string());
 	}
 
-	try {
-		antlr4::ANTLRInputStream input(fin);
-		pd::EffectLabLexer lexer(&input);
-		antlr4::CommonTokenStream tokens(&lexer);
-		pd::EffectLabParser parser(&tokens);
+	antlr4::ANTLRInputStream input(fin);
+	pd::EffectLabLexer lexer(&input);
+	antlr4::CommonTokenStream tokens(&lexer);
+	pd::EffectLabParser parser(&tokens);
 
-		EffectErrorListener errorListener;
-		parser.removeErrorListeners();
-		parser.addErrorListener(&errorListener);
-		return std::unique_ptr<Effect>(std::any_cast<Effect *>(visitEffect(parser.effect())));
-	} catch (const Exception &e) {
-		Exception::Throw("compile the file: {}, error message: {}", 
-			effectSourcePath.string(), 
-			e.getMessage()
-		);
-	}
-	return nullptr;
+	EffectErrorListener errorListener;
+	parser.removeErrorListeners();
+	parser.addErrorListener(&errorListener);
+	return any_to_unique_ptr<Effect>(visitEffect(parser.effect()));
 }
 
 std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context) {
@@ -55,7 +47,7 @@ std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context
 	pEffect->_sourcePath = std::any_cast<fs::path>(visitSource_path(context->source_path()));
 	if (!PathManager::exist(pEffect->_sourcePath)) {
 		Exception::Throw("in file: {}, SourcePath: {} invalid!", 
-			_effectSourcePath.string(),
+			_effectSourcePath,
 			pEffect->_sourcePath.string()
 		);
 	}
@@ -164,11 +156,31 @@ std::any EffectCompiler::visitProperty_matrix_val(pd::EffectLabParser::Property_
 }
 
 std::any EffectCompiler::visitProperty_name(ParserDetails::EffectLabParser::Property_nameContext *context) {
-	return context->Identity()->getText();
+	auto propertyName = context->Identity()->getText();
+	auto iter = _propertyVars.find(propertyName);
+	auto token = context->Identity()->getSymbol();
+	if (iter != _propertyVars.end()) {
+		Exception::Throw("{}:{}:{} redefinition property name {}, last seen in line {}:{}",
+			_effectSourcePath,
+			token->getLine(),
+			token->getCharPositionInLine(),
+			propertyName,
+			iter->second.line,
+			iter->second.column
+		);
+	}
+
+	_propertyVars[propertyName] = PropertyVar {
+		token->getLine(),
+		token->getCharPositionInLine()
+	};
+
+	return propertyName;
 }
 
 std::any EffectCompiler::visitProperty_description(ParserDetails::EffectLabParser::Property_descriptionContext *context) {
-	return context->StringLiteral()->getText();
+	auto text = context->StringLiteral()->getText();
+	return text.substr(1, text.length() -2);
 }
 
 std::any EffectCompiler::visitPropertyItemBool(ParserDetails::EffectLabParser::PropertyItemBoolContext *context) {
@@ -203,6 +215,20 @@ std::any EffectCompiler::visitPropertyItemRange(ParserDetails::EffectLabParser::
 	range.min = rangeType.first;
 	range.max = rangeType.second;
 	range.val = std::any_cast<float>(visitProperty_range_val(context->property_range_val()));
+
+	if (range.val < range.min || range.val > range.max) {
+		auto token = context->property_range_val()->getStart();
+		Exception::Throw("{}:{}:{} the property {} (Range({}, {})), the range default value {} out of range!",
+			_effectSourcePath,
+			token->getLine(),
+			token->getCharPositionInLine(),
+			name,
+			range.min,
+			range.max,
+			range.val
+		);
+	}
+
 	pPropertyItem->setRange(range);
 	return pPropertyItem;
 }

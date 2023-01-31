@@ -5,9 +5,10 @@
 namespace Eureka {
 
 auto ShaderContentLoader::open(const fs::path &filePath) -> std::string_view {
-	auto iter = _contentMap.find(filePath);
+	auto strFilePath = filePath.string();
+	auto iter = _contentMap.find(strFilePath);
 	if (iter != _contentMap.end()) {
-		return { std::get<0>(iter->second).get(), std::get<1>(iter->second) };
+		return { iter->second.ptr.get(), iter->second.length };
 	}
 
 	if (!fs::exists(filePath)) {
@@ -25,7 +26,7 @@ auto ShaderContentLoader::open(const fs::path &filePath) -> std::string_view {
 	auto pContent = std::make_unique<char[]>(content.length());
 	auto *pResult = pContent.get();
 	std::memcpy(pResult, content.c_str(), content.length());
-	_contentMap[filePath] = std::make_tuple(std::move(pContent), content.size());
+	_contentMap[strFilePath] = { content.length(), std::move(pContent) };
 	return { pResult, content.length() };
 }
 

@@ -11,8 +11,11 @@ class ShaderContentLoader : public Singletion<ShaderContentLoader> {
 public:
 	auto open(const fs::path &filePath) -> std::string_view;
 private:
-	using ContentMap = std::unordered_map<fs::path, std::tuple<std::unique_ptr<char[]>, size_t>>;
-	ContentMap _contentMap;
+	struct Value {
+		size_t length = 0;
+		std::unique_ptr<char[]> ptr;
+	};
+	std::unordered_map<std::string, Value> _contentMap;
 };
 
 }

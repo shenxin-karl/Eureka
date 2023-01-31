@@ -10,6 +10,15 @@ namespace fs = std::filesystem;
 
 namespace dx12lib {
 
+namespace details {
+
+template<typename T>
+void ThrowException(T &&exception) noexcept(false) {
+	throw std::forward<T>(exception);
+}
+
+}
+
 struct FormatAndLocation {
 	std::string_view fmt;
 	std::source_location location;
@@ -24,6 +33,8 @@ public:
 
 	}
 };
+
+
 
 class Exception : public std::exception {
 public:
@@ -42,7 +53,7 @@ public:
 		} else {
 			message = fmtAndLocation.fmt.data();
 		}
-		throw Exception(std::move(message), fmtAndLocation.location);
+		details::ThrowException(Exception(std::move(message), fmtAndLocation.location));
 	}
 	template<typename ...Args>
 	static void Throw(bool cond, const FormatAndLocation &fmtAndLocation, Args&&...args) {
@@ -67,12 +78,21 @@ public:
 	auto getErrorMessage() const -> const std::string &;
 	static void Throw(HRESULT hr, std::source_location sourceLocation = std::source_location::current()) {
 		if (FAILED(hr)) {
-			throw D3DException(hr, sourceLocation.file_name(), sourceLocation.line());
+			details::ThrowException(D3DException(
+				hr, 
+				sourceLocation.file_name(), 
+				sourceLocation.line()
+			));
 		}
 	}
 	static void Throw(HRESULT hr, const std::string &errorMessage, std::source_location sourceLocation = std::source_location::current()) {
 		if (FAILED(hr)) {
-			throw D3DException(hr, errorMessage, sourceLocation.file_name(), sourceLocation.line());
+			details::ThrowException(D3DException(
+				hr, 
+				errorMessage, 
+				sourceLocation.file_name(), 
+				sourceLocation.line()
+			));
 		}
 	}
 private:

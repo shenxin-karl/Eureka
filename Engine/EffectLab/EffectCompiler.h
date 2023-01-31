@@ -73,12 +73,12 @@ private:
 	}
 
 	struct PropertyVar {
-		std::string name;
-		int line = 0;
-		int column = 0;
+		size_t line = 0;
+		size_t column = 0;
 	};
 private:
-	fs::path _effectSourcePath;
+	std::string _effectSourcePath;
+	std::unordered_map<std::string, PropertyVar> _propertyVars;
 };
 
 }
