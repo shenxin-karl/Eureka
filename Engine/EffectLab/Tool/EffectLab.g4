@@ -69,6 +69,22 @@ pass_render_queue
 pass_shader_feature : 'ShaderFeature' Identity+;    
 pass_cull_mode      : 'Cull' CullModeLabel;
 pass_zclip_mode     : 'ZClip' ZClipModeLabel;
+pass_ztest_mode     : 'ZTest' ZTestModeLabel;
+pass_zwrite_mode    : 'ZWrite' ZWriteModeLabel;
+pass_offset         : 'Offset' FloatLiteral FloatLiteral;
+pass_color_mask     
+    : ColorMaskChannel
+    | ColorMaskChannel RenderTargetID
+    ;
+
+
+pass_blend_mode
+    : 'Off'                                             # PassBlend_1
+    | RenderTargetID 'Off'                              # PassBlend_2
+    | BlendFactorLabel BlendFactorLabel                 # PassBlend_3
+    | RenderTargetID BlendFactorLabel BlendFactorLabel                  # PassBlend_4
+    | BlendFactorLabel BlendFactorLabel BlendFactorLabel BlendFactorLabel
+    | RenderTargetID BlendFactorLabel 
 
 pass_block_item 
     : pass_vertex_shader
@@ -80,6 +96,10 @@ pass_block_item
     | pass_shader_feature
     | pass_cull_mode
     | pass_zclip_mode
+    | pass_ztest_mode
+    | pass_zwrite_mode
+    | pass_offset
+    | pass_color_mask
     ;
 
 // lex
@@ -105,7 +125,44 @@ CullModeLabel
 ZClipModeLabel 
     : 'True'
     | 'False'
+    ;   
+
+ZTestModeLabel
+    : 'Less'
+    | 'LEqual'
+    | 'Equal'
+    | 'GEqual'      
+    | 'Greater'
+    | 'NotEqual'
+    | 'Always'
+    ;
+
+ZWriteModeLabel
+    : 'On'
+    | 'Off'
+    ;
+
+ColorMaskChannel
+    : [RGBA]
+    | [RGBA] [RGBA]
+    | [RGBA] [RGBA] [RGBA]
+    | [RGBA] [RGBA] [RGBA] [RGBA]
     ;    
+
+RenderTargetID : [0-7];
+
+
+BlendFactorLabel
+    : 'Zero'
+    | 'SrcColor'
+    | 'SrcAlpha'
+    | 'DstColor'
+    | 'DstAlpha'
+    | 'OneMinusSrcColor'
+    | 'OneMinusSrcAlpha'
+    | 'OneMinusDstColor'
+    | 'OneMinusDstAlpha'
+    ;
 
 StringLiteral : '"' .*? '"' ;
 Identity      : [_a-zA-Z][a-zA-Z0-9_]*; 
