@@ -18,9 +18,21 @@ public:
     T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
     T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, T__25 = 26, 
     T__26 = 27, T__27 = 28, T__28 = 29, T__29 = 30, T__30 = 31, T__31 = 32, 
-    T__32 = 33, T__33 = 34, IntLiteral = 35, FloatLiteral = 36, BooleanLiteral = 37, 
-    StringLiteral = 38, Identity = 39, WhiteSpace = 40, LineComment = 41, 
-    BlockComment = 42
+    T__32 = 33, T__33 = 34, T__34 = 35, T__35 = 36, T__36 = 37, T__37 = 38, 
+    T__38 = 39, T__39 = 40, T__40 = 41, T__41 = 42, T__42 = 43, T__43 = 44, 
+    T__44 = 45, T__45 = 46, T__46 = 47, T__47 = 48, T__48 = 49, T__49 = 50, 
+    T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
+    T__56 = 57, T__57 = 58, T__58 = 59, T__59 = 60, T__60 = 61, T__61 = 62, 
+    T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, T__66 = 67, T__67 = 68, 
+    IntLiteral = 69, FloatLiteral = 70, BooleanLiteral = 71, CullModeLabel = 72, 
+    ZClipModeLabel = 73, ZTestModeLabel = 74, ZWriteModeLabel = 75, ColorMaskChannel = 76, 
+    RenderTargetID = 77, BlendFactorLabel = 78, BlendOPLabel = 79, AlphaToMaskLabel = 80, 
+    StencilCompareLabel = 81, StencilOpLabel = 82, KWOff = 83, KWOn = 84, 
+    KWNever = 85, KWLess = 86, KWEqual = 87, KWLEqaul = 88, KWGreater = 89, 
+    KWNotEqual = 90, KWGEqual = 91, KWAlways = 92, KWKeep = 93, KWZero = 94, 
+    KWReplace = 95, KWIncrSat = 96, KWDecrSat = 97, KWInvert = 98, KWIncrWrap = 99, 
+    KWDecrWrap = 100, StringLiteral = 101, Identity = 102, WhiteSpace = 103, 
+    LineComment = 104, BlockComment = 105
   };
 
   enum {
@@ -31,7 +43,19 @@ public:
     RuleProperty_range_val = 13, RuleProperty_bool_val = 14, RuleProperty_int_val = 15, 
     RuleProperty_float_val = 16, RuleProperty_float2_val = 17, RuleProperty_float3_val = 18, 
     RuleProperty_float4_val = 19, RuleProperty_matrix_val = 20, RuleProperty_texture_val = 21, 
-    RuleProperty_name = 22, RuleProperty_description = 23, RuleProperty_item = 24
+    RuleProperty_name = 22, RuleProperty_description = 23, RuleProperty_item = 24, 
+    RulePass_tag = 25, RulePass = 26, RulePass_vertex_shader = 27, RulePass_geometry_shader = 28, 
+    RulePass_hull_shader = 29, RulePass_domain_shader = 30, RulePass_pixel_shader = 31, 
+    RulePass_render_queue = 32, RulePass_shader_feature = 33, RulePass_cull_mode = 34, 
+    RulePass_zclip_mode = 35, RulePass_ztest_mode = 36, RulePass_zwrite_mode = 37, 
+    RulePass_offset = 38, RulePass_color_mask = 39, RulePass_blend = 40, 
+    RulePass_blend_op = 41, RulePass_alpha_to_mask = 42, RulePass_stencil = 43, 
+    RulePass_block_item = 44, RuleStencil_ref = 45, RuleStencil_read_mask = 46, 
+    RuleStencil_write_mask = 47, RuleStencil_comp = 48, RuleStencil_pass_op = 49, 
+    RuleStencil_fail_op = 50, RuleStencil_zfail_op = 51, RuleStencil_comp_back_op = 52, 
+    RuleStancil_pass_back_op = 53, RuleStencil_fail_back_op = 54, RuleStencil_zfail_back_op = 55, 
+    RuleStencil_comp_front_op = 56, RuleStancil_pass_front_op = 57, RuleStencil_fail_front_op = 58, 
+    RuleStencil_zfail_front_op = 59, RuleStencil_item = 60
   };
 
   explicit EffectLabParser(antlr4::TokenStream *input);
@@ -75,7 +99,43 @@ public:
   class Property_texture_valContext;
   class Property_nameContext;
   class Property_descriptionContext;
-  class Property_itemContext; 
+  class Property_itemContext;
+  class Pass_tagContext;
+  class PassContext;
+  class Pass_vertex_shaderContext;
+  class Pass_geometry_shaderContext;
+  class Pass_hull_shaderContext;
+  class Pass_domain_shaderContext;
+  class Pass_pixel_shaderContext;
+  class Pass_render_queueContext;
+  class Pass_shader_featureContext;
+  class Pass_cull_modeContext;
+  class Pass_zclip_modeContext;
+  class Pass_ztest_modeContext;
+  class Pass_zwrite_modeContext;
+  class Pass_offsetContext;
+  class Pass_color_maskContext;
+  class Pass_blendContext;
+  class Pass_blend_opContext;
+  class Pass_alpha_to_maskContext;
+  class Pass_stencilContext;
+  class Pass_block_itemContext;
+  class Stencil_refContext;
+  class Stencil_read_maskContext;
+  class Stencil_write_maskContext;
+  class Stencil_compContext;
+  class Stencil_pass_opContext;
+  class Stencil_fail_opContext;
+  class Stencil_zfail_opContext;
+  class Stencil_comp_back_opContext;
+  class Stancil_pass_back_opContext;
+  class Stencil_fail_back_opContext;
+  class Stencil_zfail_back_opContext;
+  class Stencil_comp_front_opContext;
+  class Stancil_pass_front_opContext;
+  class Stencil_fail_front_opContext;
+  class Stencil_zfail_front_opContext;
+  class Stencil_itemContext; 
 
   class  EffectContext : public antlr4::ParserRuleContext {
   public:
@@ -83,6 +143,8 @@ public:
     virtual size_t getRuleIndex() const override;
     Source_pathContext *source_path();
     Property_blockContext *property_block();
+    std::vector<PassContext *> pass();
+    PassContext* pass(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -574,6 +636,976 @@ public:
   };
 
   Property_itemContext* property_item();
+
+  class  Pass_tagContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_tagContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StringLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_tagContext* pass_tag();
+
+  class  PassContext : public antlr4::ParserRuleContext {
+  public:
+    PassContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    Pass_tagContext *pass_tag();
+    std::vector<Pass_block_itemContext *> pass_block_item();
+    Pass_block_itemContext* pass_block_item(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  PassContext* pass();
+
+  class  Pass_vertex_shaderContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_vertex_shaderContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StringLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_vertex_shaderContext* pass_vertex_shader();
+
+  class  Pass_geometry_shaderContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_geometry_shaderContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StringLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_geometry_shaderContext* pass_geometry_shader();
+
+  class  Pass_hull_shaderContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_hull_shaderContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StringLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_hull_shaderContext* pass_hull_shader();
+
+  class  Pass_domain_shaderContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_domain_shaderContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StringLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_domain_shaderContext* pass_domain_shader();
+
+  class  Pass_pixel_shaderContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_pixel_shaderContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StringLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_pixel_shaderContext* pass_pixel_shader();
+
+  class  Pass_render_queueContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_render_queueContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_render_queueContext* pass_render_queue();
+
+  class  Pass_shader_featureContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_shader_featureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> StringLiteral();
+    antlr4::tree::TerminalNode* StringLiteral(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_shader_featureContext* pass_shader_feature();
+
+  class  Pass_cull_modeContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_cull_modeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *CullModeLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_cull_modeContext* pass_cull_mode();
+
+  class  Pass_zclip_modeContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_zclip_modeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *ZClipModeLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_zclip_modeContext* pass_zclip_mode();
+
+  class  Pass_ztest_modeContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_ztest_modeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *ZTestModeLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_ztest_modeContext* pass_ztest_mode();
+
+  class  Pass_zwrite_modeContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_zwrite_modeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *ZWriteModeLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_zwrite_modeContext* pass_zwrite_mode();
+
+  class  Pass_offsetContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_offsetContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> FloatLiteral();
+    antlr4::tree::TerminalNode* FloatLiteral(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_offsetContext* pass_offset();
+
+  class  Pass_color_maskContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_color_maskContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *ColorMaskChannel();
+    antlr4::tree::TerminalNode *RenderTargetID();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_color_maskContext* pass_color_mask();
+
+  class  Pass_blendContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_blendContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    Pass_blendContext() = default;
+    void copyFrom(Pass_blendContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  PassBlendRTOffContext : public Pass_blendContext {
+  public:
+    PassBlendRTOffContext(Pass_blendContext *ctx);
+
+    antlr4::tree::TerminalNode *RenderTargetID();
+    antlr4::tree::TerminalNode *KWOff();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassBlendOffContext : public Pass_blendContext {
+  public:
+    PassBlendOffContext(Pass_blendContext *ctx);
+
+    antlr4::tree::TerminalNode *KWOff();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassBlendRTColorAlphaContext : public Pass_blendContext {
+  public:
+    PassBlendRTColorAlphaContext(Pass_blendContext *ctx);
+
+    antlr4::tree::TerminalNode *RenderTargetID();
+    std::vector<antlr4::tree::TerminalNode *> BlendFactorLabel();
+    antlr4::tree::TerminalNode* BlendFactorLabel(size_t i);
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassBlendColorContext : public Pass_blendContext {
+  public:
+    PassBlendColorContext(Pass_blendContext *ctx);
+
+    std::vector<antlr4::tree::TerminalNode *> BlendFactorLabel();
+    antlr4::tree::TerminalNode* BlendFactorLabel(size_t i);
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassBlendColorAlphaContext : public Pass_blendContext {
+  public:
+    PassBlendColorAlphaContext(Pass_blendContext *ctx);
+
+    std::vector<antlr4::tree::TerminalNode *> BlendFactorLabel();
+    antlr4::tree::TerminalNode* BlendFactorLabel(size_t i);
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassBlendRTColorContext : public Pass_blendContext {
+  public:
+    PassBlendRTColorContext(Pass_blendContext *ctx);
+
+    antlr4::tree::TerminalNode *RenderTargetID();
+    std::vector<antlr4::tree::TerminalNode *> BlendFactorLabel();
+    antlr4::tree::TerminalNode* BlendFactorLabel(size_t i);
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  Pass_blendContext* pass_blend();
+
+  class  Pass_blend_opContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_blend_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *BlendOPLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_blend_opContext* pass_blend_op();
+
+  class  Pass_alpha_to_maskContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_alpha_to_maskContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *AlphaToMaskLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_alpha_to_maskContext* pass_alpha_to_mask();
+
+  class  Pass_stencilContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_stencilContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<Stencil_itemContext *> stencil_item();
+    Stencil_itemContext* stencil_item(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_stencilContext* pass_stencil();
+
+  class  Pass_block_itemContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_block_itemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    Pass_block_itemContext() = default;
+    void copyFrom(Pass_block_itemContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  PassStencilContext : public Pass_block_itemContext {
+  public:
+    PassStencilContext(Pass_block_itemContext *ctx);
+
+    Pass_stencilContext *pass_stencil();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassColorMaskContext : public Pass_block_itemContext {
+  public:
+    PassColorMaskContext(Pass_block_itemContext *ctx);
+
+    Pass_color_maskContext *pass_color_mask();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassPixelShaderContext : public Pass_block_itemContext {
+  public:
+    PassPixelShaderContext(Pass_block_itemContext *ctx);
+
+    Pass_pixel_shaderContext *pass_pixel_shader();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassZClipModeContext : public Pass_block_itemContext {
+  public:
+    PassZClipModeContext(Pass_block_itemContext *ctx);
+
+    Pass_zclip_modeContext *pass_zclip_mode();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassGeometryShaderContext : public Pass_block_itemContext {
+  public:
+    PassGeometryShaderContext(Pass_block_itemContext *ctx);
+
+    Pass_geometry_shaderContext *pass_geometry_shader();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassShaderFeatureContext : public Pass_block_itemContext {
+  public:
+    PassShaderFeatureContext(Pass_block_itemContext *ctx);
+
+    Pass_shader_featureContext *pass_shader_feature();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassDomainShaderContext : public Pass_block_itemContext {
+  public:
+    PassDomainShaderContext(Pass_block_itemContext *ctx);
+
+    Pass_domain_shaderContext *pass_domain_shader();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassRenderQueueContext : public Pass_block_itemContext {
+  public:
+    PassRenderQueueContext(Pass_block_itemContext *ctx);
+
+    Pass_render_queueContext *pass_render_queue();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassZWriteModeContext : public Pass_block_itemContext {
+  public:
+    PassZWriteModeContext(Pass_block_itemContext *ctx);
+
+    Pass_zwrite_modeContext *pass_zwrite_mode();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassBlendContext : public Pass_block_itemContext {
+  public:
+    PassBlendContext(Pass_block_itemContext *ctx);
+
+    Pass_blendContext *pass_blend();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassOffsetContext : public Pass_block_itemContext {
+  public:
+    PassOffsetContext(Pass_block_itemContext *ctx);
+
+    Pass_offsetContext *pass_offset();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassHullShaderContext : public Pass_block_itemContext {
+  public:
+    PassHullShaderContext(Pass_block_itemContext *ctx);
+
+    Pass_hull_shaderContext *pass_hull_shader();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassCullModeContext : public Pass_block_itemContext {
+  public:
+    PassCullModeContext(Pass_block_itemContext *ctx);
+
+    Pass_cull_modeContext *pass_cull_mode();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassZTestModeContext : public Pass_block_itemContext {
+  public:
+    PassZTestModeContext(Pass_block_itemContext *ctx);
+
+    Pass_ztest_modeContext *pass_ztest_mode();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassVertexShaderContext : public Pass_block_itemContext {
+  public:
+    PassVertexShaderContext(Pass_block_itemContext *ctx);
+
+    Pass_vertex_shaderContext *pass_vertex_shader();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassBlendOpContext : public Pass_block_itemContext {
+  public:
+    PassBlendOpContext(Pass_block_itemContext *ctx);
+
+    Pass_blend_opContext *pass_blend_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassAlphaToMaskContext : public Pass_block_itemContext {
+  public:
+    PassAlphaToMaskContext(Pass_block_itemContext *ctx);
+
+    Pass_alpha_to_maskContext *pass_alpha_to_mask();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  Pass_block_itemContext* pass_block_item();
+
+  class  Stencil_refContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_refContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *IntLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_refContext* stencil_ref();
+
+  class  Stencil_read_maskContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_read_maskContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *IntLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_read_maskContext* stencil_read_mask();
+
+  class  Stencil_write_maskContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_write_maskContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *IntLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_write_maskContext* stencil_write_mask();
+
+  class  Stencil_compContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_compContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilCompareLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_compContext* stencil_comp();
+
+  class  Stencil_pass_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_pass_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_pass_opContext* stencil_pass_op();
+
+  class  Stencil_fail_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_fail_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_fail_opContext* stencil_fail_op();
+
+  class  Stencil_zfail_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_zfail_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_zfail_opContext* stencil_zfail_op();
+
+  class  Stencil_comp_back_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_comp_back_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_comp_back_opContext* stencil_comp_back_op();
+
+  class  Stancil_pass_back_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stancil_pass_back_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stancil_pass_back_opContext* stancil_pass_back_op();
+
+  class  Stencil_fail_back_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_fail_back_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_fail_back_opContext* stencil_fail_back_op();
+
+  class  Stencil_zfail_back_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_zfail_back_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_zfail_back_opContext* stencil_zfail_back_op();
+
+  class  Stencil_comp_front_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_comp_front_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_comp_front_opContext* stencil_comp_front_op();
+
+  class  Stancil_pass_front_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stancil_pass_front_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stancil_pass_front_opContext* stancil_pass_front_op();
+
+  class  Stencil_fail_front_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_fail_front_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_fail_front_opContext* stencil_fail_front_op();
+
+  class  Stencil_zfail_front_opContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_zfail_front_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StencilOpLabel();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Stencil_zfail_front_opContext* stencil_zfail_front_op();
+
+  class  Stencil_itemContext : public antlr4::ParserRuleContext {
+  public:
+    Stencil_itemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    Stencil_itemContext() = default;
+    void copyFrom(Stencil_itemContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  StencilCompBackOpContext : public Stencil_itemContext {
+  public:
+    StencilCompBackOpContext(Stencil_itemContext *ctx);
+
+    Stencil_comp_back_opContext *stencil_comp_back_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilReadMaskContext : public Stencil_itemContext {
+  public:
+    StencilReadMaskContext(Stencil_itemContext *ctx);
+
+    Stencil_read_maskContext *stencil_read_mask();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilRefContext : public Stencil_itemContext {
+  public:
+    StencilRefContext(Stencil_itemContext *ctx);
+
+    Stencil_refContext *stencil_ref();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilPassOpContext : public Stencil_itemContext {
+  public:
+    StencilPassOpContext(Stencil_itemContext *ctx);
+
+    Stencil_pass_opContext *stencil_pass_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilFailOpContext : public Stencil_itemContext {
+  public:
+    StencilFailOpContext(Stencil_itemContext *ctx);
+
+    Stencil_fail_opContext *stencil_fail_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilCompFrontOpContext : public Stencil_itemContext {
+  public:
+    StencilCompFrontOpContext(Stencil_itemContext *ctx);
+
+    Stencil_comp_front_opContext *stencil_comp_front_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilPassBackOpContext : public Stencil_itemContext {
+  public:
+    StencilPassBackOpContext(Stencil_itemContext *ctx);
+
+    Stancil_pass_back_opContext *stancil_pass_back_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilWriteMaskContext : public Stencil_itemContext {
+  public:
+    StencilWriteMaskContext(Stencil_itemContext *ctx);
+
+    Stencil_write_maskContext *stencil_write_mask();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilFailBackOpContext : public Stencil_itemContext {
+  public:
+    StencilFailBackOpContext(Stencil_itemContext *ctx);
+
+    Stencil_fail_back_opContext *stencil_fail_back_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilPassFrontOpContext : public Stencil_itemContext {
+  public:
+    StencilPassFrontOpContext(Stencil_itemContext *ctx);
+
+    Stancil_pass_front_opContext *stancil_pass_front_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilFailFrontOpContext : public Stencil_itemContext {
+  public:
+    StencilFailFrontOpContext(Stencil_itemContext *ctx);
+
+    Stencil_fail_front_opContext *stencil_fail_front_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilZFailOpContext : public Stencil_itemContext {
+  public:
+    StencilZFailOpContext(Stencil_itemContext *ctx);
+
+    Stencil_zfail_opContext *stencil_zfail_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilCompContext : public Stencil_itemContext {
+  public:
+    StencilCompContext(Stencil_itemContext *ctx);
+
+    Stencil_compContext *stencil_comp();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilZFailBackOpContext : public Stencil_itemContext {
+  public:
+    StencilZFailBackOpContext(Stencil_itemContext *ctx);
+
+    Stencil_zfail_back_opContext *stencil_zfail_back_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  StencilZFailFrontOpContext : public Stencil_itemContext {
+  public:
+    StencilZFailFrontOpContext(Stencil_itemContext *ctx);
+
+    Stencil_zfail_front_opContext *stencil_zfail_front_op();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  Stencil_itemContext* stencil_item();
 
 
   // By default the static state used to implement the parser is lazily initialized during the first
