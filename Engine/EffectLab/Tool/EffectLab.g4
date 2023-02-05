@@ -68,13 +68,13 @@ pass_render_queue
 
 pass_shader_feature : 'ShaderFeature' StringLiteral+;    
 pass_cull_mode      : 'Cull' CullModeLabel;
-pass_zclip_mode     : 'ZClip' ZClipModeLabel;
+pass_zclip_mode     : 'ZClip' BooleanLiteral;
 pass_ztest_mode     : 'ZTest' ZTestModeLabel;
 pass_zwrite_mode    : 'ZWrite' ZWriteModeLabel;
 pass_offset         : 'Offset' FloatLiteral FloatLiteral;
 pass_color_mask     
-    : ColorMaskChannel
-    | ColorMaskChannel RenderTargetID
+    : 'ColorMask' ColorMaskChannel
+    | 'ColorMask' ColorMaskChannel RenderTargetID
     ;
 
 pass_blend
@@ -88,6 +88,7 @@ pass_blend
 
 pass_blend_op      : 'BlendOp' BlendOPLabel;
 pass_alpha_to_mask : 'AlphaToMask' AlphaToMaskLabel;
+pass_conservative  : 'Conservative' BooleanLiteral;
 pass_stencil       : 'Stencil' '{' stencil_item+ '}';
 
 pass_block_item 
@@ -107,6 +108,7 @@ pass_block_item
     | pass_blend           # PassBlend
     | pass_blend_op        # PassBlendOp
     | pass_alpha_to_mask   # PassAlphaToMask
+    | pass_conservative    # PassConservative
     | pass_stencil         # PassStencil
     ;
 
@@ -155,20 +157,15 @@ FloatLiteral
     | '.' [0-9]+ [fF]?
     ;
 BooleanLiteral
-	: 'false'
-	| 'true'
+	: KWFalse
+	| KWTrue
 	;
 
 CullModeLabel 
-    : KWOff    
+    : KWOff
     | 'Front'
     | 'Back'
     ;
-
-ZClipModeLabel 
-    : 'True'
-    | 'False'
-    ;   
 
 ZTestModeLabel
     : KWLess
@@ -259,6 +256,8 @@ KWDecrSat   : 'DecrSat';
 KWInvert    : 'Invert';
 KWIncrWrap  : 'IncrWrap';
 KWDecrWrap  : 'DecrWrap';
+KWTrue      : 'true'  | 'True';
+KWFalse     : 'false' | 'False';
 
 StringLiteral : '"' .*? '"' ;
 Identity      : [_a-zA-Z][a-zA-Z0-9_]*; 

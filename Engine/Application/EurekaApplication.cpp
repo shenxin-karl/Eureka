@@ -94,10 +94,10 @@ void EurekaApplication::onInitialize(dx12lib::DirectContextProxy pDirectCtx) {
 	//}
 
 	// initialize
-	loading(pDirectCtx);
+	loading(pDirectCtx); 
 
-	EffectCompiler compiler;
-	auto pEffect = compiler.compile("Assets/Effects/ShaderLabExample.shader");
+	//EffectCompiler compiler;
+	//auto pEffect = compiler.compile("Assets/Effects/ShaderLabExample.shader");
 }
 
 void EurekaApplication::onDestroy() {

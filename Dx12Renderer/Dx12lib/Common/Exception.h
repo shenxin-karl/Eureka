@@ -24,11 +24,11 @@ struct FormatAndLocation {
 	std::source_location location;
 public:
 	template<size_t N>
-	FormatAndLocation(const char(&arr)[N], const std::source_location &location = std::source_location::current())
+	FormatAndLocation(const char(&arr)[N], std::source_location location = std::source_location::current())
 	: fmt(arr), location(location) {
 
 	}
-	FormatAndLocation(const std::string_view &fmt, const std::source_location &location = std::source_location::current())
+	FormatAndLocation(const std::string_view &fmt, std::source_location location = std::source_location::current())
 	: fmt(fmt), location(location) {
 
 	}

@@ -25,7 +25,7 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 	while (auto event = pInputSystem->pMouse->getEvent()) {
 		if (event.isRPress()) {
 			_mouseRightPress = true;
-			_lastMousePosition = POINT(event.x, event.y);
+			_lastMousePosition = POINT{ event.x, event.y };
 		} else if (event.isRRelease()) {
 			_mouseRightPress = false;
 		}
@@ -34,14 +34,14 @@ void FPSCameraControl::update(std::shared_ptr<InputSystem> pInputSystem, std::sh
 			continue;
 
 		if (_lastMousePosition.x == -1 && _lastMousePosition.y == -1)
-			_lastMousePosition = POINT(event.x, event.y);
+			_lastMousePosition = POINT{ event.x, event.y };
 
 		if (event._state == MouseState::Move) {
 			float dx = static_cast<float>(event.x - _lastMousePosition.x) * mouseMoveSensitivity;
 			float dy = static_cast<float>(event.y - _lastMousePosition.y) * mouseMoveSensitivity;
 			setPitch(_pitch - dy);
 			setYaw(_yaw - dx);
-			_lastMousePosition = POINT(event.x, event.y);
+			_lastMousePosition = POINT{ event.x, event.y };
 		} else if (event._state == MouseState::Wheel) {
 			float fovDeviation = event._offset * mouseWheelSensitivity;
 			_pCamera->setFov(std::clamp(_pCamera->getFov() - fovDeviation, 1.f, 89.f));

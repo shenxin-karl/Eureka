@@ -5,7 +5,7 @@ namespace dx12lib {
 
 DescriptorAllocatorPage::DescriptorAllocatorPage() 
 : _numFreeHandle(0), _numDescriptorInHeap(0), _descriptorHandleIncrementSize(0)
-, _baseDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE(0)), _heapType(D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES) {
+, _baseDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE{ 0 }), _heapType(D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES) {
 }
 
 DescriptorAllocatorPage::DescriptorAllocatorPage(DescriptorAllocatorPage &&other) noexcept 

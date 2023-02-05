@@ -132,6 +132,8 @@ public:
 
     virtual std::any visitPass_alpha_to_mask(EffectLabParser::Pass_alpha_to_maskContext *context) = 0;
 
+    virtual std::any visitPass_conservative(EffectLabParser::Pass_conservativeContext *context) = 0;
+
     virtual std::any visitPass_stencil(EffectLabParser::Pass_stencilContext *context) = 0;
 
     virtual std::any visitPassVertexShader(EffectLabParser::PassVertexShaderContext *context) = 0;
@@ -165,6 +167,8 @@ public:
     virtual std::any visitPassBlendOp(EffectLabParser::PassBlendOpContext *context) = 0;
 
     virtual std::any visitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *context) = 0;
+
+    virtual std::any visitPassConservative(EffectLabParser::PassConservativeContext *context) = 0;
 
     virtual std::any visitPassStencil(EffectLabParser::PassStencilContext *context) = 0;
 

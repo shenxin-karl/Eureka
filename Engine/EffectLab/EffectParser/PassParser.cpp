@@ -1,82 +1,204 @@
 #include "PassParser.h"
 #include "EffectLab/Pass.h"
+#include "EffectLab/ShaderKeyword.h"
+#include "EffectLab/ShaderKeywordSet.h"
+#include "Foundation/Exception.h"
 
 namespace Eureka {
 
 PassParser::PassParser(std::string effectSourcePath)
-: _effectSourcePath(std::move(effectSourcePath)) {
+: _effectSourcePath(effectSourcePath)
+, _rasterizerParser(effectSourcePath)
+, _blendParser(effectSourcePath)
+, _depthStencilParser(std::move(effectSourcePath))
+{
+	_pKeywordSet = std::make_shared<ShaderKeywordSet>();
 }
 
 auto PassParser::parserPass(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr<Pass> {
-	return nullptr;
+	_pass = std::make_unique<Pass>();
+	_pass->_tag = std::any_cast<std::string>(visitPass_tag(ctx->pass_tag()));
+	for (auto *item : ctx->pass_block_item()) {
+		item->accept(this);
+	}
+	return std::move(_pass);
 }
 
 std::any PassParser::visitPassVertexShader(pd::EffectLabParser::PassVertexShaderContext *context) {
-	return BaseParser::visitPassVertexShader(context);
+	auto token = context->getStart();
+	if (_vertexShader.hasValue()) {
+		parserShaderThrow(_vertexShader, token, "Vertex");
+	}
+
+	auto text = extractString(context->pass_vertex_shader()->StringLiteral()->getText());
+	_vertexShader.setLocation(token);
+	_vertexShader.set(text);
+	return NullAny;
 }
 
 std::any PassParser::visitPassGeometryShader(pd::EffectLabParser::PassGeometryShaderContext *context) {
-	return BaseParser::visitPassGeometryShader(context);
+	auto token = context->getStart();
+	if (_geometryShader.hasValue()) {
+		parserShaderThrow(_geometryShader, token, "Geometry");
+	}
+
+	auto text = extractString(context->pass_geometry_shader()->StringLiteral()->getText());
+	_geometryShader.setLocation(token);
+	_geometryShader.set(text);
+	return NullAny;
 }
 
 std::any PassParser::visitPassHullShader(pd::EffectLabParser::PassHullShaderContext *context) {
-	return BaseParser::visitPassHullShader(context);
+	auto token = context->getStart();
+	if (_hullShader.hasValue()) {
+		parserShaderThrow(_hullShader, token, "Hull");
+	}
+
+	auto text = extractString(context->pass_hull_shader()->StringLiteral()->getText());
+	_hullShader.setLocation(token);
+	_hullShader.set(text);
+	return NullAny;
 }
 
 std::any PassParser::visitPassDomainShader(pd::EffectLabParser::PassDomainShaderContext *context) {
-	return BaseParser::visitPassDomainShader(context);
+	auto token = context->getStart();
+	if (_domainShader.hasValue()) {
+		parserShaderThrow(_domainShader, token, "Domain");
+	}
+
+	auto text = extractString(context->pass_domain_shader()->StringLiteral()->getText());
+	_domainShader.setLocation(token);
+	_domainShader.set(text);
+	return NullAny;
 }
 
 std::any PassParser::visitPassPixelShader(pd::EffectLabParser::PassPixelShaderContext *context) {
-	return BaseParser::visitPassPixelShader(context);
+	auto token = context->getStart();
+	if (_pixelShader.hasValue()) {
+		parserShaderThrow(_pixelShader, token, "Pixel");
+	}
+
+	auto text = extractString(context->pass_pixel_shader()->StringLiteral()->getText());
+	_pixelShader.setLocation(token);
+	_pixelShader.set(text);
+	return NullAny;
 }
 
 std::any PassParser::visitPassRenderQueue(pd::EffectLabParser::PassRenderQueueContext *context) {
-	return BaseParser::visitPassRenderQueue(context);
+	auto token = context->getStart();
+	if (_renderQueueLabel.hasValue()) {
+		Exception::Throw("{} {}:{} keyword RenderQueue redefinition",
+			_effectSourcePath,
+			token->getLine(),
+			token->getCharPositionInLine()
+		);
+	}
+
+	auto text = context->getText();
+	if (text == "BackGround") {
+		_renderQueueLabel.set(RenderQueueLabel::BackGround);
+	} else if (text == "Geometry") {
+		_renderQueueLabel.set(RenderQueueLabel::Geometry);
+	} else if (text == "Opaque") {
+		_renderQueueLabel.set(RenderQueueLabel::Opaque);
+	} else if (text == "AlphaTest") {
+		_renderQueueLabel.set(RenderQueueLabel::AlphaTest);
+	} else if (text == "Transparent") {
+		_renderQueueLabel.set(RenderQueueLabel::Transparent);
+	} else if (text == "Overlay") {
+		_renderQueueLabel.set(RenderQueueLabel::Overlay);
+	}
+
+	_renderQueueLabel.setLocation(token);
+	return NullAny;
 }
 
 std::any PassParser::visitPassShaderFeature(pd::EffectLabParser::PassShaderFeatureContext *context) {
-	return BaseParser::visitPassShaderFeature(context);
+	ShaderKeywordSet::ShaderFeature shaderFeature;
+	for (const auto &macroNode : context->pass_shader_feature()->StringLiteral()) {
+		auto token = macroNode->getSymbol();
+		auto macro = extractString(macroNode->getText());
+		auto iter = _macroLocationMap.find(macro);
+		if (iter != _macroLocationMap.end()) {
+			Exception::Throw("{} {}:{} the shader feature macro"
+				"{} redefine, the last redefinition in {} {} {}",
+				_effectSourcePath,
+				token->getLine(),
+				token->getCharPositionInLine(),
+				macro,
+				iter->second.line,
+				iter->second.column
+			);
+		}
+
+		Location location;
+		location.setLocation(token);
+		_macroLocationMap[macro] = location;
+		shaderFeature.push_back(std::move(macro));
+	}
+
+	_pKeywordSet->addShaderFeatures(std::move(shaderFeature));
+	return NullAny;
 }
 
 std::any PassParser::visitPassCullMode(pd::EffectLabParser::PassCullModeContext *context) {
-	return BaseParser::visitPassCullMode(context);
+	return _rasterizerParser.visitPassCullMode(context);
 }
 
 std::any PassParser::visitPassZClipMode(pd::EffectLabParser::PassZClipModeContext *context) {
-	return BaseParser::visitPassZClipMode(context);
+	return _rasterizerParser.visitPassZClipMode(context);
 }
 
 std::any PassParser::visitPassZTestMode(pd::EffectLabParser::PassZTestModeContext *context) {
-	return BaseParser::visitPassZTestMode(context);
+	return _depthStencilParser.visitPassZTestMode(context);
 }
 
-std::any PassParser::visitPassZWriteMode(pd::EffectLabParser::PassZWriteModeContext *context) {
-	return BaseParser::visitPassZWriteMode(context);
+std::any PassParser::visitPassZWriteMode(ParserDetails::EffectLabParser::PassZWriteModeContext *context) {
+	return _depthStencilParser.visitPassZWriteMode(context);
 }
 
-std::any PassParser::visitPassOffset(pd::EffectLabParser::PassOffsetContext *context) {
-	return BaseParser::visitPassOffset(context);
-}
-
-std::any PassParser::visitPassColorMask(pd::EffectLabParser::PassColorMaskContext *context) {
-	return BaseParser::visitPassColorMask(context);
-}
-
-std::any PassParser::visitPassBlend(pd::EffectLabParser::PassBlendContext *context) {
-	return BaseParser::visitPassBlend(context);
-}
-
-std::any PassParser::visitPassBlendOp(pd::EffectLabParser::PassBlendOpContext *context) {
-	return BaseParser::visitPassBlendOp(context);
+std::any PassParser::visitPassOffset(ParserDetails::EffectLabParser::PassOffsetContext *context) {
+	return _rasterizerParser.visitPassOffset(context);
 }
 
 std::any PassParser::visitPassAlphaToMask(pd::EffectLabParser::PassAlphaToMaskContext *context) {
-	return BaseParser::visitPassAlphaToMask(context);
+	return _blendParser.visitPassAlphaToMask(context);
+}
+
+std::any PassParser::visitPassConservative(pd::EffectLabParser::PassConservativeContext *context) {
+	return _rasterizerParser.visitPassConservative(context);
+}
+
+std::any PassParser::visitPassColorMask(pd::EffectLabParser::PassColorMaskContext *context) {
+	return _blendParser.visitPassColorMask(context);
+}
+
+std::any PassParser::visitPassBlend(pd::EffectLabParser::PassBlendContext *context) {
+	return _blendParser.visitPassBlend(context);
+}
+
+std::any PassParser::visitPassBlendOp(pd::EffectLabParser::PassBlendOpContext *context) {
+	return _depthStencilParser.visitPassBlendOp(context);
 }
 
 std::any PassParser::visitPassStencil(pd::EffectLabParser::PassStencilContext *context) {
-	return BaseParser::visitPassStencil(context);
+	return _depthStencilParser.visitPassStencil(context);
+}
+
+void PassParser::parserShaderThrow(const LocAndObject<std::string> &shader, 
+	const antlr4::Token *pToken,
+	std::string_view keyword) const
+{
+	Exception::Throw("{} {}:{} keyword {} redefinition in {} {}:{} the last value is {}",
+		_effectSourcePath,
+		pToken->getLine(),
+		pToken->getCharPositionInLine(),
+		keyword,
+		_effectSourcePath,
+		shader.line,
+		shader.column,
+		shader.get()
+	);
 }
 
 }

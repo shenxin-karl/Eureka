@@ -1,5 +1,4 @@
 #pragma once
-#define  NOMINMAX
 #include <queue>
 #include <Windows.h>
 #include <bitset>

@@ -1,5 +1,6 @@
 #pragma once
 #include <filesystem>
+#include "Foundation/NonCopyable.h"
 
 namespace Eureka {
 
@@ -9,10 +10,8 @@ class Pass;
 class PropertyBlock;
 class EffectCompiler;
 
-class Effect {
+class Effect : NonCopyable {
 	friend EffectCompiler;
-	Effect(const Effect &) = delete;
-	Effect &operator=(const Effect &) = delete;
 public:
 	Effect();
 	~Effect();

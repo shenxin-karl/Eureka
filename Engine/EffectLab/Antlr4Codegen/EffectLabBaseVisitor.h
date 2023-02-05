@@ -241,6 +241,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitPass_conservative(EffectLabParser::Pass_conservativeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitPass_stencil(EffectLabParser::Pass_stencilContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -306,6 +310,10 @@ public:
   }
 
   virtual std::any visitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassConservative(EffectLabParser::PassConservativeContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -24,15 +24,15 @@ public:
     T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
     T__56 = 57, T__57 = 58, T__58 = 59, T__59 = 60, T__60 = 61, T__61 = 62, 
     T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, T__66 = 67, T__67 = 68, 
-    IntLiteral = 69, FloatLiteral = 70, BooleanLiteral = 71, CullModeLabel = 72, 
-    ZClipModeLabel = 73, ZTestModeLabel = 74, ZWriteModeLabel = 75, ColorMaskChannel = 76, 
-    RenderTargetID = 77, BlendFactorLabel = 78, BlendOPLabel = 79, AlphaToMaskLabel = 80, 
-    StencilCompareLabel = 81, StencilOpLabel = 82, KWOff = 83, KWOn = 84, 
-    KWNever = 85, KWLess = 86, KWEqual = 87, KWLEqaul = 88, KWGreater = 89, 
-    KWNotEqual = 90, KWGEqual = 91, KWAlways = 92, KWKeep = 93, KWZero = 94, 
-    KWReplace = 95, KWIncrSat = 96, KWDecrSat = 97, KWInvert = 98, KWIncrWrap = 99, 
-    KWDecrWrap = 100, StringLiteral = 101, Identity = 102, WhiteSpace = 103, 
-    LineComment = 104, BlockComment = 105
+    T__68 = 69, T__69 = 70, IntLiteral = 71, FloatLiteral = 72, BooleanLiteral = 73, 
+    CullModeLabel = 74, ZTestModeLabel = 75, ZWriteModeLabel = 76, ColorMaskChannel = 77, 
+    RenderTargetID = 78, BlendFactorLabel = 79, BlendOPLabel = 80, AlphaToMaskLabel = 81, 
+    StencilCompareLabel = 82, StencilOpLabel = 83, KWOff = 84, KWOn = 85, 
+    KWNever = 86, KWLess = 87, KWEqual = 88, KWLEqaul = 89, KWGreater = 90, 
+    KWNotEqual = 91, KWGEqual = 92, KWAlways = 93, KWKeep = 94, KWZero = 95, 
+    KWReplace = 96, KWIncrSat = 97, KWDecrSat = 98, KWInvert = 99, KWIncrWrap = 100, 
+    KWDecrWrap = 101, KWTrue = 102, KWFalse = 103, StringLiteral = 104, 
+    Identity = 105, WhiteSpace = 106, LineComment = 107, BlockComment = 108
   };
 
   enum {
@@ -49,13 +49,13 @@ public:
     RulePass_render_queue = 32, RulePass_shader_feature = 33, RulePass_cull_mode = 34, 
     RulePass_zclip_mode = 35, RulePass_ztest_mode = 36, RulePass_zwrite_mode = 37, 
     RulePass_offset = 38, RulePass_color_mask = 39, RulePass_blend = 40, 
-    RulePass_blend_op = 41, RulePass_alpha_to_mask = 42, RulePass_stencil = 43, 
-    RulePass_block_item = 44, RuleStencil_ref = 45, RuleStencil_read_mask = 46, 
-    RuleStencil_write_mask = 47, RuleStencil_comp = 48, RuleStencil_pass_op = 49, 
-    RuleStencil_fail_op = 50, RuleStencil_zfail_op = 51, RuleStencil_comp_back_op = 52, 
-    RuleStancil_pass_back_op = 53, RuleStencil_fail_back_op = 54, RuleStencil_zfail_back_op = 55, 
-    RuleStencil_comp_front_op = 56, RuleStancil_pass_front_op = 57, RuleStencil_fail_front_op = 58, 
-    RuleStencil_zfail_front_op = 59, RuleStencil_item = 60
+    RulePass_blend_op = 41, RulePass_alpha_to_mask = 42, RulePass_conservative = 43, 
+    RulePass_stencil = 44, RulePass_block_item = 45, RuleStencil_ref = 46, 
+    RuleStencil_read_mask = 47, RuleStencil_write_mask = 48, RuleStencil_comp = 49, 
+    RuleStencil_pass_op = 50, RuleStencil_fail_op = 51, RuleStencil_zfail_op = 52, 
+    RuleStencil_comp_back_op = 53, RuleStancil_pass_back_op = 54, RuleStencil_fail_back_op = 55, 
+    RuleStencil_zfail_back_op = 56, RuleStencil_comp_front_op = 57, RuleStancil_pass_front_op = 58, 
+    RuleStencil_fail_front_op = 59, RuleStencil_zfail_front_op = 60, RuleStencil_item = 61
   };
 
   explicit EffectLabParser(antlr4::TokenStream *input);
@@ -118,6 +118,7 @@ public:
   class Pass_blendContext;
   class Pass_blend_opContext;
   class Pass_alpha_to_maskContext;
+  class Pass_conservativeContext;
   class Pass_stencilContext;
   class Pass_block_itemContext;
   class Stencil_refContext;
@@ -793,7 +794,7 @@ public:
   public:
     Pass_zclip_modeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *ZClipModeLabel();
+    antlr4::tree::TerminalNode *BooleanLiteral();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -984,6 +985,21 @@ public:
 
   Pass_alpha_to_maskContext* pass_alpha_to_mask();
 
+  class  Pass_conservativeContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_conservativeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *BooleanLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_conservativeContext* pass_conservative();
+
   class  Pass_stencilContext : public antlr4::ParserRuleContext {
   public:
     Pass_stencilContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -1073,6 +1089,17 @@ public:
     PassShaderFeatureContext(Pass_block_itemContext *ctx);
 
     Pass_shader_featureContext *pass_shader_feature();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  PassConservativeContext : public Pass_block_itemContext {
+  public:
+    PassConservativeContext(Pass_block_itemContext *ctx);
+
+    Pass_conservativeContext *pass_conservative();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 

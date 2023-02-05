@@ -119,13 +119,13 @@ void RootSignature::finalize(D3D12_ROOT_SIGNATURE_FLAGS flags) {
 		return;
 	}
 
-	D3D12_ROOT_SIGNATURE_DESC rootDesc(
+	D3D12_ROOT_SIGNATURE_DESC rootDesc{
 		static_cast<UINT>(_numRootParams),
 		_pRootParamArray.get(), 
 		static_cast<UINT>(_numStaticSamplers),
 		_pStaticSamplerArray.get(),
 		flags
-	);
+	};
 
 	// build root Signature 
 	WRL::ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -149,7 +149,7 @@ void RootSignature::finalize(D3D12_ROOT_SIGNATURE_FLAGS flags) {
 		IID_PPV_ARGS(&_pRootSignature)
 	));
 
-	// Í³¼ÆºÃÃ¿¸ö¸ù²ÎÊýÓÐ¶àÉÙ¸öÃèÊö·û
+	// Í³ï¿½Æºï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	size_t numDescriptors = 0;
 	for (size_t rootParamIndex = 0; rootParamIndex < _numRootParams; ++rootParamIndex) {
 		const RootParameter &rootParam = _pRootParamArray[rootParamIndex];
@@ -167,7 +167,7 @@ void RootSignature::finalize(D3D12_ROOT_SIGNATURE_FLAGS flags) {
 				if (range.NumDescriptors <= 0)
 					continue;
 
-				// Í³¼ÆÃ¿¸ö¼Ä´æÆ÷µÄÊ¹ÓÃ
+				// Í³ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
 				for (size_t j = 0; j < range.NumDescriptors; ++j, ++offset) {
 					size_t baseRegister = range.BaseShaderRegister + j;
 					RegisterSlot slot(range.RangeType, baseRegister);

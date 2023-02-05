@@ -51,7 +51,7 @@ public:
 	BufferView() = default;
 
 	template<typename ... Args> requires(sizeof...(Args) > 0)
-	BufferView(Args&&...args) : _view(std::forward<Args>(args)...) {}
+	BufferView(Args&&...args) : _view{ std::forward<Args>(args)... } {}
 	BufferView(D3D12_VERTEX_BUFFER_VIEW view) : _view(view) {}
 	BufferView(const BufferView &) = default;
 	BufferView(BufferView &&) noexcept = default;

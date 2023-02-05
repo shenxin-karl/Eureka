@@ -2,4 +2,8 @@
 
 namespace Eureka {
 
+Pass::Pass() {
+
+}
+
 }

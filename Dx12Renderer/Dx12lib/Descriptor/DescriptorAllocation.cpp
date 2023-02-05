@@ -4,13 +4,13 @@
 namespace dx12lib {
 
 DescriptorAllocation::DescriptorAllocation()
-: _numHandle(0), _handleSize(0), _pRefCount(nullptr), _baseHandle(D3D12_CPU_DESCRIPTOR_HANDLE(0))
+: _numHandle(0), _handleSize(0), _pRefCount(nullptr), _baseHandle(D3D12_CPU_DESCRIPTOR_HANDLE{ 0 })
 {
 }
 
 DescriptorAllocation::DescriptorAllocation(const DescriptorAllocation &other)
 : _numHandle(0), _handleSize(other._handleSize)
-, _pRefCount(nullptr), _baseHandle(D3D12_CPU_DESCRIPTOR_HANDLE(0)), _pPage(other._pPage)
+, _pRefCount(nullptr), _baseHandle(D3D12_CPU_DESCRIPTOR_HANDLE{ 0 }), _pPage(other._pPage)
 {
 	if (other._pRefCount == nullptr)
 		return;

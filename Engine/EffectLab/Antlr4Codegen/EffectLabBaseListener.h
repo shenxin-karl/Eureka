@@ -186,6 +186,9 @@ public:
   virtual void enterPass_alpha_to_mask(EffectLabParser::Pass_alpha_to_maskContext * /*ctx*/) override { }
   virtual void exitPass_alpha_to_mask(EffectLabParser::Pass_alpha_to_maskContext * /*ctx*/) override { }
 
+  virtual void enterPass_conservative(EffectLabParser::Pass_conservativeContext * /*ctx*/) override { }
+  virtual void exitPass_conservative(EffectLabParser::Pass_conservativeContext * /*ctx*/) override { }
+
   virtual void enterPass_stencil(EffectLabParser::Pass_stencilContext * /*ctx*/) override { }
   virtual void exitPass_stencil(EffectLabParser::Pass_stencilContext * /*ctx*/) override { }
 
@@ -236,6 +239,9 @@ public:
 
   virtual void enterPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext * /*ctx*/) override { }
   virtual void exitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext * /*ctx*/) override { }
+
+  virtual void enterPassConservative(EffectLabParser::PassConservativeContext * /*ctx*/) override { }
+  virtual void exitPassConservative(EffectLabParser::PassConservativeContext * /*ctx*/) override { }
 
   virtual void enterPassStencil(EffectLabParser::PassStencilContext * /*ctx*/) override { }
   virtual void exitPassStencil(EffectLabParser::PassStencilContext * /*ctx*/) override { }

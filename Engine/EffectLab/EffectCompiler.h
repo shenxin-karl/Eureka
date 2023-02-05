@@ -28,7 +28,7 @@ public:
 	) override;
 };
 
-class EffectCompiler : public BaseParser {
+class EffectCompiler : public BaseParser, private NonCopyable {
 public:
 	EffectCompiler();
 	~EffectCompiler() override;

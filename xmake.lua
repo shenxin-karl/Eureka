@@ -6,6 +6,7 @@ EUREKA_BINARY_DIR   = path.join(EUREKA_DIR, "Res")
 EUREKA_RENDERER_DIR = path.join(EUREKA_DIR, "Dx12Renderer")
 EUREKA_TOOL_DIR     = path.join(EUREKA_DIR, "Tool")
 
+add_cxxflags("-std:c++20", {tools = { "clang_cl" }})
 add_defines("NOMINMAX", "UNICODE", "_UNICODE")
 
 if is_mode("debug") then

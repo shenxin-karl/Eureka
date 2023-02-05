@@ -122,7 +122,7 @@ std::any PropertyBlockParser::visitProperty_name(ParserDetails::EffectLabParser:
 
 std::any PropertyBlockParser::visitProperty_description(ParserDetails::EffectLabParser::Property_descriptionContext *context) {
 	auto text = context->StringLiteral()->getText();
-	return text.substr(1, text.length() -2);
+	return extractString(text);
 }
 
 std::any PropertyBlockParser::visitPropertyItemBool(ParserDetails::EffectLabParser::PropertyItemBoolContext *context) {
