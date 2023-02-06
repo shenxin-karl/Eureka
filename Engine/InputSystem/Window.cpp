@@ -1,4 +1,3 @@
-#include <format>
 #include <cassert>
 #include "Window.h"
 #include "InputSystem.h"

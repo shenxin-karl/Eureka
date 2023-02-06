@@ -9,7 +9,7 @@
 #include <Dx12lib/Buffer/UAStructuredBuffer.h>
 #include "EurekaApplication.h"
 #include "InputSystem/InputSystem.h"
-#include "InputSystem/window.h"
+#include "InputSystem/Window.h"
 #include "Foundation/GameTimer.h"
 #include "Model/MeshManager.h"
 #include "ShaderHelper/GraphicsPipeline.h"
@@ -31,6 +31,7 @@
 #include "Foundation/UUIDRandomGenerator.h"
 #include "ShaderHelper/ShaderContentLoader.h"
 #include "ShaderHelper/ShaderLoader.h"
+#include <fmt/format.h>
 
 using namespace Math;
 
@@ -144,7 +145,7 @@ void EurekaApplication::onBeginTick(std::shared_ptr<GameTimer> pGameTimer) {
 	pCbPrePassVisitor->gMatPreViewport = float4x4(matClipToNdc * preFrameViewProj);
 
 	if (pGameTimer->oneSecondTrigger()) {
-		std::string titleName = std::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());
+		std::string titleName = fmt::format("{} fps:{} mspf:{} ", _title, pGameTimer->FPS(), pGameTimer->mspf());
 		_pInputSystem->pWindow->setShowTitle(titleName);
 	}
 }

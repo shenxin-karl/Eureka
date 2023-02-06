@@ -1,7 +1,7 @@
 #include <comdef.h>
 #include "Exception.h"
-
 #include "Dx12lib/dx12libStd.h"
+#include <fmt/format.h>
 
 namespace dx12lib {
 
@@ -10,7 +10,7 @@ Exception::Exception(const std::string &message, const std::source_location &sou
 , _func(sourceLocation.function_name())
 {
 	_message = message;
-	_whatBuffer = std::format("[Message]: {}\n[Function]: {}\n[File]: {}\n[Line]: {}\n",
+	_whatBuffer = fmt::format("[Message]: {}\n[Function]: {}\n[File]: {}\n[Line]: {}\n",
 		message, _func, _file, _line
 	);
 }
@@ -47,7 +47,7 @@ D3DException::D3DException(HRESULT hr, const std::string &errorMessage, const ch
 
 const char *D3DException::what() const noexcept {
 	if (_whatBuffer.empty())
-		_whatBuffer = std::format("file: {} line: {} message: {}", _file, _line, getHResultMessage());
+		_whatBuffer = fmt::format("file: {} line: {} message: {}", _file, _line, getHResultMessage());
 	return _whatBuffer.c_str();
 }
 
@@ -67,7 +67,7 @@ NotImplementedException::NotImplementedException(const char *func) : _func(func)
 
 const char * NotImplementedException::what() const noexcept {
 	if (_whatBuffer.empty())
-		_whatBuffer = std::format("Function: {} not implemented!", _func);
+		_whatBuffer = fmt::format("Function: {} not implemented!", _func);
 	return _whatBuffer.c_str();
 }
 

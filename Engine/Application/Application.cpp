@@ -1,8 +1,8 @@
 #include "Application.h"
 #include "InputSystem/InputSystem.h"
-#include "InputSystem/window.h"
-#include <dx12lib/Device/DeviceStd.h>
-#include <dx12lib/Context/ContextStd.h>
+#include "InputSystem/Window.h"
+#include <Dx12lib/Device/DeviceStd.h>
+#include <Dx12lib/Context/ContextStd.h>
 #include "Foundation/GameTimer.h"
 #include "EngineDefinition/EngineDefinition.h"
 

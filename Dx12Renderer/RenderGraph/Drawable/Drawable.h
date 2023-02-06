@@ -12,7 +12,6 @@ class Drawable : public IDrawable {
 public:
 	Drawable() = default;
 	~Drawable() override = default;
-	void submit(const TechniqueFlag &techniqueFlag) const = 0;
 	auto getGeometry() const -> std::shared_ptr<Geometry>;
 	auto getTransformCBuffer() const -> TransformCBufferPtr;
 	void setGeometry(std::shared_ptr<Geometry> pGeometry);

@@ -1,8 +1,8 @@
 #include "DXCShader.h"
-#include <format>
 #include <filesystem>
 #include <fstream>
 #include "Dx12lib/Tool/DxcModule.h"
+#include <fmt/format.h>
 
 namespace dx12lib {
 
@@ -74,7 +74,7 @@ void DXCShader::compile(const ShaderCompileDesc &desc) {
     for (size_t i = 0; desc.pMacro != nullptr && desc.pMacro[i].Name != nullptr; ++i) {
         auto key = desc.pMacro[i].Name;
         auto value = desc.pMacro[i].Definition == nullptr ? "1" : desc.pMacro[i].Definition;
-        compileFlags.emplace_back(to_wstring(std::format("-D{}={}", key, value)));
+        compileFlags.emplace_back(to_wstring(fmt::format("-D{}={}", key, value)));
     }
 
     std::vector<LPCWSTR> arguments;

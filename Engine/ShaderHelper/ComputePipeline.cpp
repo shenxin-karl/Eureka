@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <fmt/format.h>
 #include "ComputePipeline.h"
 #include "ShaderContentLoader.h"
 #include "ShaderHelper.h"
@@ -38,7 +39,7 @@ auto ComputePipeline::getPSO(const KeywordMask &keywordMask) const -> std::share
 	for (size_t i = 0; i < kMaxKeyword; ++i) {
 		if (keywordMask.getBitMask().test(i)) {
 			auto pKeyword = keywordMask.getKeywordByIndex(i);
-			key += std::format("#{}", *pKeyword);
+			key += fmt::format("#{}", *pKeyword);
 			macros.push_back(D3D_SHADER_MACRO{
 				.Name = pKeyword->c_str(),
 				.Definition = nullptr

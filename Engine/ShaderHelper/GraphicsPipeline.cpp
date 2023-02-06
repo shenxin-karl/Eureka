@@ -1,6 +1,7 @@
 #include <cassert>
 #include <Dx12lib/Device/Device.h>
 #include <filesystem>
+#include <fmt/format.h>
 #include <Dx12lib/Pipeline/PipelineStateObject.h>
 #include "GraphicsPipeline.h"
 #include "ShaderContentLoader.h"
@@ -120,7 +121,7 @@ auto GraphicsPipeline::getPSO(const KeywordMask &keywordMask) const -> std::shar
 	for (size_t i = 0; i < kMaxKeyword; ++i) {
 		if (keywordMask.getBitMask().test(i)) {
 			auto pKeyword = keywordMask.getKeywordByIndex(i);
-			key += std::format("#{}", *pKeyword);
+			key += fmt::format("#{}", *pKeyword);
 			macros.push_back(D3D_SHADER_MACRO{
 				.Name = pKeyword->c_str(),
 				.Definition = nullptr

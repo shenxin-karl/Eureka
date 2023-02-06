@@ -1,8 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include <DirectXMath.h>
-#include "dx12lib/dx12libStd.h"
-#include "dx12lib/Context/ContextProxy.hpp"
+#include "Dx12lib/dx12libStd.h"
+#include "Dx12lib/Context/ContextProxy.hpp"
 #include "InputSystem/InputSystem.h"
 
 namespace Eureka {

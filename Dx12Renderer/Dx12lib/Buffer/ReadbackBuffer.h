@@ -14,7 +14,7 @@ public:
 	size_t getElementCount() const final;
 	size_t getElementStride() const final;
 	void setCompletedCallback(const std::function<void(IReadBackBuffer *)> &callback) final;
-	~ReadBackBuffer() final;
+	~ReadBackBuffer() override;
 
 	template<typename T>
 	std::span<const T> visit() const {

@@ -1533,6 +1533,7 @@ namespace
                 case DDS_ALPHA_MODE_OPAQUE:
                 case DDS_ALPHA_MODE_CUSTOM:
                     return mode;
+                default: ;
                 }
             }
             else if ((MAKEFOURCC('D', 'X', 'T', '2') == header->ddspf.fourCC)

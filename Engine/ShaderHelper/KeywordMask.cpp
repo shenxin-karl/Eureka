@@ -1,8 +1,7 @@
 #include <cassert>
 #include "KeywordMask.h"
-
-#include <format>
 #include <unordered_set>
+#include <fmt/format.h>
 
 namespace Eureka {
 
@@ -126,7 +125,7 @@ void KeywordMask::handleShaderContent(const char *pShaderContent) {
 					std::string keyword(pStart, pEnd);
 					auto iter = featureKeywords.find(keyword);
 					if (iter != featureKeywords.end())
-						throw std::format("Duplicate shader_feature keyword: {}", keyword);
+						throw fmt::format("Duplicate shader_feature keyword: {}", keyword);
 
 					featureKeywords.insert(keyword);
 					keywords.emplace_back(std::move(keyword));

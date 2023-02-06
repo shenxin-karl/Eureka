@@ -82,15 +82,15 @@ std::string ShaderLoader::calcShaderCacheKey(const fs::path &filePath, const D3D
     for (size_t i = 0; defines != nullptr && defines[i].Name != nullptr; ++i) {
         auto key = defines[i].Name;
         auto value = defines[i].Definition == nullptr ? "1" : defines[i].Definition;
-        macros.emplace_back(std::format("_{}#{}", key, value));
+        macros.emplace_back(fmt::format("_{}#{}", key, value));
     }
 
     std::ranges::stable_sort(macros);
     fs::path baseName = filePath.stem();
     std::string targetFileName = std::to_string(fs::hash_value(filePath));
-    targetFileName += std::format("_{}", baseName.string());
-    targetFileName += std::format("_{}", entryPoint);
-    targetFileName += std::format("_{}", target);
+    targetFileName += fmt::format("_{}", baseName.string());
+    targetFileName += fmt::format("_{}", entryPoint);
+    targetFileName += fmt::format("_{}", target);
     for (auto &m : macros)
         targetFileName += m;
     return targetFileName;
@@ -100,9 +100,9 @@ dx12lib::ShaderCacheInfo ShaderLoader::getShaderCacheInfo(const std::string &sha
     auto csoUUID = UUID::to_string(instance()->_uuidGenerator.newUUID(shaderCacheKey + ".cso"));
     auto pdbUUID = UUID::to_string(instance()->_uuidGenerator.newUUID(shaderCacheKey + ".pdb"));
     auto refUUID = UUID::to_string(instance()->_uuidGenerator.newUUID(shaderCacheKey + ".ref"));
-    std::string csoFileName = std::format("{}_{}.cso", CompileMode, csoUUID);
-    std::string pdbFileName = std::format("{}_{}.pdb", CompileMode, pdbUUID);
-    std::string refFileName = std::format("{}_{}.ref", CompileMode, refUUID);
+    std::string csoFileName = fmt::format("{}_{}.cso", CompileMode, csoUUID);
+    std::string pdbFileName = fmt::format("{}_{}.pdb", CompileMode, pdbUUID);
+    std::string refFileName = fmt::format("{}_{}.ref", CompileMode, refUUID);
     dx12lib::ShaderCacheInfo cacheInfo;
     auto cachePath = PathManager::toTempPath(outputDirectory);
     cacheInfo.csoFilePath = cachePath / csoFileName;

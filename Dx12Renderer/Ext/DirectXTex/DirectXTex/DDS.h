@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------
-// dds.h
+// DDS.h
 //
 // This header defines constants and structures that are useful when parsing 
 // DDS files.  DDS files were originally designed to use several structures

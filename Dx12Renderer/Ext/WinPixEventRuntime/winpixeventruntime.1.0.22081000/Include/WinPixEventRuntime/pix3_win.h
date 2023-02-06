@@ -75,7 +75,7 @@ namespace PixImpl
             return nullptr;
         }
 
-        return fn;
+        return (void *)fn;
     }
 }
 

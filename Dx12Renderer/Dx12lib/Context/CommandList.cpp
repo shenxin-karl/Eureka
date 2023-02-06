@@ -1,5 +1,4 @@
-﻿#include <format>
-#include <Dx12lib/Context/CommandList.h>
+﻿#include <Dx12lib/Context/CommandList.h>
 #include <Dx12lib/Device/Device.h>
 #include <Dx12lib/Context/FrameResourceQueue.h>
 #include <Dx12lib/Context/CommandQueue.h>
@@ -8,7 +7,7 @@
 #include <Dx12lib/Pipeline/PipelineStateObject.h>
 #include <Dx12lib/Pipeline/RootSignature.h>
 #include <Dx12lib/Tool/MakeObejctTool.hpp>
-#include <Dx12lib/Buffer/ReadBackBuffer.h>
+#include <Dx12lib/Buffer/ReadbackBuffer.h>
 #include <Dx12lib/Buffer/SRStructuredBuffer.h>
 #include <Dx12lib/Buffer/FRSRStructuredBuffer.hpp>
 #include <Dx12lib/Buffer/ConstantBuffer.h>
@@ -17,6 +16,7 @@
 #include <Dx12lib/Texture/Texture.h>
 #include <Dx12lib/Texture/GenerateMipsPSO.h>
 #include <iostream>
+#include <fmt/format.h>
 
 #if defined(_DEBUG) || defined(DEBUG)
 	#define DBG_CALL(f) f;
@@ -170,7 +170,7 @@ void CommandList::setConstantBufferView(const std::string &boundResourceName, co
 	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
 #if defined(_DEBUG) || defined(DEBUG)
 	if (boundResource == std::nullopt) {
-		std::cerr << std::format(
+		std::cerr << fmt::format(
 			"PSO Name: {} There is no {} bound resource\n",
 			_currentGPUState.pPSO->getName(),
 			boundResourceName
@@ -216,7 +216,7 @@ void CommandList::setShaderResourceView(const std::string &boundResourceName,
 	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
 #if defined(_DEBUG) || defined(DEBUG)
 	if (boundResource == std::nullopt) {
-		std::cerr << std::format(
+		std::cerr << fmt::format(
 			"PSO Name: {} There is no {} bound resource\n",
 			_currentGPUState.pPSO->getName(),
 			boundResourceName
@@ -576,7 +576,7 @@ void CommandList::setUnorderedAccessView(const std::string &boundResourceName,
 	auto boundResource = _currentGPUState.pPSO->getBoundResource(boundResourceName);
 #if defined(_DEBUG) || defined(DEBUG)
 	if (boundResource == std::nullopt) {
-		std::cerr << std::format(
+		std::cerr << fmt::format(
 			"PSO Name: {} There is no {} bound resource\n",
 			_currentGPUState.pPSO->getName(),
 			boundResourceName
@@ -1076,7 +1076,7 @@ bool CommandList::CommandListState::debugCheckDrawIndex() const {
 
 bool CommandList::CommandListState::checkVertexBuffer() const {
 	for (auto *pVertexBuffer : pVertexBuffers) {
-		if (pVertexBuffers != nullptr)
+		if (pVertexBuffer != nullptr)
 			return true;
 	}
 	return false;

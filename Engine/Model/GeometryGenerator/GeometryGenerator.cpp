@@ -1,9 +1,6 @@
 #include "GeometryGenerator.h"
-
-#include <format>
-#include <iostream>
-
 #include "Model/RenderItem/RenderItem.h"
+#include <fmt/format.h>
 
 using namespace Math;
 
@@ -226,7 +223,7 @@ auto GeometryGenerator::createCylinder(float bottomRadius, float topRadius, floa
 	generateTangentAndNormal(vertices, indices, normals, tangents);
 
 	auto pPartMesh = std::make_shared<PartMesh>();
-	pPartMesh->_meshName = std::format("Cylinder_{}_{}_{}_{}_{}", bottomRadius, topRadius, height, stackCount, sliceCount);
+	pPartMesh->_meshName = fmt::format("Cylinder_{}_{}_{}_{}_{}", bottomRadius, topRadius, height, stackCount, sliceCount);
 	pPartMesh->_positions = std::move(positions);
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
@@ -300,7 +297,7 @@ auto GeometryGenerator::createBox(float width, float height, float depth,
 	generateTangentAndNormal(vertices, indices, normals, tangents);
 
 	auto pPartMesh = std::make_shared<PartMesh>();
-	pPartMesh->_meshName = std::format("Box_{}_{}_{}", width, height, depth);
+	pPartMesh->_meshName = fmt::format("Box_{}_{}_{}", width, height, depth);
 	pPartMesh->_positions = std::move(positions);
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
@@ -356,7 +353,7 @@ auto GeometryGenerator::createSphere(float radius, uint32 numSubdivisions) const
 	generateTangentAndNormal(vertices, indices, normals, tangents);
 
 	auto pPartMesh = std::make_shared<PartMesh>();
-	pPartMesh->_meshName = std::format("Sphere_{}_{}", radius, numSubdivisions);
+	pPartMesh->_meshName = fmt::format("Sphere_{}_{}", radius, numSubdivisions);
 	pPartMesh->_positions = std::move(positions);
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
@@ -404,7 +401,7 @@ auto GeometryGenerator::createGrid(float width, float depth, uint32 m, uint32 n)
 	generateTangentAndNormal(vertices, indices, normals, tangents);
 
 	auto pPartMesh = std::make_shared<PartMesh>();
-	pPartMesh->_meshName = std::format("Grid_{}_{}_{}_{}", width, depth, m, n);
+	pPartMesh->_meshName = fmt::format("Grid_{}_{}_{}_{}", width, depth, m, n);
 	pPartMesh->_positions = std::move(positions);
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);
@@ -442,7 +439,7 @@ auto GeometryGenerator::createQuad(float x, float y, float w, float h, float dep
 	generateTangentAndNormal(vertices, indices, normals, tangents);
 
 	auto pPartMesh = std::make_shared<PartMesh>();
-	pPartMesh->_meshName = std::format("Quad_{}_{}_{}_{}", x, y, w, h, depth);
+	pPartMesh->_meshName = fmt::format("Quad_{}_{}_{}_{}", x, y, w, h, depth);
 	pPartMesh->_positions = std::move(positions);
 	pPartMesh->_normals = std::move(normals);
 	pPartMesh->_texcoord0 = std::move(texcoord);

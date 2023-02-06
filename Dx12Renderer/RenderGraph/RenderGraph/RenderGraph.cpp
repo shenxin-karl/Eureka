@@ -1,8 +1,8 @@
 #include "RenderGraph.h"
-#include <format>
 #include <iostream>
 #include "RenderGraph/Pass/ExecutablePass.h"
 #include "RenderGraph/Pass/RenderQueuePass.h"
+#include <fmt/format.h>
 
 namespace rgph {
 
@@ -100,7 +100,7 @@ void RenderGraph::finalize() {
 							std::string sourceName = "nil";
 							if (pResourceSource != nullptr) {
 								sourceState = pPassResource->isFinished() ? "true" : "false";
-								sourceName = std::format(
+								sourceName = fmt::format(
 									"{}.{}",
 									pResourceSource->getExecutablePass()->getPassName(),
 									pResourceSource->getResourceName()

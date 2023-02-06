@@ -733,6 +733,7 @@ bool hasAlpha(DXGI_FORMAT format) {
 	case DXGI_FORMAT_B4G4R4A4_UNORM:
 		hasAlpha = true;
 		break;
+	default: ;
 	}
 	return hasAlpha;
 }
@@ -870,6 +871,8 @@ DXGI_FORMAT getSRGBFormat(DXGI_FORMAT format) {
 	case DXGI_FORMAT_BC7_UNORM:
 		srgbFormat = DXGI_FORMAT_BC7_UNORM_SRGB;
 		break;
+	default:
+		break;
 	}
 	return srgbFormat;
 }
@@ -890,6 +893,8 @@ DXGI_FORMAT getUAVCompatableFormat(DXGI_FORMAT format) {
 	case DXGI_FORMAT_R32_TYPELESS:
 	case DXGI_FORMAT_D32_FLOAT:
 		uavFormat = DXGI_FORMAT_R32_FLOAT;
+		break;
+	default:
 		break;
 	}
 	return uavFormat;
@@ -1001,6 +1006,8 @@ DXGI_FORMAT getTypelessFormat(DXGI_FORMAT format) {
 	case DXGI_FORMAT_BC7_UNORM:
 	case DXGI_FORMAT_BC7_UNORM_SRGB:
 		typelessFormat = DXGI_FORMAT_BC7_TYPELESS;
+		break;
+	default:
 		break;
 	}
 	return typelessFormat;

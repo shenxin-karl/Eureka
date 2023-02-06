@@ -1,5 +1,4 @@
 #include "FXCShader.h"
-#include <format>
 
 namespace dx12lib {
 

@@ -1,11 +1,10 @@
-#include <format>
 #include <iostream>
 #include "RenderItem.h"
-
 #include "Material/Material.h"
 #include "Model/IModel.hpp"
 #include "RenderGraph/Material/Material.h"
 #include "Model/MeshManager.h"
+#include <fmt/format.h>
 
 using namespace Math;
 
@@ -40,59 +39,59 @@ bool Eureka::RenderItem::buildVertexDataInput(dx12lib::IDirectContext &directCtx
 	std::shared_ptr<dx12lib::VertexBuffer> pVertexBuffer;
 	switch (shaderLayoutIndex) {
 	case rgph::ShaderLayoutIndex::Position:
-		name = std::format("{}_{}", pMesh->getMeshName(), "POSITION");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "POSITION");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getPositions());
 		break;
 	case rgph::ShaderLayoutIndex::Normal:
-		name = std::format("{}_{}", pMesh->getMeshName(), "NORMAL");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "NORMAL");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getNormals());
 		break;
 	case rgph::ShaderLayoutIndex::Tangent:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TANGENT");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TANGENT");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTangents());
 		break;
 	case rgph::ShaderLayoutIndex::Color:
-		name = std::format("{}_{}", pMesh->getMeshName(), "COLOR");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "COLOR");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getColors());
 		break;
 	case rgph::ShaderLayoutIndex::TexCoord0:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD0");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TEXCOORD0");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord0());
 		break;
 	case rgph::ShaderLayoutIndex::TexCoord1:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD1");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TEXCOORD1");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord1());
 		break;
 	case rgph::ShaderLayoutIndex::TexCoord2:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD2");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TEXCOORD2");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord2());
 		break;
 	case rgph::ShaderLayoutIndex::TexCoord3:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD3");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TEXCOORD3");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord3());
 		break;
 	case rgph::ShaderLayoutIndex::TexCoord4:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD4");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TEXCOORD4");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord4());
 		break;
 	case rgph::ShaderLayoutIndex::TexCoord5:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD5");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TEXCOORD5");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord5());
 		break;
 	case rgph::ShaderLayoutIndex::TexCoord6:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD6");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TEXCOORD6");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord6());
 		break;
 	case rgph::ShaderLayoutIndex::TexCoord7:
-		name = std::format("{}_{}", pMesh->getMeshName(), "TEXCOORD7");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "TEXCOORD7");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getTexCoord7());
 		break;
 	case rgph::ShaderLayoutIndex::BoneIndices:
-		name = std::format("{}_{}", pMesh->getMeshName(), "BONEINDICES");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "BONEINDICES");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getBoneIndices());
 		break;
 	case rgph::ShaderLayoutIndex::BoneWeights:
-		name = std::format("{}_{}", pMesh->getMeshName(), "BONEWEIGHTS");
+		name = fmt::format("{}_{}", pMesh->getMeshName(), "BONEWEIGHTS");
 		pVertexBuffer = buildVertexDataInputImpl(directCtx, name, pMesh->getBoneWeight());
 		break;
 	default:

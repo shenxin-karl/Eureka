@@ -1,9 +1,9 @@
 #include <filesystem>
-#include <format>
 #include <DirectXMath.h>
 #include "ALNode.h"
 #include "ALMesh.h"
 #include "ALTree.h"
+#include <fmt/format.h>
 
 namespace Eureka {
 
@@ -74,7 +74,7 @@ void ALNode::saveToObj(const std::string &direction) const {
 	for (auto &pMesh : _meshs) {
 		const auto &meshName = pMesh->getMeshName();
 		std::filesystem::path path(meshName);
-		std::string fileName = std::format("{}{}_.obj", direction, path.filename().string());
+		std::string fileName = fmt::format("{}{}_.obj", direction, path.filename().string());
 		bool res = pMesh->saveToObj(fileName);
 		assert(res);
 	}

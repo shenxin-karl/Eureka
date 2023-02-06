@@ -94,7 +94,7 @@ void ShaderHelper::generateRootSignature(std::shared_ptr<dx12lib::Device> pDevic
 
 	auto sortViews = [&](std::vector<ShaderInput> &views) {
 		std::sort(views.begin(), views.end(), [](const ShaderInput &lhs, const ShaderInput &rhs) {
-			if (lhs.shaderRegister.space < lhs.shaderRegister.space)
+			if (lhs.shaderRegister.space < rhs.shaderRegister.space)
 				return true;
 			return lhs.shaderRegister.slot.getRegisterId() < rhs.shaderRegister.slot.getRegisterId();
 		});
@@ -159,7 +159,7 @@ void ShaderHelper::generateVertexInput(std::shared_ptr<dx12lib::GraphicsPSO> pGr
 	std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
 	for (UINT i = 0; i < desc.InputParameters; ++i) {
 		pShaderRef->GetInputParameterDesc(i, &signDesc);
-		std::string semantic = std::format("{}{}", signDesc.SemanticName, signDesc.SemanticIndex);
+		std::string semantic = fmt::format("{}{}", signDesc.SemanticName, signDesc.SemanticIndex);
 		rgph::ShaderLayoutIndex index = rgph::ShaderLayoutIndex::stringToEnum(semantic);
 		assert(index != rgph::ShaderLayoutIndex::Nothing);
 		auto inputDesc = rgph::ShaderLayoutIndex::getInputLayoutByEnum(index);
@@ -172,7 +172,7 @@ void ShaderHelper::generateVertexInput(std::shared_ptr<dx12lib::GraphicsPSO> pGr
 rgph::ShaderLayoutMask ShaderHelper::calcShaderLayoutMask(const std::vector<D3D12_INPUT_ELEMENT_DESC> &inputLayout) {
 	rgph::ShaderLayoutMask mask;
 	for (const auto &desc : inputLayout) {
-		std::string semantic = std::format("{}{}", desc.SemanticName, desc.SemanticIndex);
+		std::string semantic = fmt::format("{}{}", desc.SemanticName, desc.SemanticIndex);
 		rgph::ShaderLayoutIndex index = rgph::ShaderLayoutIndex::stringToEnum(semantic);
 		assert(index != rgph::ShaderLayoutIndex::Nothing);
 		mask |= index;

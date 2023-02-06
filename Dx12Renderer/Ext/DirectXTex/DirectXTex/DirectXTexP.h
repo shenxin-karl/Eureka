@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-// DirectXTexp.h
+// DirectXTexP.h
 //  
 // DirectX Texture Library - Private header
 //
@@ -95,7 +95,7 @@
 
 #include <ole2.h>
 
-#include "directxtex.h"
+#include "DirectXTex.h"
 
 #include <wincodec.h>
 

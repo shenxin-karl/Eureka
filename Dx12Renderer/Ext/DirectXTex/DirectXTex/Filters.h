@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-// filters.h
+// Filters.h
 //  
 // Utility header with helpers for implementing image filters
 //

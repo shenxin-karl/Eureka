@@ -9,9 +9,9 @@
 // http://go.microsoft.com/fwlink/?LinkId=248926
 //-------------------------------------------------------------------------------------
 
-#include "DirectXTexp.h"
+#include "DirectXTexP.h"
 
-#include "dds.h"
+#include "DDS.h"
 
 using namespace DirectX;
 

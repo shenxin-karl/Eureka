@@ -1,9 +1,9 @@
 #include "ALTree.h"
 #include "ALMesh.h"
 #include <fstream>
-#include <format>
 #include <assimp/mesh.h>
 #include <assimp/vector3.h>
+#include <fmt/format.h>
 
 namespace Eureka {
 
@@ -11,7 +11,7 @@ using namespace Math;
 
 ALMesh::ALMesh(ALTree *pTree, std::string_view modelPath, size_t nodeIdx, size_t meshIdx, const aiMesh *pAiMesh)
 : _pMaterial(pTree->getMaterial(pAiMesh->mMaterialIndex)), _meshIdx(meshIdx)
-, _meshName(std::format("{}_{}_{}", modelPath, nodeIdx, meshIdx))
+, _meshName(fmt::format("{}_{}_{}", modelPath, nodeIdx, meshIdx))
 {
 	_positions.reserve(pAiMesh->mNumVertices);
 	if (pAiMesh->HasNormals())

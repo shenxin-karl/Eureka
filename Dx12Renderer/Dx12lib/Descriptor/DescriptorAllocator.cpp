@@ -1,4 +1,3 @@
-#pragma once
 #include <Dx12lib/Device/Device.h>
 #include <Dx12lib/Descriptor/DescriptorAllocator.h>
 #include <Dx12lib/Descriptor/DescriptorAllocatorPage.h>

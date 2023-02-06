@@ -14,6 +14,8 @@ function link_dxc_compiler()
     add_links("dxcompiler")
 end
 
+add_requires("fmt")
+
 target("Dx12lib")
     set_languages("c++latest")
     set_group("Dx12Renderer")
@@ -34,6 +36,7 @@ target("Dx12lib")
     add_syslinks("dxgi")
     add_links("WinPixEventRuntime")
     add_deps("DirectXTex")
+    add_packages("fmt", {public=true})
     link_dxc_compiler()
 target_end()
 
