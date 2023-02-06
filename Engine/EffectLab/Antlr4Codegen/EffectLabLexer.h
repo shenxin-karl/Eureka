@@ -23,16 +23,16 @@ public:
     T__44 = 45, T__45 = 46, T__46 = 47, T__47 = 48, T__48 = 49, T__49 = 50, 
     T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
     T__56 = 57, T__57 = 58, T__58 = 59, T__59 = 60, T__60 = 61, T__61 = 62, 
-    T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, T__66 = 67, T__67 = 68, 
-    T__68 = 69, T__69 = 70, IntLiteral = 71, FloatLiteral = 72, BooleanLiteral = 73, 
-    CullModeLabel = 74, ZTestModeLabel = 75, ZWriteModeLabel = 76, ColorMaskChannel = 77, 
-    RenderTargetID = 78, BlendFactorLabel = 79, BlendOPLabel = 80, AlphaToMaskLabel = 81, 
-    StencilCompareLabel = 82, StencilOpLabel = 83, KWOff = 84, KWOn = 85, 
-    KWNever = 86, KWLess = 87, KWEqual = 88, KWLEqaul = 89, KWGreater = 90, 
-    KWNotEqual = 91, KWGEqual = 92, KWAlways = 93, KWKeep = 94, KWZero = 95, 
-    KWReplace = 96, KWIncrSat = 97, KWDecrSat = 98, KWInvert = 99, KWIncrWrap = 100, 
-    KWDecrWrap = 101, KWTrue = 102, KWFalse = 103, StringLiteral = 104, 
-    Identity = 105, WhiteSpace = 106, LineComment = 107, BlockComment = 108
+    T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, T__66 = 67, IntLiteral = 68, 
+    FloatLiteral = 69, BooleanLiteral = 70, CullModeLabel = 71, RenderQueueLabel = 72, 
+    ZTestModeLabel = 73, ZWriteModeLabel = 74, ColorMaskChannel = 75, RenderTargetID = 76, 
+    BlendFactorLabel = 77, BlendOPLabel = 78, AlphaToMaskLabel = 79, StencilCompareLabel = 80, 
+    StencilOpLabel = 81, KWOff = 82, KWOn = 83, KWNever = 84, KWLess = 85, 
+    KWEqual = 86, KWLEqaul = 87, KWGreater = 88, KWNotEqual = 89, KWGEqual = 90, 
+    KWAlways = 91, KWKeep = 92, KWZero = 93, KWReplace = 94, KWIncrSat = 95, 
+    KWDecrSat = 96, KWInvert = 97, KWIncrWrap = 98, KWDecrWrap = 99, KWTrue = 100, 
+    KWFalse = 101, StringLiteral = 102, Identity = 103, WhiteSpace = 104, 
+    LineComment = 105, BlockComment = 106
   };
 
   explicit EffectLabLexer(antlr4::CharStream *input);

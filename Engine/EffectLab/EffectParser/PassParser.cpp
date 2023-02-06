@@ -15,7 +15,7 @@ PassParser::PassParser(std::string effectSourcePath)
 	_pKeywordSet = std::make_shared<ShaderKeywordSet>();
 }
 
-auto PassParser::parserPass(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr<Pass> {
+auto PassParser::parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr<Pass> {
 	_pass = std::make_unique<Pass>();
 	_pass->_tag = std::any_cast<std::string>(visitPass_tag(ctx->pass_tag()));
 	for (auto *item : ctx->pass_block_item()) {
@@ -24,27 +24,20 @@ auto PassParser::parserPass(pd::EffectLabParser::PassContext *ctx) -> std::uniqu
 	return std::move(_pass);
 }
 
+std::any PassParser::visitPass_tag(ParserDetails::EffectLabParser::Pass_tagContext *context) {
+	auto text = context->StringLiteral()->getText();
+	return extractString(text);
+}
+
 std::any PassParser::visitPassVertexShader(pd::EffectLabParser::PassVertexShaderContext *context) {
 	auto token = context->getStart();
-	if (_vertexShader.hasValue()) {
+	if (_vertexShader.valid()) {
 		parserShaderThrow(_vertexShader, token, "Vertex");
 	}
 
-	auto text = extractString(context->pass_vertex_shader()->StringLiteral()->getText());
+	auto text = context->pass_vertex_shader()->Identity()->getText();
 	_vertexShader.setLocation(token);
-	_vertexShader.set(text);
-	return NullAny;
-}
-
-std::any PassParser::visitPassGeometryShader(pd::EffectLabParser::PassGeometryShaderContext *context) {
-	auto token = context->getStart();
-	if (_geometryShader.hasValue()) {
-		parserShaderThrow(_geometryShader, token, "Geometry");
-	}
-
-	auto text = extractString(context->pass_geometry_shader()->StringLiteral()->getText());
-	_geometryShader.setLocation(token);
-	_geometryShader.set(text);
+	_pass->_vertexEntryPoint = std::move(text);
 	return NullAny;
 }
 
@@ -54,9 +47,10 @@ std::any PassParser::visitPassHullShader(pd::EffectLabParser::PassHullShaderCont
 		parserShaderThrow(_hullShader, token, "Hull");
 	}
 
-	auto text = extractString(context->pass_hull_shader()->StringLiteral()->getText());
+	auto text = context->pass_hull_shader()->Identity()->getText();
 	_hullShader.setLocation(token);
 	_hullShader.set(text);
+	_pass->_hullEntryPoint = std::move(text);
 	return NullAny;
 }
 
@@ -66,9 +60,23 @@ std::any PassParser::visitPassDomainShader(pd::EffectLabParser::PassDomainShader
 		parserShaderThrow(_domainShader, token, "Domain");
 	}
 
-	auto text = extractString(context->pass_domain_shader()->StringLiteral()->getText());
+	auto text = context->pass_domain_shader()->Identity()->getText();
 	_domainShader.setLocation(token);
 	_domainShader.set(text);
+	_pass->_domainEntryPoint = std::move(text);
+	return NullAny;
+}
+
+std::any PassParser::visitPassGeometryShader(pd::EffectLabParser::PassGeometryShaderContext *context) {
+	auto token = context->getStart();
+	if (_geometryShader.hasValue()) {
+		parserShaderThrow(_geometryShader, token, "Geometry");
+	}
+
+	auto text = context->pass_geometry_shader()->Identity()->getText();
+	_geometryShader.setLocation(token);
+	_geometryShader.set(text);
+	_pass->_geometryEntryPoint = std::move(text);
 	return NullAny;
 }
 
@@ -78,9 +86,10 @@ std::any PassParser::visitPassPixelShader(pd::EffectLabParser::PassPixelShaderCo
 		parserShaderThrow(_pixelShader, token, "Pixel");
 	}
 
-	auto text = extractString(context->pass_pixel_shader()->StringLiteral()->getText());
+	auto text = context->pass_pixel_shader()->Identity()->getText();
 	_pixelShader.setLocation(token);
 	_pixelShader.set(text);
+	_pass->_pixelEntryPoint = std::move(text);
 	return NullAny;
 }
 
@@ -94,7 +103,7 @@ std::any PassParser::visitPassRenderQueue(pd::EffectLabParser::PassRenderQueueCo
 		);
 	}
 
-	auto text = context->getText();
+	auto text = context->pass_render_queue()->RenderQueueLabel()->getText();
 	if (text == "BackGround") {
 		_renderQueueLabel.set(RenderQueueLabel::BackGround);
 	} else if (text == "Geometry") {
@@ -110,12 +119,13 @@ std::any PassParser::visitPassRenderQueue(pd::EffectLabParser::PassRenderQueueCo
 	}
 
 	_renderQueueLabel.setLocation(token);
+	_pass->_renderQueue = _renderQueueLabel.get();
 	return NullAny;
 }
 
 std::any PassParser::visitPassShaderFeature(pd::EffectLabParser::PassShaderFeatureContext *context) {
 	ShaderKeywordSet::ShaderFeature shaderFeature;
-	for (const auto &macroNode : context->pass_shader_feature()->StringLiteral()) {
+	for (const auto &macroNode : context->pass_shader_feature()->Identity()) {
 		auto token = macroNode->getSymbol();
 		auto macro = extractString(macroNode->getText());
 		auto iter = _macroLocationMap.find(macro);

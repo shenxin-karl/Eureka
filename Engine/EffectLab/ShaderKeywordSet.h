@@ -18,8 +18,8 @@ public:
 	bool enable(ShaderKeyword &keyword, const std::string &key) const;
 	bool disable(ShaderKeyword &keyword, const std::string &key) const;
 	bool isEnable(const ShaderKeyword &keyword, const std::string &key) const;
-	void addShaderFeatures(ShaderFeature features);
 	auto find(const std::string &key) const -> std::optional<FindResult>;
+	void addShaderFeatures(ShaderFeature features);
 private:
 	std::vector<ShaderFeature> _features;
 };

@@ -12,6 +12,7 @@ public:
 	std::any visitPassOffset(pd::EffectLabParser::PassOffsetContext *context) override;
 	std::any visitPassConservative(pd::EffectLabParser::PassConservativeContext *context) override;
 private:
+	static bool visitBoolLiteral(const antlr4::tree::TerminalNode *node);
 	struct RasterizerOffset {
 		float bias;
 		float slopeScaleDepthBias;
@@ -19,7 +20,7 @@ private:
 private:
 	std::string						    _effectSourcePath;
 	LocAndObject<std::string>			_cullMode;
-	LocAndObject<std::string>			_zClipMode;
+	LocAndObject<bool>					_zClipMode;
 	LocAndObject<RasterizerOffset>		_offset;
 	D3D12_RASTERIZER_DESC				_rasterizerDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 };

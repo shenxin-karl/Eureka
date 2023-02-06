@@ -48,18 +48,6 @@ bool ShaderKeywordSet::isEnable(const ShaderKeyword &keyword, const std::string 
 	return keyword.getBitset().test(pFindResult->bitIndex);
 }
 
-void ShaderKeywordSet::addShaderFeatures(ShaderFeature features) {
-	std::unordered_set<std::string> hashSet(features.begin(), features.end());
-	for (const auto &shaderFeatures : _features) {
-		for (const auto &key : shaderFeatures) {
-			if (hashSet.contains(key)) {
-				Exception::Throw("ShaderKeywordSet::addShaderFeatures redefinition key {} !", key);
-			}
-		}
-	}
-	_features.push_back(std::move(features));
-}
-
 auto ShaderKeywordSet::find(const std::string &key) const -> std::optional<FindResult> {
 	size_t bitIndex = 0;
 	for (size_t featureIndex = 0; featureIndex < _features.size(); ++featureIndex) {
@@ -75,6 +63,18 @@ auto ShaderKeywordSet::find(const std::string &key) const -> std::optional<FindR
 		}
 	}
 	return std::nullopt;
+}
+
+void ShaderKeywordSet::addShaderFeatures(ShaderFeature features) {
+	std::unordered_set<std::string> hashSet(features.begin(), features.end());
+	for (const auto &shaderFeatures : _features) {
+		for (const auto &key : shaderFeatures) {
+			if (hashSet.contains(key)) {
+				Exception::Throw("ShaderKeywordSet::addShaderFeatures redefinition key {} !", key);
+			}
+		}
+	}
+	_features.push_back(std::move(features));
 }
 
 }

@@ -20,7 +20,10 @@ Properties {
 
 
 Pass("BasePass") {
-    Vertex: "vert"
-    Fragment: "frag"
-    ShaderFeature: "aaa"
+    VertexShader: vert
+    PixelShader: frag
+    ShaderFeature: _AAA _BBB _CCC
+    RenderQueue: Geometry
+    Cull: Back
+    
 }

@@ -5,6 +5,8 @@
 #include "EffectParser/PropertyBlockParser.h"
 #include <fstream>
 
+#include "EffectParser/PassParser.h"
+
 namespace Eureka {
 
 void EffectErrorListener::syntaxError(antlr4::Recognizer *recognizer, 
@@ -57,6 +59,12 @@ std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context
 		PropertyBlockParser propertyBlockParser(_effectSourcePath);
 		pEffect->_propertyBlock = propertyBlockParser.parserPropertyBlock(context->property_block());
 	}
+
+	for (auto *pPassCtx : context->pass()) {
+		PassParser passParser(_effectSourcePath);
+		pEffect->_passes.push_back(passParser.parse(pPassCtx));
+	}
+
 	return pEffect;
 }
 

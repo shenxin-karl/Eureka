@@ -11,11 +11,12 @@ class Pass;
 class PassParser : public BaseParser {
 public:
 	PassParser(std::string effectSourcePath);
-	auto parserPass(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr<Pass>;
+	auto parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr<Pass>;
+	std::any visitPass_tag(ParserDetails::EffectLabParser::Pass_tagContext *context) override;
 	std::any visitPassVertexShader(pd::EffectLabParser::PassVertexShaderContext *context) override;
-	std::any visitPassGeometryShader(pd::EffectLabParser::PassGeometryShaderContext *context) override;
 	std::any visitPassHullShader(pd::EffectLabParser::PassHullShaderContext *context) override;
 	std::any visitPassDomainShader(pd::EffectLabParser::PassDomainShaderContext *context) override;
+	std::any visitPassGeometryShader(pd::EffectLabParser::PassGeometryShaderContext *context) override;
 	std::any visitPassPixelShader(pd::EffectLabParser::PassPixelShaderContext *context) override;
 	std::any visitPassRenderQueue(pd::EffectLabParser::PassRenderQueueContext *context) override;
 	std::any visitPassShaderFeature(pd::EffectLabParser::PassShaderFeatureContext *context) override;
@@ -36,9 +37,9 @@ private:
 	std::string									_effectSourcePath;
 	std::unique_ptr<Pass>						_pass;
 	LocAndObject<std::string>					_vertexShader;
-	LocAndObject<std::string>					_geometryShader;
 	LocAndObject<std::string>					_hullShader;
 	LocAndObject<std::string>					_domainShader;
+	LocAndObject<std::string>					_geometryShader;
 	LocAndObject<std::string>					_pixelShader;
 	LocAndObject<RenderQueueLabel>				_renderQueueLabel;
 	std::shared_ptr<ShaderKeywordSet>			_pKeywordSet;
