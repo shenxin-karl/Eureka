@@ -18,11 +18,12 @@ private:
 		float slopeScaleDepthBias;
 	};
 private:
-	std::string						    _effectSourcePath;
-	LocAndObject<std::string>			_cullMode;
-	LocAndObject<bool>					_zClipMode;
-	LocAndObject<RasterizerOffset>		_offset;
-	D3D12_RASTERIZER_DESC				_rasterizerDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	std::string						_effectSourcePath;
+	LocAndObject<std::string>		_cullMode;
+	LocAndObject<std::string>		_zClipMode;
+	LocAndObject<RasterizerOffset>	_offset;
+	LocAndObject<std::string>		_conservative;
+	D3D12_RASTERIZER_DESC			_rasterizerDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 };
 
 }

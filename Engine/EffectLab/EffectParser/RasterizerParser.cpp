@@ -38,7 +38,7 @@ std::any RasterizerParser::visitPassCullMode(pd::EffectLabParser::PassCullModeCo
 std::any RasterizerParser::visitPassZClipMode(pd::EffectLabParser::PassZClipModeContext *context) {
 	auto *token = context->getStart();
 	if (_zClipMode.hasValue()) {
-		Exception::Throw("{} {}:{} keyword redefinition at {}:{}, the last value is {}",
+		Exception::Throw("{} {}:{} keyword redefinition the last location at {}:{}, the last value is {}",
 			_effectSourcePath,
 			token->getLine(),
 			token->getCharPositionInLine(),
@@ -48,10 +48,11 @@ std::any RasterizerParser::visitPassZClipMode(pd::EffectLabParser::PassZClipMode
 		);
 	}
 
+	auto text = context->pass_zclip_mode()->BooleanLiteral()->getText();
 	auto zClipMode = visitBoolLiteral(context->pass_zclip_mode()->BooleanLiteral());
-	_zClipMode.set(zClipMode);
+	_zClipMode.set(text);
 	_zClipMode.setLocation(token);
-	_rasterizerDesc.DepthClipEnable = _zClipMode.get();
+	_rasterizerDesc.DepthClipEnable = zClipMode;
 	return NullAny;
 }
 
@@ -60,7 +61,28 @@ std::any RasterizerParser::visitPassOffset(pd::EffectLabParser::PassOffsetContex
 }
 
 std::any RasterizerParser::visitPassConservative(pd::EffectLabParser::PassConservativeContext *context) {
-	return BaseParser::visitPassConservative(context);
+	auto token = context->getStart();
+	if (_conservative.hasValue()) {
+		Exception::Throw("{} {}:{} keyword Conservative redefinition the last location at {}:{} "
+			", the last value is {}",
+			_effectSourcePath,
+			token->getLine(),
+			token->getCharPositionInLine(),
+			_conservative.line,
+			_conservative.column,
+			_conservative.get()
+		);
+	}
+
+	auto text = context->pass_conservative()->BooleanLiteral()->getText();
+	bool enable = visitBoolLiteral(context->pass_conservative()->BooleanLiteral());
+	_conservative.set(std::move(text));
+	_conservative.setLocation(token);
+	if (enable) {
+		_rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_ON; 
+	} else {
+		_rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	}
 }
 
 bool RasterizerParser::visitBoolLiteral(const antlr4::tree::TerminalNode *node) {

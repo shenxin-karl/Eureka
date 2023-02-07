@@ -53,7 +53,7 @@ public:
 		auto get() const -> const T & {
 			return *pObject;
 		}
-		template<typename ...Args>
+		template<typename ...Args> requires(std::is_constructible_v<T, Args...>)
 		auto set(Args&&...args) -> T & {
 			pObject = std::make_optional<T>(std::forward<Args>(args)...);
 			return get();
