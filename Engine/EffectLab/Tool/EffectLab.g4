@@ -5,9 +5,18 @@ effect : source_path property_block? pass+;
 source_path    : 'SourcePath' ':' StringLiteral;
 property_block : 'Properties' '{' property_item+ '}';
 
-number_val 
-    : IntLiteral 
-    | FloatLiteral
+property_name        : Identity;
+property_description : StringLiteral;
+property_item 
+    : property_name '(' property_description ',' property_bool_type       ')' '=' property_bool_val    # PropertyItemBool
+    | property_name '(' property_description ',' property_int_type        ')' '=' property_int_val     # PropertyItemInt
+    | property_name '(' property_description ',' property_range_type      ')' '=' property_range_val   # PropertyItemRange
+    | property_name '(' property_description ',' property_float_type      ')' '=' property_float_val   # PropertyItemFloat
+    | property_name '(' property_description ',' property_float2_type     ')' '=' property_float2_val  # PropertyItemFloat2
+    | property_name '(' property_description ',' property_float3_type     ')' '=' property_float3_val  # PropertyItemFloat3
+    | property_name '(' property_description ',' property_float4_type     ')' '=' property_float4_val  # PropertyItemFloat4
+    | property_name '(' property_description ',' property_texture_2d_type ')' '=' property_texture_val # PropertyItemTexture
+    | property_name '(' property_description ',' property_matrix_type     ')' '=' property_matrix_val  # PropertyItemMatrix
     ;
 
 property_bool_type       : ('bool'  | 'Bool');
@@ -34,54 +43,15 @@ property_texture_val
     | ('bump'  | 'Bump')
     ;
 
-property_name        : Identity;
-property_description : StringLiteral;
-property_item 
-    : property_name '(' property_description ',' property_bool_type       ')' '=' property_bool_val    # PropertyItemBool
-    | property_name '(' property_description ',' property_int_type        ')' '=' property_int_val     # PropertyItemInt
-    | property_name '(' property_description ',' property_range_type      ')' '=' property_range_val   # PropertyItemRange
-    | property_name '(' property_description ',' property_float_type      ')' '=' property_float_val   # PropertyItemFloat
-    | property_name '(' property_description ',' property_float2_type     ')' '=' property_float2_val  # PropertyItemFloat2
-    | property_name '(' property_description ',' property_float3_type     ')' '=' property_float3_val  # PropertyItemFloat3
-    | property_name '(' property_description ',' property_float4_type     ')' '=' property_float4_val  # PropertyItemFloat4
-    | property_name '(' property_description ',' property_texture_2d_type ')' '=' property_texture_val # PropertyItemTexture
-    | property_name '(' property_description ',' property_matrix_type     ')' '=' property_matrix_val  # PropertyItemMatrix
+    
+number_val 
+    : IntLiteral 
+    | FloatLiteral
     ;
 
-pass_tag : StringLiteral;
 pass     : 'Pass' '(' pass_tag ')' '{' pass_block_item+ '}';
 
-pass_vertex_shader   : 'VertexShader'   ':' Identity;
-pass_geometry_shader : 'GeometryShader' ':' Identity;
-pass_hull_shader     : 'HullShader'     ':' Identity;
-pass_domain_shader   : 'DomainShader'   ':' Identity;
-pass_pixel_shader    : 'PixelShader'    ':' Identity;
-pass_render_queue    : 'RenderQueue'    ':' RenderQueueLabel; 
-
-pass_shader_feature : 'ShaderFeature' ':' Identity+;    
-pass_cull_mode      : 'Cull' ':' CullModeLabel;
-pass_zclip_mode     : 'ZClip' ':' BooleanLiteral;
-pass_ztest_mode     : 'ZTest' ':' ZTestModeLabel;
-pass_zwrite_mode    : 'ZWrite' ':' ZWriteModeLabel;
-pass_offset         : 'Offset' ':' FloatLiteral FloatLiteral;
-pass_color_mask     
-    : 'ColorMask' ColorMaskChannel
-    | 'ColorMask' ColorMaskChannel RenderTargetID
-    ;
-
-pass_blend
-    : 'Blend' ':' 'Off'                                                                                  # PassBlendOff
-    | 'Blend' ':' RenderTargetID 'Off'                                                                   # PassBlendRTOff
-    | 'Blend' ':' BlendFactorLabel BlendFactorLabel                                                      # PassBlendColor
-    | 'Blend' ':' RenderTargetID BlendFactorLabel BlendFactorLabel                                       # PassBlendRTColor
-    | 'Blend' ':' BlendFactorLabel BlendFactorLabel ',' BlendFactorLabel BlendFactorLabel                # PassBlendColorAlpha
-    | 'Blend' ':' RenderTargetID BlendFactorLabel BlendFactorLabel ',' BlendFactorLabel BlendFactorLabel # PassBlendRTColorAlpha
-    ;
-
-pass_blend_op      : 'BlendOp' ':' BlendOPLabel;
-pass_alpha_to_mask : 'AlphaToMask' ':' AlphaToMaskLabel;
-pass_conservative  : 'Conservative' ':' BooleanLiteral;
-pass_stencil       : 'Stencil' '{' stencil_item+ '}';
+pass_tag : StringLiteral;
 
 pass_block_item 
     : pass_vertex_shader   # PassVertexShader
@@ -104,23 +74,40 @@ pass_block_item
     | pass_stencil         # PassStencil
     ;
 
-stencil_ref            : 'Ref'        ':' IntLiteral;
-stencil_read_mask      : 'ReadMask'   ':' IntLiteral;
-stencil_write_mask     : 'WriteMask'  ':' IntLiteral;
-stencil_comp           : 'Comp'       ':' StencilCompareLabel;
-stencil_pass_op        : 'Pass'       ':' StencilOpLabel;
-stencil_fail_op        : 'Fail'       ':' StencilOpLabel;
-stencil_zfail_op       : 'ZFail'      ':' StencilOpLabel;
-stencil_comp_back_op   : 'CompBack'   ':' StencilOpLabel;
-stancil_pass_back_op   : 'PassBack'   ':' StencilOpLabel;
-stencil_fail_back_op   : 'FailBack'   ':' StencilOpLabel;
-stencil_zfail_back_op  : 'ZFailBack'  ':' StencilOpLabel;
-stencil_comp_front_op  : 'CompFront'  ':' StencilOpLabel;
-stancil_pass_front_op  : 'PassFront'  ':' StencilOpLabel;
-stencil_fail_front_op  : 'FailFront'  ':' StencilOpLabel;
-stencil_zfail_front_op : 'ZFailFront' ':' StencilOpLabel;
+pass_vertex_shader   : 'VertexShader'   ':' Identity;
+pass_geometry_shader : 'GeometryShader' ':' Identity;
+pass_hull_shader     : 'HullShader'     ':' Identity;
+pass_domain_shader   : 'DomainShader'   ':' Identity;
+pass_pixel_shader    : 'PixelShader'    ':' Identity;
+pass_render_queue    : 'RenderQueue'    ':' RenderQueueLabel; 
 
-stencil_item 
+pass_shader_feature : 'ShaderFeature' ':' Identity+;    
+pass_cull_mode      : 'Cull' ':' CullModeLabel;
+pass_zclip_mode     : 'ZClip' ':' BooleanLiteral;
+pass_ztest_mode     : 'ZTest' ':' ZTestModeLabel;
+pass_zwrite_mode    : 'ZWrite' ':' OnOffLabel;
+pass_offset         : 'Offset' ':' FloatLiteral FloatLiteral;
+pass_color_mask     
+    : 'ColorMask' ColorMaskChannel
+    | 'ColorMask' ColorMaskChannel IntLiteral
+    ;
+
+
+pass_blend
+    : 'Blend' ':' KWOff                                                                              # PassBlendOff
+    | 'Blend' ':' IntLiteral KWOff                                                                   # PassBlendRTOff
+    | 'Blend' ':' BlendFactorLabel BlendFactorLabel                                                  # PassBlendColor
+    | 'Blend' ':' IntLiteral BlendFactorLabel BlendFactorLabel                                       # PassBlendRTColor
+    | 'Blend' ':' BlendFactorLabel BlendFactorLabel ',' BlendFactorLabel BlendFactorLabel            # PassBlendColorAlpha
+    | 'Blend' ':' IntLiteral BlendFactorLabel BlendFactorLabel ',' BlendFactorLabel BlendFactorLabel # PassBlendRTColorAlpha
+    ;
+
+pass_blend_op      : 'BlendOp' ':' BlendOPLabel;
+pass_alpha_to_mask : 'AlphaToMask' ':' OnOffLabel;
+pass_conservative  : 'Conservative' ':' BooleanLiteral;
+pass_stencil       : 'Stencil' '{' stencil_item+ '}';
+
+stencil_item
     : stencil_ref            # StencilRef
     | stencil_read_mask      # StencilReadMask
     | stencil_write_mask     # StencilWriteMask
@@ -138,20 +125,37 @@ stencil_item
     | stencil_zfail_front_op # StencilZFailFrontOp
     ;
 
+stencil_ref            : 'Ref'        ':' IntLiteral;
+stencil_read_mask      : 'ReadMask'   ':' IntLiteral;
+stencil_write_mask     : 'WriteMask'  ':' IntLiteral;
+stencil_comp           : 'Comp'       ':' StencilCompareLabel;
+stencil_pass_op        : 'Pass'       ':' StencilOpLabel;
+stencil_fail_op        : 'Fail'       ':' StencilOpLabel;
+stencil_zfail_op       : 'ZFail'      ':' StencilOpLabel;
+stencil_comp_back_op   : 'CompBack'   ':' StencilOpLabel;
+stancil_pass_back_op   : 'PassBack'   ':' StencilOpLabel;
+stencil_fail_back_op   : 'FailBack'   ':' StencilOpLabel;
+stencil_zfail_back_op  : 'ZFailBack'  ':' StencilOpLabel;
+stencil_comp_front_op  : 'CompFront'  ':' StencilOpLabel;
+stancil_pass_front_op  : 'PassFront'  ':' StencilOpLabel;
+stencil_fail_front_op  : 'FailFront'  ':' StencilOpLabel;
+stencil_zfail_front_op : 'ZFailFront' ':' StencilOpLabel;
 
 // lex
-IntLiteral 
-    : [+-]? [1-9][0-9]*
-    | '0'
-    ;
-FloatLiteral 
-    : [+-]? [0-9]+ '.' [0-9]* [fF]?
-    | '.' [0-9]+ [fF]?
-    ;
+
+WhiteSpace   : [ \t\n\r]+          -> skip;
+LineComment  : '//' .*? '\r'? '\n' -> skip;
+BlockComment : '/*' .*? '*/'       -> skip;
+
 BooleanLiteral
-	: KWFalse
-	| KWTrue
+	: KWTrue
+	| KWFalse
 	;
+
+OnOffLabel
+    : KWOn
+    | KWOff
+    ;
 
 CullModeLabel 
     : KWOff
@@ -169,28 +173,15 @@ RenderQueueLabel
     ;
 
 ZTestModeLabel
-    : KWLess
+    : KWNever
+    | KWLess
     | KWEqual
-    | KWEqual
+    | KWLEqaul
     | KWGEqual     
-    | KWGreater
     | KWNotEqual
+    | KWGreater
     | KWAlways
     ;
-
-ZWriteModeLabel
-    : KWOn
-    | KWOff
-    ;
-
-ColorMaskChannel
-    : [RGBA]
-    | [RGBA] [RGBA]
-    | [RGBA] [RGBA] [RGBA]
-    | [RGBA] [RGBA] [RGBA] [RGBA]
-    ;    
-
-RenderTargetID : [0-7];
 
 BlendFactorLabel
     : KWZero
@@ -210,12 +201,7 @@ BlendOPLabel
     | 'RevSub'
     | 'Min'
     | 'Max'
-    ;
-
-AlphaToMaskLabel
-    : KWOff
-    | KWOn
-    ;    
+    ;   
 
 StencilCompareLabel
     : KWNever
@@ -239,6 +225,23 @@ StencilOpLabel
     | KWDecrWrap
     ;    
 
+IntLiteral 
+    : [+-]? [1-9][0-9]*
+    | '0'
+    ;
+
+FloatLiteral 
+    : [+-]? [0-9]+ '.' [0-9]* [fF]?
+    | '.' [0-9]+ [fF]?
+    ;
+
+ColorMaskChannel
+    : [RGBA]
+    | [RGBA] [RGBA]
+    | [RGBA] [RGBA] [RGBA]
+    | [RGBA] [RGBA] [RGBA] [RGBA]
+    ;   
+
 KWOff       : 'Off';
 KWOn        : 'On';
 KWNever     : 'Never';
@@ -260,10 +263,5 @@ KWDecrWrap  : 'DecrWrap';
 KWTrue      : 'true'  | 'True';
 KWFalse     : 'false' | 'False';
 
-
 StringLiteral : '"' .*? '"' ;
 Identity      : [_a-zA-Z][a-zA-Z0-9_]*; 
-
-WhiteSpace   : [ \t\n\r]+          -> skip;
-LineComment  : '//' .*? '\r'? '\n' -> skip;
-BlockComment : '/*' .*? '*/'       -> skip;

@@ -16,7 +16,7 @@ SwapChain::SwapChain(std::weak_ptr<Device> pDevice,
 		DXGI_FORMAT backBufferFormat,
 		DXGI_FORMAT depthStencilFormat,
 		size_t fps)
-: _hwnd(hwnd), _width(0), _height(0), _renderTargetFormat(backBufferFormat)
+: _width(0), _height(0), _renderTargetFormat(backBufferFormat)
 , _depthStencilFormat(depthStencilFormat), _currentBackBufferIndex(0), _pDevice(pDevice)
 {
 	RECT windowRect;

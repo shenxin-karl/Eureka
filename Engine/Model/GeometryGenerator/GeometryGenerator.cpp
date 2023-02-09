@@ -16,7 +16,7 @@ struct LoopEdge {
 	uint32 v1;
 public:
 	friend bool operator==(const LoopEdge &lhs, const LoopEdge &rhs) {
-		return lhs.v0 == rhs.v0 && lhs.v1 == rhs.v1 || lhs.v0 == rhs.v1 && lhs.v1 == rhs.v0;
+		return (lhs.v0 == rhs.v0 && lhs.v1 == rhs.v1) || (lhs.v0 == rhs.v1 && lhs.v1 == rhs.v0);
 	}
 };
 

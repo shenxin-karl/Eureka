@@ -26,7 +26,6 @@ public:
 private:
 	void updateBuffer(DirectContextProxy pDirectContext);
 private:
-	HWND	_hwnd;
 	uint32	_width;
 	uint32	_height;
 	DXGI_FORMAT	_renderTargetFormat;

@@ -27,8 +27,38 @@ public:
   virtual void enterProperty_block(EffectLabParser::Property_blockContext * /*ctx*/) override { }
   virtual void exitProperty_block(EffectLabParser::Property_blockContext * /*ctx*/) override { }
 
-  virtual void enterNumber_val(EffectLabParser::Number_valContext * /*ctx*/) override { }
-  virtual void exitNumber_val(EffectLabParser::Number_valContext * /*ctx*/) override { }
+  virtual void enterProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
+  virtual void exitProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
+
+  virtual void enterProperty_description(EffectLabParser::Property_descriptionContext * /*ctx*/) override { }
+  virtual void exitProperty_description(EffectLabParser::Property_descriptionContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemBool(EffectLabParser::PropertyItemBoolContext * /*ctx*/) override { }
+  virtual void exitPropertyItemBool(EffectLabParser::PropertyItemBoolContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemInt(EffectLabParser::PropertyItemIntContext * /*ctx*/) override { }
+  virtual void exitPropertyItemInt(EffectLabParser::PropertyItemIntContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemRange(EffectLabParser::PropertyItemRangeContext * /*ctx*/) override { }
+  virtual void exitPropertyItemRange(EffectLabParser::PropertyItemRangeContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemFloat(EffectLabParser::PropertyItemFloatContext * /*ctx*/) override { }
+  virtual void exitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context * /*ctx*/) override { }
+  virtual void exitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context * /*ctx*/) override { }
+
+  virtual void enterPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context * /*ctx*/) override { }
+  virtual void exitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context * /*ctx*/) override { }
+
+  virtual void enterPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context * /*ctx*/) override { }
+  virtual void exitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context * /*ctx*/) override { }
+
+  virtual void enterPropertyItemTexture(EffectLabParser::PropertyItemTextureContext * /*ctx*/) override { }
+  virtual void exitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext * /*ctx*/) override { }
+
+  virtual void enterPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext * /*ctx*/) override { }
+  virtual void exitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext * /*ctx*/) override { }
 
   virtual void enterProperty_bool_type(EffectLabParser::Property_bool_typeContext * /*ctx*/) override { }
   virtual void exitProperty_bool_type(EffectLabParser::Property_bool_typeContext * /*ctx*/) override { }
@@ -84,44 +114,68 @@ public:
   virtual void enterProperty_texture_val(EffectLabParser::Property_texture_valContext * /*ctx*/) override { }
   virtual void exitProperty_texture_val(EffectLabParser::Property_texture_valContext * /*ctx*/) override { }
 
-  virtual void enterProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
-  virtual void exitProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
+  virtual void enterNumber_val(EffectLabParser::Number_valContext * /*ctx*/) override { }
+  virtual void exitNumber_val(EffectLabParser::Number_valContext * /*ctx*/) override { }
 
-  virtual void enterProperty_description(EffectLabParser::Property_descriptionContext * /*ctx*/) override { }
-  virtual void exitProperty_description(EffectLabParser::Property_descriptionContext * /*ctx*/) override { }
-
-  virtual void enterPropertyItemBool(EffectLabParser::PropertyItemBoolContext * /*ctx*/) override { }
-  virtual void exitPropertyItemBool(EffectLabParser::PropertyItemBoolContext * /*ctx*/) override { }
-
-  virtual void enterPropertyItemInt(EffectLabParser::PropertyItemIntContext * /*ctx*/) override { }
-  virtual void exitPropertyItemInt(EffectLabParser::PropertyItemIntContext * /*ctx*/) override { }
-
-  virtual void enterPropertyItemRange(EffectLabParser::PropertyItemRangeContext * /*ctx*/) override { }
-  virtual void exitPropertyItemRange(EffectLabParser::PropertyItemRangeContext * /*ctx*/) override { }
-
-  virtual void enterPropertyItemFloat(EffectLabParser::PropertyItemFloatContext * /*ctx*/) override { }
-  virtual void exitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext * /*ctx*/) override { }
-
-  virtual void enterPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context * /*ctx*/) override { }
-  virtual void exitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context * /*ctx*/) override { }
-
-  virtual void enterPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context * /*ctx*/) override { }
-  virtual void exitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context * /*ctx*/) override { }
-
-  virtual void enterPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context * /*ctx*/) override { }
-  virtual void exitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context * /*ctx*/) override { }
-
-  virtual void enterPropertyItemTexture(EffectLabParser::PropertyItemTextureContext * /*ctx*/) override { }
-  virtual void exitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext * /*ctx*/) override { }
-
-  virtual void enterPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext * /*ctx*/) override { }
-  virtual void exitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext * /*ctx*/) override { }
+  virtual void enterPass(EffectLabParser::PassContext * /*ctx*/) override { }
+  virtual void exitPass(EffectLabParser::PassContext * /*ctx*/) override { }
 
   virtual void enterPass_tag(EffectLabParser::Pass_tagContext * /*ctx*/) override { }
   virtual void exitPass_tag(EffectLabParser::Pass_tagContext * /*ctx*/) override { }
 
-  virtual void enterPass(EffectLabParser::PassContext * /*ctx*/) override { }
-  virtual void exitPass(EffectLabParser::PassContext * /*ctx*/) override { }
+  virtual void enterPassVertexShader(EffectLabParser::PassVertexShaderContext * /*ctx*/) override { }
+  virtual void exitPassVertexShader(EffectLabParser::PassVertexShaderContext * /*ctx*/) override { }
+
+  virtual void enterPassGeometryShader(EffectLabParser::PassGeometryShaderContext * /*ctx*/) override { }
+  virtual void exitPassGeometryShader(EffectLabParser::PassGeometryShaderContext * /*ctx*/) override { }
+
+  virtual void enterPassHullShader(EffectLabParser::PassHullShaderContext * /*ctx*/) override { }
+  virtual void exitPassHullShader(EffectLabParser::PassHullShaderContext * /*ctx*/) override { }
+
+  virtual void enterPassDomainShader(EffectLabParser::PassDomainShaderContext * /*ctx*/) override { }
+  virtual void exitPassDomainShader(EffectLabParser::PassDomainShaderContext * /*ctx*/) override { }
+
+  virtual void enterPassPixelShader(EffectLabParser::PassPixelShaderContext * /*ctx*/) override { }
+  virtual void exitPassPixelShader(EffectLabParser::PassPixelShaderContext * /*ctx*/) override { }
+
+  virtual void enterPassRenderQueue(EffectLabParser::PassRenderQueueContext * /*ctx*/) override { }
+  virtual void exitPassRenderQueue(EffectLabParser::PassRenderQueueContext * /*ctx*/) override { }
+
+  virtual void enterPassShaderFeature(EffectLabParser::PassShaderFeatureContext * /*ctx*/) override { }
+  virtual void exitPassShaderFeature(EffectLabParser::PassShaderFeatureContext * /*ctx*/) override { }
+
+  virtual void enterPassCullMode(EffectLabParser::PassCullModeContext * /*ctx*/) override { }
+  virtual void exitPassCullMode(EffectLabParser::PassCullModeContext * /*ctx*/) override { }
+
+  virtual void enterPassZClipMode(EffectLabParser::PassZClipModeContext * /*ctx*/) override { }
+  virtual void exitPassZClipMode(EffectLabParser::PassZClipModeContext * /*ctx*/) override { }
+
+  virtual void enterPassZTestMode(EffectLabParser::PassZTestModeContext * /*ctx*/) override { }
+  virtual void exitPassZTestMode(EffectLabParser::PassZTestModeContext * /*ctx*/) override { }
+
+  virtual void enterPassZWriteMode(EffectLabParser::PassZWriteModeContext * /*ctx*/) override { }
+  virtual void exitPassZWriteMode(EffectLabParser::PassZWriteModeContext * /*ctx*/) override { }
+
+  virtual void enterPassOffset(EffectLabParser::PassOffsetContext * /*ctx*/) override { }
+  virtual void exitPassOffset(EffectLabParser::PassOffsetContext * /*ctx*/) override { }
+
+  virtual void enterPassColorMask(EffectLabParser::PassColorMaskContext * /*ctx*/) override { }
+  virtual void exitPassColorMask(EffectLabParser::PassColorMaskContext * /*ctx*/) override { }
+
+  virtual void enterPassBlend(EffectLabParser::PassBlendContext * /*ctx*/) override { }
+  virtual void exitPassBlend(EffectLabParser::PassBlendContext * /*ctx*/) override { }
+
+  virtual void enterPassBlendOp(EffectLabParser::PassBlendOpContext * /*ctx*/) override { }
+  virtual void exitPassBlendOp(EffectLabParser::PassBlendOpContext * /*ctx*/) override { }
+
+  virtual void enterPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext * /*ctx*/) override { }
+  virtual void exitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext * /*ctx*/) override { }
+
+  virtual void enterPassConservative(EffectLabParser::PassConservativeContext * /*ctx*/) override { }
+  virtual void exitPassConservative(EffectLabParser::PassConservativeContext * /*ctx*/) override { }
+
+  virtual void enterPassStencil(EffectLabParser::PassStencilContext * /*ctx*/) override { }
+  virtual void exitPassStencil(EffectLabParser::PassStencilContext * /*ctx*/) override { }
 
   virtual void enterPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext * /*ctx*/) override { }
   virtual void exitPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext * /*ctx*/) override { }
@@ -192,59 +246,50 @@ public:
   virtual void enterPass_stencil(EffectLabParser::Pass_stencilContext * /*ctx*/) override { }
   virtual void exitPass_stencil(EffectLabParser::Pass_stencilContext * /*ctx*/) override { }
 
-  virtual void enterPassVertexShader(EffectLabParser::PassVertexShaderContext * /*ctx*/) override { }
-  virtual void exitPassVertexShader(EffectLabParser::PassVertexShaderContext * /*ctx*/) override { }
+  virtual void enterStencilRef(EffectLabParser::StencilRefContext * /*ctx*/) override { }
+  virtual void exitStencilRef(EffectLabParser::StencilRefContext * /*ctx*/) override { }
 
-  virtual void enterPassGeometryShader(EffectLabParser::PassGeometryShaderContext * /*ctx*/) override { }
-  virtual void exitPassGeometryShader(EffectLabParser::PassGeometryShaderContext * /*ctx*/) override { }
+  virtual void enterStencilReadMask(EffectLabParser::StencilReadMaskContext * /*ctx*/) override { }
+  virtual void exitStencilReadMask(EffectLabParser::StencilReadMaskContext * /*ctx*/) override { }
 
-  virtual void enterPassHullShader(EffectLabParser::PassHullShaderContext * /*ctx*/) override { }
-  virtual void exitPassHullShader(EffectLabParser::PassHullShaderContext * /*ctx*/) override { }
+  virtual void enterStencilWriteMask(EffectLabParser::StencilWriteMaskContext * /*ctx*/) override { }
+  virtual void exitStencilWriteMask(EffectLabParser::StencilWriteMaskContext * /*ctx*/) override { }
 
-  virtual void enterPassDomainShader(EffectLabParser::PassDomainShaderContext * /*ctx*/) override { }
-  virtual void exitPassDomainShader(EffectLabParser::PassDomainShaderContext * /*ctx*/) override { }
+  virtual void enterStencilComp(EffectLabParser::StencilCompContext * /*ctx*/) override { }
+  virtual void exitStencilComp(EffectLabParser::StencilCompContext * /*ctx*/) override { }
 
-  virtual void enterPassPixelShader(EffectLabParser::PassPixelShaderContext * /*ctx*/) override { }
-  virtual void exitPassPixelShader(EffectLabParser::PassPixelShaderContext * /*ctx*/) override { }
+  virtual void enterStencilPassOp(EffectLabParser::StencilPassOpContext * /*ctx*/) override { }
+  virtual void exitStencilPassOp(EffectLabParser::StencilPassOpContext * /*ctx*/) override { }
 
-  virtual void enterPassRenderQueue(EffectLabParser::PassRenderQueueContext * /*ctx*/) override { }
-  virtual void exitPassRenderQueue(EffectLabParser::PassRenderQueueContext * /*ctx*/) override { }
+  virtual void enterStencilFailOp(EffectLabParser::StencilFailOpContext * /*ctx*/) override { }
+  virtual void exitStencilFailOp(EffectLabParser::StencilFailOpContext * /*ctx*/) override { }
 
-  virtual void enterPassShaderFeature(EffectLabParser::PassShaderFeatureContext * /*ctx*/) override { }
-  virtual void exitPassShaderFeature(EffectLabParser::PassShaderFeatureContext * /*ctx*/) override { }
+  virtual void enterStencilZFailOp(EffectLabParser::StencilZFailOpContext * /*ctx*/) override { }
+  virtual void exitStencilZFailOp(EffectLabParser::StencilZFailOpContext * /*ctx*/) override { }
 
-  virtual void enterPassCullMode(EffectLabParser::PassCullModeContext * /*ctx*/) override { }
-  virtual void exitPassCullMode(EffectLabParser::PassCullModeContext * /*ctx*/) override { }
+  virtual void enterStencilCompBackOp(EffectLabParser::StencilCompBackOpContext * /*ctx*/) override { }
+  virtual void exitStencilCompBackOp(EffectLabParser::StencilCompBackOpContext * /*ctx*/) override { }
 
-  virtual void enterPassZClipMode(EffectLabParser::PassZClipModeContext * /*ctx*/) override { }
-  virtual void exitPassZClipMode(EffectLabParser::PassZClipModeContext * /*ctx*/) override { }
+  virtual void enterStencilPassBackOp(EffectLabParser::StencilPassBackOpContext * /*ctx*/) override { }
+  virtual void exitStencilPassBackOp(EffectLabParser::StencilPassBackOpContext * /*ctx*/) override { }
 
-  virtual void enterPassZTestMode(EffectLabParser::PassZTestModeContext * /*ctx*/) override { }
-  virtual void exitPassZTestMode(EffectLabParser::PassZTestModeContext * /*ctx*/) override { }
+  virtual void enterStencilFailBackOp(EffectLabParser::StencilFailBackOpContext * /*ctx*/) override { }
+  virtual void exitStencilFailBackOp(EffectLabParser::StencilFailBackOpContext * /*ctx*/) override { }
 
-  virtual void enterPassZWriteMode(EffectLabParser::PassZWriteModeContext * /*ctx*/) override { }
-  virtual void exitPassZWriteMode(EffectLabParser::PassZWriteModeContext * /*ctx*/) override { }
+  virtual void enterStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext * /*ctx*/) override { }
+  virtual void exitStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext * /*ctx*/) override { }
 
-  virtual void enterPassOffset(EffectLabParser::PassOffsetContext * /*ctx*/) override { }
-  virtual void exitPassOffset(EffectLabParser::PassOffsetContext * /*ctx*/) override { }
+  virtual void enterStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext * /*ctx*/) override { }
+  virtual void exitStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext * /*ctx*/) override { }
 
-  virtual void enterPassColorMask(EffectLabParser::PassColorMaskContext * /*ctx*/) override { }
-  virtual void exitPassColorMask(EffectLabParser::PassColorMaskContext * /*ctx*/) override { }
+  virtual void enterStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext * /*ctx*/) override { }
+  virtual void exitStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext * /*ctx*/) override { }
 
-  virtual void enterPassBlend(EffectLabParser::PassBlendContext * /*ctx*/) override { }
-  virtual void exitPassBlend(EffectLabParser::PassBlendContext * /*ctx*/) override { }
+  virtual void enterStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext * /*ctx*/) override { }
+  virtual void exitStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext * /*ctx*/) override { }
 
-  virtual void enterPassBlendOp(EffectLabParser::PassBlendOpContext * /*ctx*/) override { }
-  virtual void exitPassBlendOp(EffectLabParser::PassBlendOpContext * /*ctx*/) override { }
-
-  virtual void enterPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext * /*ctx*/) override { }
-  virtual void exitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext * /*ctx*/) override { }
-
-  virtual void enterPassConservative(EffectLabParser::PassConservativeContext * /*ctx*/) override { }
-  virtual void exitPassConservative(EffectLabParser::PassConservativeContext * /*ctx*/) override { }
-
-  virtual void enterPassStencil(EffectLabParser::PassStencilContext * /*ctx*/) override { }
-  virtual void exitPassStencil(EffectLabParser::PassStencilContext * /*ctx*/) override { }
+  virtual void enterStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext * /*ctx*/) override { }
+  virtual void exitStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext * /*ctx*/) override { }
 
   virtual void enterStencil_ref(EffectLabParser::Stencil_refContext * /*ctx*/) override { }
   virtual void exitStencil_ref(EffectLabParser::Stencil_refContext * /*ctx*/) override { }
@@ -290,51 +335,6 @@ public:
 
   virtual void enterStencil_zfail_front_op(EffectLabParser::Stencil_zfail_front_opContext * /*ctx*/) override { }
   virtual void exitStencil_zfail_front_op(EffectLabParser::Stencil_zfail_front_opContext * /*ctx*/) override { }
-
-  virtual void enterStencilRef(EffectLabParser::StencilRefContext * /*ctx*/) override { }
-  virtual void exitStencilRef(EffectLabParser::StencilRefContext * /*ctx*/) override { }
-
-  virtual void enterStencilReadMask(EffectLabParser::StencilReadMaskContext * /*ctx*/) override { }
-  virtual void exitStencilReadMask(EffectLabParser::StencilReadMaskContext * /*ctx*/) override { }
-
-  virtual void enterStencilWriteMask(EffectLabParser::StencilWriteMaskContext * /*ctx*/) override { }
-  virtual void exitStencilWriteMask(EffectLabParser::StencilWriteMaskContext * /*ctx*/) override { }
-
-  virtual void enterStencilComp(EffectLabParser::StencilCompContext * /*ctx*/) override { }
-  virtual void exitStencilComp(EffectLabParser::StencilCompContext * /*ctx*/) override { }
-
-  virtual void enterStencilPassOp(EffectLabParser::StencilPassOpContext * /*ctx*/) override { }
-  virtual void exitStencilPassOp(EffectLabParser::StencilPassOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilFailOp(EffectLabParser::StencilFailOpContext * /*ctx*/) override { }
-  virtual void exitStencilFailOp(EffectLabParser::StencilFailOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilZFailOp(EffectLabParser::StencilZFailOpContext * /*ctx*/) override { }
-  virtual void exitStencilZFailOp(EffectLabParser::StencilZFailOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilCompBackOp(EffectLabParser::StencilCompBackOpContext * /*ctx*/) override { }
-  virtual void exitStencilCompBackOp(EffectLabParser::StencilCompBackOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilPassBackOp(EffectLabParser::StencilPassBackOpContext * /*ctx*/) override { }
-  virtual void exitStencilPassBackOp(EffectLabParser::StencilPassBackOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilFailBackOp(EffectLabParser::StencilFailBackOpContext * /*ctx*/) override { }
-  virtual void exitStencilFailBackOp(EffectLabParser::StencilFailBackOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext * /*ctx*/) override { }
-  virtual void exitStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext * /*ctx*/) override { }
-  virtual void exitStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext * /*ctx*/) override { }
-  virtual void exitStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext * /*ctx*/) override { }
-  virtual void exitStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext * /*ctx*/) override { }
-
-  virtual void enterStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext * /*ctx*/) override { }
-  virtual void exitStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

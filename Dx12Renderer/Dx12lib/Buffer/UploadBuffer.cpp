@@ -10,7 +10,7 @@ UploadBuffer::UploadBuffer(std::weak_ptr<Device> pDevice,
 	size_t elementByteSize, 
 	bool isConstantBuffer, 
 	D3D12_RESOURCE_FLAGS flags)
-: _isConstantBuffer(isConstantBuffer), _elementByteSize(elementByteSize), _elementCount(elementCount), _pMappedData(nullptr)
+: _elementByteSize(elementByteSize), _elementCount(elementCount), _pMappedData(nullptr)
 , _pDevice(pDevice)
 {
 	if (isConstantBuffer)

@@ -29,7 +29,47 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitNumber_val(EffectLabParser::Number_valContext *ctx) override {
+  virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -105,47 +145,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *ctx) override {
+  virtual std::any visitNumber_val(EffectLabParser::Number_valContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) override {
+  virtual std::any visitPass(EffectLabParser::PassContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -153,7 +157,75 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPass(EffectLabParser::PassContext *ctx) override {
+  virtual std::any visitPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassGeometryShader(EffectLabParser::PassGeometryShaderContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassHullShader(EffectLabParser::PassHullShaderContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassDomainShader(EffectLabParser::PassDomainShaderContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassPixelShader(EffectLabParser::PassPixelShaderContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassRenderQueue(EffectLabParser::PassRenderQueueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassShaderFeature(EffectLabParser::PassShaderFeatureContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassCullMode(EffectLabParser::PassCullModeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassZClipMode(EffectLabParser::PassZClipModeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassZTestMode(EffectLabParser::PassZTestModeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassZWriteMode(EffectLabParser::PassZWriteModeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassOffset(EffectLabParser::PassOffsetContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassColorMask(EffectLabParser::PassColorMaskContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassBlend(EffectLabParser::PassBlendContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassBlendOp(EffectLabParser::PassBlendOpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassConservative(EffectLabParser::PassConservativeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPassStencil(EffectLabParser::PassStencilContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -249,75 +321,63 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) override {
+  virtual std::any visitStencilRef(EffectLabParser::StencilRefContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassGeometryShader(EffectLabParser::PassGeometryShaderContext *ctx) override {
+  virtual std::any visitStencilReadMask(EffectLabParser::StencilReadMaskContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassHullShader(EffectLabParser::PassHullShaderContext *ctx) override {
+  virtual std::any visitStencilWriteMask(EffectLabParser::StencilWriteMaskContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassDomainShader(EffectLabParser::PassDomainShaderContext *ctx) override {
+  virtual std::any visitStencilComp(EffectLabParser::StencilCompContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassPixelShader(EffectLabParser::PassPixelShaderContext *ctx) override {
+  virtual std::any visitStencilPassOp(EffectLabParser::StencilPassOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassRenderQueue(EffectLabParser::PassRenderQueueContext *ctx) override {
+  virtual std::any visitStencilFailOp(EffectLabParser::StencilFailOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassShaderFeature(EffectLabParser::PassShaderFeatureContext *ctx) override {
+  virtual std::any visitStencilZFailOp(EffectLabParser::StencilZFailOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassCullMode(EffectLabParser::PassCullModeContext *ctx) override {
+  virtual std::any visitStencilCompBackOp(EffectLabParser::StencilCompBackOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassZClipMode(EffectLabParser::PassZClipModeContext *ctx) override {
+  virtual std::any visitStencilPassBackOp(EffectLabParser::StencilPassBackOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassZTestMode(EffectLabParser::PassZTestModeContext *ctx) override {
+  virtual std::any visitStencilFailBackOp(EffectLabParser::StencilFailBackOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassZWriteMode(EffectLabParser::PassZWriteModeContext *ctx) override {
+  virtual std::any visitStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassOffset(EffectLabParser::PassOffsetContext *ctx) override {
+  virtual std::any visitStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassColorMask(EffectLabParser::PassColorMaskContext *ctx) override {
+  virtual std::any visitStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassBlend(EffectLabParser::PassBlendContext *ctx) override {
+  virtual std::any visitStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassBlendOp(EffectLabParser::PassBlendOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPassConservative(EffectLabParser::PassConservativeContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitPassStencil(EffectLabParser::PassStencilContext *ctx) override {
+  virtual std::any visitStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -378,66 +438,6 @@ public:
   }
 
   virtual std::any visitStencil_zfail_front_op(EffectLabParser::Stencil_zfail_front_opContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilRef(EffectLabParser::StencilRefContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilReadMask(EffectLabParser::StencilReadMaskContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilWriteMask(EffectLabParser::StencilWriteMaskContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilComp(EffectLabParser::StencilCompContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilPassOp(EffectLabParser::StencilPassOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilFailOp(EffectLabParser::StencilFailOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilZFailOp(EffectLabParser::StencilZFailOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilCompBackOp(EffectLabParser::StencilCompBackOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilPassBackOp(EffectLabParser::StencilPassBackOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilFailBackOp(EffectLabParser::StencilFailBackOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext *ctx) override {
     return visitChildren(ctx);
   }
 

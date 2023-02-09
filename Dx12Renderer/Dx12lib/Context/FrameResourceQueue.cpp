@@ -6,7 +6,7 @@
 namespace dx12lib {
 
 FrameResourceItem::FrameResourceItem(std::weak_ptr<Device> pDevice, D3D12_COMMAND_LIST_TYPE cmdListType, uint32 frameIndex)
-: _fence(0), _frameIndex(frameIndex), _pDevice(pDevice), _cmdListType(cmdListType) {
+: _frameIndex(frameIndex), _cmdListType(cmdListType), _pDevice(pDevice) {
 }
 
 uint64 FrameResourceItem::getFence() const noexcept {

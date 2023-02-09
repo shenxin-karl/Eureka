@@ -50,11 +50,21 @@ std::any BlendParser::visitPassAlphaToMask(ParserDetails::EffectLabParser::PassA
 
 std::any BlendParser::visitPassColorMask(pd::EffectLabParser::PassColorMaskContext *context) {
 	size_t renderTargetId = 0;
-	if (auto *pRtIdNode = context->pass_color_mask()->RenderTargetID()) {
+	if (auto *pRtIdNode = context->pass_color_mask()->IntLiteral()) {
 		renderTargetId = std::stoi(pRtIdNode->getSymbol()->getText());
 	}
 
 	auto token = context->pass_color_mask()->getStart();
+	if (renderTargetId >= kMaxRenderTarget) {
+		Exception::Throw("{} {}:{} ColorMask render target id {} out of range(0, 7)",
+			_effectSourcePath,
+			renderTargetId,
+			token->getLine(),
+			token->getCharPositionInLine()
+		);
+
+	}
+
 	if (_renderTargetColorMask[renderTargetId].valid()) {
 		Exception::Throw("{} {}:{} keyword ColorMask redefinition in {} {}:{}",
 			_effectSourcePath,

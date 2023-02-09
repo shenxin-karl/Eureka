@@ -1,6 +1,7 @@
 
 target("RenderGraph")
     set_languages("c++latest")
+    set_warnings("all", "error")
     set_group("Dx12Renderer")
     set_kind("static")
     add_headerfiles("**.h")

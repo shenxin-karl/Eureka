@@ -149,11 +149,8 @@ void RootSignature::finalize(D3D12_ROOT_SIGNATURE_FLAGS flags) {
 		IID_PPV_ARGS(&_pRootSignature)
 	));
 
-	// ͳ�ƺ�ÿ���������ж��ٸ�������
-	size_t numDescriptors = 0;
 	for (size_t rootParamIndex = 0; rootParamIndex < _numRootParams; ++rootParamIndex) {
 		const RootParameter &rootParam = _pRootParamArray[rootParamIndex];
-
 		switch (rootParam.ParameterType) {
 		case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE: {
 			auto &descriptorTable = rootParam.DescriptorTable;
@@ -180,7 +177,6 @@ void RootSignature::finalize(D3D12_ROOT_SIGNATURE_FLAGS flags) {
 				_rootParamDescriptorPerTable[tableIndex][rootParamIndex] += static_cast<uint8_t>(range.NumDescriptors);
 				_rootParamBitMask[tableIndex].set(rootParamIndex);
 			}
-			numDescriptors += _rootParamDescriptorPerTable[tableIndex][rootParamIndex];
 			break;
 		}
 		case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS: {

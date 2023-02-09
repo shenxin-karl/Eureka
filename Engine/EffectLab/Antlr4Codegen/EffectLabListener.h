@@ -25,8 +25,38 @@ public:
   virtual void enterProperty_block(EffectLabParser::Property_blockContext *ctx) = 0;
   virtual void exitProperty_block(EffectLabParser::Property_blockContext *ctx) = 0;
 
-  virtual void enterNumber_val(EffectLabParser::Number_valContext *ctx) = 0;
-  virtual void exitNumber_val(EffectLabParser::Number_valContext *ctx) = 0;
+  virtual void enterProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
+  virtual void exitProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
+
+  virtual void enterProperty_description(EffectLabParser::Property_descriptionContext *ctx) = 0;
+  virtual void exitProperty_description(EffectLabParser::Property_descriptionContext *ctx) = 0;
+
+  virtual void enterPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) = 0;
+  virtual void exitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) = 0;
+
+  virtual void enterPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) = 0;
+  virtual void exitPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) = 0;
+
+  virtual void enterPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) = 0;
+  virtual void exitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) = 0;
+
+  virtual void enterPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) = 0;
+  virtual void exitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) = 0;
+
+  virtual void enterPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) = 0;
+  virtual void exitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) = 0;
+
+  virtual void enterPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) = 0;
+  virtual void exitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) = 0;
+
+  virtual void enterPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) = 0;
+  virtual void exitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) = 0;
+
+  virtual void enterPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) = 0;
+  virtual void exitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) = 0;
+
+  virtual void enterPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) = 0;
+  virtual void exitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) = 0;
 
   virtual void enterProperty_bool_type(EffectLabParser::Property_bool_typeContext *ctx) = 0;
   virtual void exitProperty_bool_type(EffectLabParser::Property_bool_typeContext *ctx) = 0;
@@ -82,44 +112,68 @@ public:
   virtual void enterProperty_texture_val(EffectLabParser::Property_texture_valContext *ctx) = 0;
   virtual void exitProperty_texture_val(EffectLabParser::Property_texture_valContext *ctx) = 0;
 
-  virtual void enterProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
-  virtual void exitProperty_name(EffectLabParser::Property_nameContext *ctx) = 0;
+  virtual void enterNumber_val(EffectLabParser::Number_valContext *ctx) = 0;
+  virtual void exitNumber_val(EffectLabParser::Number_valContext *ctx) = 0;
 
-  virtual void enterProperty_description(EffectLabParser::Property_descriptionContext *ctx) = 0;
-  virtual void exitProperty_description(EffectLabParser::Property_descriptionContext *ctx) = 0;
-
-  virtual void enterPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) = 0;
-  virtual void exitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *ctx) = 0;
-
-  virtual void enterPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) = 0;
-  virtual void exitPropertyItemInt(EffectLabParser::PropertyItemIntContext *ctx) = 0;
-
-  virtual void enterPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) = 0;
-  virtual void exitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *ctx) = 0;
-
-  virtual void enterPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) = 0;
-  virtual void exitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *ctx) = 0;
-
-  virtual void enterPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) = 0;
-  virtual void exitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *ctx) = 0;
-
-  virtual void enterPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) = 0;
-  virtual void exitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *ctx) = 0;
-
-  virtual void enterPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) = 0;
-  virtual void exitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *ctx) = 0;
-
-  virtual void enterPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) = 0;
-  virtual void exitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *ctx) = 0;
-
-  virtual void enterPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) = 0;
-  virtual void exitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *ctx) = 0;
+  virtual void enterPass(EffectLabParser::PassContext *ctx) = 0;
+  virtual void exitPass(EffectLabParser::PassContext *ctx) = 0;
 
   virtual void enterPass_tag(EffectLabParser::Pass_tagContext *ctx) = 0;
   virtual void exitPass_tag(EffectLabParser::Pass_tagContext *ctx) = 0;
 
-  virtual void enterPass(EffectLabParser::PassContext *ctx) = 0;
-  virtual void exitPass(EffectLabParser::PassContext *ctx) = 0;
+  virtual void enterPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) = 0;
+  virtual void exitPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) = 0;
+
+  virtual void enterPassGeometryShader(EffectLabParser::PassGeometryShaderContext *ctx) = 0;
+  virtual void exitPassGeometryShader(EffectLabParser::PassGeometryShaderContext *ctx) = 0;
+
+  virtual void enterPassHullShader(EffectLabParser::PassHullShaderContext *ctx) = 0;
+  virtual void exitPassHullShader(EffectLabParser::PassHullShaderContext *ctx) = 0;
+
+  virtual void enterPassDomainShader(EffectLabParser::PassDomainShaderContext *ctx) = 0;
+  virtual void exitPassDomainShader(EffectLabParser::PassDomainShaderContext *ctx) = 0;
+
+  virtual void enterPassPixelShader(EffectLabParser::PassPixelShaderContext *ctx) = 0;
+  virtual void exitPassPixelShader(EffectLabParser::PassPixelShaderContext *ctx) = 0;
+
+  virtual void enterPassRenderQueue(EffectLabParser::PassRenderQueueContext *ctx) = 0;
+  virtual void exitPassRenderQueue(EffectLabParser::PassRenderQueueContext *ctx) = 0;
+
+  virtual void enterPassShaderFeature(EffectLabParser::PassShaderFeatureContext *ctx) = 0;
+  virtual void exitPassShaderFeature(EffectLabParser::PassShaderFeatureContext *ctx) = 0;
+
+  virtual void enterPassCullMode(EffectLabParser::PassCullModeContext *ctx) = 0;
+  virtual void exitPassCullMode(EffectLabParser::PassCullModeContext *ctx) = 0;
+
+  virtual void enterPassZClipMode(EffectLabParser::PassZClipModeContext *ctx) = 0;
+  virtual void exitPassZClipMode(EffectLabParser::PassZClipModeContext *ctx) = 0;
+
+  virtual void enterPassZTestMode(EffectLabParser::PassZTestModeContext *ctx) = 0;
+  virtual void exitPassZTestMode(EffectLabParser::PassZTestModeContext *ctx) = 0;
+
+  virtual void enterPassZWriteMode(EffectLabParser::PassZWriteModeContext *ctx) = 0;
+  virtual void exitPassZWriteMode(EffectLabParser::PassZWriteModeContext *ctx) = 0;
+
+  virtual void enterPassOffset(EffectLabParser::PassOffsetContext *ctx) = 0;
+  virtual void exitPassOffset(EffectLabParser::PassOffsetContext *ctx) = 0;
+
+  virtual void enterPassColorMask(EffectLabParser::PassColorMaskContext *ctx) = 0;
+  virtual void exitPassColorMask(EffectLabParser::PassColorMaskContext *ctx) = 0;
+
+  virtual void enterPassBlend(EffectLabParser::PassBlendContext *ctx) = 0;
+  virtual void exitPassBlend(EffectLabParser::PassBlendContext *ctx) = 0;
+
+  virtual void enterPassBlendOp(EffectLabParser::PassBlendOpContext *ctx) = 0;
+  virtual void exitPassBlendOp(EffectLabParser::PassBlendOpContext *ctx) = 0;
+
+  virtual void enterPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *ctx) = 0;
+  virtual void exitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *ctx) = 0;
+
+  virtual void enterPassConservative(EffectLabParser::PassConservativeContext *ctx) = 0;
+  virtual void exitPassConservative(EffectLabParser::PassConservativeContext *ctx) = 0;
+
+  virtual void enterPassStencil(EffectLabParser::PassStencilContext *ctx) = 0;
+  virtual void exitPassStencil(EffectLabParser::PassStencilContext *ctx) = 0;
 
   virtual void enterPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext *ctx) = 0;
   virtual void exitPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext *ctx) = 0;
@@ -190,59 +244,50 @@ public:
   virtual void enterPass_stencil(EffectLabParser::Pass_stencilContext *ctx) = 0;
   virtual void exitPass_stencil(EffectLabParser::Pass_stencilContext *ctx) = 0;
 
-  virtual void enterPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) = 0;
-  virtual void exitPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) = 0;
+  virtual void enterStencilRef(EffectLabParser::StencilRefContext *ctx) = 0;
+  virtual void exitStencilRef(EffectLabParser::StencilRefContext *ctx) = 0;
 
-  virtual void enterPassGeometryShader(EffectLabParser::PassGeometryShaderContext *ctx) = 0;
-  virtual void exitPassGeometryShader(EffectLabParser::PassGeometryShaderContext *ctx) = 0;
+  virtual void enterStencilReadMask(EffectLabParser::StencilReadMaskContext *ctx) = 0;
+  virtual void exitStencilReadMask(EffectLabParser::StencilReadMaskContext *ctx) = 0;
 
-  virtual void enterPassHullShader(EffectLabParser::PassHullShaderContext *ctx) = 0;
-  virtual void exitPassHullShader(EffectLabParser::PassHullShaderContext *ctx) = 0;
+  virtual void enterStencilWriteMask(EffectLabParser::StencilWriteMaskContext *ctx) = 0;
+  virtual void exitStencilWriteMask(EffectLabParser::StencilWriteMaskContext *ctx) = 0;
 
-  virtual void enterPassDomainShader(EffectLabParser::PassDomainShaderContext *ctx) = 0;
-  virtual void exitPassDomainShader(EffectLabParser::PassDomainShaderContext *ctx) = 0;
+  virtual void enterStencilComp(EffectLabParser::StencilCompContext *ctx) = 0;
+  virtual void exitStencilComp(EffectLabParser::StencilCompContext *ctx) = 0;
 
-  virtual void enterPassPixelShader(EffectLabParser::PassPixelShaderContext *ctx) = 0;
-  virtual void exitPassPixelShader(EffectLabParser::PassPixelShaderContext *ctx) = 0;
+  virtual void enterStencilPassOp(EffectLabParser::StencilPassOpContext *ctx) = 0;
+  virtual void exitStencilPassOp(EffectLabParser::StencilPassOpContext *ctx) = 0;
 
-  virtual void enterPassRenderQueue(EffectLabParser::PassRenderQueueContext *ctx) = 0;
-  virtual void exitPassRenderQueue(EffectLabParser::PassRenderQueueContext *ctx) = 0;
+  virtual void enterStencilFailOp(EffectLabParser::StencilFailOpContext *ctx) = 0;
+  virtual void exitStencilFailOp(EffectLabParser::StencilFailOpContext *ctx) = 0;
 
-  virtual void enterPassShaderFeature(EffectLabParser::PassShaderFeatureContext *ctx) = 0;
-  virtual void exitPassShaderFeature(EffectLabParser::PassShaderFeatureContext *ctx) = 0;
+  virtual void enterStencilZFailOp(EffectLabParser::StencilZFailOpContext *ctx) = 0;
+  virtual void exitStencilZFailOp(EffectLabParser::StencilZFailOpContext *ctx) = 0;
 
-  virtual void enterPassCullMode(EffectLabParser::PassCullModeContext *ctx) = 0;
-  virtual void exitPassCullMode(EffectLabParser::PassCullModeContext *ctx) = 0;
+  virtual void enterStencilCompBackOp(EffectLabParser::StencilCompBackOpContext *ctx) = 0;
+  virtual void exitStencilCompBackOp(EffectLabParser::StencilCompBackOpContext *ctx) = 0;
 
-  virtual void enterPassZClipMode(EffectLabParser::PassZClipModeContext *ctx) = 0;
-  virtual void exitPassZClipMode(EffectLabParser::PassZClipModeContext *ctx) = 0;
+  virtual void enterStencilPassBackOp(EffectLabParser::StencilPassBackOpContext *ctx) = 0;
+  virtual void exitStencilPassBackOp(EffectLabParser::StencilPassBackOpContext *ctx) = 0;
 
-  virtual void enterPassZTestMode(EffectLabParser::PassZTestModeContext *ctx) = 0;
-  virtual void exitPassZTestMode(EffectLabParser::PassZTestModeContext *ctx) = 0;
+  virtual void enterStencilFailBackOp(EffectLabParser::StencilFailBackOpContext *ctx) = 0;
+  virtual void exitStencilFailBackOp(EffectLabParser::StencilFailBackOpContext *ctx) = 0;
 
-  virtual void enterPassZWriteMode(EffectLabParser::PassZWriteModeContext *ctx) = 0;
-  virtual void exitPassZWriteMode(EffectLabParser::PassZWriteModeContext *ctx) = 0;
+  virtual void enterStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext *ctx) = 0;
+  virtual void exitStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext *ctx) = 0;
 
-  virtual void enterPassOffset(EffectLabParser::PassOffsetContext *ctx) = 0;
-  virtual void exitPassOffset(EffectLabParser::PassOffsetContext *ctx) = 0;
+  virtual void enterStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext *ctx) = 0;
+  virtual void exitStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext *ctx) = 0;
 
-  virtual void enterPassColorMask(EffectLabParser::PassColorMaskContext *ctx) = 0;
-  virtual void exitPassColorMask(EffectLabParser::PassColorMaskContext *ctx) = 0;
+  virtual void enterStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext *ctx) = 0;
+  virtual void exitStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext *ctx) = 0;
 
-  virtual void enterPassBlend(EffectLabParser::PassBlendContext *ctx) = 0;
-  virtual void exitPassBlend(EffectLabParser::PassBlendContext *ctx) = 0;
+  virtual void enterStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext *ctx) = 0;
+  virtual void exitStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext *ctx) = 0;
 
-  virtual void enterPassBlendOp(EffectLabParser::PassBlendOpContext *ctx) = 0;
-  virtual void exitPassBlendOp(EffectLabParser::PassBlendOpContext *ctx) = 0;
-
-  virtual void enterPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *ctx) = 0;
-  virtual void exitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *ctx) = 0;
-
-  virtual void enterPassConservative(EffectLabParser::PassConservativeContext *ctx) = 0;
-  virtual void exitPassConservative(EffectLabParser::PassConservativeContext *ctx) = 0;
-
-  virtual void enterPassStencil(EffectLabParser::PassStencilContext *ctx) = 0;
-  virtual void exitPassStencil(EffectLabParser::PassStencilContext *ctx) = 0;
+  virtual void enterStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext *ctx) = 0;
+  virtual void exitStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext *ctx) = 0;
 
   virtual void enterStencil_ref(EffectLabParser::Stencil_refContext *ctx) = 0;
   virtual void exitStencil_ref(EffectLabParser::Stencil_refContext *ctx) = 0;
@@ -288,51 +333,6 @@ public:
 
   virtual void enterStencil_zfail_front_op(EffectLabParser::Stencil_zfail_front_opContext *ctx) = 0;
   virtual void exitStencil_zfail_front_op(EffectLabParser::Stencil_zfail_front_opContext *ctx) = 0;
-
-  virtual void enterStencilRef(EffectLabParser::StencilRefContext *ctx) = 0;
-  virtual void exitStencilRef(EffectLabParser::StencilRefContext *ctx) = 0;
-
-  virtual void enterStencilReadMask(EffectLabParser::StencilReadMaskContext *ctx) = 0;
-  virtual void exitStencilReadMask(EffectLabParser::StencilReadMaskContext *ctx) = 0;
-
-  virtual void enterStencilWriteMask(EffectLabParser::StencilWriteMaskContext *ctx) = 0;
-  virtual void exitStencilWriteMask(EffectLabParser::StencilWriteMaskContext *ctx) = 0;
-
-  virtual void enterStencilComp(EffectLabParser::StencilCompContext *ctx) = 0;
-  virtual void exitStencilComp(EffectLabParser::StencilCompContext *ctx) = 0;
-
-  virtual void enterStencilPassOp(EffectLabParser::StencilPassOpContext *ctx) = 0;
-  virtual void exitStencilPassOp(EffectLabParser::StencilPassOpContext *ctx) = 0;
-
-  virtual void enterStencilFailOp(EffectLabParser::StencilFailOpContext *ctx) = 0;
-  virtual void exitStencilFailOp(EffectLabParser::StencilFailOpContext *ctx) = 0;
-
-  virtual void enterStencilZFailOp(EffectLabParser::StencilZFailOpContext *ctx) = 0;
-  virtual void exitStencilZFailOp(EffectLabParser::StencilZFailOpContext *ctx) = 0;
-
-  virtual void enterStencilCompBackOp(EffectLabParser::StencilCompBackOpContext *ctx) = 0;
-  virtual void exitStencilCompBackOp(EffectLabParser::StencilCompBackOpContext *ctx) = 0;
-
-  virtual void enterStencilPassBackOp(EffectLabParser::StencilPassBackOpContext *ctx) = 0;
-  virtual void exitStencilPassBackOp(EffectLabParser::StencilPassBackOpContext *ctx) = 0;
-
-  virtual void enterStencilFailBackOp(EffectLabParser::StencilFailBackOpContext *ctx) = 0;
-  virtual void exitStencilFailBackOp(EffectLabParser::StencilFailBackOpContext *ctx) = 0;
-
-  virtual void enterStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext *ctx) = 0;
-  virtual void exitStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext *ctx) = 0;
-
-  virtual void enterStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext *ctx) = 0;
-  virtual void exitStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext *ctx) = 0;
-
-  virtual void enterStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext *ctx) = 0;
-  virtual void exitStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext *ctx) = 0;
-
-  virtual void enterStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext *ctx) = 0;
-  virtual void exitStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext *ctx) = 0;
-
-  virtual void enterStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext *ctx) = 0;
-  virtual void exitStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext *ctx) = 0;
 
 
 };

@@ -16,7 +16,12 @@ void EffectErrorListener::syntaxError(antlr4::Recognizer *recognizer,
 	const std::string &msg, 
 	std::exception_ptr e)
 {
-	Exception::Throw("line {}:{} {}", line, charPositionInLine, msg);
+	Exception::Throw("line {}:{}, current token type {}, error message: {}", 
+		line, 
+		charPositionInLine, 
+		offendingSymbol->getType(),
+		msg
+	);
 }
 
 EffectCompiler::EffectCompiler() {

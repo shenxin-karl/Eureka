@@ -26,7 +26,27 @@ public:
 
     virtual std::any visitProperty_block(EffectLabParser::Property_blockContext *context) = 0;
 
-    virtual std::any visitNumber_val(EffectLabParser::Number_valContext *context) = 0;
+    virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *context) = 0;
+
+    virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *context) = 0;
+
+    virtual std::any visitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *context) = 0;
+
+    virtual std::any visitPropertyItemInt(EffectLabParser::PropertyItemIntContext *context) = 0;
+
+    virtual std::any visitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *context) = 0;
+
+    virtual std::any visitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *context) = 0;
+
+    virtual std::any visitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *context) = 0;
+
+    virtual std::any visitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *context) = 0;
+
+    virtual std::any visitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *context) = 0;
+
+    virtual std::any visitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *context) = 0;
+
+    virtual std::any visitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *context) = 0;
 
     virtual std::any visitProperty_bool_type(EffectLabParser::Property_bool_typeContext *context) = 0;
 
@@ -64,31 +84,47 @@ public:
 
     virtual std::any visitProperty_texture_val(EffectLabParser::Property_texture_valContext *context) = 0;
 
-    virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *context) = 0;
+    virtual std::any visitNumber_val(EffectLabParser::Number_valContext *context) = 0;
 
-    virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *context) = 0;
-
-    virtual std::any visitPropertyItemBool(EffectLabParser::PropertyItemBoolContext *context) = 0;
-
-    virtual std::any visitPropertyItemInt(EffectLabParser::PropertyItemIntContext *context) = 0;
-
-    virtual std::any visitPropertyItemRange(EffectLabParser::PropertyItemRangeContext *context) = 0;
-
-    virtual std::any visitPropertyItemFloat(EffectLabParser::PropertyItemFloatContext *context) = 0;
-
-    virtual std::any visitPropertyItemFloat2(EffectLabParser::PropertyItemFloat2Context *context) = 0;
-
-    virtual std::any visitPropertyItemFloat3(EffectLabParser::PropertyItemFloat3Context *context) = 0;
-
-    virtual std::any visitPropertyItemFloat4(EffectLabParser::PropertyItemFloat4Context *context) = 0;
-
-    virtual std::any visitPropertyItemTexture(EffectLabParser::PropertyItemTextureContext *context) = 0;
-
-    virtual std::any visitPropertyItemMatrix(EffectLabParser::PropertyItemMatrixContext *context) = 0;
+    virtual std::any visitPass(EffectLabParser::PassContext *context) = 0;
 
     virtual std::any visitPass_tag(EffectLabParser::Pass_tagContext *context) = 0;
 
-    virtual std::any visitPass(EffectLabParser::PassContext *context) = 0;
+    virtual std::any visitPassVertexShader(EffectLabParser::PassVertexShaderContext *context) = 0;
+
+    virtual std::any visitPassGeometryShader(EffectLabParser::PassGeometryShaderContext *context) = 0;
+
+    virtual std::any visitPassHullShader(EffectLabParser::PassHullShaderContext *context) = 0;
+
+    virtual std::any visitPassDomainShader(EffectLabParser::PassDomainShaderContext *context) = 0;
+
+    virtual std::any visitPassPixelShader(EffectLabParser::PassPixelShaderContext *context) = 0;
+
+    virtual std::any visitPassRenderQueue(EffectLabParser::PassRenderQueueContext *context) = 0;
+
+    virtual std::any visitPassShaderFeature(EffectLabParser::PassShaderFeatureContext *context) = 0;
+
+    virtual std::any visitPassCullMode(EffectLabParser::PassCullModeContext *context) = 0;
+
+    virtual std::any visitPassZClipMode(EffectLabParser::PassZClipModeContext *context) = 0;
+
+    virtual std::any visitPassZTestMode(EffectLabParser::PassZTestModeContext *context) = 0;
+
+    virtual std::any visitPassZWriteMode(EffectLabParser::PassZWriteModeContext *context) = 0;
+
+    virtual std::any visitPassOffset(EffectLabParser::PassOffsetContext *context) = 0;
+
+    virtual std::any visitPassColorMask(EffectLabParser::PassColorMaskContext *context) = 0;
+
+    virtual std::any visitPassBlend(EffectLabParser::PassBlendContext *context) = 0;
+
+    virtual std::any visitPassBlendOp(EffectLabParser::PassBlendOpContext *context) = 0;
+
+    virtual std::any visitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *context) = 0;
+
+    virtual std::any visitPassConservative(EffectLabParser::PassConservativeContext *context) = 0;
+
+    virtual std::any visitPassStencil(EffectLabParser::PassStencilContext *context) = 0;
 
     virtual std::any visitPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext *context) = 0;
 
@@ -136,41 +172,35 @@ public:
 
     virtual std::any visitPass_stencil(EffectLabParser::Pass_stencilContext *context) = 0;
 
-    virtual std::any visitPassVertexShader(EffectLabParser::PassVertexShaderContext *context) = 0;
+    virtual std::any visitStencilRef(EffectLabParser::StencilRefContext *context) = 0;
 
-    virtual std::any visitPassGeometryShader(EffectLabParser::PassGeometryShaderContext *context) = 0;
+    virtual std::any visitStencilReadMask(EffectLabParser::StencilReadMaskContext *context) = 0;
 
-    virtual std::any visitPassHullShader(EffectLabParser::PassHullShaderContext *context) = 0;
+    virtual std::any visitStencilWriteMask(EffectLabParser::StencilWriteMaskContext *context) = 0;
 
-    virtual std::any visitPassDomainShader(EffectLabParser::PassDomainShaderContext *context) = 0;
+    virtual std::any visitStencilComp(EffectLabParser::StencilCompContext *context) = 0;
 
-    virtual std::any visitPassPixelShader(EffectLabParser::PassPixelShaderContext *context) = 0;
+    virtual std::any visitStencilPassOp(EffectLabParser::StencilPassOpContext *context) = 0;
 
-    virtual std::any visitPassRenderQueue(EffectLabParser::PassRenderQueueContext *context) = 0;
+    virtual std::any visitStencilFailOp(EffectLabParser::StencilFailOpContext *context) = 0;
 
-    virtual std::any visitPassShaderFeature(EffectLabParser::PassShaderFeatureContext *context) = 0;
+    virtual std::any visitStencilZFailOp(EffectLabParser::StencilZFailOpContext *context) = 0;
 
-    virtual std::any visitPassCullMode(EffectLabParser::PassCullModeContext *context) = 0;
+    virtual std::any visitStencilCompBackOp(EffectLabParser::StencilCompBackOpContext *context) = 0;
 
-    virtual std::any visitPassZClipMode(EffectLabParser::PassZClipModeContext *context) = 0;
+    virtual std::any visitStencilPassBackOp(EffectLabParser::StencilPassBackOpContext *context) = 0;
 
-    virtual std::any visitPassZTestMode(EffectLabParser::PassZTestModeContext *context) = 0;
+    virtual std::any visitStencilFailBackOp(EffectLabParser::StencilFailBackOpContext *context) = 0;
 
-    virtual std::any visitPassZWriteMode(EffectLabParser::PassZWriteModeContext *context) = 0;
+    virtual std::any visitStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext *context) = 0;
 
-    virtual std::any visitPassOffset(EffectLabParser::PassOffsetContext *context) = 0;
+    virtual std::any visitStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext *context) = 0;
 
-    virtual std::any visitPassColorMask(EffectLabParser::PassColorMaskContext *context) = 0;
+    virtual std::any visitStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext *context) = 0;
 
-    virtual std::any visitPassBlend(EffectLabParser::PassBlendContext *context) = 0;
+    virtual std::any visitStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext *context) = 0;
 
-    virtual std::any visitPassBlendOp(EffectLabParser::PassBlendOpContext *context) = 0;
-
-    virtual std::any visitPassAlphaToMask(EffectLabParser::PassAlphaToMaskContext *context) = 0;
-
-    virtual std::any visitPassConservative(EffectLabParser::PassConservativeContext *context) = 0;
-
-    virtual std::any visitPassStencil(EffectLabParser::PassStencilContext *context) = 0;
+    virtual std::any visitStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext *context) = 0;
 
     virtual std::any visitStencil_ref(EffectLabParser::Stencil_refContext *context) = 0;
 
@@ -201,36 +231,6 @@ public:
     virtual std::any visitStencil_fail_front_op(EffectLabParser::Stencil_fail_front_opContext *context) = 0;
 
     virtual std::any visitStencil_zfail_front_op(EffectLabParser::Stencil_zfail_front_opContext *context) = 0;
-
-    virtual std::any visitStencilRef(EffectLabParser::StencilRefContext *context) = 0;
-
-    virtual std::any visitStencilReadMask(EffectLabParser::StencilReadMaskContext *context) = 0;
-
-    virtual std::any visitStencilWriteMask(EffectLabParser::StencilWriteMaskContext *context) = 0;
-
-    virtual std::any visitStencilComp(EffectLabParser::StencilCompContext *context) = 0;
-
-    virtual std::any visitStencilPassOp(EffectLabParser::StencilPassOpContext *context) = 0;
-
-    virtual std::any visitStencilFailOp(EffectLabParser::StencilFailOpContext *context) = 0;
-
-    virtual std::any visitStencilZFailOp(EffectLabParser::StencilZFailOpContext *context) = 0;
-
-    virtual std::any visitStencilCompBackOp(EffectLabParser::StencilCompBackOpContext *context) = 0;
-
-    virtual std::any visitStencilPassBackOp(EffectLabParser::StencilPassBackOpContext *context) = 0;
-
-    virtual std::any visitStencilFailBackOp(EffectLabParser::StencilFailBackOpContext *context) = 0;
-
-    virtual std::any visitStencilZFailBackOp(EffectLabParser::StencilZFailBackOpContext *context) = 0;
-
-    virtual std::any visitStencilCompFrontOp(EffectLabParser::StencilCompFrontOpContext *context) = 0;
-
-    virtual std::any visitStencilPassFrontOp(EffectLabParser::StencilPassFrontOpContext *context) = 0;
-
-    virtual std::any visitStencilFailFrontOp(EffectLabParser::StencilFailFrontOpContext *context) = 0;
-
-    virtual std::any visitStencilZFailFrontOp(EffectLabParser::StencilZFailFrontOpContext *context) = 0;
 
 
 };

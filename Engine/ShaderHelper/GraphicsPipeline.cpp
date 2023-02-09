@@ -145,9 +145,6 @@ auto GraphicsPipeline::getPSO(const KeywordMask &keywordMask) const -> std::shar
 	auto pGraphicsPSO = pSharedDevice->createGraphicsPSO(key);
 	auto pGraphicsPSOPtr = pGraphicsPSO.get();
 
-	auto path = std::filesystem::path(_shaderFilePath).lexically_normal();
-	std::unique_ptr<ShaderInclude> pShaderInclude = std::make_unique<ShaderInclude>(path.string());
-
 	for (auto &entry : _entryPoints) {
 		size_t index = static_cast<size_t>(entry.shaderType);
 		auto pBinaryBlob = ShaderLoader::dxc(

@@ -23,7 +23,5 @@ Pass("BasePass") {
     VertexShader: vert
     PixelShader: frag
     ShaderFeature: _AAA _BBB _CCC
-    RenderQueue: Geometry
-    Cull: Back
-    
+    ZWrite: Off
 }

@@ -67,6 +67,7 @@ end
 
 target("Engine")
     set_languages("c++latest")
+    set_warnings("all", "error")
     set_kind("binary")
     add_headerfiles("**.h")
     add_headerfiles("**.hpp")

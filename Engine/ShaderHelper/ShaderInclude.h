@@ -9,6 +9,7 @@ public:
     ShaderInclude(fs::path parentDirectory);
     STDMETHOD(Open)(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes) override;
     STDMETHOD(Close)(THIS_ LPCVOID pData) override;
+    virtual ~ShaderInclude() = default;
 private:
     fs::path _parentDirectory;
 };

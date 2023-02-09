@@ -57,7 +57,28 @@ std::any RasterizerParser::visitPassZClipMode(pd::EffectLabParser::PassZClipMode
 }
 
 std::any RasterizerParser::visitPassOffset(pd::EffectLabParser::PassOffsetContext *context) {
-	return BaseParser::visitPassOffset(context);
+	auto *token = context->getStart();
+	if (_depthOffset.hasValue()) {
+		Exception::Throw("{} {}:{} keyword redefinition the last location at {}:{},"
+			"the last bias is {}, the last slope scale depth bias is {}",
+			_effectSourcePath,
+			token->getLine(),
+			token->getCharPositionInLine(),
+			_depthOffset.line,
+			_depthOffset.column,
+			_depthOffset.get().bias,
+			_depthOffset.get().slopeScaleDepthBias
+		);
+	}
+
+	float bias = std::stof(context->pass_offset()->FloatLiteral(0)->getText());
+	float slopeScaleDepthBias = std::stof(context->pass_offset()->FloatLiteral(1)->getText());
+	_depthOffset.set(RasterizerOffset{ bias, slopeScaleDepthBias });
+	_depthOffset.setLocation(token);
+
+	_rasterizerDesc.DepthBias = static_cast<INT>(bias);
+	_rasterizerDesc.SlopeScaledDepthBias = slopeScaleDepthBias;
+	return NullAny;
 }
 
 std::any RasterizerParser::visitPassConservative(pd::EffectLabParser::PassConservativeContext *context) {
@@ -83,6 +104,7 @@ std::any RasterizerParser::visitPassConservative(pd::EffectLabParser::PassConser
 	} else {
 		_rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 	}
+	return NullAny;
 }
 
 bool RasterizerParser::visitBoolLiteral(const antlr4::tree::TerminalNode *node) {

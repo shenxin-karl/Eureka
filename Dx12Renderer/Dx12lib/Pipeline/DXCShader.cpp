@@ -44,6 +44,7 @@ struct DxcInclude : public IDxcIncludeHandler {
         *ppIncludeSource = pSource.Detach();
         return hr;
 	}
+    virtual ~DxcInclude() = default;
 public:
     ID3DInclude *pInclude = nullptr;
 };

@@ -19,7 +19,6 @@ public:
 	auto getKeywordMask() const -> const KeywordMask &;
 private:
 	fs::path _shaderFilePath;
-	size_t _shaderContentLength;
 	KeywordMask _keywordMask;
 	std::string _entryPoint;
 	mutable ComputePSOMap _psoMap;

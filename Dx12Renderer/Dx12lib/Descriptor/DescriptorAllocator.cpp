@@ -35,7 +35,7 @@ std::shared_ptr<DescriptorAllocatorPage> DescriptorAllocator::createAllocatorPag
 DescriptorAllocator::DescriptorAllocator(std::weak_ptr<Device> pDevice, 
 	D3D12_DESCRIPTOR_HEAP_TYPE heapType, 
 	uint32 numDescriptorPreHeap)
-: _pDevice(pDevice), _numDescriptorPreHeap(numDescriptorPreHeap)
+: _numDescriptorPreHeap(numDescriptorPreHeap), _pDevice(pDevice)
 , _heapType(heapType) {
 }
 

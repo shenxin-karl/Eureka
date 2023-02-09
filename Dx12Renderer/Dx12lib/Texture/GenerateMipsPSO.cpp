@@ -11,11 +11,6 @@ static unsigned char g_GenerateMips_CS_data[] = {
 };
 
 GenerateMipsPSO::GenerateMipsPSO(std::weak_ptr<Device> pDevice) {
-	UINT compilesFlags = 0;
-	#if defined(DEBUG) || defined(_DEBUG) 
-		compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-	#endif
-
 	ShaderCompileDesc desc;
 	desc.entryPoint = "CS";
 	desc.target = "cs_5_1";

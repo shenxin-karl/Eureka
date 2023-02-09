@@ -28,7 +28,6 @@ public:
 private:
 	void map() const;
 private:
-	bool _isConstantBuffer;
 	size_t _elementByteSize;
 	size_t _elementCount;
 	mutable BYTE *_pMappedData;
