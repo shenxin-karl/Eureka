@@ -12,17 +12,17 @@ auto DepthStencilParser::getDepthStencilDesc() const -> const D3D12_DEPTH_STENCI
 	return _depthStencilDesc;
 }
 
+auto DepthStencilParser::getStencilRef() -> int {
+	return _stencilRef.hasValue() ? _stencilRef.get() : 0;
+}
+
 std::any DepthStencilParser::visitPassZWriteMode(pd::EffectLabParser::PassZWriteModeContext *context) {
 	auto *token = context->getStart();
 	if (_zWriteMode.hasValue()) {
-		Exception::Throw("{} {}:{} keyword 'ZWrite' redefinition the last location at {}:{}\n"
+		redefinitionThrow("{} {}:{} keyword 'ZWrite' redefinition the last location at {}:{}\n"
 			"the last value is '{}'!",
-			_effectSourcePath,
-			token->getLine(),
-			token->getCharPositionInLine(),
-			_zWriteMode.line,
-			_zWriteMode.column,
-			_zWriteMode.get()
+			token,
+			_zWriteMode
 		);
 	}
 
@@ -40,14 +40,10 @@ std::any DepthStencilParser::visitPassZWriteMode(pd::EffectLabParser::PassZWrite
 std::any DepthStencilParser::visitPassZTestMode(pd::EffectLabParser::PassZTestModeContext *context) {
 	auto *token = context->getStart();
 	if (_zTestMode.hasValue()) {
-		Exception::Throw("{} {}:{} keyword 'ZTest' redefinition the last location at {}:{}\n"
+		redefinitionThrow("{} {}:{} keyword 'ZTest' redefinition the last location at {}:{}\n"
 			"the last value is '{}'!",
-			_effectSourcePath,
-			token->getLine(),
-			token->getCharPositionInLine(),
-			_zTestMode.line,
-			_zTestMode.column,
-			_zTestMode.get()
+			token,
+			_zTestMode
 		);
 	}
 
@@ -75,19 +71,88 @@ std::any DepthStencilParser::visitPassZTestMode(pd::EffectLabParser::PassZTestMo
 }
 
 std::any DepthStencilParser::visitPassStencil(pd::EffectLabParser::PassStencilContext *context) {
-	return BaseParser::visitPassStencil(context);
+	_depthStencilDesc.StencilEnable = !context->pass_stencil()->stencil_item().empty();
+	for (auto *stencilItem : context->pass_stencil()->stencil_item()) {
+		stencilItem->accept(this);
+	}
+	return NullAny;
 }
 
 std::any DepthStencilParser::visitStencilRef(pd::EffectLabParser::StencilRefContext *context) {
-	return BaseParser::visitStencilRef(context);
+	auto *token = context->stencil_ref()->getStart();
+	if (_stencilRef.hasValue()) {
+		redefinitionThrow("{} {}:{} Stencil keyword 'Ref' redefinition, the last location at {}:{}\n"
+			"the last value is '{}'",
+			token,
+			_stencilRef
+		);
+	}
+
+	int refValue = std::stoi(context->stencil_ref()->IntLiteral()->getText());
+	if (refValue < 0 || refValue > 255) {
+		Exception::Throw("{} {}:{} the Stencil Ref value '{}' out of range(0, 255)",
+			_effectSourcePath,
+			token->getLine(),
+			token->getCharPositionInLine(),
+			refValue
+		);
+	}
+
+	_stencilRef.set(refValue);
+	_stencilRef.setLocation(token);
+	return NullAny;
 }
 
 std::any DepthStencilParser::visitStencilReadMask(pd::EffectLabParser::StencilReadMaskContext *context) {
-	return BaseParser::visitStencilReadMask(context);
+	auto *token = context->stencil_read_mask()->getStart();
+	if (_stencilReadMask.hasValue()) {
+		redefinitionThrow("{} {}:{} Stencil keyword 'ReadMask' redefinition,"
+			"the last location at {}:{}\n the last value is '{}'",
+			token,
+			_stencilReadMask
+		);
+	}
+
+	int readMaskValue = std::stoi(context->stencil_read_mask()->IntLiteral()->getText());
+	if (readMaskValue < 0 || readMaskValue > 255) {
+		Exception::Throw("{} {}:{} the Stencil ReadMask value '{}' out of range(0, 255)",
+			_effectSourcePath,
+			token->getLine(),
+			token->getCharPositionInLine(),
+			readMaskValue
+		);
+	}
+
+	_stencilReadMask.set(readMaskValue);
+	_stencilReadMask.setLocation(token);
+	_depthStencilDesc.StencilReadMask = static_cast<UINT8>(readMaskValue);
+	return NullAny;
 }
 
 std::any DepthStencilParser::visitStencilWriteMask(pd::EffectLabParser::StencilWriteMaskContext *context) {
-	return BaseParser::visitStencilWriteMask(context);
+	auto *token = context->stencil_write_mask()->getStart();
+	if (_stencilWriteMask.hasValue()) {
+		redefinitionThrow("{} {}:{} Stencil keyword 'WriteMask' redefinition,"
+			"the last location at {}:{}\n the last value is '{}'",
+			token,
+			_stencilWriteMask
+		);
+	}
+
+	int readMaskValue = std::stoi(context->stencil_write_mask()->IntLiteral()->getText());
+	if (readMaskValue < 0 || readMaskValue > 255) {
+		Exception::Throw("{} {}:{} the Stencil keyword 'WriteMask' value '{}' out of range(0, 255)",
+			_effectSourcePath,
+			token->getLine(),
+			token->getCharPositionInLine(),
+			readMaskValue
+		);
+	}
+
+	_stencilWriteMask.set(readMaskValue);
+	_stencilWriteMask.setLocation(token);
+	_depthStencilDesc.StencilWriteMask = static_cast<UINT8>(readMaskValue);
+	return NullAny;
 }
 
 std::any DepthStencilParser::visitStencilComp(pd::EffectLabParser::StencilCompContext *context) {

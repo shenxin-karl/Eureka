@@ -7,6 +7,7 @@ namespace Eureka {
 class RasterizerParser : public BaseParser {
 public:
 	RasterizerParser(std::string effectSourcePath);
+	auto getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &;
 	std::any visitPassCullMode(pd::EffectLabParser::PassCullModeContext *context) override;
 	std::any visitPassZClipMode(pd::EffectLabParser::PassZClipModeContext *context) override;
 	std::any visitPassOffset(pd::EffectLabParser::PassOffsetContext *context) override;

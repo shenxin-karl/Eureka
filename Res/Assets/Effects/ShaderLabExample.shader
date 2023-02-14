@@ -24,4 +24,10 @@ Pass("BasePass") {
     PixelShader: frag
     ShaderFeature: _AAA _BBB _CCC
     ZWrite: Off
+    Stencil {
+        Ref: 1
+        ReadMask: 1
+        WriteMask: 1
+        Comp: 
+    }
 }

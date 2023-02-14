@@ -55,7 +55,7 @@ std::any BlendParser::visitPassColorMask(pd::EffectLabParser::PassColorMaskConte
 	}
 
 	auto token = context->pass_color_mask()->getStart();
-	if (renderTargetId >= kMaxRenderTarget) {
+	if (renderTargetId >= kMaxNumRenderTarget) {
 		Exception::Throw("{} {}:{} ColorMask render target id {} out of range(0, 7)",
 			_effectSourcePath,
 			renderTargetId,

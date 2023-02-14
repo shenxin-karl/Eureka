@@ -21,6 +21,11 @@ auto PassParser::parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr
 	for (auto *item : ctx->pass_block_item()) {
 		item->accept(this);
 	}
+
+	_pass->_rasterizerDesc = _rasterizerParser.getRasterizerDesc();
+	_pass->_depthStencilDesc = _depthStencilParser.getDepthStencilDesc();
+	_pass->_stencilRef = _depthStencilParser.getStencilRef();
+	_pass->_blendDesc = _blendParser.getBlendDesc();
 	return std::move(_pass);
 }
 

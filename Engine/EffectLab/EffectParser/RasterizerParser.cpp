@@ -8,6 +8,10 @@ RasterizerParser::RasterizerParser(std::string effectSourcePath)
 {
 }
 
+auto RasterizerParser::getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC & {
+	return _rasterizerDesc;
+}
+
 std::any RasterizerParser::visitPassCullMode(pd::EffectLabParser::PassCullModeContext *context) {
 	auto *token = context->getStart();
 	if (_cullMode.hasValue()) {

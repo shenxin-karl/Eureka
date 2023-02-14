@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 #include "EffectLab/Antlr4Codegen/EffectLabBaseVisitor.h"
+#include "Foundation/Exception.h"
 
 namespace Eureka {
 

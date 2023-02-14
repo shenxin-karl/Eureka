@@ -2,12 +2,15 @@
 #include "BaseParser.h"
 #include <Dx12lib/Tool/D3Dx12.h>
 
+#include "EffectLab/Pass.h"
+
 namespace Eureka {
 
 class DepthStencilParser : public BaseParser {
 public:
 	DepthStencilParser(std::string effectSourcePath);
 	auto getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &;
+	auto getStencilRef() -> int;
 	/// depth
 	std::any visitPassZWriteMode(pd::EffectLabParser::PassZWriteModeContext *context) override;
 	std::any visitPassZTestMode(pd::EffectLabParser::PassZTestModeContext *context) override;
@@ -31,6 +34,21 @@ public:
 	std::any visitStencilPassFrontOp(pd::EffectLabParser::StencilPassFrontOpContext *context) override;
 	std::any visitStencilFailFrontOp(pd::EffectLabParser::StencilFailFrontOpContext *context) override;
 	std::any visitStencilZFailFrontOp(pd::EffectLabParser::StencilZFailFrontOpContext *context) override;
+
+private:
+	template<typename T>
+	void redefinitionThrow(std::string_view fmt, const antlr4::Token *token, const LocAndObject<T> &object) const {
+		Exception::Throw(fmt,
+			_effectSourcePath,
+			token->getLine(), 
+			token->getCharPositionInLine(), 
+			object.line,
+			object.column,
+			object.get()
+		);
+	}
+	static auto visitStencilOpLable(const std::string &stencilOpLabel) -> D3D12_STENCIL_OP;
+	static auto visitStencilCompareLabel(const std::string &stencilCompareLabel) -> D3D12_COMPARISON_FUNC;
 private:
 	std::string						_effectSourcePath;
 	LocAndObject<std::string>		_zWriteMode;
