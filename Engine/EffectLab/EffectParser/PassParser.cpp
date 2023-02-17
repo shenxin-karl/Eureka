@@ -26,6 +26,7 @@ auto PassParser::parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr
 	_pass->_depthStencilDesc = _depthStencilParser.getDepthStencilDesc();
 	_pass->_stencilRef = _depthStencilParser.getStencilRef();
 	_pass->_blendDesc = _blendParser.getBlendDesc();
+	_pass->_pKeywordSet = _pKeywordSet;
 	return std::move(_pass);
 }
 

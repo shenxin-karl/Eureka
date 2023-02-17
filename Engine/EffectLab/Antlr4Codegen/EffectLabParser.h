@@ -1518,7 +1518,7 @@ public:
   public:
     Stencil_comp_back_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *StencilOpLabel();
+    antlr4::tree::TerminalNode *StencilCompareLabel();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -1578,7 +1578,7 @@ public:
   public:
     Stencil_comp_front_opContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *StencilOpLabel();
+    antlr4::tree::TerminalNode *StencilCompareLabel();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

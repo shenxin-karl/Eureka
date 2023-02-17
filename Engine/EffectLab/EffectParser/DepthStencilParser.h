@@ -47,28 +47,28 @@ private:
 			object.get()
 		);
 	}
-	static auto visitStencilOpLable(const std::string &stencilOpLabel) -> D3D12_STENCIL_OP;
+	static auto visitStencilOpLabel(const std::string &stencilOpLabel) -> D3D12_STENCIL_OP;
 	static auto visitStencilCompareLabel(const std::string &stencilCompareLabel) -> D3D12_COMPARISON_FUNC;
 private:
-	std::string						_effectSourcePath;
-	LocAndObject<std::string>		_zWriteMode;
-	LocAndObject<std::string>		_zTestMode;
-	LocAndObject<int>				_stencilRef;
-	LocAndObject<int>				_stencilReadMask;
-	LocAndObject<int>				_stencilWriteMask;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilCompOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilPassOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilFailOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilZFailOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilCompBackOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilPassBackOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilFailBackOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilZFailBackOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilCompFrontOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilPassFrontOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilFailFrontOp;
-	LocAndObject<D3D12_STENCIL_OP>	_stencilZFailFrontOp;
-	D3D12_DEPTH_STENCIL_DESC		_depthStencilDesc = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	std::string					_effectSourcePath;
+	LocAndObject<std::string>	_zWriteMode;
+	LocAndObject<std::string>	_zTestMode;
+	LocAndObject<int>			_stencilRef;
+	LocAndObject<int>			_stencilReadMask;
+	LocAndObject<int>			_stencilWriteMask;
+	LocAndObject<std::string>	_stencilCompOp;
+	LocAndObject<std::string>	_stencilPassOp;
+	LocAndObject<std::string>	_stencilFailOp;
+	LocAndObject<std::string>	_stencilZFailOp;
+	LocAndObject<std::string>	_stencilCompBackOp;
+	LocAndObject<std::string>	_stencilPassBackOp;
+	LocAndObject<std::string>	_stencilFailBackOp;
+	LocAndObject<std::string>	_stencilZFailBackOp;
+	LocAndObject<std::string>	_stencilCompFrontOp;
+	LocAndObject<std::string>	_stencilPassFrontOp;
+	LocAndObject<std::string>	_stencilFailFrontOp;
+	LocAndObject<std::string>	_stencilZFailFrontOp;
+	D3D12_DEPTH_STENCIL_DESC	_depthStencilDesc = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 };
 
 }

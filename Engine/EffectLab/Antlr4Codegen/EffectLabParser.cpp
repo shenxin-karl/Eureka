@@ -249,11 +249,11 @@ void effectlabParserInitialize() {
   	1,0,0,0,477,478,5,35,0,0,478,479,5,2,0,0,479,480,5,79,0,0,480,103,1,0,
   	0,0,481,482,5,58,0,0,482,483,5,2,0,0,483,484,5,79,0,0,484,105,1,0,0,0,
   	485,486,5,59,0,0,486,487,5,2,0,0,487,488,5,79,0,0,488,107,1,0,0,0,489,
-  	490,5,60,0,0,490,491,5,2,0,0,491,492,5,79,0,0,492,109,1,0,0,0,493,494,
+  	490,5,60,0,0,490,491,5,2,0,0,491,492,5,78,0,0,492,109,1,0,0,0,493,494,
   	5,61,0,0,494,495,5,2,0,0,495,496,5,79,0,0,496,111,1,0,0,0,497,498,5,62,
   	0,0,498,499,5,2,0,0,499,500,5,79,0,0,500,113,1,0,0,0,501,502,5,63,0,0,
   	502,503,5,2,0,0,503,504,5,79,0,0,504,115,1,0,0,0,505,506,5,64,0,0,506,
-  	507,5,2,0,0,507,508,5,79,0,0,508,117,1,0,0,0,509,510,5,65,0,0,510,511,
+  	507,5,2,0,0,507,508,5,78,0,0,508,117,1,0,0,0,509,510,5,65,0,0,510,511,
   	5,2,0,0,511,512,5,79,0,0,512,119,1,0,0,0,513,514,5,66,0,0,514,515,5,2,
   	0,0,515,516,5,79,0,0,516,121,1,0,0,0,517,518,5,67,0,0,518,519,5,2,0,0,
   	519,520,5,79,0,0,520,123,1,0,0,0,12,126,131,142,231,293,305,329,360,388,
@@ -5853,8 +5853,8 @@ EffectLabParser::Stencil_comp_back_opContext::Stencil_comp_back_opContext(Parser
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* EffectLabParser::Stencil_comp_back_opContext::StencilOpLabel() {
-  return getToken(EffectLabParser::StencilOpLabel, 0);
+tree::TerminalNode* EffectLabParser::Stencil_comp_back_opContext::StencilCompareLabel() {
+  return getToken(EffectLabParser::StencilCompareLabel, 0);
 }
 
 
@@ -5900,7 +5900,7 @@ EffectLabParser::Stencil_comp_back_opContext* EffectLabParser::stencil_comp_back
     setState(490);
     match(EffectLabParser::T__1);
     setState(491);
-    match(EffectLabParser::StencilOpLabel);
+    match(EffectLabParser::StencilCompareLabel);
    
   }
   catch (RecognitionException &e) {
@@ -6113,8 +6113,8 @@ EffectLabParser::Stencil_comp_front_opContext::Stencil_comp_front_opContext(Pars
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* EffectLabParser::Stencil_comp_front_opContext::StencilOpLabel() {
-  return getToken(EffectLabParser::StencilOpLabel, 0);
+tree::TerminalNode* EffectLabParser::Stencil_comp_front_opContext::StencilCompareLabel() {
+  return getToken(EffectLabParser::StencilCompareLabel, 0);
 }
 
 
@@ -6160,7 +6160,7 @@ EffectLabParser::Stencil_comp_front_opContext* EffectLabParser::stencil_comp_fro
     setState(506);
     match(EffectLabParser::T__1);
     setState(507);
-    match(EffectLabParser::StencilOpLabel);
+    match(EffectLabParser::StencilCompareLabel);
    
   }
   catch (RecognitionException &e) {

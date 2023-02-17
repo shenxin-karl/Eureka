@@ -205,7 +205,7 @@ BlendOPLabel
 
 StencilCompareLabel
     : KWNever
-    | KWAlways
+    | KWLess
     | KWEqual
     | KWLEqaul
     | KWGreater
