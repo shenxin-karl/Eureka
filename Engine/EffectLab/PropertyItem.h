@@ -59,6 +59,7 @@ public:
 	void setFloat4(const Math::float4 &f4);
 	void setTexture2D(PropertyTexture textureDefault);
 	void setMatrix(PropertyMatrix matrixDefault);
+	auto getUniformName() const -> const std::string &;
 	auto getPropertyType() const -> PropertyItemType;
 	auto getDescription() const -> const std::string &;
 	auto getBool() const -> bool;

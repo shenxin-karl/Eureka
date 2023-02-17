@@ -57,6 +57,10 @@ void PropertyItem::setMatrix(PropertyMatrix matrixDefault) {
 	_propertyValue = matrixDefault;
 }
 
+auto PropertyItem::getUniformName() const -> const std::string & {
+	return _uniformName;
+}
+
 auto PropertyItem::getPropertyType() const -> PropertyItemType {
 	return _propertyType;
 }

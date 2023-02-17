@@ -2,9 +2,12 @@
 #include <string>
 #include <memory>
 #include <Dx12lib/Tool/D3Dx12.h>
+#include <filesystem>
 #include "Foundation/NonCopyable.h"
 
 namespace Eureka {
+
+namespace fs = std::filesystem;
 
 enum class RenderQueueLabel {
 	Invalid     = -1,
@@ -29,6 +32,7 @@ private:
 	std::string						  _domainEntryPoint;
 	std::string						  _geometryEntryPoint;
 	std::string						  _pixelEntryPoint;
+	fs::path						  _sourcePath;
 	RenderQueueLabel				  _renderQueue		= RenderQueueLabel::Invalid;
 	std::shared_ptr<ShaderKeywordSet> _pKeywordSet		= nullptr;
 	D3D12_RASTERIZER_DESC			  _rasterizerDesc	= CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
