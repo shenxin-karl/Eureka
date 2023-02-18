@@ -35,15 +35,15 @@ public:
   };
 
   enum {
-    RuleEffect = 0, RuleSource_path = 1, RuleProperty_block = 2, RuleProperty_name = 3, 
-    RuleProperty_description = 4, RuleProperty_item = 5, RuleProperty_bool_type = 6, 
-    RuleProperty_int_type = 7, RuleProperty_range_type = 8, RuleProperty_float_type = 9, 
-    RuleProperty_float2_type = 10, RuleProperty_float3_type = 11, RuleProperty_float4_type = 12, 
-    RuleProperty_texture_2d_type = 13, RuleProperty_matrix_type = 14, RuleProperty_range_val = 15, 
-    RuleProperty_bool_val = 16, RuleProperty_int_val = 17, RuleProperty_float_val = 18, 
-    RuleProperty_float2_val = 19, RuleProperty_float3_val = 20, RuleProperty_float4_val = 21, 
-    RuleProperty_matrix_val = 22, RuleProperty_texture_val = 23, RuleNumber_val = 24, 
-    RulePass = 25, RulePass_tag = 26, RulePass_block_item = 27, RulePass_vertex_shader = 28, 
+    RuleEffect = 0, RuleProperty_block = 1, RuleProperty_name = 2, RuleProperty_description = 3, 
+    RuleProperty_item = 4, RuleProperty_bool_type = 5, RuleProperty_int_type = 6, 
+    RuleProperty_range_type = 7, RuleProperty_float_type = 8, RuleProperty_float2_type = 9, 
+    RuleProperty_float3_type = 10, RuleProperty_float4_type = 11, RuleProperty_texture_2d_type = 12, 
+    RuleProperty_matrix_type = 13, RuleProperty_range_val = 14, RuleProperty_bool_val = 15, 
+    RuleProperty_int_val = 16, RuleProperty_float_val = 17, RuleProperty_float2_val = 18, 
+    RuleProperty_float3_val = 19, RuleProperty_float4_val = 20, RuleProperty_matrix_val = 21, 
+    RuleProperty_texture_val = 22, RuleNumber_val = 23, RulePass = 24, RulePass_tag = 25, 
+    RulePass_block_item = 26, RulePass_source_path = 27, RulePass_vertex_shader = 28, 
     RulePass_geometry_shader = 29, RulePass_hull_shader = 30, RulePass_domain_shader = 31, 
     RulePass_pixel_shader = 32, RulePass_render_queue = 33, RulePass_shader_feature = 34, 
     RulePass_cull_mode = 35, RulePass_zclip_mode = 36, RulePass_ztest_mode = 37, 
@@ -75,7 +75,6 @@ public:
 
 
   class EffectContext;
-  class Source_pathContext;
   class Property_blockContext;
   class Property_nameContext;
   class Property_descriptionContext;
@@ -102,6 +101,7 @@ public:
   class PassContext;
   class Pass_tagContext;
   class Pass_block_itemContext;
+  class Pass_source_pathContext;
   class Pass_vertex_shaderContext;
   class Pass_geometry_shaderContext;
   class Pass_hull_shaderContext;
@@ -141,7 +141,6 @@ public:
   public:
     EffectContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    Source_pathContext *source_path();
     Property_blockContext *property_block();
     std::vector<PassContext *> pass();
     PassContext* pass(size_t i);
@@ -154,21 +153,6 @@ public:
   };
 
   EffectContext* effect();
-
-  class  Source_pathContext : public antlr4::ParserRuleContext {
-  public:
-    Source_pathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *StringLiteral();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  Source_pathContext* source_path();
 
   class  Property_blockContext : public antlr4::ParserRuleContext {
   public:
@@ -880,7 +864,33 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  PassSourcePathContext : public Pass_block_itemContext {
+  public:
+    PassSourcePathContext(Pass_block_itemContext *ctx);
+
+    Pass_source_pathContext *pass_source_path();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   Pass_block_itemContext* pass_block_item();
+
+  class  Pass_source_pathContext : public antlr4::ParserRuleContext {
+  public:
+    Pass_source_pathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *StringLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Pass_source_pathContext* pass_source_path();
 
   class  Pass_vertex_shaderContext : public antlr4::ParserRuleContext {
   public:

@@ -35,7 +35,6 @@ public:
 	auto compile(const fs::path &effectSourcePath)->std::unique_ptr<Effect>;
 public:
 	std::any visitEffect(pd::EffectLabParser::EffectContext *context) override;
-	std::any visitSource_path(pd::EffectLabParser::Source_pathContext *context) override;
 private:
 	std::string _effectSourcePath;
 };

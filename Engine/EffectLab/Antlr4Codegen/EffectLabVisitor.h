@@ -22,8 +22,6 @@ public:
    */
     virtual std::any visitEffect(EffectLabParser::EffectContext *context) = 0;
 
-    virtual std::any visitSource_path(EffectLabParser::Source_pathContext *context) = 0;
-
     virtual std::any visitProperty_block(EffectLabParser::Property_blockContext *context) = 0;
 
     virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *context) = 0;
@@ -90,6 +88,8 @@ public:
 
     virtual std::any visitPass_tag(EffectLabParser::Pass_tagContext *context) = 0;
 
+    virtual std::any visitPassSourcePath(EffectLabParser::PassSourcePathContext *context) = 0;
+
     virtual std::any visitPassVertexShader(EffectLabParser::PassVertexShaderContext *context) = 0;
 
     virtual std::any visitPassGeometryShader(EffectLabParser::PassGeometryShaderContext *context) = 0;
@@ -125,6 +125,8 @@ public:
     virtual std::any visitPassConservative(EffectLabParser::PassConservativeContext *context) = 0;
 
     virtual std::any visitPassStencil(EffectLabParser::PassStencilContext *context) = 0;
+
+    virtual std::any visitPass_source_path(EffectLabParser::Pass_source_pathContext *context) = 0;
 
     virtual std::any visitPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext *context) = 0;
 

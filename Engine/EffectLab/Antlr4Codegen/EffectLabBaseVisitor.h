@@ -21,10 +21,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitSource_path(EffectLabParser::Source_pathContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitProperty_block(EffectLabParser::Property_blockContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -157,6 +153,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitPassSourcePath(EffectLabParser::PassSourcePathContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -226,6 +226,10 @@ public:
   }
 
   virtual std::any visitPassStencil(EffectLabParser::PassStencilContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPass_source_path(EffectLabParser::Pass_source_pathContext *ctx) override {
     return visitChildren(ctx);
   }
 

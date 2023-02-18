@@ -1,5 +1,4 @@
 
-SourcePath: "Assets/Shaders/FXAA.hlsl"
 Properties {
     _Bool0("test bool true", bool) = true
     _Bool1("test bool false", Bool) = false
@@ -18,16 +17,9 @@ Properties {
     _LightMapTex("lightMap texture", 2D) = black
 }
 
-
 Pass("BasePass") {
+    SourcePath: "Assets/Shaders/FXAA.hlsl"
     VertexShader: vert
     PixelShader: frag
     ShaderFeature: _AAA _BBB _CCC
-    ZWrite: Off
-    Stencil {
-        Ref: 1
-        ReadMask: 1
-        WriteMask: 1
-        Comp: 
-    }
 }

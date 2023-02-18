@@ -1,8 +1,7 @@
 grammar EffectLab;
 
-effect : source_path property_block? pass+;
+effect : property_block? pass+;
 
-source_path    : 'SourcePath' ':' StringLiteral;
 property_block : 'Properties' '{' property_item+ '}';
 
 property_name        : Identity;
@@ -50,11 +49,10 @@ number_val
     ;
 
 pass     : 'Pass' '(' pass_tag ')' '{' pass_block_item+ '}';
-
 pass_tag : StringLiteral;
-
 pass_block_item 
-    : pass_vertex_shader   # PassVertexShader
+    : pass_source_path     # PassSourcePath
+    | pass_vertex_shader   # PassVertexShader
     | pass_geometry_shader # PassGeometryShader
     | pass_hull_shader     # PassHullShader
     | pass_domain_shader   # PassDomainShader
@@ -74,6 +72,7 @@ pass_block_item
     | pass_stencil         # PassStencil
     ;
 
+pass_source_path     : 'SourcePath'     ':' StringLiteral;
 pass_vertex_shader   : 'VertexShader'   ':' Identity;
 pass_geometry_shader : 'GeometryShader' ':' Identity;
 pass_hull_shader     : 'HullShader'     ':' Identity;

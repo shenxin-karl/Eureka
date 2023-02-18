@@ -3,6 +3,7 @@
 #include "EffectLab/ShaderKeyword.h"
 #include "EffectLab/ShaderKeywordSet.h"
 #include "Foundation/Exception.h"
+#include "Objects/PathManager.h"
 
 namespace Eureka {
 
@@ -22,6 +23,13 @@ auto PassParser::parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr
 		item->accept(this);
 	}
 
+	if (!_sourcePath.hasValue()) {
+		Exception::Throw("{} the the Pass '{}' no source path is provided",
+			_effectSourcePath,
+			_pass->_tag
+		);
+	}
+
 	_pass->_rasterizerDesc = _rasterizerParser.getRasterizerDesc();
 	_pass->_depthStencilDesc = _depthStencilParser.getDepthStencilDesc();
 	_pass->_stencilRef = _depthStencilParser.getStencilRef();
@@ -33,6 +41,34 @@ auto PassParser::parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr
 std::any PassParser::visitPass_tag(ParserDetails::EffectLabParser::Pass_tagContext *context) {
 	auto text = context->StringLiteral()->getText();
 	return extractString(text);
+}
+
+std::any PassParser::visitPassSourcePath(ParserDetails::EffectLabParser::PassSourcePathContext *context) {
+	auto *pToken = context->getStart();
+	auto text = context->pass_source_path()->StringLiteral()->getText();
+	if (_sourcePath.hasValue()) {
+		Exception::Throw("{} {}:{} the pass 'SourcePath' redefinition"
+			", the last location at {}:{}\nthe last path is {}",
+			_effectSourcePath,
+			pToken->getLine(),
+			pToken->getCharPositionInLine(),
+			_sourcePath.line,
+			_sourcePath.column,
+			_sourcePath.get()
+		);
+	}
+
+	_sourcePath.setLocation(pToken);
+	_sourcePath.set(extractString(text));
+	if (!PathManager::exist(_sourcePath.get())) {
+		Exception::Throw("{} {}:{} Pass ",
+			_effectSourcePath,
+			_sourcePath.get()
+		);
+	}
+
+	_pass->_sourcePath = _sourcePath.get();
+	return NullAny;
 }
 
 std::any PassParser::visitPassVertexShader(pd::EffectLabParser::PassVertexShaderContext *context) {
