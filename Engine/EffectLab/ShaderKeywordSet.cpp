@@ -13,7 +13,7 @@ bool ShaderKeywordSet::enable(ShaderKeyword &keyword, const std::string &key) co
 
 	ShaderKeyword::BitsetType &bitset = keyword.getBitset();
 	if (bitset.test(pFindResult->bitIndex)) {
-		return true;
+		return false;
 	}
 
 	const auto &shaderFeature = _features[pFindResult->featureIndex];
@@ -33,7 +33,7 @@ bool ShaderKeywordSet::disable(ShaderKeyword &keyword, const std::string &key) c
 
 	ShaderKeyword::BitsetType &bitset = keyword.getBitset();
 	if (!bitset.test(pFindResult->bitIndex)) {
-		return true;
+		return false;
 	}
 
 	bitset.set(pFindResult->bitIndex, false);

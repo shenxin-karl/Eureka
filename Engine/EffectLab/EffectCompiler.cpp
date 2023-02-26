@@ -3,9 +3,8 @@
 #include "Foundation/Exception.h"
 #include "Objects/PathManager.h"
 #include "EffectParser/PropertyBlockParser.h"
-#include <fstream>
-
 #include "EffectParser/PassParser.h"
+#include <fstream>
 
 namespace Eureka {
 
@@ -31,7 +30,7 @@ EffectCompiler::~EffectCompiler() {
 
 }
 
-auto EffectCompiler::compile(const fs::path &effectSourcePath) -> std::unique_ptr<Effect> {
+auto EffectCompiler::compile(const fs::path &effectSourcePath) -> std::shared_ptr<Effect> {
 	_effectSourcePath = effectSourcePath.string();
 
 	std::ifstream fin;
@@ -47,19 +46,11 @@ auto EffectCompiler::compile(const fs::path &effectSourcePath) -> std::unique_pt
 	EffectErrorListener errorListener;
 	parser.removeErrorListeners();
 	parser.addErrorListener(&errorListener);
-	return any_to_unique_ptr<Effect>(visitEffect(parser.effect()));
+	return std::any_cast<std::shared_ptr<Effect>>(visitEffect(parser.effect()));
 }
 
 std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context) {
-	auto pEffect = make_any_unique_ptr<Effect>();
-	pEffect->_sourcePath = std::any_cast<fs::path>(visitSource_path(context->source_path()));
-	if (!PathManager::exist(pEffect->_sourcePath)) {
-		Exception::Throw("in file: {}, SourcePath: {} invalid!", 
-			_effectSourcePath,
-			pEffect->_sourcePath.string()
-		);
-	}
-
+	auto pEffect = std::make_shared<Effect>();
 	if (context->property_block() != nullptr) {
 		PropertyBlockParser propertyBlockParser(_effectSourcePath);
 		pEffect->_propertyBlock = propertyBlockParser.parserPropertyBlock(context->property_block());
@@ -68,15 +59,10 @@ std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context
 	for (auto *pPassCtx : context->pass()) {
 		PassParser passParser(_effectSourcePath);
 		pEffect->_passes.push_back(passParser.parse(pPassCtx));
+		auto &passShaderFeatures = passParser.getShaderFeatures();
 	}
 
 	return pEffect;
-}
-
-std::any EffectCompiler::visitSource_path(pd::EffectLabParser::Source_pathContext *context) {
-	auto text = context->StringLiteral()->getText();
-	fs::path sourcePath = text.substr(1, text.length()-2);
-	return sourcePath;
 }
 
 }

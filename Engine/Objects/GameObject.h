@@ -2,11 +2,12 @@
 #include <memory>
 #include <typeindex>
 #include <vector>
+#include "Foundation/NonCopyable.h"
 
 namespace Eureka {
 
 class IComponent;
-class GameObject {
+class GameObject : private NonCopyable {
 	struct ComponentItem {
 		std::type_index typeIndex;
 		std::unique_ptr<IComponent> pComponent;
@@ -34,8 +35,6 @@ public:
 		_components.push_back(std::move(item));
 		return static_cast<T *>(_components.back().pComponent.get());
 	}
-
-
 private:
 	std::vector<ComponentItem> _components;
 };

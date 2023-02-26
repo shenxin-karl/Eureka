@@ -1,5 +1,6 @@
 #include "PropertyBlock.h"
 #include "PropertyItem.h"
+#include "Objects/TextureManager.h"
 
 namespace Eureka {
 
@@ -8,7 +9,12 @@ void PropertyBlock::addItem(std::unique_ptr<PropertyItem> &&item) {
 }
 
 void PropertyBlock::finalize() {
-	std::vector<std::tuple<std::string, int>> uniformVars;
+	struct UniformInfo {
+		std::string name;
+		size_t		stride;
+	};
+
+	std::vector<UniformInfo> uniformInfos;
 	for (auto &pItem : _items) {
 		auto &uniformName = pItem->getUniformName();
 		switch (pItem->getPropertyType()) {
@@ -16,26 +22,47 @@ void PropertyBlock::finalize() {
 		case PropertyItemType::Int:
 		case PropertyItemType::Float:
 		case PropertyItemType::Range:
-			uniformVars.emplace_back(uniformName, 4);
+			uniformInfos.emplace_back(uniformName, 4);
 			break;
 		case PropertyItemType::Float2:
-			uniformVars.emplace_back(uniformName, sizeof(Math::float2));
+			uniformInfos.emplace_back(uniformName, sizeof(Math::float2));
 			break;
 		case PropertyItemType::Float3:
-			uniformVars.emplace_back(uniformName, sizeof(Math::float3));
+			uniformInfos.emplace_back(uniformName, sizeof(Math::float3));
 			break;
 		case PropertyItemType::Float4:
-			uniformVars.emplace_back(uniformName, sizeof(Math::float4));
+			uniformInfos.emplace_back(uniformName, sizeof(Math::float4));
 			break;
 		case PropertyItemType::Matrix:
-			uniformVars.emplace_back(uniformName, sizeof(Math::float4x4));
+			uniformInfos.emplace_back(uniformName, sizeof(Math::float4x4));
 			break;
+		case PropertyItemType::Texture2D: {
+			std::string defaultTexturePath = pItem->getTexture2DPath();
+			auto pTexture = TextureManager::instance()->getTexture(defaultTexturePath);
+			_textureMap[uniformName] = pTexture;
+			break;
+		}
 		case PropertyItemType::None:
-		case PropertyItemType::Texture2D:
 		default:
 			break;
 		}
 	}
+
+	auto findExpectStrideVar = [&](size_t stride) -> std::optional<size_t> {
+		for (size_t i = 0; i < uniformInfos.size(); ++i) {
+			if (uniformInfos[i].stride == stride) {
+				return i;
+			}
+		}
+		return std::nullopt;
+	};
+
+	std::ranges::sort(uniformInfos, [](UniformInfo &lhs, UniformInfo &rhs) {
+		return lhs.stride <= rhs.stride;
+	});
+
+	// todo: ¼ÆËãºÃ uniform µÄ offset
+	 
 }
 
 PropertyBlock::~PropertyBlock() {

@@ -12,10 +12,6 @@ Effect::~Effect() {
 
 }
 
-auto Effect::getSourcePath() const -> const fs::path & {
-	return _sourcePath;
-}
-
 auto Effect::getPasses() const -> const std::vector<std::unique_ptr<Pass>> & {
 	return _passes;
 }

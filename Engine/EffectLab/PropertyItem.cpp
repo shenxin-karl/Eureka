@@ -109,6 +109,22 @@ auto PropertyItem::getTexture2D() const -> PropertyTexture {
 	return std::get<PropertyTexture>(_propertyValue);
 }
 
+auto PropertyItem::getTexture2DPath() const -> std::string {
+	Exception::Throw(_propertyType == PropertyItemType::Texture2D, "PropertyItem::getTexture2DPath invalid type");
+	switch (getTexture2D()) {
+	case PropertyTexture::White:
+		return "White";
+	case PropertyTexture::Black:
+		return "Black";
+	case PropertyTexture::Bump:
+		return "Bump";
+	case PropertyTexture::None:
+	default: ;
+		Exception::Throw("PropertyItem::getTexture2DPath invalid texture default value");
+		return "";
+	}
+}
+
 auto PropertyItem::getMatrix() const -> PropertyMatrix {
 	Exception::Throw(_propertyType == PropertyItemType::Matrix, "PropertyItem::getMatrix invalid type");
 	return std::get<PropertyMatrix>(_propertyValue);

@@ -9,7 +9,7 @@ class ShaderKeyword {
 public:
 	constexpr static size_t kMaxShaderKeyword = 128;
 	using BitsetType = std::bitset<kMaxShaderKeyword>;
-	ShaderKeyword(const ShaderKeyword &) = delete;
+	ShaderKeyword(const ShaderKeyword &) = default;
 	ShaderKeyword(std::shared_ptr<ShaderKeywordSet> pKeywordSet);
 	bool enable(const std::string &key);
 	bool disable(const std::string &key);

@@ -70,6 +70,7 @@ public:
 	auto getFloat3() const -> Math::float3;
 	auto getFloat4() const -> Math::float4;
 	auto getTexture2D() const -> PropertyTexture;
+	auto getTexture2DPath() const -> std::string;
 	auto getMatrix() const -> PropertyMatrix;
 private:
 	std::string _uniformName;

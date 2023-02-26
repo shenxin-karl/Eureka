@@ -7,10 +7,7 @@
 #include "Effect.h"
 #include "Pass.h"
 #include "PropertyItem.h"
-#include "PropertyBlock.h"
-#include "Math/MathStd.hpp"
 #include <filesystem>
-
 
 namespace Eureka {
 
@@ -32,8 +29,7 @@ class EffectCompiler : public BaseParser, private NonCopyable {
 public:
 	EffectCompiler();
 	~EffectCompiler() override;
-	auto compile(const fs::path &effectSourcePath)->std::unique_ptr<Effect>;
-public:
+	auto compile(const fs::path &effectSourcePath) -> std::shared_ptr<Effect>;
 	std::any visitEffect(pd::EffectLabParser::EffectContext *context) override;
 private:
 	std::string _effectSourcePath;

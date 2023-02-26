@@ -12,6 +12,7 @@ class PassParser : public BaseParser {
 public:
 	PassParser(std::string effectSourcePath);
 	auto parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr<Pass>;
+	auto getShaderFeatures() const -> const std::unordered_set<std::string> &;
 	std::any visitPass_tag(ParserDetails::EffectLabParser::Pass_tagContext *context) override;
 	std::any visitPassSourcePath(ParserDetails::EffectLabParser::PassSourcePathContext *context) override;
 	std::any visitPassVertexShader(pd::EffectLabParser::PassVertexShaderContext *context) override;

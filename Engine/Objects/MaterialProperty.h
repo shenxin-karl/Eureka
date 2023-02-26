@@ -1,19 +1,22 @@
 #pragma once
-#include <memory>
-#include "Math/MathStd.hpp"
-#include "Dx12lib/dx12libStd.h"
+#include <Dx12lib/Buffer/BufferStd.h>
 #include "Foundation/NonCopyable.h"
+
+namespace Math {
+
+class float4x4;
+class float4;
+class float3;
+class float2;
+
+}
 
 namespace Eureka {
 
-class Effect;
-class MaterialProperty;
-class MaterialKeyword;
-class Material : private NonCopyable {
-	friend MaterialKeyword;
-	friend MaterialProperty;
+class Material;
+class MaterialProperty : private NonCopyable {
 public:
-	explicit Material(std::shared_ptr<Effect> pEffect);
+	explicit MaterialProperty(Material *pMaterial);
 	bool setBool(const std::string &name, bool val);
 	bool setInt(const std::string &name, int val);
 	bool setFloat(const std::string &name, float val);
@@ -30,17 +33,15 @@ public:
 	bool getFloat4(const std::string &name, Math::float4 &outVal) const;
 	bool getMatrix(const std::string &name, Math::float4x4 &outMatrix) const;
 	bool getTexture(const std::string &name, std::shared_ptr<dx12lib::Texture> &outTexture) const;
-	bool isKeywordEnable(const std::string &keyword) const;
-	bool disableKeyword(const std::string &keyword, bool flushPassVariant = true);
-	bool enableKeyword(const std::string &keyword, bool flushPassVariant = true);
-	void flushPassVariant();
-	bool isRenderObjectDirty() const;
-	void resetRenderObjectDirty();
 private:
-	std::shared_ptr<Effect>				_pEffect = nullptr;
-	std::unique_ptr<MaterialProperty>	_pMaterialProperty = nullptr;
-	std::unique_ptr<MaterialKeyword>	_pMaterialKeyword = nullptr;
-	bool								_renderObjectDirty = true;
+	struct TextureToBind {
+		std::string name;
+		std::shared_ptr<dx12lib::Texture> pTexture;
+	};
+private:
+	Material *						_pMaterial;
+	dx12lib::FRRawConstantBufferPtr _pConstantBuffer;
+	std::vector<TextureToBind>      _textures;
 };
 
 }
