@@ -11,6 +11,9 @@ Material::Material(std::shared_ptr<Effect> pEffect) : _pEffect(std::move(pEffect
 	_pMaterialKeyword = std::make_unique<MaterialKeyword>(this);
 }
 
+Material::~Material() {
+}
+
 bool Material::setBool(const std::string &name, bool val) {
 	return _pMaterialProperty->setBool(name, val);
 }

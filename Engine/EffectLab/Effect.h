@@ -19,6 +19,7 @@ public:
 	auto getPasses() const -> const std::vector<std::unique_ptr<Pass>> &;
 	auto getPropertyBlock() const -> PropertyBlock *;
 private:
+	std::string						    _passIncludeContent;
 	std::vector<std::unique_ptr<Pass>>	_passes;
 	std::unique_ptr<PropertyBlock>		_propertyBlock;
 };

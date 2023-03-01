@@ -24,6 +24,8 @@ public:
 
     virtual std::any visitProperty_block(EffectLabParser::Property_blockContext *context) = 0;
 
+    virtual std::any visitHlsl_include_block(EffectLabParser::Hlsl_include_blockContext *context) = 0;
+
     virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *context) = 0;
 
     virtual std::any visitProperty_description(EffectLabParser::Property_descriptionContext *context) = 0;

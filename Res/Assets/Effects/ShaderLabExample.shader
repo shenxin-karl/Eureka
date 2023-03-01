@@ -17,6 +17,12 @@ Properties {
     _LightMapTex("lightMap texture", 2D) = black
 }
 
+HLSLINCLUDE
+    flaot4 getAlbedo() {
+        return 1.0;
+    }
+ENDHLSL
+
 Pass("BasePass") {
     SourcePath: "Assets/Shaders/FXAA.hlsl"
     VertexShader: vert

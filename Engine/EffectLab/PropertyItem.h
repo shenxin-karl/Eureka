@@ -72,6 +72,7 @@ public:
 	auto getTexture2D() const -> PropertyTexture;
 	auto getTexture2DPath() const -> std::string;
 	auto getMatrix() const -> PropertyMatrix;
+	auto getPropertyValue() const -> const PropertyItemValue &;
 private:
 	std::string _uniformName;
 	std::string _description;

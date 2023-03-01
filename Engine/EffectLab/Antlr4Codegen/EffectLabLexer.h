@@ -31,7 +31,8 @@ public:
     KWLess = 86, KWEqual = 87, KWLEqaul = 88, KWGreater = 89, KWNotEqual = 90, 
     KWGEqual = 91, KWAlways = 92, KWKeep = 93, KWZero = 94, KWReplace = 95, 
     KWIncrSat = 96, KWDecrSat = 97, KWInvert = 98, KWIncrWrap = 99, KWDecrWrap = 100, 
-    KWTrue = 101, KWFalse = 102, StringLiteral = 103, Identity = 104
+    KWTrue = 101, KWFalse = 102, StringLiteral = 103, HlslIncludeBlock = 104, 
+    HlslProgramBlock = 105, Identity = 106
   };
 
   explicit EffectLabLexer(antlr4::CharStream *input);

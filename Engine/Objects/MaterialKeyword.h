@@ -11,6 +11,7 @@ class PassVariant;
 class MaterialKeyword {
 public:
 	explicit MaterialKeyword(Material *pMaterial);
+	~MaterialKeyword();
 	bool isKeywordEnable(const std::string &keyword) const;
 	bool disableKeyword(const std::string &keyword, bool flush);
 	bool enableKeyword(const std::string &keyword, bool flush);

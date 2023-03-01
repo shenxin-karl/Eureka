@@ -14,6 +14,7 @@ class Material : private NonCopyable {
 	friend MaterialProperty;
 public:
 	explicit Material(std::shared_ptr<Effect> pEffect);
+	~Material();
 	bool setBool(const std::string &name, bool val);
 	bool setInt(const std::string &name, int val);
 	bool setFloat(const std::string &name, float val);
@@ -37,9 +38,9 @@ public:
 	bool isRenderObjectDirty() const;
 	void resetRenderObjectDirty();
 private:
-	std::shared_ptr<Effect>				_pEffect = nullptr;
-	std::unique_ptr<MaterialProperty>	_pMaterialProperty = nullptr;
-	std::unique_ptr<MaterialKeyword>	_pMaterialKeyword = nullptr;
+	std::shared_ptr<Effect>				_pEffect;
+	std::unique_ptr<MaterialProperty>	_pMaterialProperty;
+	std::unique_ptr<MaterialKeyword>	_pMaterialKeyword;
 	bool								_renderObjectDirty = true;
 };
 

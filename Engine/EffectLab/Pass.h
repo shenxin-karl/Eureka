@@ -15,7 +15,7 @@ class ShaderKeywordSet;
 namespace fs = std::filesystem;
 
 enum class RenderQueueLabel : uint16_t {
-	Invalid     = -1,
+	Invalid     = static_cast<uint16_t>(-1),
 	BackGround	= 1000,
 	Geometry	= 2000,
 	AlphaTest	= 2450,
@@ -32,8 +32,8 @@ public:
 	auto getTag() const -> const std::string &;
 	auto getPassVariant(const ShaderKeyword &keyword) -> std::shared_ptr<PassVariant>;
 	auto getKeywordSet() const -> std::shared_ptr<ShaderKeywordSet>;
-	auto getStencilRef() -> int;
-	auto getRenderQueue() -> RenderQueueLabel;
+	auto getStencilRef() const -> int;
+	auto getRenderQueue() const -> RenderQueueLabel;
 private:
 	using PassVariantMap = std::unordered_map<ShaderKeyword::BitsetType, std::shared_ptr<PassVariant>>;
 	std::string						  _tag;

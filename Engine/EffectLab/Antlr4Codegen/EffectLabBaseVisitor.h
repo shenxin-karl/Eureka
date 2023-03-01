@@ -25,6 +25,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitHlsl_include_block(EffectLabParser::Hlsl_include_blockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitProperty_name(EffectLabParser::Property_nameContext *ctx) override {
     return visitChildren(ctx);
   }

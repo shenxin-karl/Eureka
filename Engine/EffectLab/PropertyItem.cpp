@@ -130,4 +130,8 @@ auto PropertyItem::getMatrix() const -> PropertyMatrix {
 	return std::get<PropertyMatrix>(_propertyValue);
 }
 
+auto PropertyItem::getPropertyValue() const -> const PropertyItemValue & {
+	return _propertyValue;
+}
+
 }

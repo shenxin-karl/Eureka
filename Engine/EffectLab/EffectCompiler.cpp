@@ -1,6 +1,6 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "EffectCompiler.h"
 #include "Antlr4Codegen/EffectLabLexer.h"
-#include "Foundation/Exception.h"
 #include "Objects/PathManager.h"
 #include "EffectParser/PropertyBlockParser.h"
 #include "EffectParser/PassParser.h"
@@ -56,13 +56,26 @@ std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context
 		pEffect->_propertyBlock = propertyBlockParser.parserPropertyBlock(context->property_block());
 	}
 
+	if (context->hlsl_include_block() != nullptr) {
+		pEffect->_passIncludeContent = std::any_cast<std::string>(
+			visitHlsl_include_block(context->hlsl_include_block())
+		);
+	}
+
 	for (auto *pPassCtx : context->pass()) {
 		PassParser passParser(_effectSourcePath);
 		pEffect->_passes.push_back(passParser.parse(pPassCtx));
-		auto &passShaderFeatures = passParser.getShaderFeatures();
 	}
 
 	return pEffect;
+}
+
+std::any EffectCompiler::visitHlsl_include_block(ParserDetails::EffectLabParser::Hlsl_include_blockContext *context) {
+	std::string text = context->HlslIncludeBlock()->getText();
+	std::string output(text.size(), '\0');
+	int ret = std::sscanf(text.c_str(), "HLSLPROGRAM%sENDHLSL", output.data());
+	assert(ret == 1);
+	return output;
 }
 
 }

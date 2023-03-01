@@ -1,8 +1,9 @@
 grammar EffectLab;
 
-effect : property_block? pass+;
+effect : property_block? hlsl_include_block? pass+;
 
-property_block : 'Properties' '{' property_item+ '}';
+property_block     : 'Properties' '{' property_item+ '}';
+hlsl_include_block : HlslIncludeBlock;
 
 property_name        : Identity;
 property_description : StringLiteral;
@@ -241,26 +242,29 @@ ColorMaskChannel
     | [RGBA] [RGBA] [RGBA] [RGBA]
     ;   
 
-KWOff       : 'Off';
-KWOn        : 'On';
-KWNever     : 'Never';
-KWLess      : 'Less';
-KWEqual     : 'Equal';
-KWLEqaul    : 'LEqual';
-KWGreater   : 'Greater';
-KWNotEqual  : 'NotEqual';
-KWGEqual    : 'GEqual';
-KWAlways    : 'Always';
-KWKeep      : 'Keep';
-KWZero      : 'Zero';
-KWReplace   : 'Replace';
-KWIncrSat   : 'IncrSat';
-KWDecrSat   : 'DecrSat';
-KWInvert    : 'Invert';
-KWIncrWrap  : 'IncrWrap';
-KWDecrWrap  : 'DecrWrap';
-KWTrue      : 'true'  | 'True';
-KWFalse     : 'false' | 'False';
+KWOff         : 'Off';
+KWOn          : 'On';
+KWNever       : 'Never';
+KWLess        : 'Less';
+KWEqual       : 'Equal';
+KWLEqaul      : 'LEqual';
+KWGreater     : 'Greater';
+KWNotEqual    : 'NotEqual';
+KWGEqual      : 'GEqual';
+KWAlways      : 'Always';
+KWKeep        : 'Keep';
+KWZero        : 'Zero';
+KWReplace     : 'Replace';
+KWIncrSat     : 'IncrSat';
+KWDecrSat     : 'DecrSat';
+KWInvert      : 'Invert';
+KWIncrWrap    : 'IncrWrap';
+KWDecrWrap    : 'DecrWrap';
+KWTrue        : 'true'  | 'True';
+KWFalse       : 'false' | 'False';
 
 StringLiteral : '"' .*? '"' ;
+HlslIncludeBlock : 'HLSLINCLUDE' .*? 'ENDHLSL';
+HlslProgramBlock : 'HLSLPROGRAM' .*? 'ENDHLSL';
+
 Identity      : [_a-zA-Z][a-zA-Z0-9_]*; 

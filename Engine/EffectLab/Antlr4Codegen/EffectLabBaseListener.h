@@ -24,6 +24,9 @@ public:
   virtual void enterProperty_block(EffectLabParser::Property_blockContext * /*ctx*/) override { }
   virtual void exitProperty_block(EffectLabParser::Property_blockContext * /*ctx*/) override { }
 
+  virtual void enterHlsl_include_block(EffectLabParser::Hlsl_include_blockContext * /*ctx*/) override { }
+  virtual void exitHlsl_include_block(EffectLabParser::Hlsl_include_blockContext * /*ctx*/) override { }
+
   virtual void enterProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
   virtual void exitProperty_name(EffectLabParser::Property_nameContext * /*ctx*/) override { }
 

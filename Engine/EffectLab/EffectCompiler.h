@@ -31,6 +31,7 @@ public:
 	~EffectCompiler() override;
 	auto compile(const fs::path &effectSourcePath) -> std::shared_ptr<Effect>;
 	std::any visitEffect(pd::EffectLabParser::EffectContext *context) override;
+	std::any visitHlsl_include_block(ParserDetails::EffectLabParser::Hlsl_include_blockContext *context) override;
 private:
 	std::string _effectSourcePath;
 };

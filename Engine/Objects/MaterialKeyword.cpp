@@ -14,6 +14,9 @@ MaterialKeyword::MaterialKeyword(Material *pMaterial) : _pMaterial(pMaterial) {
 	}
 }
 
+MaterialKeyword::~MaterialKeyword() {
+}
+
 bool MaterialKeyword::isKeywordEnable(const std::string &keyword) const {
 	for (auto &pShaderKeyword : _pPassKeywords) {
 		if (pShaderKeyword->isEnabled(keyword)) {
