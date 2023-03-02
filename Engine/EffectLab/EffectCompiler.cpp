@@ -71,11 +71,15 @@ std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context
 }
 
 std::any EffectCompiler::visitHlsl_include_block(ParserDetails::EffectLabParser::Hlsl_include_blockContext *context) {
+	constexpr size_t kBlockBeginLength = std::string_view("HLSLPROGRAM").length();
+	constexpr size_t kBlockEndLength = std::string_view("ENDHLSL").length();
 	std::string text = context->HlslIncludeBlock()->getText();
-	std::string output(text.size(), '\0');
-	int ret = std::sscanf(text.c_str(), "HLSLPROGRAM%sENDHLSL", output.data());
-	assert(ret == 1);
-	return output;
+	std::string content = text.substr(kBlockBeginLength, (text.length() - kBlockBeginLength - kBlockEndLength));
+
+	auto *pToken = context->getStart();
+	fs::path effectAbsolutePath = fs::absolute(_effectSourcePath);
+	std::string toReturn = std::format("#line {} \"{}\"\n{}", pToken->getLine(), effectAbsolutePath.string(), content);
+	return toReturn;
 }
 
 }

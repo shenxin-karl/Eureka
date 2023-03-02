@@ -657,14 +657,15 @@ void Texture::initFeatureSupport(ID3D12Device *pDevice, DXGI_FORMAT format) {
 			   formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_RENDER_TARGET  ;
 	};
 	auto checkDSVSupport = [&](const D3D12_FEATURE_DATA_FORMAT_SUPPORT &formatSupport) {
-		return _resourceDesc.Flags &D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL &&
-			   formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_DEPTH_STENCIL;
+		return _resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL &&
+			   formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_DEPTH_STENCIL  ;
 	};
 	auto checkUASupport = [&](const D3D12_FEATURE_DATA_FORMAT_SUPPORT &formatSupport) {
-		return _resourceDesc.Flags &D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS				&&
-			   formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_TYPED_UNORDERED_ACCESS_VIEW	&&
-			   formatSupport.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD				&&
-			   formatSupport.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_STORE				;
+		// todo: 在不好的显卡上可能会不支持 load 和 store 但是代码可以跑
+		return _resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS				&&
+			   formatSupport.Support1 & D3D12_FORMAT_SUPPORT1_TYPED_UNORDERED_ACCESS_VIEW	;//&&
+			   //formatSupport.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD				&&
+			   //formatSupport.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_STORE				;
 	};
 
 	_formatSupport			= getFormatSupport(format);
