@@ -23,11 +23,8 @@ auto PassParser::parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr
 		item->accept(this);
 	}
 
-	if (!_sourcePath.hasValue()) {
-		Exception::Throw("{} the the Pass '{}' no source path is provided",
-			_effectSourcePath,
-			_pass->_tag
-		);
+	if (_pass->_programContext.empty()) {
+		Exception::Throw("the pass '{}' No source code for shader is provided", _pass->getTag());
 	}
 
 	_pass->_rasterizerDesc = _rasterizerParser.getRasterizerDesc();
@@ -43,31 +40,23 @@ std::any PassParser::visitPass_tag(ParserDetails::EffectLabParser::Pass_tagConte
 	return extractString(text);
 }
 
-std::any PassParser::visitPassSourcePath(ParserDetails::EffectLabParser::PassSourcePathContext *context) {
+std::any PassParser::visitPassSourceContext(ParserDetails::EffectLabParser::PassSourceContextContext *context) {
 	auto *pToken = context->getStart();
-	auto text = context->pass_source_path()->StringLiteral()->getText();
-	if (_sourcePath.hasValue()) {
-		Exception::Throw("{} {}:{} the pass 'SourcePath' redefinition"
-			", the last location at {}:{}\nthe last path is {}",
+	if (_programContent.valid()) {
+		Exception::Throw("{} {}:{} keyword 'HLSLPROGRAM' redefinition",
 			_effectSourcePath,
 			pToken->getLine(),
-			pToken->getCharPositionInLine(),
-			_sourcePath.line,
-			_sourcePath.column,
-			_sourcePath.get()
+			pToken->getCharPositionInLine()
 		);
 	}
 
-	_sourcePath.setLocation(pToken);
-	_sourcePath.set(extractString(text));
-	if (!PathManager::exist(_sourcePath.get())) {
-		Exception::Throw("{} {}:{} Pass ",
-			_effectSourcePath,
-			_sourcePath.get()
-		);
-	}
-
-	_pass->_sourcePath = _sourcePath.get();
+	_programContent.setLocation(pToken);
+	constexpr size_t kBlockBeginLength = std::string_view("HLSLPROGRAM\n").length();
+	constexpr size_t kBlockEndLength = std::string_view("ENDHLSL\n").length();
+	std::string text = context->pass_source_context()->getText();
+	std::string content = text.substr(kBlockBeginLength, text.length() - kBlockBeginLength - kBlockEndLength);
+	std::string absolutePath = fs::absolute(_effectSourcePath).string();
+	_pass->_programContext = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), absolutePath, content);
 	return NullAny;
 }
 

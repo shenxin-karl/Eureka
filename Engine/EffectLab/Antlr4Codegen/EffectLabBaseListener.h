@@ -123,8 +123,8 @@ public:
   virtual void enterPass_tag(EffectLabParser::Pass_tagContext * /*ctx*/) override { }
   virtual void exitPass_tag(EffectLabParser::Pass_tagContext * /*ctx*/) override { }
 
-  virtual void enterPassSourcePath(EffectLabParser::PassSourcePathContext * /*ctx*/) override { }
-  virtual void exitPassSourcePath(EffectLabParser::PassSourcePathContext * /*ctx*/) override { }
+  virtual void enterPassSourceContext(EffectLabParser::PassSourceContextContext * /*ctx*/) override { }
+  virtual void exitPassSourceContext(EffectLabParser::PassSourceContextContext * /*ctx*/) override { }
 
   virtual void enterPassVertexShader(EffectLabParser::PassVertexShaderContext * /*ctx*/) override { }
   virtual void exitPassVertexShader(EffectLabParser::PassVertexShaderContext * /*ctx*/) override { }
@@ -180,8 +180,8 @@ public:
   virtual void enterPassStencil(EffectLabParser::PassStencilContext * /*ctx*/) override { }
   virtual void exitPassStencil(EffectLabParser::PassStencilContext * /*ctx*/) override { }
 
-  virtual void enterPass_source_path(EffectLabParser::Pass_source_pathContext * /*ctx*/) override { }
-  virtual void exitPass_source_path(EffectLabParser::Pass_source_pathContext * /*ctx*/) override { }
+  virtual void enterPass_source_context(EffectLabParser::Pass_source_contextContext * /*ctx*/) override { }
+  virtual void exitPass_source_context(EffectLabParser::Pass_source_contextContext * /*ctx*/) override { }
 
   virtual void enterPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext * /*ctx*/) override { }
   virtual void exitPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext * /*ctx*/) override { }

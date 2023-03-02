@@ -121,8 +121,8 @@ public:
   virtual void enterPass_tag(EffectLabParser::Pass_tagContext *ctx) = 0;
   virtual void exitPass_tag(EffectLabParser::Pass_tagContext *ctx) = 0;
 
-  virtual void enterPassSourcePath(EffectLabParser::PassSourcePathContext *ctx) = 0;
-  virtual void exitPassSourcePath(EffectLabParser::PassSourcePathContext *ctx) = 0;
+  virtual void enterPassSourceContext(EffectLabParser::PassSourceContextContext *ctx) = 0;
+  virtual void exitPassSourceContext(EffectLabParser::PassSourceContextContext *ctx) = 0;
 
   virtual void enterPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) = 0;
   virtual void exitPassVertexShader(EffectLabParser::PassVertexShaderContext *ctx) = 0;
@@ -178,8 +178,8 @@ public:
   virtual void enterPassStencil(EffectLabParser::PassStencilContext *ctx) = 0;
   virtual void exitPassStencil(EffectLabParser::PassStencilContext *ctx) = 0;
 
-  virtual void enterPass_source_path(EffectLabParser::Pass_source_pathContext *ctx) = 0;
-  virtual void exitPass_source_path(EffectLabParser::Pass_source_pathContext *ctx) = 0;
+  virtual void enterPass_source_context(EffectLabParser::Pass_source_contextContext *ctx) = 0;
+  virtual void exitPass_source_context(EffectLabParser::Pass_source_contextContext *ctx) = 0;
 
   virtual void enterPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext *ctx) = 0;
   virtual void exitPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext *ctx) = 0;

@@ -42,7 +42,7 @@ private:
 	std::string						  _domainEntryPoint;
 	std::string						  _geometryEntryPoint;
 	std::string						  _pixelEntryPoint;
-	fs::path						  _sourcePath;
+	std::string						  _programContext;
 	RenderQueueLabel				  _renderQueue		= RenderQueueLabel::Invalid;
 	std::shared_ptr<ShaderKeywordSet> _pKeywordSet		= nullptr;
 	D3D12_RASTERIZER_DESC			  _rasterizerDesc	= CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);

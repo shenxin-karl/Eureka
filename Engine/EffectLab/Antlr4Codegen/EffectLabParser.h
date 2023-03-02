@@ -23,16 +23,16 @@ public:
     T__44 = 45, T__45 = 46, T__46 = 47, T__47 = 48, T__48 = 49, T__49 = 50, 
     T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
     T__56 = 57, T__57 = 58, T__58 = 59, T__59 = 60, T__60 = 61, T__61 = 62, 
-    T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, T__66 = 67, WhiteSpace = 68, 
-    LineComment = 69, BlockComment = 70, BooleanLiteral = 71, OnOffLabel = 72, 
-    CullModeLabel = 73, RenderQueueLabel = 74, ZTestModeLabel = 75, BlendFactorLabel = 76, 
-    BlendOPLabel = 77, StencilCompareLabel = 78, StencilOpLabel = 79, IntLiteral = 80, 
-    FloatLiteral = 81, ColorMaskChannel = 82, KWOff = 83, KWOn = 84, KWNever = 85, 
-    KWLess = 86, KWEqual = 87, KWLEqaul = 88, KWGreater = 89, KWNotEqual = 90, 
-    KWGEqual = 91, KWAlways = 92, KWKeep = 93, KWZero = 94, KWReplace = 95, 
-    KWIncrSat = 96, KWDecrSat = 97, KWInvert = 98, KWIncrWrap = 99, KWDecrWrap = 100, 
-    KWTrue = 101, KWFalse = 102, StringLiteral = 103, HlslIncludeBlock = 104, 
-    HlslProgramBlock = 105, Identity = 106
+    T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, WhiteSpace = 67, LineComment = 68, 
+    BlockComment = 69, BooleanLiteral = 70, OnOffLabel = 71, CullModeLabel = 72, 
+    RenderQueueLabel = 73, ZTestModeLabel = 74, BlendFactorLabel = 75, BlendOPLabel = 76, 
+    StencilCompareLabel = 77, StencilOpLabel = 78, IntLiteral = 79, FloatLiteral = 80, 
+    ColorMaskChannel = 81, KWOff = 82, KWOn = 83, KWNever = 84, KWLess = 85, 
+    KWEqual = 86, KWLEqaul = 87, KWGreater = 88, KWNotEqual = 89, KWGEqual = 90, 
+    KWAlways = 91, KWKeep = 92, KWZero = 93, KWReplace = 94, KWIncrSat = 95, 
+    KWDecrSat = 96, KWInvert = 97, KWIncrWrap = 98, KWDecrWrap = 99, KWTrue = 100, 
+    KWFalse = 101, StringLiteral = 102, HlslIncludeBlock = 103, HlslProgramBlock = 104, 
+    Identity = 105
   };
 
   enum {
@@ -45,7 +45,7 @@ public:
     RuleProperty_float_val = 18, RuleProperty_float2_val = 19, RuleProperty_float3_val = 20, 
     RuleProperty_float4_val = 21, RuleProperty_matrix_val = 22, RuleProperty_texture_val = 23, 
     RuleNumber_val = 24, RulePass = 25, RulePass_tag = 26, RulePass_block_item = 27, 
-    RulePass_source_path = 28, RulePass_vertex_shader = 29, RulePass_geometry_shader = 30, 
+    RulePass_source_context = 28, RulePass_vertex_shader = 29, RulePass_geometry_shader = 30, 
     RulePass_hull_shader = 31, RulePass_domain_shader = 32, RulePass_pixel_shader = 33, 
     RulePass_render_queue = 34, RulePass_shader_feature = 35, RulePass_cull_mode = 36, 
     RulePass_zclip_mode = 37, RulePass_ztest_mode = 38, RulePass_zwrite_mode = 39, 
@@ -104,7 +104,7 @@ public:
   class PassContext;
   class Pass_tagContext;
   class Pass_block_itemContext;
-  class Pass_source_pathContext;
+  class Pass_source_contextContext;
   class Pass_vertex_shaderContext;
   class Pass_geometry_shaderContext;
   class Pass_hull_shaderContext;
@@ -707,6 +707,17 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  PassSourceContextContext : public Pass_block_itemContext {
+  public:
+    PassSourceContextContext(Pass_block_itemContext *ctx);
+
+    Pass_source_contextContext *pass_source_context();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  PassPixelShaderContext : public Pass_block_itemContext {
   public:
     PassPixelShaderContext(Pass_block_itemContext *ctx);
@@ -883,24 +894,13 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  PassSourcePathContext : public Pass_block_itemContext {
-  public:
-    PassSourcePathContext(Pass_block_itemContext *ctx);
-
-    Pass_source_pathContext *pass_source_path();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
   Pass_block_itemContext* pass_block_item();
 
-  class  Pass_source_pathContext : public antlr4::ParserRuleContext {
+  class  Pass_source_contextContext : public antlr4::ParserRuleContext {
   public:
-    Pass_source_pathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    Pass_source_contextContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *StringLiteral();
+    antlr4::tree::TerminalNode *HlslProgramBlock();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -909,7 +909,7 @@ public:
    
   };
 
-  Pass_source_pathContext* pass_source_path();
+  Pass_source_contextContext* pass_source_context();
 
   class  Pass_vertex_shaderContext : public antlr4::ParserRuleContext {
   public:

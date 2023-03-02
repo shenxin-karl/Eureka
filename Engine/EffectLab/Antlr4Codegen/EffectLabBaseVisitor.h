@@ -157,7 +157,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPassSourcePath(EffectLabParser::PassSourcePathContext *ctx) override {
+  virtual std::any visitPassSourceContext(EffectLabParser::PassSourceContextContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -233,7 +233,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPass_source_path(EffectLabParser::Pass_source_pathContext *ctx) override {
+  virtual std::any visitPass_source_context(EffectLabParser::Pass_source_contextContext *ctx) override {
     return visitChildren(ctx);
   }
 

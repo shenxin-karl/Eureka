@@ -52,7 +52,7 @@ number_val
 pass     : 'Pass' '(' pass_tag ')' '{' pass_block_item+ '}';
 pass_tag : StringLiteral;
 pass_block_item 
-    : pass_source_path     # PassSourcePath
+    : pass_source_context  # PassSourceContext
     | pass_vertex_shader   # PassVertexShader
     | pass_geometry_shader # PassGeometryShader
     | pass_hull_shader     # PassHullShader
@@ -73,7 +73,7 @@ pass_block_item
     | pass_stencil         # PassStencil
     ;
 
-pass_source_path     : 'SourcePath'     ':' StringLiteral;
+pass_source_context  : HlslProgramBlock;
 pass_vertex_shader   : 'VertexShader'   ':' Identity;
 pass_geometry_shader : 'GeometryShader' ':' Identity;
 pass_hull_shader     : 'HullShader'     ':' Identity;
@@ -264,7 +264,7 @@ KWTrue        : 'true'  | 'True';
 KWFalse       : 'false' | 'False';
 
 StringLiteral : '"' .*? '"' ;
-HlslIncludeBlock : 'HLSLINCLUDE' .*? 'ENDHLSL';
-HlslProgramBlock : 'HLSLPROGRAM' .*? 'ENDHLSL';
+HlslIncludeBlock : 'HLSLINCLUDE' [ \t]* [\n]  .+?  [\n] [ \t]* 'ENDHLSL';
+HlslProgramBlock : 'HLSLPROGRAM' [ \t]* [\n]  .+?  [\n] [ \t]* 'ENDHLSL';
 
 Identity      : [_a-zA-Z][a-zA-Z0-9_]*; 

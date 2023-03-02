@@ -21,11 +21,25 @@ HLSLINCLUDE
     flaot4 getAlbedo() {
         return 1.0;
     }
+    struct VertexIn {
+        float3 position     : POSITION0;
+        float3 normal       : NORMAL0;
+        float2 texcoord     : TEXCOORD0;
+    };
 ENDHLSL
 
 Pass("BasePass") {
-    SourcePath: "Assets/Shaders/FXAA.hlsl"
     VertexShader: vert
     PixelShader: frag
     ShaderFeature: _AAA _BBB _CCC
+
+    HLSLPROGRAM
+        VertexOut vert(VertexIn vin) {
+            VertexOut vout = (VertexOut)0;
+            return vout;
+        }
+        float4 frag(VertexOut pin) : SV_TARGET {
+            return 0.0;
+        }
+    ENDHLSL
 }

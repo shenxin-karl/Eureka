@@ -52,7 +52,7 @@ void effectlabParserInitialize() {
       "property_matrix_type", "property_range_val", "property_bool_val", 
       "property_int_val", "property_float_val", "property_float2_val", "property_float3_val", 
       "property_float4_val", "property_matrix_val", "property_texture_val", 
-      "number_val", "pass", "pass_tag", "pass_block_item", "pass_source_path", 
+      "number_val", "pass", "pass_tag", "pass_block_item", "pass_source_context", 
       "pass_vertex_shader", "pass_geometry_shader", "pass_hull_shader", 
       "pass_domain_shader", "pass_pixel_shader", "pass_render_queue", "pass_shader_feature", 
       "pass_cull_mode", "pass_zclip_mode", "pass_ztest_mode", "pass_zwrite_mode", 
@@ -68,35 +68,35 @@ void effectlabParserInitialize() {
       "'Bool'", "'int'", "'Int'", "'range'", "'Range'", "'float'", "'Float'", 
       "'float2'", "'Float2'", "'float3'", "'Float3'", "'float4'", "'Float4'", 
       "'2d'", "'2D'", "'matrix'", "'Matrix'", "'identity'", "'white'", "'White'", 
-      "'black'", "'Black'", "'bump'", "'Bump'", "'Pass'", "'SourcePath'", 
-      "':'", "'VertexShader'", "'GeometryShader'", "'HullShader'", "'DomainShader'", 
-      "'PixelShader'", "'RenderQueue'", "'ShaderFeature'", "'Cull'", "'ZClip'", 
-      "'ZTest'", "'ZWrite'", "'Offset'", "'ColorMask'", "'Blend'", "'BlendOp'", 
-      "'AlphaToMask'", "'Conservative'", "'Stencil'", "'Ref'", "'ReadMask'", 
-      "'WriteMask'", "'Comp'", "'Fail'", "'ZFail'", "'CompBack'", "'PassBack'", 
-      "'FailBack'", "'ZFailBack'", "'CompFront'", "'PassFront'", "'FailFront'", 
-      "'ZFailFront'", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "'Off'", "'On'", "'Never'", "'Less'", "'Equal'", "'LEqual'", 
-      "'Greater'", "'NotEqual'", "'GEqual'", "'Always'", "'Keep'", "'Zero'", 
-      "'Replace'", "'IncrSat'", "'DecrSat'", "'Invert'", "'IncrWrap'", "'DecrWrap'"
+      "'black'", "'Black'", "'bump'", "'Bump'", "'Pass'", "'VertexShader'", 
+      "':'", "'GeometryShader'", "'HullShader'", "'DomainShader'", "'PixelShader'", 
+      "'RenderQueue'", "'ShaderFeature'", "'Cull'", "'ZClip'", "'ZTest'", 
+      "'ZWrite'", "'Offset'", "'ColorMask'", "'Blend'", "'BlendOp'", "'AlphaToMask'", 
+      "'Conservative'", "'Stencil'", "'Ref'", "'ReadMask'", "'WriteMask'", 
+      "'Comp'", "'Fail'", "'ZFail'", "'CompBack'", "'PassBack'", "'FailBack'", 
+      "'ZFailBack'", "'CompFront'", "'PassFront'", "'FailFront'", "'ZFailFront'", 
+      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "'Off'", 
+      "'On'", "'Never'", "'Less'", "'Equal'", "'LEqual'", "'Greater'", "'NotEqual'", 
+      "'GEqual'", "'Always'", "'Keep'", "'Zero'", "'Replace'", "'IncrSat'", 
+      "'DecrSat'", "'Invert'", "'IncrWrap'", "'DecrWrap'"
     },
     std::vector<std::string>{
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "WhiteSpace", "LineComment", "BlockComment", "BooleanLiteral", "OnOffLabel", 
-      "CullModeLabel", "RenderQueueLabel", "ZTestModeLabel", "BlendFactorLabel", 
-      "BlendOPLabel", "StencilCompareLabel", "StencilOpLabel", "IntLiteral", 
-      "FloatLiteral", "ColorMaskChannel", "KWOff", "KWOn", "KWNever", "KWLess", 
-      "KWEqual", "KWLEqaul", "KWGreater", "KWNotEqual", "KWGEqual", "KWAlways", 
-      "KWKeep", "KWZero", "KWReplace", "KWIncrSat", "KWDecrSat", "KWInvert", 
-      "KWIncrWrap", "KWDecrWrap", "KWTrue", "KWFalse", "StringLiteral", 
-      "HlslIncludeBlock", "HlslProgramBlock", "Identity"
+      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "WhiteSpace", 
+      "LineComment", "BlockComment", "BooleanLiteral", "OnOffLabel", "CullModeLabel", 
+      "RenderQueueLabel", "ZTestModeLabel", "BlendFactorLabel", "BlendOPLabel", 
+      "StencilCompareLabel", "StencilOpLabel", "IntLiteral", "FloatLiteral", 
+      "ColorMaskChannel", "KWOff", "KWOn", "KWNever", "KWLess", "KWEqual", 
+      "KWLEqaul", "KWGreater", "KWNotEqual", "KWGEqual", "KWAlways", "KWKeep", 
+      "KWZero", "KWReplace", "KWIncrSat", "KWDecrSat", "KWInvert", "KWIncrWrap", 
+      "KWDecrWrap", "KWTrue", "KWFalse", "StringLiteral", "HlslIncludeBlock", 
+      "HlslProgramBlock", "Identity"
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,106,529,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,105,527,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
   	14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,
   	21,2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,
@@ -118,148 +118,148 @@ void effectlabParserInitialize() {
   	1,21,1,21,1,21,1,21,1,21,1,22,1,22,1,23,1,23,1,23,3,23,296,8,23,1,24,
   	1,24,1,25,1,25,1,25,1,25,1,25,1,25,4,25,306,8,25,11,25,12,25,307,1,25,
   	1,25,1,26,1,26,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,
-  	1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,3,27,333,8,27,1,28,1,28,1,28,
-  	1,28,1,29,1,29,1,29,1,29,1,30,1,30,1,30,1,30,1,31,1,31,1,31,1,31,1,32,
-  	1,32,1,32,1,32,1,33,1,33,1,33,1,33,1,34,1,34,1,34,1,34,1,35,1,35,1,35,
-  	4,35,366,8,35,11,35,12,35,367,1,36,1,36,1,36,1,36,1,37,1,37,1,37,1,37,
-  	1,38,1,38,1,38,1,38,1,39,1,39,1,39,1,39,1,40,1,40,1,40,1,40,1,40,1,41,
-  	1,41,1,41,1,41,1,41,3,41,396,8,41,1,42,1,42,1,42,1,42,1,42,1,42,1,42,
+  	1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,3,27,333,8,27,1,28,1,28,1,29,
+  	1,29,1,29,1,29,1,30,1,30,1,30,1,30,1,31,1,31,1,31,1,31,1,32,1,32,1,32,
+  	1,32,1,33,1,33,1,33,1,33,1,34,1,34,1,34,1,34,1,35,1,35,1,35,4,35,364,
+  	8,35,11,35,12,35,365,1,36,1,36,1,36,1,36,1,37,1,37,1,37,1,37,1,38,1,38,
+  	1,38,1,38,1,39,1,39,1,39,1,39,1,40,1,40,1,40,1,40,1,40,1,41,1,41,1,41,
+  	1,41,1,41,3,41,394,8,41,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,
   	1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,
-  	1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,3,42,429,8,42,1,43,
-  	1,43,1,43,1,43,1,44,1,44,1,44,1,44,1,45,1,45,1,45,1,45,1,46,1,46,1,46,
-  	4,46,446,8,46,11,46,12,46,447,1,46,1,46,1,47,1,47,1,47,1,47,1,47,1,47,
-  	1,47,1,47,1,47,1,47,1,47,1,47,1,47,1,47,1,47,3,47,467,8,47,1,48,1,48,
-  	1,48,1,48,1,49,1,49,1,49,1,49,1,50,1,50,1,50,1,50,1,51,1,51,1,51,1,51,
-  	1,52,1,52,1,52,1,52,1,53,1,53,1,53,1,53,1,54,1,54,1,54,1,54,1,55,1,55,
-  	1,55,1,55,1,56,1,56,1,56,1,56,1,57,1,57,1,57,1,57,1,58,1,58,1,58,1,58,
-  	1,59,1,59,1,59,1,59,1,60,1,60,1,60,1,60,1,61,1,61,1,61,1,61,1,62,1,62,
-  	1,62,1,62,1,62,0,0,63,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,
-  	36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,
-  	82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,
-  	122,124,0,13,1,0,8,9,1,0,10,11,1,0,12,13,1,0,14,15,1,0,16,17,1,0,18,19,
-  	1,0,20,21,1,0,22,23,1,0,24,25,1,0,27,28,1,0,29,30,1,0,31,32,1,0,80,81,
-  	520,0,127,1,0,0,0,2,137,1,0,0,0,4,146,1,0,0,0,6,148,1,0,0,0,8,150,1,0,
-  	0,0,10,233,1,0,0,0,12,235,1,0,0,0,14,237,1,0,0,0,16,239,1,0,0,0,18,246,
-  	1,0,0,0,20,248,1,0,0,0,22,250,1,0,0,0,24,252,1,0,0,0,26,254,1,0,0,0,28,
-  	256,1,0,0,0,30,258,1,0,0,0,32,260,1,0,0,0,34,262,1,0,0,0,36,264,1,0,0,
-  	0,38,266,1,0,0,0,40,272,1,0,0,0,42,280,1,0,0,0,44,290,1,0,0,0,46,295,
-  	1,0,0,0,48,297,1,0,0,0,50,299,1,0,0,0,52,311,1,0,0,0,54,332,1,0,0,0,56,
-  	334,1,0,0,0,58,338,1,0,0,0,60,342,1,0,0,0,62,346,1,0,0,0,64,350,1,0,0,
-  	0,66,354,1,0,0,0,68,358,1,0,0,0,70,362,1,0,0,0,72,369,1,0,0,0,74,373,
-  	1,0,0,0,76,377,1,0,0,0,78,381,1,0,0,0,80,385,1,0,0,0,82,395,1,0,0,0,84,
-  	428,1,0,0,0,86,430,1,0,0,0,88,434,1,0,0,0,90,438,1,0,0,0,92,442,1,0,0,
-  	0,94,466,1,0,0,0,96,468,1,0,0,0,98,472,1,0,0,0,100,476,1,0,0,0,102,480,
-  	1,0,0,0,104,484,1,0,0,0,106,488,1,0,0,0,108,492,1,0,0,0,110,496,1,0,0,
-  	0,112,500,1,0,0,0,114,504,1,0,0,0,116,508,1,0,0,0,118,512,1,0,0,0,120,
-  	516,1,0,0,0,122,520,1,0,0,0,124,524,1,0,0,0,126,128,3,2,1,0,127,126,1,
-  	0,0,0,127,128,1,0,0,0,128,130,1,0,0,0,129,131,3,4,2,0,130,129,1,0,0,0,
-  	130,131,1,0,0,0,131,133,1,0,0,0,132,134,3,50,25,0,133,132,1,0,0,0,134,
-  	135,1,0,0,0,135,133,1,0,0,0,135,136,1,0,0,0,136,1,1,0,0,0,137,138,5,1,
-  	0,0,138,140,5,2,0,0,139,141,3,10,5,0,140,139,1,0,0,0,141,142,1,0,0,0,
-  	142,140,1,0,0,0,142,143,1,0,0,0,143,144,1,0,0,0,144,145,5,3,0,0,145,3,
-  	1,0,0,0,146,147,5,104,0,0,147,5,1,0,0,0,148,149,5,106,0,0,149,7,1,0,0,
-  	0,150,151,5,103,0,0,151,9,1,0,0,0,152,153,3,6,3,0,153,154,5,4,0,0,154,
-  	155,3,8,4,0,155,156,5,5,0,0,156,157,3,12,6,0,157,158,5,6,0,0,158,159,
-  	5,7,0,0,159,160,3,32,16,0,160,234,1,0,0,0,161,162,3,6,3,0,162,163,5,4,
-  	0,0,163,164,3,8,4,0,164,165,5,5,0,0,165,166,3,14,7,0,166,167,5,6,0,0,
-  	167,168,5,7,0,0,168,169,3,34,17,0,169,234,1,0,0,0,170,171,3,6,3,0,171,
-  	172,5,4,0,0,172,173,3,8,4,0,173,174,5,5,0,0,174,175,3,16,8,0,175,176,
-  	5,6,0,0,176,177,5,7,0,0,177,178,3,30,15,0,178,234,1,0,0,0,179,180,3,6,
-  	3,0,180,181,5,4,0,0,181,182,3,8,4,0,182,183,5,5,0,0,183,184,3,18,9,0,
-  	184,185,5,6,0,0,185,186,5,7,0,0,186,187,3,36,18,0,187,234,1,0,0,0,188,
-  	189,3,6,3,0,189,190,5,4,0,0,190,191,3,8,4,0,191,192,5,5,0,0,192,193,3,
-  	20,10,0,193,194,5,6,0,0,194,195,5,7,0,0,195,196,3,38,19,0,196,234,1,0,
-  	0,0,197,198,3,6,3,0,198,199,5,4,0,0,199,200,3,8,4,0,200,201,5,5,0,0,201,
-  	202,3,22,11,0,202,203,5,6,0,0,203,204,5,7,0,0,204,205,3,40,20,0,205,234,
-  	1,0,0,0,206,207,3,6,3,0,207,208,5,4,0,0,208,209,3,8,4,0,209,210,5,5,0,
-  	0,210,211,3,24,12,0,211,212,5,6,0,0,212,213,5,7,0,0,213,214,3,42,21,0,
-  	214,234,1,0,0,0,215,216,3,6,3,0,216,217,5,4,0,0,217,218,3,8,4,0,218,219,
-  	5,5,0,0,219,220,3,26,13,0,220,221,5,6,0,0,221,222,5,7,0,0,222,223,3,46,
-  	23,0,223,234,1,0,0,0,224,225,3,6,3,0,225,226,5,4,0,0,226,227,3,8,4,0,
-  	227,228,5,5,0,0,228,229,3,28,14,0,229,230,5,6,0,0,230,231,5,7,0,0,231,
-  	232,3,44,22,0,232,234,1,0,0,0,233,152,1,0,0,0,233,161,1,0,0,0,233,170,
-  	1,0,0,0,233,179,1,0,0,0,233,188,1,0,0,0,233,197,1,0,0,0,233,206,1,0,0,
-  	0,233,215,1,0,0,0,233,224,1,0,0,0,234,11,1,0,0,0,235,236,7,0,0,0,236,
-  	13,1,0,0,0,237,238,7,1,0,0,238,15,1,0,0,0,239,240,7,2,0,0,240,241,5,4,
-  	0,0,241,242,3,48,24,0,242,243,5,5,0,0,243,244,3,48,24,0,244,245,5,6,0,
-  	0,245,17,1,0,0,0,246,247,7,3,0,0,247,19,1,0,0,0,248,249,7,4,0,0,249,21,
-  	1,0,0,0,250,251,7,5,0,0,251,23,1,0,0,0,252,253,7,6,0,0,253,25,1,0,0,0,
-  	254,255,7,7,0,0,255,27,1,0,0,0,256,257,7,8,0,0,257,29,1,0,0,0,258,259,
-  	3,48,24,0,259,31,1,0,0,0,260,261,5,71,0,0,261,33,1,0,0,0,262,263,5,80,
-  	0,0,263,35,1,0,0,0,264,265,3,48,24,0,265,37,1,0,0,0,266,267,5,4,0,0,267,
-  	268,3,48,24,0,268,269,5,5,0,0,269,270,3,48,24,0,270,271,5,6,0,0,271,39,
-  	1,0,0,0,272,273,5,4,0,0,273,274,3,48,24,0,274,275,5,5,0,0,275,276,3,48,
-  	24,0,276,277,5,5,0,0,277,278,3,48,24,0,278,279,5,6,0,0,279,41,1,0,0,0,
-  	280,281,5,4,0,0,281,282,3,48,24,0,282,283,5,5,0,0,283,284,3,48,24,0,284,
-  	285,5,5,0,0,285,286,3,48,24,0,286,287,5,5,0,0,287,288,3,48,24,0,288,289,
-  	5,6,0,0,289,43,1,0,0,0,290,291,5,26,0,0,291,45,1,0,0,0,292,296,7,9,0,
-  	0,293,296,7,10,0,0,294,296,7,11,0,0,295,292,1,0,0,0,295,293,1,0,0,0,295,
-  	294,1,0,0,0,296,47,1,0,0,0,297,298,7,12,0,0,298,49,1,0,0,0,299,300,5,
-  	33,0,0,300,301,5,4,0,0,301,302,3,52,26,0,302,303,5,6,0,0,303,305,5,2,
-  	0,0,304,306,3,54,27,0,305,304,1,0,0,0,306,307,1,0,0,0,307,305,1,0,0,0,
-  	307,308,1,0,0,0,308,309,1,0,0,0,309,310,5,3,0,0,310,51,1,0,0,0,311,312,
-  	5,103,0,0,312,53,1,0,0,0,313,333,3,56,28,0,314,333,3,58,29,0,315,333,
-  	3,60,30,0,316,333,3,62,31,0,317,333,3,64,32,0,318,333,3,66,33,0,319,333,
-  	3,68,34,0,320,333,3,70,35,0,321,333,3,72,36,0,322,333,3,74,37,0,323,333,
-  	3,76,38,0,324,333,3,78,39,0,325,333,3,80,40,0,326,333,3,82,41,0,327,333,
-  	3,84,42,0,328,333,3,86,43,0,329,333,3,88,44,0,330,333,3,90,45,0,331,333,
+  	1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,3,42,427,8,42,1,43,1,43,1,43,
+  	1,43,1,44,1,44,1,44,1,44,1,45,1,45,1,45,1,45,1,46,1,46,1,46,4,46,444,
+  	8,46,11,46,12,46,445,1,46,1,46,1,47,1,47,1,47,1,47,1,47,1,47,1,47,1,47,
+  	1,47,1,47,1,47,1,47,1,47,1,47,1,47,3,47,465,8,47,1,48,1,48,1,48,1,48,
+  	1,49,1,49,1,49,1,49,1,50,1,50,1,50,1,50,1,51,1,51,1,51,1,51,1,52,1,52,
+  	1,52,1,52,1,53,1,53,1,53,1,53,1,54,1,54,1,54,1,54,1,55,1,55,1,55,1,55,
+  	1,56,1,56,1,56,1,56,1,57,1,57,1,57,1,57,1,58,1,58,1,58,1,58,1,59,1,59,
+  	1,59,1,59,1,60,1,60,1,60,1,60,1,61,1,61,1,61,1,61,1,62,1,62,1,62,1,62,
+  	1,62,0,0,63,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,
+  	42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,
+  	88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,
+  	0,13,1,0,8,9,1,0,10,11,1,0,12,13,1,0,14,15,1,0,16,17,1,0,18,19,1,0,20,
+  	21,1,0,22,23,1,0,24,25,1,0,27,28,1,0,29,30,1,0,31,32,1,0,79,80,518,0,
+  	127,1,0,0,0,2,137,1,0,0,0,4,146,1,0,0,0,6,148,1,0,0,0,8,150,1,0,0,0,10,
+  	233,1,0,0,0,12,235,1,0,0,0,14,237,1,0,0,0,16,239,1,0,0,0,18,246,1,0,0,
+  	0,20,248,1,0,0,0,22,250,1,0,0,0,24,252,1,0,0,0,26,254,1,0,0,0,28,256,
+  	1,0,0,0,30,258,1,0,0,0,32,260,1,0,0,0,34,262,1,0,0,0,36,264,1,0,0,0,38,
+  	266,1,0,0,0,40,272,1,0,0,0,42,280,1,0,0,0,44,290,1,0,0,0,46,295,1,0,0,
+  	0,48,297,1,0,0,0,50,299,1,0,0,0,52,311,1,0,0,0,54,332,1,0,0,0,56,334,
+  	1,0,0,0,58,336,1,0,0,0,60,340,1,0,0,0,62,344,1,0,0,0,64,348,1,0,0,0,66,
+  	352,1,0,0,0,68,356,1,0,0,0,70,360,1,0,0,0,72,367,1,0,0,0,74,371,1,0,0,
+  	0,76,375,1,0,0,0,78,379,1,0,0,0,80,383,1,0,0,0,82,393,1,0,0,0,84,426,
+  	1,0,0,0,86,428,1,0,0,0,88,432,1,0,0,0,90,436,1,0,0,0,92,440,1,0,0,0,94,
+  	464,1,0,0,0,96,466,1,0,0,0,98,470,1,0,0,0,100,474,1,0,0,0,102,478,1,0,
+  	0,0,104,482,1,0,0,0,106,486,1,0,0,0,108,490,1,0,0,0,110,494,1,0,0,0,112,
+  	498,1,0,0,0,114,502,1,0,0,0,116,506,1,0,0,0,118,510,1,0,0,0,120,514,1,
+  	0,0,0,122,518,1,0,0,0,124,522,1,0,0,0,126,128,3,2,1,0,127,126,1,0,0,0,
+  	127,128,1,0,0,0,128,130,1,0,0,0,129,131,3,4,2,0,130,129,1,0,0,0,130,131,
+  	1,0,0,0,131,133,1,0,0,0,132,134,3,50,25,0,133,132,1,0,0,0,134,135,1,0,
+  	0,0,135,133,1,0,0,0,135,136,1,0,0,0,136,1,1,0,0,0,137,138,5,1,0,0,138,
+  	140,5,2,0,0,139,141,3,10,5,0,140,139,1,0,0,0,141,142,1,0,0,0,142,140,
+  	1,0,0,0,142,143,1,0,0,0,143,144,1,0,0,0,144,145,5,3,0,0,145,3,1,0,0,0,
+  	146,147,5,103,0,0,147,5,1,0,0,0,148,149,5,105,0,0,149,7,1,0,0,0,150,151,
+  	5,102,0,0,151,9,1,0,0,0,152,153,3,6,3,0,153,154,5,4,0,0,154,155,3,8,4,
+  	0,155,156,5,5,0,0,156,157,3,12,6,0,157,158,5,6,0,0,158,159,5,7,0,0,159,
+  	160,3,32,16,0,160,234,1,0,0,0,161,162,3,6,3,0,162,163,5,4,0,0,163,164,
+  	3,8,4,0,164,165,5,5,0,0,165,166,3,14,7,0,166,167,5,6,0,0,167,168,5,7,
+  	0,0,168,169,3,34,17,0,169,234,1,0,0,0,170,171,3,6,3,0,171,172,5,4,0,0,
+  	172,173,3,8,4,0,173,174,5,5,0,0,174,175,3,16,8,0,175,176,5,6,0,0,176,
+  	177,5,7,0,0,177,178,3,30,15,0,178,234,1,0,0,0,179,180,3,6,3,0,180,181,
+  	5,4,0,0,181,182,3,8,4,0,182,183,5,5,0,0,183,184,3,18,9,0,184,185,5,6,
+  	0,0,185,186,5,7,0,0,186,187,3,36,18,0,187,234,1,0,0,0,188,189,3,6,3,0,
+  	189,190,5,4,0,0,190,191,3,8,4,0,191,192,5,5,0,0,192,193,3,20,10,0,193,
+  	194,5,6,0,0,194,195,5,7,0,0,195,196,3,38,19,0,196,234,1,0,0,0,197,198,
+  	3,6,3,0,198,199,5,4,0,0,199,200,3,8,4,0,200,201,5,5,0,0,201,202,3,22,
+  	11,0,202,203,5,6,0,0,203,204,5,7,0,0,204,205,3,40,20,0,205,234,1,0,0,
+  	0,206,207,3,6,3,0,207,208,5,4,0,0,208,209,3,8,4,0,209,210,5,5,0,0,210,
+  	211,3,24,12,0,211,212,5,6,0,0,212,213,5,7,0,0,213,214,3,42,21,0,214,234,
+  	1,0,0,0,215,216,3,6,3,0,216,217,5,4,0,0,217,218,3,8,4,0,218,219,5,5,0,
+  	0,219,220,3,26,13,0,220,221,5,6,0,0,221,222,5,7,0,0,222,223,3,46,23,0,
+  	223,234,1,0,0,0,224,225,3,6,3,0,225,226,5,4,0,0,226,227,3,8,4,0,227,228,
+  	5,5,0,0,228,229,3,28,14,0,229,230,5,6,0,0,230,231,5,7,0,0,231,232,3,44,
+  	22,0,232,234,1,0,0,0,233,152,1,0,0,0,233,161,1,0,0,0,233,170,1,0,0,0,
+  	233,179,1,0,0,0,233,188,1,0,0,0,233,197,1,0,0,0,233,206,1,0,0,0,233,215,
+  	1,0,0,0,233,224,1,0,0,0,234,11,1,0,0,0,235,236,7,0,0,0,236,13,1,0,0,0,
+  	237,238,7,1,0,0,238,15,1,0,0,0,239,240,7,2,0,0,240,241,5,4,0,0,241,242,
+  	3,48,24,0,242,243,5,5,0,0,243,244,3,48,24,0,244,245,5,6,0,0,245,17,1,
+  	0,0,0,246,247,7,3,0,0,247,19,1,0,0,0,248,249,7,4,0,0,249,21,1,0,0,0,250,
+  	251,7,5,0,0,251,23,1,0,0,0,252,253,7,6,0,0,253,25,1,0,0,0,254,255,7,7,
+  	0,0,255,27,1,0,0,0,256,257,7,8,0,0,257,29,1,0,0,0,258,259,3,48,24,0,259,
+  	31,1,0,0,0,260,261,5,70,0,0,261,33,1,0,0,0,262,263,5,79,0,0,263,35,1,
+  	0,0,0,264,265,3,48,24,0,265,37,1,0,0,0,266,267,5,4,0,0,267,268,3,48,24,
+  	0,268,269,5,5,0,0,269,270,3,48,24,0,270,271,5,6,0,0,271,39,1,0,0,0,272,
+  	273,5,4,0,0,273,274,3,48,24,0,274,275,5,5,0,0,275,276,3,48,24,0,276,277,
+  	5,5,0,0,277,278,3,48,24,0,278,279,5,6,0,0,279,41,1,0,0,0,280,281,5,4,
+  	0,0,281,282,3,48,24,0,282,283,5,5,0,0,283,284,3,48,24,0,284,285,5,5,0,
+  	0,285,286,3,48,24,0,286,287,5,5,0,0,287,288,3,48,24,0,288,289,5,6,0,0,
+  	289,43,1,0,0,0,290,291,5,26,0,0,291,45,1,0,0,0,292,296,7,9,0,0,293,296,
+  	7,10,0,0,294,296,7,11,0,0,295,292,1,0,0,0,295,293,1,0,0,0,295,294,1,0,
+  	0,0,296,47,1,0,0,0,297,298,7,12,0,0,298,49,1,0,0,0,299,300,5,33,0,0,300,
+  	301,5,4,0,0,301,302,3,52,26,0,302,303,5,6,0,0,303,305,5,2,0,0,304,306,
+  	3,54,27,0,305,304,1,0,0,0,306,307,1,0,0,0,307,305,1,0,0,0,307,308,1,0,
+  	0,0,308,309,1,0,0,0,309,310,5,3,0,0,310,51,1,0,0,0,311,312,5,102,0,0,
+  	312,53,1,0,0,0,313,333,3,56,28,0,314,333,3,58,29,0,315,333,3,60,30,0,
+  	316,333,3,62,31,0,317,333,3,64,32,0,318,333,3,66,33,0,319,333,3,68,34,
+  	0,320,333,3,70,35,0,321,333,3,72,36,0,322,333,3,74,37,0,323,333,3,76,
+  	38,0,324,333,3,78,39,0,325,333,3,80,40,0,326,333,3,82,41,0,327,333,3,
+  	84,42,0,328,333,3,86,43,0,329,333,3,88,44,0,330,333,3,90,45,0,331,333,
   	3,92,46,0,332,313,1,0,0,0,332,314,1,0,0,0,332,315,1,0,0,0,332,316,1,0,
   	0,0,332,317,1,0,0,0,332,318,1,0,0,0,332,319,1,0,0,0,332,320,1,0,0,0,332,
   	321,1,0,0,0,332,322,1,0,0,0,332,323,1,0,0,0,332,324,1,0,0,0,332,325,1,
   	0,0,0,332,326,1,0,0,0,332,327,1,0,0,0,332,328,1,0,0,0,332,329,1,0,0,0,
-  	332,330,1,0,0,0,332,331,1,0,0,0,333,55,1,0,0,0,334,335,5,34,0,0,335,336,
-  	5,35,0,0,336,337,5,103,0,0,337,57,1,0,0,0,338,339,5,36,0,0,339,340,5,
-  	35,0,0,340,341,5,106,0,0,341,59,1,0,0,0,342,343,5,37,0,0,343,344,5,35,
-  	0,0,344,345,5,106,0,0,345,61,1,0,0,0,346,347,5,38,0,0,347,348,5,35,0,
-  	0,348,349,5,106,0,0,349,63,1,0,0,0,350,351,5,39,0,0,351,352,5,35,0,0,
-  	352,353,5,106,0,0,353,65,1,0,0,0,354,355,5,40,0,0,355,356,5,35,0,0,356,
-  	357,5,106,0,0,357,67,1,0,0,0,358,359,5,41,0,0,359,360,5,35,0,0,360,361,
-  	5,74,0,0,361,69,1,0,0,0,362,363,5,42,0,0,363,365,5,35,0,0,364,366,5,106,
-  	0,0,365,364,1,0,0,0,366,367,1,0,0,0,367,365,1,0,0,0,367,368,1,0,0,0,368,
-  	71,1,0,0,0,369,370,5,43,0,0,370,371,5,35,0,0,371,372,5,73,0,0,372,73,
-  	1,0,0,0,373,374,5,44,0,0,374,375,5,35,0,0,375,376,5,71,0,0,376,75,1,0,
-  	0,0,377,378,5,45,0,0,378,379,5,35,0,0,379,380,5,75,0,0,380,77,1,0,0,0,
-  	381,382,5,46,0,0,382,383,5,35,0,0,383,384,5,72,0,0,384,79,1,0,0,0,385,
-  	386,5,47,0,0,386,387,5,35,0,0,387,388,5,81,0,0,388,389,5,81,0,0,389,81,
-  	1,0,0,0,390,391,5,48,0,0,391,396,5,82,0,0,392,393,5,48,0,0,393,394,5,
-  	82,0,0,394,396,5,80,0,0,395,390,1,0,0,0,395,392,1,0,0,0,396,83,1,0,0,
-  	0,397,398,5,49,0,0,398,399,5,35,0,0,399,429,5,83,0,0,400,401,5,49,0,0,
-  	401,402,5,35,0,0,402,403,5,80,0,0,403,429,5,83,0,0,404,405,5,49,0,0,405,
-  	406,5,35,0,0,406,407,5,76,0,0,407,429,5,76,0,0,408,409,5,49,0,0,409,410,
-  	5,35,0,0,410,411,5,80,0,0,411,412,5,76,0,0,412,429,5,76,0,0,413,414,5,
-  	49,0,0,414,415,5,35,0,0,415,416,5,76,0,0,416,417,5,76,0,0,417,418,5,5,
-  	0,0,418,419,5,76,0,0,419,429,5,76,0,0,420,421,5,49,0,0,421,422,5,35,0,
-  	0,422,423,5,80,0,0,423,424,5,76,0,0,424,425,5,76,0,0,425,426,5,5,0,0,
-  	426,427,5,76,0,0,427,429,5,76,0,0,428,397,1,0,0,0,428,400,1,0,0,0,428,
-  	404,1,0,0,0,428,408,1,0,0,0,428,413,1,0,0,0,428,420,1,0,0,0,429,85,1,
-  	0,0,0,430,431,5,50,0,0,431,432,5,35,0,0,432,433,5,77,0,0,433,87,1,0,0,
-  	0,434,435,5,51,0,0,435,436,5,35,0,0,436,437,5,72,0,0,437,89,1,0,0,0,438,
-  	439,5,52,0,0,439,440,5,35,0,0,440,441,5,71,0,0,441,91,1,0,0,0,442,443,
-  	5,53,0,0,443,445,5,2,0,0,444,446,3,94,47,0,445,444,1,0,0,0,446,447,1,
-  	0,0,0,447,445,1,0,0,0,447,448,1,0,0,0,448,449,1,0,0,0,449,450,5,3,0,0,
-  	450,93,1,0,0,0,451,467,3,96,48,0,452,467,3,98,49,0,453,467,3,100,50,0,
-  	454,467,3,102,51,0,455,467,3,104,52,0,456,467,3,106,53,0,457,467,3,108,
-  	54,0,458,467,3,110,55,0,459,467,3,112,56,0,460,467,3,114,57,0,461,467,
-  	3,116,58,0,462,467,3,118,59,0,463,467,3,120,60,0,464,467,3,122,61,0,465,
-  	467,3,124,62,0,466,451,1,0,0,0,466,452,1,0,0,0,466,453,1,0,0,0,466,454,
-  	1,0,0,0,466,455,1,0,0,0,466,456,1,0,0,0,466,457,1,0,0,0,466,458,1,0,0,
-  	0,466,459,1,0,0,0,466,460,1,0,0,0,466,461,1,0,0,0,466,462,1,0,0,0,466,
-  	463,1,0,0,0,466,464,1,0,0,0,466,465,1,0,0,0,467,95,1,0,0,0,468,469,5,
-  	54,0,0,469,470,5,35,0,0,470,471,5,80,0,0,471,97,1,0,0,0,472,473,5,55,
-  	0,0,473,474,5,35,0,0,474,475,5,80,0,0,475,99,1,0,0,0,476,477,5,56,0,0,
-  	477,478,5,35,0,0,478,479,5,80,0,0,479,101,1,0,0,0,480,481,5,57,0,0,481,
-  	482,5,35,0,0,482,483,5,78,0,0,483,103,1,0,0,0,484,485,5,33,0,0,485,486,
-  	5,35,0,0,486,487,5,79,0,0,487,105,1,0,0,0,488,489,5,58,0,0,489,490,5,
-  	35,0,0,490,491,5,79,0,0,491,107,1,0,0,0,492,493,5,59,0,0,493,494,5,35,
-  	0,0,494,495,5,79,0,0,495,109,1,0,0,0,496,497,5,60,0,0,497,498,5,35,0,
-  	0,498,499,5,78,0,0,499,111,1,0,0,0,500,501,5,61,0,0,501,502,5,35,0,0,
-  	502,503,5,79,0,0,503,113,1,0,0,0,504,505,5,62,0,0,505,506,5,35,0,0,506,
-  	507,5,79,0,0,507,115,1,0,0,0,508,509,5,63,0,0,509,510,5,35,0,0,510,511,
-  	5,79,0,0,511,117,1,0,0,0,512,513,5,64,0,0,513,514,5,35,0,0,514,515,5,
-  	78,0,0,515,119,1,0,0,0,516,517,5,65,0,0,517,518,5,35,0,0,518,519,5,79,
-  	0,0,519,121,1,0,0,0,520,521,5,66,0,0,521,522,5,35,0,0,522,523,5,79,0,
-  	0,523,123,1,0,0,0,524,525,5,67,0,0,525,526,5,35,0,0,526,527,5,79,0,0,
-  	527,125,1,0,0,0,13,127,130,135,142,233,295,307,332,367,395,428,447,466
+  	332,330,1,0,0,0,332,331,1,0,0,0,333,55,1,0,0,0,334,335,5,104,0,0,335,
+  	57,1,0,0,0,336,337,5,34,0,0,337,338,5,35,0,0,338,339,5,105,0,0,339,59,
+  	1,0,0,0,340,341,5,36,0,0,341,342,5,35,0,0,342,343,5,105,0,0,343,61,1,
+  	0,0,0,344,345,5,37,0,0,345,346,5,35,0,0,346,347,5,105,0,0,347,63,1,0,
+  	0,0,348,349,5,38,0,0,349,350,5,35,0,0,350,351,5,105,0,0,351,65,1,0,0,
+  	0,352,353,5,39,0,0,353,354,5,35,0,0,354,355,5,105,0,0,355,67,1,0,0,0,
+  	356,357,5,40,0,0,357,358,5,35,0,0,358,359,5,73,0,0,359,69,1,0,0,0,360,
+  	361,5,41,0,0,361,363,5,35,0,0,362,364,5,105,0,0,363,362,1,0,0,0,364,365,
+  	1,0,0,0,365,363,1,0,0,0,365,366,1,0,0,0,366,71,1,0,0,0,367,368,5,42,0,
+  	0,368,369,5,35,0,0,369,370,5,72,0,0,370,73,1,0,0,0,371,372,5,43,0,0,372,
+  	373,5,35,0,0,373,374,5,70,0,0,374,75,1,0,0,0,375,376,5,44,0,0,376,377,
+  	5,35,0,0,377,378,5,74,0,0,378,77,1,0,0,0,379,380,5,45,0,0,380,381,5,35,
+  	0,0,381,382,5,71,0,0,382,79,1,0,0,0,383,384,5,46,0,0,384,385,5,35,0,0,
+  	385,386,5,80,0,0,386,387,5,80,0,0,387,81,1,0,0,0,388,389,5,47,0,0,389,
+  	394,5,81,0,0,390,391,5,47,0,0,391,392,5,81,0,0,392,394,5,79,0,0,393,388,
+  	1,0,0,0,393,390,1,0,0,0,394,83,1,0,0,0,395,396,5,48,0,0,396,397,5,35,
+  	0,0,397,427,5,82,0,0,398,399,5,48,0,0,399,400,5,35,0,0,400,401,5,79,0,
+  	0,401,427,5,82,0,0,402,403,5,48,0,0,403,404,5,35,0,0,404,405,5,75,0,0,
+  	405,427,5,75,0,0,406,407,5,48,0,0,407,408,5,35,0,0,408,409,5,79,0,0,409,
+  	410,5,75,0,0,410,427,5,75,0,0,411,412,5,48,0,0,412,413,5,35,0,0,413,414,
+  	5,75,0,0,414,415,5,75,0,0,415,416,5,5,0,0,416,417,5,75,0,0,417,427,5,
+  	75,0,0,418,419,5,48,0,0,419,420,5,35,0,0,420,421,5,79,0,0,421,422,5,75,
+  	0,0,422,423,5,75,0,0,423,424,5,5,0,0,424,425,5,75,0,0,425,427,5,75,0,
+  	0,426,395,1,0,0,0,426,398,1,0,0,0,426,402,1,0,0,0,426,406,1,0,0,0,426,
+  	411,1,0,0,0,426,418,1,0,0,0,427,85,1,0,0,0,428,429,5,49,0,0,429,430,5,
+  	35,0,0,430,431,5,76,0,0,431,87,1,0,0,0,432,433,5,50,0,0,433,434,5,35,
+  	0,0,434,435,5,71,0,0,435,89,1,0,0,0,436,437,5,51,0,0,437,438,5,35,0,0,
+  	438,439,5,70,0,0,439,91,1,0,0,0,440,441,5,52,0,0,441,443,5,2,0,0,442,
+  	444,3,94,47,0,443,442,1,0,0,0,444,445,1,0,0,0,445,443,1,0,0,0,445,446,
+  	1,0,0,0,446,447,1,0,0,0,447,448,5,3,0,0,448,93,1,0,0,0,449,465,3,96,48,
+  	0,450,465,3,98,49,0,451,465,3,100,50,0,452,465,3,102,51,0,453,465,3,104,
+  	52,0,454,465,3,106,53,0,455,465,3,108,54,0,456,465,3,110,55,0,457,465,
+  	3,112,56,0,458,465,3,114,57,0,459,465,3,116,58,0,460,465,3,118,59,0,461,
+  	465,3,120,60,0,462,465,3,122,61,0,463,465,3,124,62,0,464,449,1,0,0,0,
+  	464,450,1,0,0,0,464,451,1,0,0,0,464,452,1,0,0,0,464,453,1,0,0,0,464,454,
+  	1,0,0,0,464,455,1,0,0,0,464,456,1,0,0,0,464,457,1,0,0,0,464,458,1,0,0,
+  	0,464,459,1,0,0,0,464,460,1,0,0,0,464,461,1,0,0,0,464,462,1,0,0,0,464,
+  	463,1,0,0,0,465,95,1,0,0,0,466,467,5,53,0,0,467,468,5,35,0,0,468,469,
+  	5,79,0,0,469,97,1,0,0,0,470,471,5,54,0,0,471,472,5,35,0,0,472,473,5,79,
+  	0,0,473,99,1,0,0,0,474,475,5,55,0,0,475,476,5,35,0,0,476,477,5,79,0,0,
+  	477,101,1,0,0,0,478,479,5,56,0,0,479,480,5,35,0,0,480,481,5,77,0,0,481,
+  	103,1,0,0,0,482,483,5,33,0,0,483,484,5,35,0,0,484,485,5,78,0,0,485,105,
+  	1,0,0,0,486,487,5,57,0,0,487,488,5,35,0,0,488,489,5,78,0,0,489,107,1,
+  	0,0,0,490,491,5,58,0,0,491,492,5,35,0,0,492,493,5,78,0,0,493,109,1,0,
+  	0,0,494,495,5,59,0,0,495,496,5,35,0,0,496,497,5,77,0,0,497,111,1,0,0,
+  	0,498,499,5,60,0,0,499,500,5,35,0,0,500,501,5,78,0,0,501,113,1,0,0,0,
+  	502,503,5,61,0,0,503,504,5,35,0,0,504,505,5,78,0,0,505,115,1,0,0,0,506,
+  	507,5,62,0,0,507,508,5,35,0,0,508,509,5,78,0,0,509,117,1,0,0,0,510,511,
+  	5,63,0,0,511,512,5,35,0,0,512,513,5,77,0,0,513,119,1,0,0,0,514,515,5,
+  	64,0,0,515,516,5,35,0,0,516,517,5,78,0,0,517,121,1,0,0,0,518,519,5,65,
+  	0,0,519,520,5,35,0,0,520,521,5,78,0,0,521,123,1,0,0,0,522,523,5,66,0,
+  	0,523,524,5,35,0,0,524,525,5,78,0,0,525,125,1,0,0,0,13,127,130,135,142,
+  	233,295,307,332,365,393,426,445,464
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -2661,7 +2661,7 @@ EffectLabParser::PassContext* EffectLabParser::pass() {
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while (((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 18014346969874432) != 0);
+      ((1ULL << _la) & 9007147715133440) != 0 || _la == EffectLabParser::HlslProgramBlock);
     setState(309);
     match(EffectLabParser::T__2);
    
@@ -2798,6 +2798,31 @@ void EffectLabParser::PassColorMaskContext::exitRule(tree::ParseTreeListener *li
 std::any EffectLabParser::PassColorMaskContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<EffectLabVisitor*>(visitor))
     return parserVisitor->visitPassColorMask(this);
+  else
+    return visitor->visitChildren(this);
+}
+//----------------- PassSourceContextContext ------------------------------------------------------------------
+
+EffectLabParser::Pass_source_contextContext* EffectLabParser::PassSourceContextContext::pass_source_context() {
+  return getRuleContext<EffectLabParser::Pass_source_contextContext>(0);
+}
+
+EffectLabParser::PassSourceContextContext::PassSourceContextContext(Pass_block_itemContext *ctx) { copyFrom(ctx); }
+
+void EffectLabParser::PassSourceContextContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<EffectLabListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterPassSourceContext(this);
+}
+void EffectLabParser::PassSourceContextContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<EffectLabListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitPassSourceContext(this);
+}
+
+std::any EffectLabParser::PassSourceContextContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<EffectLabVisitor*>(visitor))
+    return parserVisitor->visitPassSourceContext(this);
   else
     return visitor->visitChildren(this);
 }
@@ -3201,31 +3226,6 @@ std::any EffectLabParser::PassAlphaToMaskContext::accept(tree::ParseTreeVisitor 
   else
     return visitor->visitChildren(this);
 }
-//----------------- PassSourcePathContext ------------------------------------------------------------------
-
-EffectLabParser::Pass_source_pathContext* EffectLabParser::PassSourcePathContext::pass_source_path() {
-  return getRuleContext<EffectLabParser::Pass_source_pathContext>(0);
-}
-
-EffectLabParser::PassSourcePathContext::PassSourcePathContext(Pass_block_itemContext *ctx) { copyFrom(ctx); }
-
-void EffectLabParser::PassSourcePathContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<EffectLabListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterPassSourcePath(this);
-}
-void EffectLabParser::PassSourcePathContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<EffectLabListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitPassSourcePath(this);
-}
-
-std::any EffectLabParser::PassSourcePathContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<EffectLabVisitor*>(visitor))
-    return parserVisitor->visitPassSourcePath(this);
-  else
-    return visitor->visitChildren(this);
-}
 EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
   Pass_block_itemContext *_localctx = _tracker.createInstance<Pass_block_itemContext>(_ctx, getState());
   enterRule(_localctx, 54, EffectLabParser::RulePass_block_item);
@@ -3241,15 +3241,15 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
     setState(332);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case EffectLabParser::T__33: {
-        _localctx = _tracker.createInstance<EffectLabParser::PassSourcePathContext>(_localctx);
+      case EffectLabParser::HlslProgramBlock: {
+        _localctx = _tracker.createInstance<EffectLabParser::PassSourceContextContext>(_localctx);
         enterOuterAlt(_localctx, 1);
         setState(313);
-        pass_source_path();
+        pass_source_context();
         break;
       }
 
-      case EffectLabParser::T__35: {
+      case EffectLabParser::T__33: {
         _localctx = _tracker.createInstance<EffectLabParser::PassVertexShaderContext>(_localctx);
         enterOuterAlt(_localctx, 2);
         setState(314);
@@ -3257,7 +3257,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__36: {
+      case EffectLabParser::T__35: {
         _localctx = _tracker.createInstance<EffectLabParser::PassGeometryShaderContext>(_localctx);
         enterOuterAlt(_localctx, 3);
         setState(315);
@@ -3265,7 +3265,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__37: {
+      case EffectLabParser::T__36: {
         _localctx = _tracker.createInstance<EffectLabParser::PassHullShaderContext>(_localctx);
         enterOuterAlt(_localctx, 4);
         setState(316);
@@ -3273,7 +3273,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__38: {
+      case EffectLabParser::T__37: {
         _localctx = _tracker.createInstance<EffectLabParser::PassDomainShaderContext>(_localctx);
         enterOuterAlt(_localctx, 5);
         setState(317);
@@ -3281,7 +3281,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__39: {
+      case EffectLabParser::T__38: {
         _localctx = _tracker.createInstance<EffectLabParser::PassPixelShaderContext>(_localctx);
         enterOuterAlt(_localctx, 6);
         setState(318);
@@ -3289,7 +3289,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__40: {
+      case EffectLabParser::T__39: {
         _localctx = _tracker.createInstance<EffectLabParser::PassRenderQueueContext>(_localctx);
         enterOuterAlt(_localctx, 7);
         setState(319);
@@ -3297,7 +3297,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__41: {
+      case EffectLabParser::T__40: {
         _localctx = _tracker.createInstance<EffectLabParser::PassShaderFeatureContext>(_localctx);
         enterOuterAlt(_localctx, 8);
         setState(320);
@@ -3305,7 +3305,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__42: {
+      case EffectLabParser::T__41: {
         _localctx = _tracker.createInstance<EffectLabParser::PassCullModeContext>(_localctx);
         enterOuterAlt(_localctx, 9);
         setState(321);
@@ -3313,7 +3313,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__43: {
+      case EffectLabParser::T__42: {
         _localctx = _tracker.createInstance<EffectLabParser::PassZClipModeContext>(_localctx);
         enterOuterAlt(_localctx, 10);
         setState(322);
@@ -3321,7 +3321,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__44: {
+      case EffectLabParser::T__43: {
         _localctx = _tracker.createInstance<EffectLabParser::PassZTestModeContext>(_localctx);
         enterOuterAlt(_localctx, 11);
         setState(323);
@@ -3329,7 +3329,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__45: {
+      case EffectLabParser::T__44: {
         _localctx = _tracker.createInstance<EffectLabParser::PassZWriteModeContext>(_localctx);
         enterOuterAlt(_localctx, 12);
         setState(324);
@@ -3337,7 +3337,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__46: {
+      case EffectLabParser::T__45: {
         _localctx = _tracker.createInstance<EffectLabParser::PassOffsetContext>(_localctx);
         enterOuterAlt(_localctx, 13);
         setState(325);
@@ -3345,7 +3345,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__47: {
+      case EffectLabParser::T__46: {
         _localctx = _tracker.createInstance<EffectLabParser::PassColorMaskContext>(_localctx);
         enterOuterAlt(_localctx, 14);
         setState(326);
@@ -3353,7 +3353,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__48: {
+      case EffectLabParser::T__47: {
         _localctx = _tracker.createInstance<EffectLabParser::PassBlendContext>(_localctx);
         enterOuterAlt(_localctx, 15);
         setState(327);
@@ -3361,7 +3361,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__49: {
+      case EffectLabParser::T__48: {
         _localctx = _tracker.createInstance<EffectLabParser::PassBlendOpContext>(_localctx);
         enterOuterAlt(_localctx, 16);
         setState(328);
@@ -3369,7 +3369,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__50: {
+      case EffectLabParser::T__49: {
         _localctx = _tracker.createInstance<EffectLabParser::PassAlphaToMaskContext>(_localctx);
         enterOuterAlt(_localctx, 17);
         setState(329);
@@ -3377,7 +3377,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__51: {
+      case EffectLabParser::T__50: {
         _localctx = _tracker.createInstance<EffectLabParser::PassConservativeContext>(_localctx);
         enterOuterAlt(_localctx, 18);
         setState(330);
@@ -3385,7 +3385,7 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
         break;
       }
 
-      case EffectLabParser::T__52: {
+      case EffectLabParser::T__51: {
         _localctx = _tracker.createInstance<EffectLabParser::PassStencilContext>(_localctx);
         enterOuterAlt(_localctx, 19);
         setState(331);
@@ -3407,44 +3407,44 @@ EffectLabParser::Pass_block_itemContext* EffectLabParser::pass_block_item() {
   return _localctx;
 }
 
-//----------------- Pass_source_pathContext ------------------------------------------------------------------
+//----------------- Pass_source_contextContext ------------------------------------------------------------------
 
-EffectLabParser::Pass_source_pathContext::Pass_source_pathContext(ParserRuleContext *parent, size_t invokingState)
+EffectLabParser::Pass_source_contextContext::Pass_source_contextContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* EffectLabParser::Pass_source_pathContext::StringLiteral() {
-  return getToken(EffectLabParser::StringLiteral, 0);
+tree::TerminalNode* EffectLabParser::Pass_source_contextContext::HlslProgramBlock() {
+  return getToken(EffectLabParser::HlslProgramBlock, 0);
 }
 
 
-size_t EffectLabParser::Pass_source_pathContext::getRuleIndex() const {
-  return EffectLabParser::RulePass_source_path;
+size_t EffectLabParser::Pass_source_contextContext::getRuleIndex() const {
+  return EffectLabParser::RulePass_source_context;
 }
 
-void EffectLabParser::Pass_source_pathContext::enterRule(tree::ParseTreeListener *listener) {
+void EffectLabParser::Pass_source_contextContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EffectLabListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterPass_source_path(this);
+    parserListener->enterPass_source_context(this);
 }
 
-void EffectLabParser::Pass_source_pathContext::exitRule(tree::ParseTreeListener *listener) {
+void EffectLabParser::Pass_source_contextContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EffectLabListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitPass_source_path(this);
+    parserListener->exitPass_source_context(this);
 }
 
 
-std::any EffectLabParser::Pass_source_pathContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any EffectLabParser::Pass_source_contextContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<EffectLabVisitor*>(visitor))
-    return parserVisitor->visitPass_source_path(this);
+    return parserVisitor->visitPass_source_context(this);
   else
     return visitor->visitChildren(this);
 }
 
-EffectLabParser::Pass_source_pathContext* EffectLabParser::pass_source_path() {
-  Pass_source_pathContext *_localctx = _tracker.createInstance<Pass_source_pathContext>(_ctx, getState());
-  enterRule(_localctx, 56, EffectLabParser::RulePass_source_path);
+EffectLabParser::Pass_source_contextContext* EffectLabParser::pass_source_context() {
+  Pass_source_contextContext *_localctx = _tracker.createInstance<Pass_source_contextContext>(_ctx, getState());
+  enterRule(_localctx, 56, EffectLabParser::RulePass_source_context);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3456,11 +3456,7 @@ EffectLabParser::Pass_source_pathContext* EffectLabParser::pass_source_path() {
   try {
     enterOuterAlt(_localctx, 1);
     setState(334);
-    match(EffectLabParser::T__33);
-    setState(335);
-    match(EffectLabParser::T__34);
-    setState(336);
-    match(EffectLabParser::StringLiteral);
+    match(EffectLabParser::HlslProgramBlock);
    
   }
   catch (RecognitionException &e) {
@@ -3520,11 +3516,11 @@ EffectLabParser::Pass_vertex_shaderContext* EffectLabParser::pass_vertex_shader(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(338);
-    match(EffectLabParser::T__35);
-    setState(339);
+    setState(336);
+    match(EffectLabParser::T__33);
+    setState(337);
     match(EffectLabParser::T__34);
-    setState(340);
+    setState(338);
     match(EffectLabParser::Identity);
    
   }
@@ -3585,11 +3581,11 @@ EffectLabParser::Pass_geometry_shaderContext* EffectLabParser::pass_geometry_sha
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(342);
-    match(EffectLabParser::T__36);
-    setState(343);
+    setState(340);
+    match(EffectLabParser::T__35);
+    setState(341);
     match(EffectLabParser::T__34);
-    setState(344);
+    setState(342);
     match(EffectLabParser::Identity);
    
   }
@@ -3650,11 +3646,11 @@ EffectLabParser::Pass_hull_shaderContext* EffectLabParser::pass_hull_shader() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(346);
-    match(EffectLabParser::T__37);
-    setState(347);
+    setState(344);
+    match(EffectLabParser::T__36);
+    setState(345);
     match(EffectLabParser::T__34);
-    setState(348);
+    setState(346);
     match(EffectLabParser::Identity);
    
   }
@@ -3715,11 +3711,11 @@ EffectLabParser::Pass_domain_shaderContext* EffectLabParser::pass_domain_shader(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(350);
-    match(EffectLabParser::T__38);
-    setState(351);
+    setState(348);
+    match(EffectLabParser::T__37);
+    setState(349);
     match(EffectLabParser::T__34);
-    setState(352);
+    setState(350);
     match(EffectLabParser::Identity);
    
   }
@@ -3780,11 +3776,11 @@ EffectLabParser::Pass_pixel_shaderContext* EffectLabParser::pass_pixel_shader() 
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(354);
-    match(EffectLabParser::T__39);
-    setState(355);
+    setState(352);
+    match(EffectLabParser::T__38);
+    setState(353);
     match(EffectLabParser::T__34);
-    setState(356);
+    setState(354);
     match(EffectLabParser::Identity);
    
   }
@@ -3845,11 +3841,11 @@ EffectLabParser::Pass_render_queueContext* EffectLabParser::pass_render_queue() 
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(358);
-    match(EffectLabParser::T__40);
-    setState(359);
+    setState(356);
+    match(EffectLabParser::T__39);
+    setState(357);
     match(EffectLabParser::T__34);
-    setState(360);
+    setState(358);
     match(EffectLabParser::RenderQueueLabel);
    
   }
@@ -3915,17 +3911,17 @@ EffectLabParser::Pass_shader_featureContext* EffectLabParser::pass_shader_featur
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(362);
-    match(EffectLabParser::T__41);
-    setState(363);
+    setState(360);
+    match(EffectLabParser::T__40);
+    setState(361);
     match(EffectLabParser::T__34);
-    setState(365); 
+    setState(363); 
     _errHandler->sync(this);
     _la = _input->LA(1);
     do {
-      setState(364);
+      setState(362);
       match(EffectLabParser::Identity);
-      setState(367); 
+      setState(365); 
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while (_la == EffectLabParser::Identity);
@@ -3988,11 +3984,11 @@ EffectLabParser::Pass_cull_modeContext* EffectLabParser::pass_cull_mode() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(369);
-    match(EffectLabParser::T__42);
-    setState(370);
+    setState(367);
+    match(EffectLabParser::T__41);
+    setState(368);
     match(EffectLabParser::T__34);
-    setState(371);
+    setState(369);
     match(EffectLabParser::CullModeLabel);
    
   }
@@ -4053,11 +4049,11 @@ EffectLabParser::Pass_zclip_modeContext* EffectLabParser::pass_zclip_mode() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(373);
-    match(EffectLabParser::T__43);
-    setState(374);
+    setState(371);
+    match(EffectLabParser::T__42);
+    setState(372);
     match(EffectLabParser::T__34);
-    setState(375);
+    setState(373);
     match(EffectLabParser::BooleanLiteral);
    
   }
@@ -4118,11 +4114,11 @@ EffectLabParser::Pass_ztest_modeContext* EffectLabParser::pass_ztest_mode() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(377);
-    match(EffectLabParser::T__44);
-    setState(378);
+    setState(375);
+    match(EffectLabParser::T__43);
+    setState(376);
     match(EffectLabParser::T__34);
-    setState(379);
+    setState(377);
     match(EffectLabParser::ZTestModeLabel);
    
   }
@@ -4183,11 +4179,11 @@ EffectLabParser::Pass_zwrite_modeContext* EffectLabParser::pass_zwrite_mode() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(381);
-    match(EffectLabParser::T__45);
-    setState(382);
+    setState(379);
+    match(EffectLabParser::T__44);
+    setState(380);
     match(EffectLabParser::T__34);
-    setState(383);
+    setState(381);
     match(EffectLabParser::OnOffLabel);
    
   }
@@ -4252,13 +4248,13 @@ EffectLabParser::Pass_offsetContext* EffectLabParser::pass_offset() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(385);
-    match(EffectLabParser::T__46);
-    setState(386);
+    setState(383);
+    match(EffectLabParser::T__45);
+    setState(384);
     match(EffectLabParser::T__34);
-    setState(387);
+    setState(385);
     match(EffectLabParser::FloatLiteral);
-    setState(388);
+    setState(386);
     match(EffectLabParser::FloatLiteral);
    
   }
@@ -4322,25 +4318,25 @@ EffectLabParser::Pass_color_maskContext* EffectLabParser::pass_color_mask() {
     exitRule();
   });
   try {
-    setState(395);
+    setState(393);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(390);
-      match(EffectLabParser::T__47);
-      setState(391);
+      setState(388);
+      match(EffectLabParser::T__46);
+      setState(389);
       match(EffectLabParser::ColorMaskChannel);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(392);
-      match(EffectLabParser::T__47);
-      setState(393);
+      setState(390);
+      match(EffectLabParser::T__46);
+      setState(391);
       match(EffectLabParser::ColorMaskChannel);
-      setState(394);
+      setState(392);
       match(EffectLabParser::IntLiteral);
       break;
     }
@@ -4564,17 +4560,17 @@ EffectLabParser::Pass_blendContext* EffectLabParser::pass_blend() {
     exitRule();
   });
   try {
-    setState(428);
+    setState(426);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 10, _ctx)) {
     case 1: {
       _localctx = _tracker.createInstance<EffectLabParser::PassBlendOffContext>(_localctx);
       enterOuterAlt(_localctx, 1);
-      setState(397);
-      match(EffectLabParser::T__48);
-      setState(398);
+      setState(395);
+      match(EffectLabParser::T__47);
+      setState(396);
       match(EffectLabParser::T__34);
-      setState(399);
+      setState(397);
       match(EffectLabParser::KWOff);
       break;
     }
@@ -4582,13 +4578,13 @@ EffectLabParser::Pass_blendContext* EffectLabParser::pass_blend() {
     case 2: {
       _localctx = _tracker.createInstance<EffectLabParser::PassBlendRTOffContext>(_localctx);
       enterOuterAlt(_localctx, 2);
-      setState(400);
-      match(EffectLabParser::T__48);
-      setState(401);
+      setState(398);
+      match(EffectLabParser::T__47);
+      setState(399);
       match(EffectLabParser::T__34);
-      setState(402);
+      setState(400);
       match(EffectLabParser::IntLiteral);
-      setState(403);
+      setState(401);
       match(EffectLabParser::KWOff);
       break;
     }
@@ -4596,13 +4592,13 @@ EffectLabParser::Pass_blendContext* EffectLabParser::pass_blend() {
     case 3: {
       _localctx = _tracker.createInstance<EffectLabParser::PassBlendColorContext>(_localctx);
       enterOuterAlt(_localctx, 3);
-      setState(404);
-      match(EffectLabParser::T__48);
-      setState(405);
+      setState(402);
+      match(EffectLabParser::T__47);
+      setState(403);
       match(EffectLabParser::T__34);
-      setState(406);
+      setState(404);
       match(EffectLabParser::BlendFactorLabel);
-      setState(407);
+      setState(405);
       match(EffectLabParser::BlendFactorLabel);
       break;
     }
@@ -4610,15 +4606,15 @@ EffectLabParser::Pass_blendContext* EffectLabParser::pass_blend() {
     case 4: {
       _localctx = _tracker.createInstance<EffectLabParser::PassBlendRTColorContext>(_localctx);
       enterOuterAlt(_localctx, 4);
-      setState(408);
-      match(EffectLabParser::T__48);
-      setState(409);
+      setState(406);
+      match(EffectLabParser::T__47);
+      setState(407);
       match(EffectLabParser::T__34);
-      setState(410);
+      setState(408);
       match(EffectLabParser::IntLiteral);
-      setState(411);
+      setState(409);
       match(EffectLabParser::BlendFactorLabel);
-      setState(412);
+      setState(410);
       match(EffectLabParser::BlendFactorLabel);
       break;
     }
@@ -4626,19 +4622,19 @@ EffectLabParser::Pass_blendContext* EffectLabParser::pass_blend() {
     case 5: {
       _localctx = _tracker.createInstance<EffectLabParser::PassBlendColorAlphaContext>(_localctx);
       enterOuterAlt(_localctx, 5);
-      setState(413);
-      match(EffectLabParser::T__48);
-      setState(414);
+      setState(411);
+      match(EffectLabParser::T__47);
+      setState(412);
       match(EffectLabParser::T__34);
-      setState(415);
+      setState(413);
       match(EffectLabParser::BlendFactorLabel);
+      setState(414);
+      match(EffectLabParser::BlendFactorLabel);
+      setState(415);
+      match(EffectLabParser::T__4);
       setState(416);
       match(EffectLabParser::BlendFactorLabel);
       setState(417);
-      match(EffectLabParser::T__4);
-      setState(418);
-      match(EffectLabParser::BlendFactorLabel);
-      setState(419);
       match(EffectLabParser::BlendFactorLabel);
       break;
     }
@@ -4646,21 +4642,21 @@ EffectLabParser::Pass_blendContext* EffectLabParser::pass_blend() {
     case 6: {
       _localctx = _tracker.createInstance<EffectLabParser::PassBlendRTColorAlphaContext>(_localctx);
       enterOuterAlt(_localctx, 6);
-      setState(420);
-      match(EffectLabParser::T__48);
-      setState(421);
+      setState(418);
+      match(EffectLabParser::T__47);
+      setState(419);
       match(EffectLabParser::T__34);
-      setState(422);
+      setState(420);
       match(EffectLabParser::IntLiteral);
-      setState(423);
+      setState(421);
       match(EffectLabParser::BlendFactorLabel);
+      setState(422);
+      match(EffectLabParser::BlendFactorLabel);
+      setState(423);
+      match(EffectLabParser::T__4);
       setState(424);
       match(EffectLabParser::BlendFactorLabel);
       setState(425);
-      match(EffectLabParser::T__4);
-      setState(426);
-      match(EffectLabParser::BlendFactorLabel);
-      setState(427);
       match(EffectLabParser::BlendFactorLabel);
       break;
     }
@@ -4727,11 +4723,11 @@ EffectLabParser::Pass_blend_opContext* EffectLabParser::pass_blend_op() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(430);
-    match(EffectLabParser::T__49);
-    setState(431);
+    setState(428);
+    match(EffectLabParser::T__48);
+    setState(429);
     match(EffectLabParser::T__34);
-    setState(432);
+    setState(430);
     match(EffectLabParser::BlendOPLabel);
    
   }
@@ -4792,11 +4788,11 @@ EffectLabParser::Pass_alpha_to_maskContext* EffectLabParser::pass_alpha_to_mask(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(434);
-    match(EffectLabParser::T__50);
-    setState(435);
+    setState(432);
+    match(EffectLabParser::T__49);
+    setState(433);
     match(EffectLabParser::T__34);
-    setState(436);
+    setState(434);
     match(EffectLabParser::OnOffLabel);
    
   }
@@ -4857,11 +4853,11 @@ EffectLabParser::Pass_conservativeContext* EffectLabParser::pass_conservative() 
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(438);
-    match(EffectLabParser::T__51);
-    setState(439);
+    setState(436);
+    match(EffectLabParser::T__50);
+    setState(437);
     match(EffectLabParser::T__34);
-    setState(440);
+    setState(438);
     match(EffectLabParser::BooleanLiteral);
    
   }
@@ -4927,22 +4923,22 @@ EffectLabParser::Pass_stencilContext* EffectLabParser::pass_stencil() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(442);
-    match(EffectLabParser::T__52);
-    setState(443);
+    setState(440);
+    match(EffectLabParser::T__51);
+    setState(441);
     match(EffectLabParser::T__1);
-    setState(445); 
+    setState(443); 
     _errHandler->sync(this);
     _la = _input->LA(1);
     do {
-      setState(444);
+      setState(442);
       stencil_item();
-      setState(447); 
+      setState(445); 
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while ((((_la - 33) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 33)) & 34357641217) != 0);
-    setState(449);
+      ((1ULL << (_la - 33)) & 17178820609) != 0);
+    setState(447);
     match(EffectLabParser::T__2);
    
   }
@@ -5357,37 +5353,37 @@ EffectLabParser::Stencil_itemContext* EffectLabParser::stencil_item() {
     exitRule();
   });
   try {
-    setState(466);
+    setState(464);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case EffectLabParser::T__53: {
+      case EffectLabParser::T__52: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilRefContext>(_localctx);
         enterOuterAlt(_localctx, 1);
-        setState(451);
+        setState(449);
         stencil_ref();
         break;
       }
 
-      case EffectLabParser::T__54: {
+      case EffectLabParser::T__53: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilReadMaskContext>(_localctx);
         enterOuterAlt(_localctx, 2);
-        setState(452);
+        setState(450);
         stencil_read_mask();
         break;
       }
 
-      case EffectLabParser::T__55: {
+      case EffectLabParser::T__54: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilWriteMaskContext>(_localctx);
         enterOuterAlt(_localctx, 3);
-        setState(453);
+        setState(451);
         stencil_write_mask();
         break;
       }
 
-      case EffectLabParser::T__56: {
+      case EffectLabParser::T__55: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilCompContext>(_localctx);
         enterOuterAlt(_localctx, 4);
-        setState(454);
+        setState(452);
         stencil_comp();
         break;
       }
@@ -5395,87 +5391,87 @@ EffectLabParser::Stencil_itemContext* EffectLabParser::stencil_item() {
       case EffectLabParser::T__32: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilPassOpContext>(_localctx);
         enterOuterAlt(_localctx, 5);
-        setState(455);
+        setState(453);
         stencil_pass_op();
         break;
       }
 
-      case EffectLabParser::T__57: {
+      case EffectLabParser::T__56: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilFailOpContext>(_localctx);
         enterOuterAlt(_localctx, 6);
-        setState(456);
+        setState(454);
         stencil_fail_op();
         break;
       }
 
-      case EffectLabParser::T__58: {
+      case EffectLabParser::T__57: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilZFailOpContext>(_localctx);
         enterOuterAlt(_localctx, 7);
-        setState(457);
+        setState(455);
         stencil_zfail_op();
         break;
       }
 
-      case EffectLabParser::T__59: {
+      case EffectLabParser::T__58: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilCompBackOpContext>(_localctx);
         enterOuterAlt(_localctx, 8);
-        setState(458);
+        setState(456);
         stencil_comp_back_op();
         break;
       }
 
-      case EffectLabParser::T__60: {
+      case EffectLabParser::T__59: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilPassBackOpContext>(_localctx);
         enterOuterAlt(_localctx, 9);
-        setState(459);
+        setState(457);
         stancil_pass_back_op();
         break;
       }
 
-      case EffectLabParser::T__61: {
+      case EffectLabParser::T__60: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilFailBackOpContext>(_localctx);
         enterOuterAlt(_localctx, 10);
-        setState(460);
+        setState(458);
         stencil_fail_back_op();
         break;
       }
 
-      case EffectLabParser::T__62: {
+      case EffectLabParser::T__61: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilZFailBackOpContext>(_localctx);
         enterOuterAlt(_localctx, 11);
-        setState(461);
+        setState(459);
         stencil_zfail_back_op();
         break;
       }
 
-      case EffectLabParser::T__63: {
+      case EffectLabParser::T__62: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilCompFrontOpContext>(_localctx);
         enterOuterAlt(_localctx, 12);
-        setState(462);
+        setState(460);
         stencil_comp_front_op();
         break;
       }
 
-      case EffectLabParser::T__64: {
+      case EffectLabParser::T__63: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilPassFrontOpContext>(_localctx);
         enterOuterAlt(_localctx, 13);
-        setState(463);
+        setState(461);
         stancil_pass_front_op();
         break;
       }
 
-      case EffectLabParser::T__65: {
+      case EffectLabParser::T__64: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilFailFrontOpContext>(_localctx);
         enterOuterAlt(_localctx, 14);
-        setState(464);
+        setState(462);
         stencil_fail_front_op();
         break;
       }
 
-      case EffectLabParser::T__66: {
+      case EffectLabParser::T__65: {
         _localctx = _tracker.createInstance<EffectLabParser::StencilZFailFrontOpContext>(_localctx);
         enterOuterAlt(_localctx, 15);
-        setState(465);
+        setState(463);
         stencil_zfail_front_op();
         break;
       }
@@ -5542,11 +5538,11 @@ EffectLabParser::Stencil_refContext* EffectLabParser::stencil_ref() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(468);
-    match(EffectLabParser::T__53);
-    setState(469);
+    setState(466);
+    match(EffectLabParser::T__52);
+    setState(467);
     match(EffectLabParser::T__34);
-    setState(470);
+    setState(468);
     match(EffectLabParser::IntLiteral);
    
   }
@@ -5607,11 +5603,11 @@ EffectLabParser::Stencil_read_maskContext* EffectLabParser::stencil_read_mask() 
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(472);
-    match(EffectLabParser::T__54);
-    setState(473);
+    setState(470);
+    match(EffectLabParser::T__53);
+    setState(471);
     match(EffectLabParser::T__34);
-    setState(474);
+    setState(472);
     match(EffectLabParser::IntLiteral);
    
   }
@@ -5672,11 +5668,11 @@ EffectLabParser::Stencil_write_maskContext* EffectLabParser::stencil_write_mask(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(476);
-    match(EffectLabParser::T__55);
-    setState(477);
+    setState(474);
+    match(EffectLabParser::T__54);
+    setState(475);
     match(EffectLabParser::T__34);
-    setState(478);
+    setState(476);
     match(EffectLabParser::IntLiteral);
    
   }
@@ -5737,11 +5733,11 @@ EffectLabParser::Stencil_compContext* EffectLabParser::stencil_comp() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(480);
-    match(EffectLabParser::T__56);
-    setState(481);
+    setState(478);
+    match(EffectLabParser::T__55);
+    setState(479);
     match(EffectLabParser::T__34);
-    setState(482);
+    setState(480);
     match(EffectLabParser::StencilCompareLabel);
    
   }
@@ -5802,11 +5798,11 @@ EffectLabParser::Stencil_pass_opContext* EffectLabParser::stencil_pass_op() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(484);
+    setState(482);
     match(EffectLabParser::T__32);
-    setState(485);
+    setState(483);
     match(EffectLabParser::T__34);
-    setState(486);
+    setState(484);
     match(EffectLabParser::StencilOpLabel);
    
   }
@@ -5867,11 +5863,11 @@ EffectLabParser::Stencil_fail_opContext* EffectLabParser::stencil_fail_op() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(488);
-    match(EffectLabParser::T__57);
-    setState(489);
+    setState(486);
+    match(EffectLabParser::T__56);
+    setState(487);
     match(EffectLabParser::T__34);
-    setState(490);
+    setState(488);
     match(EffectLabParser::StencilOpLabel);
    
   }
@@ -5932,11 +5928,11 @@ EffectLabParser::Stencil_zfail_opContext* EffectLabParser::stencil_zfail_op() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(492);
-    match(EffectLabParser::T__58);
-    setState(493);
+    setState(490);
+    match(EffectLabParser::T__57);
+    setState(491);
     match(EffectLabParser::T__34);
-    setState(494);
+    setState(492);
     match(EffectLabParser::StencilOpLabel);
    
   }
@@ -5997,11 +5993,11 @@ EffectLabParser::Stencil_comp_back_opContext* EffectLabParser::stencil_comp_back
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(496);
-    match(EffectLabParser::T__59);
-    setState(497);
+    setState(494);
+    match(EffectLabParser::T__58);
+    setState(495);
     match(EffectLabParser::T__34);
-    setState(498);
+    setState(496);
     match(EffectLabParser::StencilCompareLabel);
    
   }
@@ -6062,11 +6058,11 @@ EffectLabParser::Stancil_pass_back_opContext* EffectLabParser::stancil_pass_back
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(500);
-    match(EffectLabParser::T__60);
-    setState(501);
+    setState(498);
+    match(EffectLabParser::T__59);
+    setState(499);
     match(EffectLabParser::T__34);
-    setState(502);
+    setState(500);
     match(EffectLabParser::StencilOpLabel);
    
   }
@@ -6127,11 +6123,11 @@ EffectLabParser::Stencil_fail_back_opContext* EffectLabParser::stencil_fail_back
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(504);
-    match(EffectLabParser::T__61);
-    setState(505);
+    setState(502);
+    match(EffectLabParser::T__60);
+    setState(503);
     match(EffectLabParser::T__34);
-    setState(506);
+    setState(504);
     match(EffectLabParser::StencilOpLabel);
    
   }
@@ -6192,11 +6188,11 @@ EffectLabParser::Stencil_zfail_back_opContext* EffectLabParser::stencil_zfail_ba
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(508);
-    match(EffectLabParser::T__62);
-    setState(509);
+    setState(506);
+    match(EffectLabParser::T__61);
+    setState(507);
     match(EffectLabParser::T__34);
-    setState(510);
+    setState(508);
     match(EffectLabParser::StencilOpLabel);
    
   }
@@ -6257,11 +6253,11 @@ EffectLabParser::Stencil_comp_front_opContext* EffectLabParser::stencil_comp_fro
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(512);
-    match(EffectLabParser::T__63);
-    setState(513);
+    setState(510);
+    match(EffectLabParser::T__62);
+    setState(511);
     match(EffectLabParser::T__34);
-    setState(514);
+    setState(512);
     match(EffectLabParser::StencilCompareLabel);
    
   }
@@ -6322,11 +6318,11 @@ EffectLabParser::Stancil_pass_front_opContext* EffectLabParser::stancil_pass_fro
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(516);
-    match(EffectLabParser::T__64);
-    setState(517);
+    setState(514);
+    match(EffectLabParser::T__63);
+    setState(515);
     match(EffectLabParser::T__34);
-    setState(518);
+    setState(516);
     match(EffectLabParser::StencilOpLabel);
    
   }
@@ -6387,11 +6383,11 @@ EffectLabParser::Stencil_fail_front_opContext* EffectLabParser::stencil_fail_fro
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(520);
-    match(EffectLabParser::T__65);
-    setState(521);
+    setState(518);
+    match(EffectLabParser::T__64);
+    setState(519);
     match(EffectLabParser::T__34);
-    setState(522);
+    setState(520);
     match(EffectLabParser::StencilOpLabel);
    
   }
@@ -6452,11 +6448,11 @@ EffectLabParser::Stencil_zfail_front_opContext* EffectLabParser::stencil_zfail_f
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(524);
-    match(EffectLabParser::T__66);
-    setState(525);
+    setState(522);
+    match(EffectLabParser::T__65);
+    setState(523);
     match(EffectLabParser::T__34);
-    setState(526);
+    setState(524);
     match(EffectLabParser::StencilOpLabel);
    
   }

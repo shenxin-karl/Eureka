@@ -90,7 +90,7 @@ public:
 
     virtual std::any visitPass_tag(EffectLabParser::Pass_tagContext *context) = 0;
 
-    virtual std::any visitPassSourcePath(EffectLabParser::PassSourcePathContext *context) = 0;
+    virtual std::any visitPassSourceContext(EffectLabParser::PassSourceContextContext *context) = 0;
 
     virtual std::any visitPassVertexShader(EffectLabParser::PassVertexShaderContext *context) = 0;
 
@@ -128,7 +128,7 @@ public:
 
     virtual std::any visitPassStencil(EffectLabParser::PassStencilContext *context) = 0;
 
-    virtual std::any visitPass_source_path(EffectLabParser::Pass_source_pathContext *context) = 0;
+    virtual std::any visitPass_source_context(EffectLabParser::Pass_source_contextContext *context) = 0;
 
     virtual std::any visitPass_vertex_shader(EffectLabParser::Pass_vertex_shaderContext *context) = 0;
 
