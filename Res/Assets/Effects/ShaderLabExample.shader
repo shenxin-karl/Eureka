@@ -17,7 +17,7 @@ Properties {
     _LightMapTex("lightMap texture", 2D) = black
 }
 
-HLSLINCLUDE
+HLSLINCLUDE 
     flaot4 getAlbedo() {
         return 1.0;
     }

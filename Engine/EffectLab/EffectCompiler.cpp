@@ -5,6 +5,7 @@
 #include "EffectParser/PropertyBlockParser.h"
 #include "EffectParser/PassParser.h"
 #include <fstream>
+#include <regex>
 
 namespace Eureka {
 
@@ -71,14 +72,42 @@ std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context
 }
 
 std::any EffectCompiler::visitHlsl_include_block(ParserDetails::EffectLabParser::Hlsl_include_blockContext *context) {
-	constexpr size_t kBlockBeginLength = std::string_view("HLSLPROGRAM\n").length();
-	constexpr size_t kBlockEndLength = std::string_view("\nENDHLSL").length();
-	std::string text = context->HlslIncludeBlock()->getText();
-	std::string content = text.substr(kBlockBeginLength, (text.length() - kBlockBeginLength - kBlockEndLength));
-
 	auto *pToken = context->getStart();
-	fs::path effectAbsolutePath = fs::absolute(_effectSourcePath);
-	std::string toReturn = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), effectAbsolutePath.string(), content);
+	if (_hlslIncludeBlock.valid()) {
+		Exception::Throw("{} {}:{} the keyword 'HLSLINCLUDE' redefinition at {}:{}",
+			_effectSourcePath,
+			pToken->getLine(),
+			pToken->getCharPositionInLine(),
+			_hlslIncludeBlock.line,
+			_hlslIncludeBlock.column
+		);
+	}
+
+	constexpr size_t kBlockBeginKeywordLength = std::size("HLSLINCLUDE") - 1;
+	constexpr size_t kBlockEndKeywordLength = std::size("ENDHLSL") - 1;
+	std::string content = context->HlslIncludeBlock()->getText().substr();
+	content = content.substr(kBlockBeginKeywordLength, 
+		content.length() - kBlockBeginKeywordLength - kBlockEndKeywordLength
+	);
+
+	bool firstIsNewLineChar = false;
+	for (char c : content) {
+		if (c == '\n') {
+			firstIsNewLineChar = true;
+			break;
+		}
+		if (c != '\t' && c != ' ') {
+			break;
+		} 
+	}
+
+	std::string toReturn;
+	std::string effectAbsolutePath = fs::absolute(_effectSourcePath).string();
+	if (firstIsNewLineChar) {
+		toReturn = fmt::format("#line {} \"{}\"{}", pToken->getLine(), effectAbsolutePath, content);
+	} else {
+		toReturn = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), effectAbsolutePath, content);
+	}
 	return toReturn;
 }
 

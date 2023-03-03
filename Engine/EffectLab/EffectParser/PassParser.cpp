@@ -23,7 +23,7 @@ auto PassParser::parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr
 		item->accept(this);
 	}
 
-	if (_pass->_programContext.empty()) {
+	if (_pass->_shaderCode.empty()) {
 		Exception::Throw("the pass '{}' No source code for shader is provided", _pass->getTag());
 	}
 
@@ -43,20 +43,40 @@ std::any PassParser::visitPass_tag(ParserDetails::EffectLabParser::Pass_tagConte
 std::any PassParser::visitPassSourceContext(ParserDetails::EffectLabParser::PassSourceContextContext *context) {
 	auto *pToken = context->getStart();
 	if (_programContent.valid()) {
-		Exception::Throw("{} {}:{} keyword 'HLSLPROGRAM' redefinition",
+		Exception::Throw("{} {}:{} the keyword 'HLSLPROGRAM' redefinition at {}:{}",
 			_effectSourcePath,
 			pToken->getLine(),
-			pToken->getCharPositionInLine()
+			pToken->getCharPositionInLine(),
+			_programContent.line,
+			_programContent.column
 		);
 	}
 
-	_programContent.setLocation(pToken);
-	constexpr size_t kBlockBeginLength = std::string_view("HLSLPROGRAM\n").length();
-	constexpr size_t kBlockEndLength = std::string_view("ENDHLSL\n").length();
-	std::string text = context->pass_source_context()->getText();
-	std::string content = text.substr(kBlockBeginLength, text.length() - kBlockBeginLength - kBlockEndLength);
-	std::string absolutePath = fs::absolute(_effectSourcePath).string();
-	_pass->_programContext = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), absolutePath, content);
+	constexpr size_t kBlockBeginKeywordLength = std::size("HLSLPROGRAM") - 1;
+	constexpr size_t kBlockEndKeywordLength = std::size("ENDHLSL") - 1;
+	std::string content = context->pass_source_context()->getText().substr();
+	content = content.substr(kBlockBeginKeywordLength,
+		content.length() - kBlockBeginKeywordLength - kBlockEndKeywordLength
+	);
+
+	bool firstIsNewLineChar = false;
+	for (char c : content) {
+		if (c == '\n') {
+			firstIsNewLineChar = true;
+			break;
+		}
+		if (c != '\t' && c != ' ') {
+			break;
+		}
+	}
+
+	std::string effectAbsolutePath = fs::absolute(_effectSourcePath).string();
+	if (firstIsNewLineChar) {
+		_pass->_shaderCode = fmt::format("#line {} \"{}\"{}", pToken->getLine(), effectAbsolutePath, content);
+	} else {
+		_pass->_shaderCode = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), effectAbsolutePath, content);
+	}
+
 	return NullAny;
 }
 

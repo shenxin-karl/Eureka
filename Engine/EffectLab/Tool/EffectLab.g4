@@ -92,7 +92,6 @@ pass_color_mask
     | 'ColorMask' ColorMaskChannel IntLiteral
     ;
 
-
 pass_blend
     : 'Blend' ':' KWOff                                                                              # PassBlendOff
     | 'Blend' ':' IntLiteral KWOff                                                                   # PassBlendRTOff
@@ -264,7 +263,9 @@ KWTrue        : 'true'  | 'True';
 KWFalse       : 'false' | 'False';
 
 StringLiteral : '"' .*? '"' ;
-HlslIncludeBlock : 'HLSLINCLUDE' [ \t]* [\n]  .+?  [\n] [ \t]* 'ENDHLSL';
-HlslProgramBlock : 'HLSLPROGRAM' [ \t]* [\n]  .+?  [\n] [ \t]* 'ENDHLSL';
+
+HlslIncludeBlock : 'HLSLINCLUDE' .+? 'ENDHLSL';
+HlslProgramBlock : 'HLSLPROGRAM' .+? 'ENDHLSL';
 
 Identity      : [_a-zA-Z][a-zA-Z0-9_]*; 
+

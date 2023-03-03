@@ -33,6 +33,7 @@ public:
 	std::any visitEffect(pd::EffectLabParser::EffectContext *context) override;
 	std::any visitHlsl_include_block(ParserDetails::EffectLabParser::Hlsl_include_blockContext *context) override;
 private:
+	Location    _hlslIncludeBlock;
 	std::string _effectSourcePath;
 };
 
