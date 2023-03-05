@@ -17,6 +17,7 @@ public:
 	auto getKeywordSet() const -> std::shared_ptr<ShaderKeywordSet>;
 	auto getBitset() -> BitsetType &;
 	auto getBitset() const -> const BitsetType &;
+	auto toString() const -> std::string;
 private:
 	BitsetType _bitset;
 	std::shared_ptr<ShaderKeywordSet> _pKeywordSet;

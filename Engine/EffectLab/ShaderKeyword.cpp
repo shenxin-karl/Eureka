@@ -1,5 +1,6 @@
 #include "ShaderKeyword.h"
 #include "ShaderKeywordSet.h"
+#include <fmt/format.h>
 
 namespace Eureka {
 
@@ -29,6 +30,20 @@ auto ShaderKeyword::getBitset() -> BitsetType & {
 
 auto ShaderKeyword::getBitset() const -> const BitsetType & {
 	return _bitset;
+}
+
+auto ShaderKeyword::toString() const -> std::string {
+	size_t index = 0;
+	std::string toReturn;
+	for (const auto &features : _pKeywordSet->getFeatures()) {
+		for (const auto &keyword : features) {
+			if (_bitset.test(index)) {
+				toReturn += fmt::format("_{}", keyword);
+			}
+			++index;
+		}
+	}
+	return toReturn;
 }
 
 }

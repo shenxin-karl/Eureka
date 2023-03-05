@@ -19,8 +19,8 @@ public:
 	void flushPassVariant();
 private:
 	Material *									_pMaterial;
-	std::vector<std::unique_ptr<ShaderKeyword>> _pPassKeywords;
-	std::vector<std::shared_ptr<PassVariant>>	_pPassVariants;	
+	std::vector<std::unique_ptr<ShaderKeyword>> _passKeywords;
+	std::vector<std::shared_ptr<PassVariant>>	_passVariants;	
 };
 
 }

@@ -1,12 +1,29 @@
 # Eureka
 
 ## Build
-需要先安装 xmake 构建工具
+环境搭建需要 clang 编译器和 xmake
+下面这是使用 scoop 配置环境. 在 powershell 中执行
+```shell
+# 安装 scoop
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+iwr -useb get.scoop.sh | iex
 
+# 安装 llvm 
+scoop install llvm
+
+# 安装 xmake
+scoop install xmake
+```
+控制台编译执行
 ```shell
 git clone --recursive https://github.com/shenxin-karl/Eureka.git
 cd Eureka
 xmake run
+```
+生成 visual studio 工程
+```shell
+cd Eureka
+start .\GenerateProject.bat
 ```
 
 ## Features:

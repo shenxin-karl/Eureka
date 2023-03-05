@@ -22,8 +22,20 @@ public:
         const std::string &entryPoint,
         const std::string &target,
         const D3D_SHADER_MACRO *defines = nullptr);
+
+
+    struct DxcCompileDesc1 {
+        std::string_view            filePath;
+        std::string_view            source;
+        fs::file_time_type          lastWriteTime;
+        const std::string &         entryPoint;
+        const std::string &         target;
+        const D3D_SHADER_MACRO *    defines = nullptr;
+        ID3DInclude *               include = D3D_COMPILE_STANDARD_FILE_INCLUDE;
+    };
+    static std::shared_ptr<dx12lib::DXCShader> dxc(const DxcCompileDesc1 &desc);
 private:
-    static bool checkShaderCacheValid(const fs::path &sourcePath, const dx12lib::ShaderCacheInfo &cacheInfo);
+    static bool checkShaderCacheValid(const fs::file_time_type &lastWriteTime, const dx12lib::ShaderCacheInfo &cacheInfo);
     static std::string calcShaderCacheKey(const fs::path &filePath,
         const D3D_SHADER_MACRO *defines,
         const std::string &entryPoint, 

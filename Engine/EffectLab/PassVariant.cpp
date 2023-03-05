@@ -1,13 +1,19 @@
 #include "PassVariant.h"
+#include "Application/Application.h"
 
 namespace Eureka {
 
-
-PassVariant::PassVariant(Pass *pass) {
+PassVariant::PassVariant(Pass *pass, const std::string &name) {
 	_tag = pass->getTag();
 	_stencilRef = pass->getStencilRef();
 	_renderQueue = pass->getRenderQueue();
-	// todo: 这里构建好 pso, 需要做缓存
+
+	auto pDevice = Application::getDevice();
+	_pso = pDevice->createGraphicsPSO(name);
+	_pso->setRasterizerState(pass->getRasterizerDesc());
+	_pso->setBlendState(pass->getBlendDesc());
+	_pso->setDepthStencilState(pass->getDepthStencilDesc());
+	// todo: 
 }
 
 auto PassVariant::getStencilRef() const -> int {

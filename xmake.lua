@@ -7,8 +7,11 @@ EUREKA_RENDERER_DIR = path.join(EUREKA_DIR, "Dx12Renderer")
 EUREKA_TOOL_DIR     = path.join(EUREKA_DIR, "Tool")
 ERUEKA_VS_RUNTIME   = nil
 
-add_cxxflags("-std:c++20", {tools = { "clang_cl" }})
-add_defines("__cpp_consteval", {tools = { "clang_cl" }})
+set_toolset("cc", "clang-cl")
+set_toolset("cxx", "clang-cl")
+
+add_cxxflags("-std:c++20", {tools = { "clang-cl" }})
+add_defines("__cpp_consteval", {tools = { "clang-cl" }})
 add_defines("NOMINMAX", "UNICODE", "_UNICODE")
 set_arch("x64")
 

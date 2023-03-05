@@ -37,11 +37,15 @@ public:
 	void flushPassVariant();
 	bool isRenderObjectDirty() const;
 	void resetRenderObjectDirty();
+	bool isPassEnable(size_t index) const;
+	bool enablePass(size_t index);
+	bool disablePass(size_t index);
 private:
 	std::shared_ptr<Effect>				_pEffect;
 	std::unique_ptr<MaterialProperty>	_pMaterialProperty;
 	std::unique_ptr<MaterialKeyword>	_pMaterialKeyword;
 	bool								_renderObjectDirty = true;
+	std::bitset<32>						_passMask;
 };
 
 }

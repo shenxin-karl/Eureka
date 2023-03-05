@@ -59,7 +59,7 @@ void PropertyBlock::finalize() {
 		return std::nullopt;
 	};
 
-	std::ranges::sort(uniformInfos, [](UniformInfo &lhs, UniformInfo &rhs) {
+	std::sort(uniformInfos.begin(), uniformInfos.end(), [](UniformInfo &lhs, UniformInfo &rhs) {
 		return lhs.stride <= rhs.stride;
 	});
 

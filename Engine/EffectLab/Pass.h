@@ -34,6 +34,9 @@ public:
 	auto getKeywordSet() const -> std::shared_ptr<ShaderKeywordSet>;
 	auto getStencilRef() const -> int;
 	auto getRenderQueue() const -> RenderQueueLabel;
+	auto getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC &;
+	auto getBlendDesc() const -> const D3D12_BLEND_DESC &;
+	auto getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC &;
 private:
 	using PassVariantMap = std::unordered_map<ShaderKeyword::BitsetType, std::shared_ptr<PassVariant>>;
 	std::string						  _tag;

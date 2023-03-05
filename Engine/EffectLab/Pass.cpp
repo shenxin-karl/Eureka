@@ -17,7 +17,7 @@ auto Pass::getPassVariant(const ShaderKeyword &keyword) -> std::shared_ptr<PassV
 		return iter->second;
 	}
 
-	auto pPassVariant = std::make_shared<PassVariant>(this);
+	auto pPassVariant = std::make_shared<PassVariant>(this, keyword.toString());
 	_passVariantMap[keyword.getBitset()] = pPassVariant;
 	return pPassVariant;
 }
@@ -32,6 +32,18 @@ auto Pass::getStencilRef() const -> int {
 
 auto Pass::getRenderQueue() const -> RenderQueueLabel {
 	return _renderQueue;
+}
+
+auto Pass::getRasterizerDesc() const -> const D3D12_RASTERIZER_DESC & {
+	return _rasterizerDesc;
+}
+
+auto Pass::getBlendDesc() const -> const D3D12_BLEND_DESC & {
+	return _blendDesc;
+}
+
+auto Pass::getDepthStencilDesc() const -> const D3D12_DEPTH_STENCIL_DESC & {
+	return _depthStencilDesc;
 }
 
 }

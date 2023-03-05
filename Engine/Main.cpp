@@ -5,17 +5,16 @@
 #include <filesystem>
 
 int main(int argc, char *argv[]) {
-	Eureka::EurekaApplication app;
 	try {
 		auto pGameTimer = std::make_shared<Eureka::GameTimer>();
-		app.initialize();
-		while (app.isRunning()) {
+		Eureka::Application::Initialize(new Eureka::EurekaApplication);
+		while (Eureka::Application::IsRunning()) {
 			pGameTimer->startNewFrame();
-			app.beginTick(pGameTimer);
-			app.tick(pGameTimer);
-			app.endTick(pGameTimer);
+			Eureka::Application::BeginTick(pGameTimer);
+			Eureka::Application::Tick(pGameTimer);
+			Eureka::Application::EndTick(pGameTimer);
 		}
-		app.destroy();
+		Eureka::Application::Destroy();
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 		std::wstring message = dx12lib::to_wstring(e.what());

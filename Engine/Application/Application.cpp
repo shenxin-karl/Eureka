@@ -4,14 +4,54 @@
 #include <Dx12lib/Device/DeviceStd.h>
 #include <Dx12lib/Context/ContextStd.h>
 #include "Foundation/GameTimer.h"
+#include "Foundation/Exception.h"
 #include "EngineDefinition/EngineDefinition.h"
 
 using namespace Math;
 
 namespace Eureka {
 
+void Application::Initialize(Application *pApplication) {
+	Exception::Throw(_inst == nullptr, "Application::_inst is not nullptr!");
+	_inst = pApplication;
+	_inst->initialize();
+}
+
+void Application::BeginTick(std::shared_ptr<GameTimer> pGameTimer) {
+	_inst->beginTick(std::move(pGameTimer));
+}
+
+void Application::Tick(std::shared_ptr<GameTimer> pGameTimer) {
+	_inst->tick(std::move(pGameTimer));
+}
+
+void Application::EndTick(std::shared_ptr<GameTimer> pGameTimer) {
+	_inst->endTick(std::move(pGameTimer));
+}
+
+void Application::Destroy() {
+	_inst->destroy();
+	delete _inst;
+}
+
+bool Application::IsRunning() {
+	return !_inst->_pInputSystem->shouldClose();
+}
+
+auto Application::getDevice() -> const std::shared_ptr<dx12lib::Device> & {
+	return _inst->_pDevice;
+}
+
+auto Application::getSwapChain() -> const std::shared_ptr<dx12lib::SwapChain> & {
+	return _inst->_pSwapChain;
+}
+
+auto Application::getInputSystem() -> const std::shared_ptr<InputSystem> & {
+	return _inst->_pInputSystem;
+}
+
 void Application::initialize() {
-	_pInputSystem = std::make_shared<InputSystem>(_title, _width, _height);
+	_pInputSystem = std::make_shared<InputSystem>(_inst->_title, _inst->_width, _inst->_height);
 	_pInputSystem->initialize();
 	_pInputSystem->pWindow->setResizeCallback([&](int width, int height) {
 		resize(width, height);
@@ -23,7 +63,7 @@ void Application::initialize() {
 	dx12lib::DeviceInitDesc desc = {
 		kSwapChainRenderTargetFormat,
 		kSwapChainDepthStencilFormat,
-		_fps,
+		_inst->_fps,
 	};
 	_pDevice->initialize(desc);
 
@@ -92,22 +132,6 @@ void Application::resize(int width, int height) {
 	pCmdQueue->executeCommandList(pCmdList);
 	pCmdQueue->signal(_pSwapChain);
 	pCmdQueue->flushCommandQueue();
-}
-
-bool Application::isRunning() const {
-	return !_pInputSystem->shouldClose();
-}
-
-auto Application::getDevice() const -> std::shared_ptr<dx12lib::Device> {
-	return _pDevice;
-}
-
-auto Application::getSwapChain() const -> std::shared_ptr<dx12lib::SwapChain> {
-	return _pSwapChain;
-}
-
-auto Application::getInputSystem() const -> std::shared_ptr<InputSystem> {
-	return _pInputSystem;
 }
 
 }

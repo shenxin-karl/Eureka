@@ -20,6 +20,7 @@ public:
 	bool isEnable(const ShaderKeyword &keyword, const std::string &key) const;
 	auto find(const std::string &key) const -> std::optional<FindResult>;
 	void addShaderFeatures(ShaderFeature features);
+	auto getFeatures() const -> const std::vector<ShaderFeature> &;
 private:
 	std::vector<ShaderFeature> _features;
 };

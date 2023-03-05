@@ -31,7 +31,8 @@ std::shared_ptr<dx12lib::DXCShader> ShaderLoader::dxc(const fs::path &filePath,
     dx12lib::ShaderCacheInfo shaderCacheInfo = getShaderCacheInfo(shaderCacheKey);
 
     auto pResult = std::make_shared<dx12lib::DXCShader>();
-    if (checkShaderCacheValid(filePath, shaderCacheInfo)) {
+    auto lastWriteTime = fs::last_write_time(filePath);
+    if (checkShaderCacheValid(lastWriteTime, shaderCacheInfo)) {
         pResult->load(shaderCacheInfo);
         return pResult;
     } 
@@ -52,7 +53,36 @@ std::shared_ptr<dx12lib::DXCShader> ShaderLoader::dxc(const fs::path &filePath,
     return pResult;
 }
 
-bool ShaderLoader::checkShaderCacheValid(const fs::path &sourcePath, const dx12lib::ShaderCacheInfo &cacheInfo) {
+std::shared_ptr<dx12lib::DXCShader> ShaderLoader::dxc(const DxcCompileDesc1 &args) {
+    auto shaderCacheKey = calcShaderCacheKey(
+        args.filePath, 
+        args.defines, 
+        args.entryPoint, 
+        args.target
+    );
+
+    auto pResult = std::make_shared<dx12lib::DXCShader>();
+    auto lastWriteTime = args.lastWriteTime;
+    dx12lib::ShaderCacheInfo shaderCacheInfo = getShaderCacheInfo(shaderCacheKey);
+    if (checkShaderCacheValid(lastWriteTime, shaderCacheInfo)) {
+        pResult->load(shaderCacheInfo);
+        return pResult;
+    }
+
+    dx12lib::ShaderCompileDesc desc;
+    desc.entryPoint = args.entryPoint;
+    desc.target = args.target;
+    desc.pInclude = args.include;
+    desc.pMacro = args.defines;
+    desc.pShaderSource = args.source.data();
+    desc.sizeInByte = args.source.size();
+    desc.pShaderCacheInfo = &shaderCacheInfo;
+    desc.hintName = args.filePath;
+    pResult->compile(desc);
+    return pResult;
+}
+
+bool ShaderLoader::checkShaderCacheValid(const fs::file_time_type &lastWriteTime, const dx12lib::ShaderCacheInfo &cacheInfo) {
     if (!fs::exists(cacheInfo.csoFilePath) ||
         !fs::exists(cacheInfo.pdbFilePath) ||
         !fs::exists(cacheInfo.refFilePath))
@@ -60,10 +90,9 @@ bool ShaderLoader::checkShaderCacheValid(const fs::path &sourcePath, const dx12l
         return false;
     }
 
-    auto sourceLastWriteTime = fs::last_write_time(sourcePath);
-    if (sourceLastWriteTime > fs::last_write_time(cacheInfo.csoFilePath) ||
-        sourceLastWriteTime > fs::last_write_time(cacheInfo.pdbFilePath) ||
-        sourceLastWriteTime > fs::last_write_time(cacheInfo.refFilePath))
+    if (lastWriteTime > fs::last_write_time(cacheInfo.csoFilePath) ||
+        lastWriteTime > fs::last_write_time(cacheInfo.pdbFilePath) ||
+        lastWriteTime > fs::last_write_time(cacheInfo.refFilePath) )
     {
         return false;
     }

@@ -13,6 +13,7 @@
 #include "TemporalAAPass.h"
 #include "TileDeferredPass.h"
 #include "Application/EurekaApplication.h"
+#include "Application/Application.h"
 
 namespace Eureka {
 

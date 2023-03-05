@@ -1,6 +1,7 @@
 #include "Material.h"
 #include "MaterialKeyword.h"
 #include "MaterialProperty.h"
+#include "EffectLab/Effect.h"
 #include "Foundation/Exception.h"
 
 namespace Eureka {
@@ -9,6 +10,7 @@ Material::Material(std::shared_ptr<Effect> pEffect) : _pEffect(std::move(pEffect
 	Exception::Throw(_pEffect != nullptr, "pEffect is nullptr");
 	_pMaterialProperty = std::make_unique<MaterialProperty>(this);
 	_pMaterialKeyword = std::make_unique<MaterialKeyword>(this);
+	_passMask.flip();
 }
 
 Material::~Material() {
@@ -104,5 +106,36 @@ bool Material::isRenderObjectDirty() const {
 
 void Material::resetRenderObjectDirty() {
 	_renderObjectDirty = false;
+}
+
+bool Material::isPassEnable(size_t index) const {
+	if (index >= _pEffect->getPasses().size()) {
+		return false;
+	}
+	return _passMask.test(index);
+}
+
+bool Material::enablePass(size_t index) {
+	if (index >= _pEffect->getPasses().size()) {
+		return false;
+	}
+	if (_passMask.test(index)) {
+		return true;
+	}
+	_passMask.set(index, true);
+	_renderObjectDirty = true;
+	return true;
+}
+
+bool Material::disablePass(size_t index) {
+	if (index >= _pEffect->getPasses().size()) {
+		return false;
+	}
+	if (!_passMask.test(index)) {
+		return true;
+	}
+	_passMask.set(index, false);
+	_renderObjectDirty = true;
+	return true;
 }
 }

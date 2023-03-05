@@ -77,4 +77,8 @@ void ShaderKeywordSet::addShaderFeatures(ShaderFeature features) {
 	_features.push_back(std::move(features));
 }
 
+auto ShaderKeywordSet::getFeatures() const -> const std::vector<ShaderFeature> & {
+	return _features;
+}
+
 }
