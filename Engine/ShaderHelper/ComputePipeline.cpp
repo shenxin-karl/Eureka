@@ -3,7 +3,6 @@
 #include "ComputePipeline.h"
 #include "ShaderContentLoader.h"
 #include "ShaderHelper.h"
-#include "ShaderInclude.h"
 #include "ShaderLoader.h"
 #include "Dx12lib/Device/Device.h"
 #include "Dx12lib/Pipeline/PipelineStateObject.h"
@@ -11,7 +10,7 @@
 
 namespace Eureka {
 
-ComputePipeline::ComputePipeline(std::weak_ptr<dx12lib::Device> pDevice, fs::path shaderPath)
+ComputePipeline::ComputePipeline(std::weak_ptr<dx12lib::Device> pDevice, stdfs::path shaderPath)
 : _shaderFilePath(std::move(shaderPath)), _pDevice(std::move(pDevice))
 {
 	_shaderContent = ShaderContentLoader::instance()->open(_shaderFilePath);

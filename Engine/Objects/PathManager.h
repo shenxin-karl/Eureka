@@ -2,28 +2,24 @@
 #include <filesystem>
 #include "Foundation/Singletion.hpp"
 
-namespace fs = std::filesystem;
+namespace stdfs = std::filesystem;
 
 namespace Eureka {
 
 class PathManager : public Singletion<PathManager> {
 public:
-	PathManager(fs::path projectPath, fs::path assetPath, fs::path tempPath);
-	static auto getProjectPath() -> const fs::path &;
-	static auto getAssetPath() -> const fs::path &;
-	static auto getTempPath() -> const fs::path &;
-	static void setProjectPath(fs::path projectPath);
-	static void setAssetPath(fs::path assetPath);
-	static void setTempPath(fs::path tempPath);
-	static auto toAssetPath(const fs::path &relativePath) -> fs::path;
-	static auto toProjectPath(const fs::path &relativePath) -> fs::path;
-	static auto toTempPath(const fs::path &relativePath) -> fs::path;
-	static bool exist(const fs::path &filePath, bool checkTempFile = false);
-	static bool open(const fs::path &filePath, std::ifstream &outStream, int mode, bool checkTempFile = false);
+	PathManager(stdfs::path assetPath, stdfs::path assetCachePath);
+	static auto getAssetPath() -> const stdfs::path &;
+	static auto getAssetCachePath() -> const stdfs::path &;
+	static void setAssetPath(stdfs::path assetPath);
+	static void setAssetCachePath(stdfs::path tempPath);
+	static auto toAssetPath(const stdfs::path &relativePath) -> stdfs::path;
+	static auto toAssetCachePath(const stdfs::path &relativePath) -> stdfs::path;
+	static bool exist(const stdfs::path &filePath, bool checkTempFile = false);
+	static bool open(const stdfs::path &filePath, std::ifstream &outStream, int mode, bool checkCache = false);
 private:
-	fs::path _assetPath;
-	fs::path _projectPath;
-	fs::path _tempPath;
+	stdfs::path _assetPath;
+	stdfs::path _tempPath;
 };
 
 }

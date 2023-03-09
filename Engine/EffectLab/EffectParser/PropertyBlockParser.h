@@ -11,6 +11,7 @@ public:
 	explicit PropertyBlockParser(std::string effectSourcePath);
 	auto parserPropertyBlock(pd::EffectLabParser::Property_blockContext *ctx) -> std::unique_ptr<PropertyBlock>;
 	std::any visitNumber_val(pd::EffectLabParser::Number_valContext *context) override;
+	std::any visitProperty_space(ParserDetails::EffectLabParser::Property_spaceContext *context) override;
 	std::any visitProperty_range_type(ParserDetails::EffectLabParser::Property_range_typeContext *context) override;
 	std::any visitProperty_range_val(ParserDetails::EffectLabParser::Property_range_valContext *context) override;
 	std::any visitProperty_bool_val(pd::EffectLabParser::Property_bool_valContext *context) override;

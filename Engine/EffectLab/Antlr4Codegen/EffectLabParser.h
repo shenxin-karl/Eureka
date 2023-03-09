@@ -31,32 +31,32 @@ public:
     KWEqual = 86, KWLEqaul = 87, KWGreater = 88, KWNotEqual = 89, KWGEqual = 90, 
     KWAlways = 91, KWKeep = 92, KWZero = 93, KWReplace = 94, KWIncrSat = 95, 
     KWDecrSat = 96, KWInvert = 97, KWIncrWrap = 98, KWDecrWrap = 99, KWTrue = 100, 
-    KWFalse = 101, StringLiteral = 102, HlslIncludeBlock = 103, HlslProgramBlock = 104, 
-    Identity = 105
+    KWFalse = 101, SpaceId = 102, StringLiteral = 103, HlslIncludeBlock = 104, 
+    HlslProgramBlock = 105, Identity = 106
   };
 
   enum {
-    RuleEffect = 0, RuleProperty_block = 1, RuleHlsl_include_block = 2, 
-    RuleProperty_name = 3, RuleProperty_description = 4, RuleProperty_item = 5, 
-    RuleProperty_bool_type = 6, RuleProperty_int_type = 7, RuleProperty_range_type = 8, 
-    RuleProperty_float_type = 9, RuleProperty_float2_type = 10, RuleProperty_float3_type = 11, 
-    RuleProperty_float4_type = 12, RuleProperty_texture_2d_type = 13, RuleProperty_matrix_type = 14, 
-    RuleProperty_range_val = 15, RuleProperty_bool_val = 16, RuleProperty_int_val = 17, 
-    RuleProperty_float_val = 18, RuleProperty_float2_val = 19, RuleProperty_float3_val = 20, 
-    RuleProperty_float4_val = 21, RuleProperty_matrix_val = 22, RuleProperty_texture_val = 23, 
-    RuleNumber_val = 24, RulePass = 25, RulePass_tag = 26, RulePass_block_item = 27, 
-    RulePass_source_context = 28, RulePass_vertex_shader = 29, RulePass_geometry_shader = 30, 
-    RulePass_hull_shader = 31, RulePass_domain_shader = 32, RulePass_pixel_shader = 33, 
-    RulePass_render_queue = 34, RulePass_shader_feature = 35, RulePass_cull_mode = 36, 
-    RulePass_zclip_mode = 37, RulePass_ztest_mode = 38, RulePass_zwrite_mode = 39, 
-    RulePass_offset = 40, RulePass_color_mask = 41, RulePass_blend = 42, 
-    RulePass_blend_op = 43, RulePass_alpha_to_mask = 44, RulePass_conservative = 45, 
-    RulePass_stencil = 46, RuleStencil_item = 47, RuleStencil_ref = 48, 
-    RuleStencil_read_mask = 49, RuleStencil_write_mask = 50, RuleStencil_comp = 51, 
-    RuleStencil_pass_op = 52, RuleStencil_fail_op = 53, RuleStencil_zfail_op = 54, 
-    RuleStencil_comp_back_op = 55, RuleStancil_pass_back_op = 56, RuleStencil_fail_back_op = 57, 
-    RuleStencil_zfail_back_op = 58, RuleStencil_comp_front_op = 59, RuleStancil_pass_front_op = 60, 
-    RuleStencil_fail_front_op = 61, RuleStencil_zfail_front_op = 62
+    RuleEffect = 0, RuleProperty_block = 1, RuleProperty_space = 2, RuleHlsl_include_block = 3, 
+    RuleProperty_name = 4, RuleProperty_description = 5, RuleProperty_item = 6, 
+    RuleProperty_bool_type = 7, RuleProperty_int_type = 8, RuleProperty_range_type = 9, 
+    RuleProperty_float_type = 10, RuleProperty_float2_type = 11, RuleProperty_float3_type = 12, 
+    RuleProperty_float4_type = 13, RuleProperty_texture_2d_type = 14, RuleProperty_matrix_type = 15, 
+    RuleProperty_range_val = 16, RuleProperty_bool_val = 17, RuleProperty_int_val = 18, 
+    RuleProperty_float_val = 19, RuleProperty_float2_val = 20, RuleProperty_float3_val = 21, 
+    RuleProperty_float4_val = 22, RuleProperty_matrix_val = 23, RuleProperty_texture_val = 24, 
+    RuleNumber_val = 25, RulePass = 26, RulePass_tag = 27, RulePass_block_item = 28, 
+    RulePass_source_context = 29, RulePass_vertex_shader = 30, RulePass_geometry_shader = 31, 
+    RulePass_hull_shader = 32, RulePass_domain_shader = 33, RulePass_pixel_shader = 34, 
+    RulePass_render_queue = 35, RulePass_shader_feature = 36, RulePass_cull_mode = 37, 
+    RulePass_zclip_mode = 38, RulePass_ztest_mode = 39, RulePass_zwrite_mode = 40, 
+    RulePass_offset = 41, RulePass_color_mask = 42, RulePass_blend = 43, 
+    RulePass_blend_op = 44, RulePass_alpha_to_mask = 45, RulePass_conservative = 46, 
+    RulePass_stencil = 47, RuleStencil_item = 48, RuleStencil_ref = 49, 
+    RuleStencil_read_mask = 50, RuleStencil_write_mask = 51, RuleStencil_comp = 52, 
+    RuleStencil_pass_op = 53, RuleStencil_fail_op = 54, RuleStencil_zfail_op = 55, 
+    RuleStencil_comp_back_op = 56, RuleStancil_pass_back_op = 57, RuleStencil_fail_back_op = 58, 
+    RuleStencil_zfail_back_op = 59, RuleStencil_comp_front_op = 60, RuleStancil_pass_front_op = 61, 
+    RuleStencil_fail_front_op = 62, RuleStencil_zfail_front_op = 63
   };
 
   explicit EffectLabParser(antlr4::TokenStream *input);
@@ -78,6 +78,7 @@ public:
 
   class EffectContext;
   class Property_blockContext;
+  class Property_spaceContext;
   class Hlsl_include_blockContext;
   class Property_nameContext;
   class Property_descriptionContext;
@@ -162,6 +163,7 @@ public:
   public:
     Property_blockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    Property_spaceContext *property_space();
     std::vector<Property_itemContext *> property_item();
     Property_itemContext* property_item(size_t i);
 
@@ -173,6 +175,21 @@ public:
   };
 
   Property_blockContext* property_block();
+
+  class  Property_spaceContext : public antlr4::ParserRuleContext {
+  public:
+    Property_spaceContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *SpaceId();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Property_spaceContext* property_space();
 
   class  Hlsl_include_blockContext : public antlr4::ParserRuleContext {
   public:

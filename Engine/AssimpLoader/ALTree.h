@@ -6,7 +6,7 @@
 #include <assimp/scene.h>
 #include <filesystem>
 
-namespace fs = std::filesystem;
+namespace stdfs = std::filesystem;
 
 namespace Eureka {
 
@@ -61,7 +61,7 @@ public:
 		aiProcess_OptimizeGraph		              |
 		aiProcess_GenBoundingBoxes
 	);
-	ALTree(const fs::path &path, int flag = kDefaultLoadFlag);
+	ALTree(const stdfs::path &path, int flag = kDefaultLoadFlag);
 	~ALTree();
 	ALTree(const ALTree &) = delete;
 	size_t getNumMaterial() const;

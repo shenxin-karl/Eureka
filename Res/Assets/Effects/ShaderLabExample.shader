@@ -34,6 +34,7 @@ Pass("BasePass") {
     ShaderFeature: _AAA _BBB _CCC
 
     HLSLPROGRAM
+        #include "generated/include.hlsl"
         VertexOut vert(VertexIn vin) {
             VertexOut vout = (VertexOut)0;
             return vout;

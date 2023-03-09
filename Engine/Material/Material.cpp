@@ -12,8 +12,8 @@
 #include <RenderGraph/Pass/RenderQueuePass.h>
 #include <RenderGraph/Pass/SubPass.h>
 #include <RenderGraph/Bindable/ConstantBufferBindable.h>
-#include "ShaderHelper/ShaderHelper.h"
 #include "Objects/TextureManager.h"
+#include "ShaderHelper/ShaderHelper.h"
 
 namespace Eureka {
 

@@ -4,9 +4,9 @@
 #include "Dx12lib/Tool/DxcModule.h"
 #include <fmt/format.h>
 
-namespace dx12lib {
+#include "ShaderInclude.h"
 
-thread_local DxcModule gDxcModel;
+namespace dx12lib {
 
 auto DXCShader::getByteCode() const -> D3D12_SHADER_BYTECODE {
 	if (_pByteCode == nullptr)
@@ -14,9 +14,9 @@ auto DXCShader::getByteCode() const -> D3D12_SHADER_BYTECODE {
 	return { _pByteCode->GetBufferPointer(), _pByteCode->GetBufferSize() };
 }
 
-struct DxcInclude : public IDxcIncludeHandler {
+struct DxcIncludeWrap : public IDxcIncludeHandler {
     ULONG STDMETHODCALLTYPE AddRef(void) final {
-	    return 0;
+	    return 1;
     }
     ULONG STDMETHODCALLTYPE Release(void) final {
 		return 0;   
@@ -30,23 +30,14 @@ struct DxcInclude : public IDxcIncludeHandler {
         _COM_Outptr_result_maybenull_ IDxcBlob **ppIncludeSource  // Resultant source object for included file, nullptr if not found.
     ) override
 	{
-        UINT bytes = 0;
-        LPCVOID pData = nullptr;
-        std::string fileName = to_string(pFilename);
-		auto hr = pInclude->Open(D3D_INCLUDE_LOCAL, fileName.c_str(), nullptr, &pData, &bytes);
-        if (pData == nullptr) {
-	        ppIncludeSource = nullptr;
-            return hr;
-        }
-
-        WRL::ComPtr<IDxcBlobEncoding> pSource;
-        gDxcModel.getUtils()->CreateBlob(pData, bytes, DXC_CP_ACP, &pSource);
+        std::string filePath = to_string(pFilename);
+        WRL::ComPtr<IDxcBlobEncoding> pSource = pInclude->loadSource(filePath);
         *ppIncludeSource = pSource.Detach();
-        return hr;
+        return S_OK;
 	}
-    virtual ~DxcInclude() = default;
+    virtual ~DxcIncludeWrap() = default;
 public:
-    ID3DInclude *pInclude = nullptr;
+    const ShaderInclude *pInclude = nullptr;
 };
 
 void DXCShader::compile(const ShaderCompileDesc &desc) {
@@ -91,20 +82,15 @@ void DXCShader::compile(const ShaderCompileDesc &desc) {
         .Encoding =  DXC_CP_ACP,
     };
 
-    IDxcIncludeHandler *pIncludeHandler;
-    WRL::ComPtr<IDxcIncludeHandler> pIncludeHandleCom;
-    std::unique_ptr<DxcInclude> pDxcInclude;
-    if (desc.pInclude == D3D_COMPILE_STANDARD_FILE_INCLUDE) {
-        gDxcModel.getUtils()->CreateDefaultIncludeHandler(&pIncludeHandleCom);
-        pIncludeHandler = pIncludeHandleCom.Get();
-    } else {
-        pDxcInclude = std::make_unique<DxcInclude>();
-        pDxcInclude->pInclude = desc.pInclude;
-        pIncludeHandler = pDxcInclude.get();
+    IDxcIncludeHandler *pIncludeHandler = nullptr;
+    DxcIncludeWrap includeWrap;
+    if (desc.pInclude != nullptr) {
+        includeWrap.pInclude = desc.pInclude;
     }
 
+
     WRL::ComPtr<IDxcResult> pResults;
-    gDxcModel.getCompiler3()->Compile(
+    DxcModule::instance()->getCompiler3()->Compile(
         &source,                
         arguments.data(),
         arguments.size(),
@@ -139,7 +125,7 @@ void DXCShader::compile(const ShaderCompileDesc &desc) {
         .Size = pReflectionData->GetBufferSize(),
         .Encoding = DXC_CP_ACP,
     };
-    gDxcModel.getUtils()->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
+    DxcModule::instance()->getUtils()->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
 
     // pdb
     WRL::ComPtr<IDxcBlob> pdb = nullptr;
@@ -175,7 +161,7 @@ void DXCShader::load(const ShaderCacheInfo &cacheInfo) {
 
     // load cso info
     WRL::ComPtr<IDxcBlobEncoding> pCsoBlob;
-    gDxcModel.getLibrary()->CreateBlobFromFile(
+    DxcModule::instance()->getLibrary()->CreateBlobFromFile(
         csoFilePath.c_str(),
         DXC_CP_ACP,
         &pCsoBlob
@@ -184,7 +170,7 @@ void DXCShader::load(const ShaderCacheInfo &cacheInfo) {
 
     // load shader reflection info
     WRL::ComPtr<IDxcBlobEncoding> pReflectionData;
-    gDxcModel.getLibrary()->CreateBlobFromFile(
+    DxcModule::instance()->getLibrary()->CreateBlobFromFile(
         csoFilePath.c_str(),
         DXC_CP_ACP,
         &pReflectionData
@@ -195,7 +181,7 @@ void DXCShader::load(const ShaderCacheInfo &cacheInfo) {
 	    .Size = pReflectionData->GetBufferSize(),
 	    .Encoding = DXC_CP_ACP,
     };
-    gDxcModel.getUtils()->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
+    DxcModule::instance()->getUtils()->CreateReflection(&reflectionData, IID_PPV_ARGS(&_pShaderReflection));
 }
 
 }

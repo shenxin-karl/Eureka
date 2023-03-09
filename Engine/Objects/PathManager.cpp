@@ -5,92 +5,68 @@
 namespace Eureka {
 
 
-PathManager::PathManager(fs::path projectPath, fs::path assetPath, fs::path tempPath) {
-	_projectPath = std::move(projectPath);
+PathManager::PathManager(stdfs::path assetPath, stdfs::path assetCachePath) {
 	_assetPath = std::move(assetPath);
-	_tempPath = std::move(tempPath);
-	if (!fs::exists(_tempPath)) {
-		fs::create_directory(_tempPath);
+	_tempPath = std::move(assetCachePath);
+	if (!stdfs::exists(_tempPath)) {
+		stdfs::create_directory(_tempPath);
 	}
 }
 
-auto PathManager::getProjectPath() -> const fs::path & {
-	return instance()->_projectPath;
-}
-
-auto PathManager::getAssetPath() -> const fs::path & {
+auto PathManager::getAssetPath() -> const stdfs::path & {
 	return instance()->_assetPath;
 }
 
-auto PathManager::getTempPath() -> const fs::path & {
+auto PathManager::getAssetCachePath() -> const stdfs::path & {
 	return instance()->_tempPath;
 }
 
-void PathManager::setProjectPath(fs::path projectPath) {
-	instance()->_projectPath = std::move(projectPath);
-}
-
-void PathManager::setAssetPath(fs::path assetPath) {
+void PathManager::setAssetPath(stdfs::path assetPath) {
 	instance()->_assetPath = std::move(assetPath);
 }
 
-void PathManager::setTempPath(fs::path tempPath) {
+void PathManager::setAssetCachePath(stdfs::path tempPath) {
 	instance()->_tempPath = std::move(tempPath);
 }
 
-auto PathManager::toAssetPath(const fs::path &relativePath) -> fs::path {
+auto PathManager::toAssetPath(const stdfs::path &relativePath) -> stdfs::path {
 	return getAssetPath() / relativePath;
 }
 
-auto PathManager::toProjectPath(const fs::path &relativePath) -> fs::path {
-	return getProjectPath() / relativePath;
+auto PathManager::toAssetCachePath(const stdfs::path &relativePath) -> stdfs::path {
+	return getAssetCachePath() / relativePath;
 }
 
-auto PathManager::toTempPath(const fs::path &relativePath) -> fs::path {
-	return getTempPath() / relativePath;
-}
-
-bool PathManager::exist(const fs::path &filePath, bool checkTempFile) {
-	if (fs::exists(filePath)) {
+bool PathManager::exist(const stdfs::path &filePath, bool checkTempFile) {
+	if (stdfs::exists(filePath)) {
 		return true;
 	}
 
 	auto assetPath = toAssetPath(filePath);
-	if (fs::exists(assetPath)) {
+	if (stdfs::exists(assetPath)) {
 		return true;
 	}
 
-	auto projectPath = toProjectPath(filePath);
-	if (fs::exists(projectPath)) {
-		return true;
-	}
-
-	if (checkTempFile && fs::exists(toTempPath(filePath))) {
+	if (checkTempFile && stdfs::exists(toAssetCachePath(filePath))) {
 		return true;
 	}
 	return false;
 }
 
-bool PathManager::open(const fs::path &filePath, std::ifstream &outStream, int mode, bool checkTempFile) {
-	if (fs::exists(filePath)) {
+bool PathManager::open(const stdfs::path &filePath, std::ifstream &outStream, int mode, bool checkCache) {
+	if (stdfs::exists(filePath)) {
 		outStream.open(filePath, mode);
 		return outStream.is_open();
 	}
 
 	auto assetPath = toAssetPath(filePath);
-	if (fs::exists(assetPath)) {
+	if (stdfs::exists(assetPath)) {
 		outStream.open(assetPath, mode);
 		return outStream.is_open();
 	}
 
-	auto projectPath = toProjectPath(filePath);
-	if (fs::exists(projectPath)) {
-		outStream.open(projectPath, mode);
-		return outStream.is_open();
-	}
-
-	if (checkTempFile) {
-		auto tempPath = toTempPath(filePath);
+	if (checkCache) {
+		auto tempPath = toAssetCachePath(filePath);
 		outStream.open(tempPath, mode);
 		return outStream.is_open();
 	}

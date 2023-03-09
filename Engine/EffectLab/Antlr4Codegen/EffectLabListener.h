@@ -22,6 +22,9 @@ public:
   virtual void enterProperty_block(EffectLabParser::Property_blockContext *ctx) = 0;
   virtual void exitProperty_block(EffectLabParser::Property_blockContext *ctx) = 0;
 
+  virtual void enterProperty_space(EffectLabParser::Property_spaceContext *ctx) = 0;
+  virtual void exitProperty_space(EffectLabParser::Property_spaceContext *ctx) = 0;
+
   virtual void enterHlsl_include_block(EffectLabParser::Hlsl_include_blockContext *ctx) = 0;
   virtual void exitHlsl_include_block(EffectLabParser::Hlsl_include_blockContext *ctx) = 0;
 

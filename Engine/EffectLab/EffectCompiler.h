@@ -11,7 +11,7 @@
 
 namespace Eureka {
 
-namespace fs = std::filesystem;
+namespace stdfs = std::filesystem;
 namespace pd = ParserDetails;
 
 class EffectErrorListener : public antlr4::BaseErrorListener {
@@ -29,7 +29,7 @@ class EffectCompiler : public BaseParser, private NonCopyable {
 public:
 	EffectCompiler();
 	~EffectCompiler() override;
-	auto compile(const fs::path &effectSourcePath) -> std::shared_ptr<Effect>;
+	auto compile(const stdfs::path &effectSourcePath) -> std::shared_ptr<Effect>;
 	std::any visitEffect(pd::EffectLabParser::EffectContext *context) override;
 	std::any visitHlsl_include_block(ParserDetails::EffectLabParser::Hlsl_include_blockContext *context) override;
 private:

@@ -2,6 +2,8 @@
 
 namespace dx12lib {
 
+thread_local std::unique_ptr<DxcModule> DxcModule::_pInstance = std::make_unique<DxcModule>();
+
 DxcModule::DxcModule() {
 	DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&_pCompiler));
 	DxcCreateInstance(CLSID_DxcLinker, IID_PPV_ARGS(&_pLinker));
@@ -20,6 +22,10 @@ auto DxcModule::getUtils() const -> IDxcUtils * {
 }
 auto DxcModule::getLibrary() const -> IDxcLibrary * {
 	return _pLibrary.Get();
+}
+
+auto DxcModule::instance() -> DxcModule * {
+	return _pInstance.get();
 }
 
 }

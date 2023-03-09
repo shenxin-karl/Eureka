@@ -4,14 +4,14 @@
 
 namespace Eureka {
 
-auto ShaderContentLoader::open(const fs::path &filePath) -> std::string_view {
+auto ShaderContentLoader::open(const stdfs::path &filePath) -> std::string_view {
 	auto strFilePath = filePath.string();
 	auto iter = _contentMap.find(strFilePath);
 	if (iter != _contentMap.end()) {
 		return { iter->second.ptr.get(), iter->second.length };
 	}
 
-	if (!fs::exists(filePath)) {
+	if (!stdfs::exists(filePath)) {
 		Exception::Throw("ShaderContentLoader::open filePath {} not exist!", filePath.string());
 	}
 

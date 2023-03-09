@@ -8,7 +8,7 @@ namespace Eureka {
 class Pass;
 class PassVariant {
 public:
-	explicit PassVariant(Pass *pass, const std::string &name);
+	explicit PassVariant(Pass *pass, const ShaderKeyword &keyword);
 	auto getStencilRef() const -> int;
 	auto getRenderQueue() const -> RenderQueueLabel;
 	auto getPipelineStateObject() const -> const std::shared_ptr<dx12lib::GraphicsPSO> &;

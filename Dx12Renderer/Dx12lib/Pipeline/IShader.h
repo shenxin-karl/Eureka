@@ -7,18 +7,21 @@
 
 namespace dx12lib {
 
-namespace fs = std::filesystem;
+namespace stdfs = std::filesystem;
+
+class ShaderInclude;
 
 struct ShaderCacheInfo {
-    fs::path pdbFilePath;           // program database data
-    fs::path csoFilePath;           // byte code data
-    fs::path refFilePath;           // reflection data
+    stdfs::path pdbFilePath;           // program database data
+    stdfs::path csoFilePath;           // byte code data
+    stdfs::path refFilePath;           // reflection data
 };
+
 
 struct ShaderCompileDesc {
     std::string                 entryPoint;
     std::string                 target;
-    ID3DInclude *               pInclude           = D3D_COMPILE_STANDARD_FILE_INCLUDE;
+    const ShaderInclude *       pInclude           = nullptr;
     const D3D_SHADER_MACRO *    pMacro             = nullptr;
     const void *                pShaderSource      = nullptr;
     size_t                      sizeInByte         = 0;

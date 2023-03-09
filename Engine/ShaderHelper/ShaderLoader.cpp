@@ -1,7 +1,7 @@
 #include "ShaderLoader.h"
 #include "ShaderContentLoader.h"
-#include "ShaderInclude.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
+#include "Dx12lib/Pipeline/ShaderInclude.h"
 #include "Foundation/Exception.h"
 #include "Objects/PathManager.h"
 
@@ -13,37 +13,39 @@ ShaderLoader::ShaderLoader() : _uuidGenerator(classUUID) {
 }
 
 void ShaderLoader::initialize() {
-    auto targetDirectory = PathManager::toTempPath(outputDirectory);
-    if (!fs::exists(targetDirectory)) {
-        fs::create_directory(targetDirectory);
+    auto targetDirectory = PathManager::toAssetCachePath(outputDirectory);
+    if (!stdfs::exists(targetDirectory)) {
+        stdfs::create_directory(targetDirectory);
     }
 }
 
-std::shared_ptr<dx12lib::DXCShader> ShaderLoader::dxc(const fs::path &filePath,
+std::shared_ptr<dx12lib::DXCShader> ShaderLoader::dxc(const stdfs::path &filePath,
     const std::string &entryPoint,
     const std::string &target,
     const D3D_SHADER_MACRO *defines)
 {
-    Exception::Throw(fs::exists(filePath), 
+    Exception::Throw(stdfs::exists(filePath), 
         "ShaderLoader::loadDxc filePath {} not exist!", filePath.string()
     );
     auto shaderCacheKey = calcShaderCacheKey(filePath, defines, entryPoint, target);
     dx12lib::ShaderCacheInfo shaderCacheInfo = getShaderCacheInfo(shaderCacheKey);
 
     auto pResult = std::make_shared<dx12lib::DXCShader>();
-    auto lastWriteTime = fs::last_write_time(filePath);
+    auto lastWriteTime = stdfs::last_write_time(filePath);
     if (checkShaderCacheValid(lastWriteTime, shaderCacheInfo)) {
         pResult->load(shaderCacheInfo);
         return pResult;
     } 
 
-    auto pInclude = std::make_unique<ShaderInclude>(filePath.parent_path());
+    dx12lib::ShaderInclude shaderInclude;
+    shaderInclude.addSearchDirectory(PathManager::instance()->getAssetPath());
+
     auto shaderSource = ShaderContentLoader::instance()->open(filePath);
 
     dx12lib::ShaderCompileDesc desc;
     desc.entryPoint = entryPoint;
     desc.target = target;
-    desc.pInclude = pInclude.get();
+    desc.pInclude = &shaderInclude;
     desc.pMacro = defines;
     desc.pShaderSource = shaderSource.data();
     desc.sizeInByte = shaderSource.size();
@@ -72,7 +74,7 @@ std::shared_ptr<dx12lib::DXCShader> ShaderLoader::dxc(const DxcCompileDesc1 &arg
     dx12lib::ShaderCompileDesc desc;
     desc.entryPoint = args.entryPoint;
     desc.target = args.target;
-    desc.pInclude = args.include;
+    desc.pInclude = args.pInclude;
     desc.pMacro = args.defines;
     desc.pShaderSource = args.source.data();
     desc.sizeInByte = args.source.size();
@@ -82,28 +84,28 @@ std::shared_ptr<dx12lib::DXCShader> ShaderLoader::dxc(const DxcCompileDesc1 &arg
     return pResult;
 }
 
-bool ShaderLoader::checkShaderCacheValid(const fs::file_time_type &lastWriteTime, const dx12lib::ShaderCacheInfo &cacheInfo) {
-    if (!fs::exists(cacheInfo.csoFilePath) ||
-        !fs::exists(cacheInfo.pdbFilePath) ||
-        !fs::exists(cacheInfo.refFilePath))
+bool ShaderLoader::checkShaderCacheValid(const stdfs::file_time_type &lastWriteTime, const dx12lib::ShaderCacheInfo &cacheInfo) {
+    if (!stdfs::exists(cacheInfo.csoFilePath) ||
+        !stdfs::exists(cacheInfo.pdbFilePath) ||
+        !stdfs::exists(cacheInfo.refFilePath))
     {
         return false;
     }
 
-    if (lastWriteTime > fs::last_write_time(cacheInfo.csoFilePath) ||
-        lastWriteTime > fs::last_write_time(cacheInfo.pdbFilePath) ||
-        lastWriteTime > fs::last_write_time(cacheInfo.refFilePath) )
+    if (lastWriteTime > stdfs::last_write_time(cacheInfo.csoFilePath) ||
+        lastWriteTime > stdfs::last_write_time(cacheInfo.pdbFilePath) ||
+        lastWriteTime > stdfs::last_write_time(cacheInfo.refFilePath) )
     {
         return false;
     }
     return true;
 }
 
-std::string ShaderLoader::calcShaderCacheKey(const fs::path &filePath, const D3D_SHADER_MACRO *defines,
+std::string ShaderLoader::calcShaderCacheKey(const stdfs::path &filePath, const D3D_SHADER_MACRO *defines,
                                              const std::string &entryPoint, const std::string &target)
 {
     std::error_code errorCode;
-    if (!fs::exists(filePath, errorCode)) {
+    if (!stdfs::exists(filePath, errorCode)) {
         Exception::Throw("DXCShader::compileFormMemory args.filePath {} not exist", filePath.string());
     }
 
@@ -115,8 +117,8 @@ std::string ShaderLoader::calcShaderCacheKey(const fs::path &filePath, const D3D
     }
 
     std::ranges::stable_sort(macros);
-    fs::path baseName = filePath.stem();
-    std::string targetFileName = std::to_string(fs::hash_value(filePath));
+    stdfs::path baseName = filePath.stem();
+    std::string targetFileName = std::to_string(stdfs::hash_value(filePath));
     targetFileName += fmt::format("_{}", baseName.string());
     targetFileName += fmt::format("_{}", entryPoint);
     targetFileName += fmt::format("_{}", target);
@@ -133,7 +135,7 @@ dx12lib::ShaderCacheInfo ShaderLoader::getShaderCacheInfo(const std::string &sha
     std::string pdbFileName = fmt::format("{}_{}.pdb", CompileMode, pdbUUID);
     std::string refFileName = fmt::format("{}_{}.ref", CompileMode, refUUID);
     dx12lib::ShaderCacheInfo cacheInfo;
-    auto cachePath = PathManager::toTempPath(outputDirectory);
+    auto cachePath = PathManager::toAssetCachePath(outputDirectory);
     cacheInfo.csoFilePath = cachePath / csoFileName;
     cacheInfo.pdbFilePath = cachePath / pdbFileName;
     cacheInfo.refFilePath = cachePath / refFileName;

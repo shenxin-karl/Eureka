@@ -4,6 +4,7 @@
 #include "Objects/PathManager.h"
 #include "EffectParser/PropertyBlockParser.h"
 #include "EffectParser/PassParser.h"
+#include "Dx12lib/Tool/DxcModule.h"
 #include <fstream>
 #include <regex>
 
@@ -31,7 +32,7 @@ EffectCompiler::~EffectCompiler() {
 
 }
 
-auto EffectCompiler::compile(const fs::path &effectSourcePath) -> std::shared_ptr<Effect> {
+auto EffectCompiler::compile(const stdfs::path &effectSourcePath) -> std::shared_ptr<Effect> {
 	_effectSourcePath = effectSourcePath.string();
 
 	std::ifstream fin;
@@ -52,13 +53,14 @@ auto EffectCompiler::compile(const fs::path &effectSourcePath) -> std::shared_pt
 
 std::any EffectCompiler::visitEffect(pd::EffectLabParser::EffectContext *context) {
 	auto pEffect = std::make_shared<Effect>();
+	pEffect->_effectSourcePath = _effectSourcePath;
 	if (context->property_block() != nullptr) {
 		PropertyBlockParser propertyBlockParser(_effectSourcePath);
 		pEffect->_propertyBlock = propertyBlockParser.parserPropertyBlock(context->property_block());
 	}
 
 	if (context->hlsl_include_block() != nullptr) {
-		pEffect->_passIncludeContent = std::any_cast<std::string>(
+		pEffect->_pIncludeContent = std::any_cast<WRL::ComPtr<IDxcBlobEncoding>>(
 			visitHlsl_include_block(context->hlsl_include_block())
 		);
 	}
@@ -101,14 +103,22 @@ std::any EffectCompiler::visitHlsl_include_block(ParserDetails::EffectLabParser:
 		} 
 	}
 
-	std::string toReturn;
-	std::string effectAbsolutePath = fs::absolute(_effectSourcePath).string();
+	std::string effectAbsolutePath = stdfs::absolute(_effectSourcePath).string();
 	if (firstIsNewLineChar) {
-		toReturn = fmt::format("#line {} \"{}\"{}", pToken->getLine(), effectAbsolutePath, content);
+		content = fmt::format("#line {} \"{}\"{}", pToken->getLine(), effectAbsolutePath, content);
 	} else {
-		toReturn = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), effectAbsolutePath, content);
+		content = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), effectAbsolutePath, content);
 	}
-	return toReturn;
+
+	WRL::ComPtr<IDxcBlobEncoding> pReturn;
+	dx12lib::DxcModule::instance()->getUtils()->CreateBlob(
+		content.c_str(),
+		content.size(),
+		DXC_CP_ACP,
+		&pReturn
+	);
+
+	return pReturn;
 }
 
 }

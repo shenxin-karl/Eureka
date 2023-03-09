@@ -9,7 +9,7 @@
 #include "ShaderHelper/KeywordMask.h"
 #include <filesystem>
 
-namespace fs = std::filesystem;
+namespace stdfs = std::filesystem;
 
 namespace Eureka {
 
@@ -28,7 +28,7 @@ struct ShaderEntryPoint {
 
 class GraphicsPipeline {
 public:
-	GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, fs::path shaderPath);
+	GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, stdfs::path shaderPath);
 	~GraphicsPipeline();
 	void setDepthStencilFormat(DXGI_FORMAT depthStencilFormat);
 	void setRenderTargetFormat(DXGI_FORMAT renderTargetFormat);
@@ -54,7 +54,7 @@ public:
 	auto getKeywordMask() const -> const KeywordMask &;
 	bool hasShader(ShaderType shaderType) const;
 private:
-	fs::path _shaderFilePath;
+	stdfs::path _shaderFilePath;
 	KeywordMask _keywordMask;
 	std::string_view _shaderContent;
 	DXGI_FORMAT _DSVFormat = DXGI_FORMAT_UNKNOWN;

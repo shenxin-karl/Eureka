@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <fmt/format.h>
 
-namespace fs = std::filesystem;
+namespace stdfs = std::filesystem;
 
 namespace dx12lib {
 

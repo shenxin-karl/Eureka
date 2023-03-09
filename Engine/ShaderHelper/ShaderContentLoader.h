@@ -5,11 +5,11 @@
 
 namespace Eureka {
 
-namespace fs = std::filesystem;
+namespace stdfs = std::filesystem;
 
 class ShaderContentLoader : public Singletion<ShaderContentLoader> {
 public:
-	auto open(const fs::path &filePath) -> std::string_view;
+	auto open(const stdfs::path &filePath) -> std::string_view;
 private:
 	struct Value {
 		size_t length = 0;

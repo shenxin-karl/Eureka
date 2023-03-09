@@ -185,12 +185,11 @@ void EurekaApplication::onResize(dx12lib::DirectContextProxy pDirectCtx, int wid
 }
 
 void EurekaApplication::constructInstance() {
-	fs::path projectPath("../../");
-	fs::path assetPath("../../Assets");
-	fs::path tempPath("../../.temp/");
+	stdfs::path assetPath("../../Assets");
+	stdfs::path tempPath("../../.temp/");
 
 	_singletionCollector.add<UUIDRandomGenerator>();
-	_singletionCollector.add<PathManager>(projectPath, assetPath, tempPath);
+	_singletionCollector.add<PathManager>(assetPath, tempPath);
 	_singletionCollector.add<ShaderContentLoader>();
 	_singletionCollector.add<ShaderLoader>();
 	_singletionCollector.add<MeshManager>();
@@ -217,7 +216,7 @@ void EurekaApplication::loading(dx12lib::DirectContextProxy pDirectCtx) {
 		return std::make_shared<Material>(materialDesc);
 	};
 
-	fs::path resourcePath;
+	stdfs::path resourcePath;
 	resourcePath = PathManager::toAssetPath("Models/SponzaPBR/Sponza.gltf");
 	auto pSponzaPBR = std::make_shared<ALTree>(resourcePath);
 	auto pModel = std::make_unique<MeshModel>(*pDirectCtx, pSponzaPBR);

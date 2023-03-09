@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "PropertyItem.h"
 #include "Dx12lib/Texture/Texture.h"
+#include "Dx12lib/Tool/DxcModule.h"
 
 namespace Eureka {
 
@@ -15,8 +16,10 @@ public:
 	void finalize();
 	auto getCBufferSize() const -> size_t;
 	auto getCBufferInitPtr() const -> void *;
+	auto getGeneratedPropertiesContent() const -> WRL::ComPtr<IDxcBlobEncoding>;
 	~PropertyBlock();
 private:
+	friend class PropertyBlockParser;
 	struct UniformVar {
 		size_t			 offset;
 		size_t			 sizeInByte;
@@ -33,12 +36,15 @@ private:
 		}
 		return T{};
 	}
+	void buildInitBuffer();
 private:
 	std::vector<std::unique_ptr<PropertyItem>>  _items;
 	size_t									    _cbufferSize = 0;
 	std::unique_ptr<char[]>						_pCbufferInitBuffer;
 	std::unordered_map<std::string, UniformVar> _uniformVars;
 	TextureMap									_textureMap;
+	WRL::ComPtr<IDxcBlobEncoding>				_pHlslPropertyContent;
+	size_t										_spaceId = 0;
 };
 	
 }

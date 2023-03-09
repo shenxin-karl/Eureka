@@ -17,13 +17,13 @@ PassParser::PassParser(std::string effectSourcePath)
 }
 
 auto PassParser::parse(pd::EffectLabParser::PassContext *ctx) -> std::unique_ptr<Pass> {
-	_pass = std::make_unique<Pass>();
+	_pass = std::make_unique<Pass>(_effectSourcePath);
 	_pass->_tag = std::any_cast<std::string>(visitPass_tag(ctx->pass_tag()));
 	for (auto *item : ctx->pass_block_item()) {
 		item->accept(this);
 	}
 
-	if (_pass->_shaderCode.empty()) {
+	if (_pass->_pSourceCode == nullptr) {
 		Exception::Throw("the pass '{}' No source code for shader is provided", _pass->getTag());
 	}
 
@@ -70,12 +70,20 @@ std::any PassParser::visitPassSourceContext(ParserDetails::EffectLabParser::Pass
 		}
 	}
 
-	std::string effectAbsolutePath = fs::absolute(_effectSourcePath).string();
+	std::string effectAbsolutePath = stdfs::absolute(_effectSourcePath).string();
+	std::string sourceCode;
 	if (firstIsNewLineChar) {
-		_pass->_shaderCode = fmt::format("#line {} \"{}\"{}", pToken->getLine(), effectAbsolutePath, content);
+		sourceCode = fmt::format("#line {} \"{}\"{}", pToken->getLine(), effectAbsolutePath, content);
 	} else {
-		_pass->_shaderCode = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), effectAbsolutePath, content);
+		sourceCode = fmt::format("#line {} \"{}\"\n{}", pToken->getLine(), effectAbsolutePath, content);
 	}
+
+	dx12lib::DxcModule::instance()->getUtils()->CreateBlob(
+		sourceCode.c_str(),
+		sourceCode.size(),
+		DXC_CP_ACP,
+		&_pass->_pSourceCode
+	);
 
 	return NullAny;
 }

@@ -14,6 +14,10 @@ auto PropertyBlockParser::parserPropertyBlock(pd::EffectLabParser::Property_bloc
 		return nullptr;
 	}
 	auto pPropertyBlock = std::make_unique<PropertyBlock>();
+	if (ctx->property_space() != nullptr) {
+		pPropertyBlock->_spaceId = std::any_cast<size_t>(visitProperty_space(ctx->property_space()));
+	}
+
 	for (auto *pPropertyItem : ctx->property_item()) {
 		pPropertyBlock->addItem(any_to_unique_ptr<PropertyItem>(pPropertyItem->accept(this)));
 	}
@@ -28,6 +32,12 @@ std::any PropertyBlockParser::visitNumber_val(pd::EffectLabParser::Number_valCon
 		return std::stof(context->FloatLiteral()->getText());
 	}
 	return 0.f;
+}
+
+std::any PropertyBlockParser::visitProperty_space(ParserDetails::EffectLabParser::Property_spaceContext *context) {
+	constexpr std::string_view keyword = "space";
+	auto text = context->SpaceId()->getText();
+	return static_cast<size_t>(text[keyword.length()]) - '0';
 }
 
 std::any PropertyBlockParser::visitProperty_range_type(ParserDetails::EffectLabParser::Property_range_typeContext *context) {

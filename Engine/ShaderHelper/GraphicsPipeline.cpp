@@ -6,14 +6,13 @@
 #include "GraphicsPipeline.h"
 #include "ShaderContentLoader.h"
 #include "ShaderHelper.h"
-#include "ShaderInclude.h"
 #include "ShaderLoader.h"
 #include "Dx12lib/Pipeline/DXCShader.h"
 #include "Foundation/Exception.h"
 
 namespace Eureka {
 
-GraphicsPipeline::GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, fs::path shaderPath)
+GraphicsPipeline::GraphicsPipeline(std::weak_ptr<dx12lib::Device> pDevice, stdfs::path shaderPath)
 : _shaderFilePath(std::move(shaderPath)), _pDevice(std::move(pDevice))
 {
 	_shaderContent = ShaderContentLoader::instance()->open(_shaderFilePath);

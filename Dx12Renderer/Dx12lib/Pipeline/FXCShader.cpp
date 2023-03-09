@@ -1,6 +1,27 @@
 #include "FXCShader.h"
+#include "ShaderInclude.h"
 
 namespace dx12lib {
+
+class FXCShaderIncludeWrap : public ID3DInclude {
+public:
+	STDMETHOD(Open)(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes) override {
+		auto pBlob = pInclude->loadSource(pFileName);
+		if (pBlob == nullptr) {
+			*ppData = nullptr;
+			*pBytes = 0;
+		} else {
+			*ppData = pBlob->GetBufferPointer();
+			*pBytes = pBlob->GetBufferSize();
+		}
+		return S_OK;
+	}
+	STDMETHOD(Close)(THIS_ LPCVOID pData) override {
+		return S_OK;
+	}
+public:
+	const ShaderInclude *pInclude;
+};
 
 auto FXCShader::getByteCode() const -> D3D12_SHADER_BYTECODE {
     if (_pByteCode == nullptr)
@@ -14,6 +35,13 @@ void FXCShader::compile(const ShaderCompileDesc &desc) {
 	compilesFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
+	FXCShaderIncludeWrap pIncludeWrap;
+	ID3DInclude *pInclude = D3D_COMPILE_STANDARD_FILE_INCLUDE;
+	if (desc.pInclude != nullptr) {
+		pIncludeWrap.pInclude = desc.pInclude;
+		pInclude = &pIncludeWrap;
+	}
+
 	HRESULT hr = S_OK;
 	WRL::ComPtr<ID3DBlob> byteCode;
 	WRL::ComPtr<ID3DBlob> errors;
@@ -21,7 +49,7 @@ void FXCShader::compile(const ShaderCompileDesc &desc) {
 		desc.sizeInByte,
 		desc.hintName.c_str(),
 		desc.pMacro,
-		desc.pInclude,
+		pInclude,
 		desc.entryPoint.c_str(),
 		desc.target.c_str(),
 		compilesFlags,

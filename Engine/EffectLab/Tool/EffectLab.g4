@@ -2,7 +2,8 @@ grammar EffectLab;
 
 effect : property_block? hlsl_include_block? pass+;
 
-property_block     : 'Properties' '{' property_item+ '}';
+property_block     : 'Properties' property_space? '{' property_item+ '}';
+property_space     : '(' SpaceId ')';
 hlsl_include_block : HlslIncludeBlock;
 
 property_name        : Identity;
@@ -261,7 +262,7 @@ KWIncrWrap    : 'IncrWrap';
 KWDecrWrap    : 'DecrWrap';
 KWTrue        : 'true'  | 'True';
 KWFalse       : 'false' | 'False';
-
+SpaceId       : 'space' [0-8];
 StringLiteral : '"' .*? '"' ;
 
 HlslIncludeBlock : 'HLSLINCLUDE' .+? 'ENDHLSL';
