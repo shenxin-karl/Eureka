@@ -27,13 +27,13 @@ UploadBuffer::UploadBuffer(std::weak_ptr<Device> pDevice,
 		IID_PPV_ARGS(&_pUploadResource)
 	));
 
-	pSharedDevice->getGlobalResourceState()->addGlobalResourceState(_pUploadResource.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	pSharedDevice->getGlobalResourceState()->addResourceState(_pUploadResource.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
 UploadBuffer::~UploadBuffer() {
 	if (auto pSharedDevice = _pDevice.lock()) {
 		if (auto *pGlobalResourceState = pSharedDevice->getGlobalResourceState())
-			pGlobalResourceState->removeGlobalResourceState(_pUploadResource.Get());
+			pGlobalResourceState->removeResourceState(_pUploadResource.Get());
 	}
 }
 

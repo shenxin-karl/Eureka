@@ -44,7 +44,7 @@ ReadBackBuffer::~ReadBackBuffer() {
 	}
 	if (auto pSharedDevice = _pDevice.lock()) {
 		if (auto *pGlobalResourceState = pSharedDevice->getGlobalResourceState())
-			pGlobalResourceState->removeGlobalResourceState(_pResource.Get());
+			pGlobalResourceState->removeResourceState(_pResource.Get());
 	}
 }
 
@@ -60,7 +60,7 @@ ReadBackBuffer::ReadBackBuffer(std::weak_ptr<Device> pDevice, size_t numElements
 		nullptr,
 		IID_PPV_ARGS(&_pResource)
 	));
-	pDevice.lock()->getGlobalResourceState()->addGlobalResourceState(_pResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST);
+	pDevice.lock()->getGlobalResourceState()->addResourceState(_pResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST);
 }
 
 void ReadBackBuffer::setCompleted(bool flag) {

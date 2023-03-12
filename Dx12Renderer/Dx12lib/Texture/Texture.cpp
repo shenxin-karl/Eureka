@@ -35,7 +35,7 @@ Texture::Texture(std::weak_ptr<Device> pDevice, const D3D12_RESOURCE_DESC &desc,
 		IID_PPV_ARGS(&_pResource)
 	));
 
-	pSharedDevice->getGlobalResourceState()->addGlobalResourceState(_pResource.Get(), D3D12_RESOURCE_STATE_COMMON);
+	pSharedDevice->getGlobalResourceState()->addResourceState(_pResource.Get(), D3D12_RESOURCE_STATE_COMMON);
 	initFeatureSupport(pd3dDevice, desc.Format);
 }
 
@@ -566,7 +566,7 @@ auto Texture::hasAlpha() const -> bool {
 Texture::~Texture() {
 	if (auto pSharedDevice = getDevice().lock()) {
 		if (auto *pGlobalResource = pSharedDevice->getGlobalResourceState())
-			pGlobalResource->removeGlobalResourceState(_pResource.Get());
+			pGlobalResource->removeResourceState(_pResource.Get());
 	}
 }
 

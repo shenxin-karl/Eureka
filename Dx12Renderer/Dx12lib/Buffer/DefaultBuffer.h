@@ -14,12 +14,13 @@ public:
 		D3D12_RESOURCE_STATES finalState = D3D12_RESOURCE_STATE_GENERIC_READ
 	);
 	~DefaultBuffer() override;
-	D3D12_GPU_VIRTUAL_ADDRESS getAddress() const;
-	WRL::ComPtr<ID3D12Resource> getD3DResource() const override;
-	BufferType getBufferType() const override;
-	size_t getBufferSize() const override;
+	auto getAddress() const -> D3D12_GPU_VIRTUAL_ADDRESS;
+	auto getD3DResource() const -> WRL::ComPtr<ID3D12Resource> override;
+	auto getBufferType() const -> BufferType override;
+	auto getBufferSize() const -> size_t override;
+	void uploadData(ID3D12GraphicsCommandList *pCmdList, const void *pData, size_t sizeInByte);
 private:
-	std::weak_ptr<Device> _pDevice;
+	std::weak_ptr<Device>		 _pDevice;
 	WRL::ComPtr<ID3D12Resource>  _pDefaultResource;
 	WRL::ComPtr<ID3D12Resource>  _pUploaderResource;
 };

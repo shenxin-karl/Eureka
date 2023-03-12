@@ -121,7 +121,7 @@ void SwapChain::updateBuffer(DirectContextProxy pDirectContext) {
 		name.append(std::to_wstring(i));
 		name.append(L"]");
 		pBuffer->SetName(name.c_str());
-		pGlobalResourceMap->addGlobalResourceState(pBuffer.Get(), D3D12_RESOURCE_STATE_COMMON);
+		pGlobalResourceMap->addResourceState(pBuffer.Get(), D3D12_RESOURCE_STATE_COMMON);
 		_pSwapChainBuffer[i] = pDirectContext->createTexture(pBuffer);
 		_pSwapChainBuffer[i]->setResourceName(name);
 	}

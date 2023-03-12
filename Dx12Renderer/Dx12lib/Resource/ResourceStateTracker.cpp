@@ -205,14 +205,23 @@ void GlobalResourceState::unlock() {
 	_isLocked = false;
 }
 
-void GlobalResourceState::addGlobalResourceState(ID3D12Resource *pResource, D3D12_RESOURCE_STATES state) {
+auto GlobalResourceState::getResourceState(ID3D12Resource *pResource, UINT subResource) -> D3D12_RESOURCE_STATES {
+	std::lock_guard lock(_mutex);
+	auto iter = _resourceState.find(pResource);
+	if (iter != _resourceState.end()) {
+		return iter->second.getSubResourceState(subResource);
+	}
+	return D3D12_RESOURCE_STATE_COMMON;
+}
+
+void GlobalResourceState::addResourceState(ID3D12Resource *pResource, D3D12_RESOURCE_STATES state) {
 	if (pResource != nullptr) {
 		std::lock_guard lock(_mutex);
 		_resourceState[pResource].setSubResourceState(D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, state);
 	}
 }
 
-void GlobalResourceState::removeGlobalResourceState(ID3D12Resource *pResource) {
+void GlobalResourceState::removeResourceState(ID3D12Resource *pResource) {
 	if (pResource != nullptr) {
 		std::lock_guard lock(_mutex);
 		_resourceState.erase(pResource);
@@ -223,13 +232,12 @@ void GlobalResourceState::setResourceState(ID3D12Resource *pResource, const Reso
 	_resourceState[pResource] = state;
 }
 
-const GlobalResourceState::ResourceState *GlobalResourceState::findResourceState(
-	ID3D12Resource *pResource) const
-{
+auto GlobalResourceState::findResourceState(
+	ID3D12Resource *pResource) const -> const GlobalResourceState::ResourceState* {
 	return const_cast<GlobalResourceState *>(this)->findResourceState(pResource);
 }
 
-GlobalResourceState::ResourceState * GlobalResourceState::findResourceState(ID3D12Resource *pResource) {
+auto GlobalResourceState::findResourceState(ID3D12Resource *pResource) -> GlobalResourceState::ResourceState* {
 	auto iter = _resourceState.find(pResource);
 	if (iter != _resourceState.end())
 		return &iter->second;

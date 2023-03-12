@@ -12,7 +12,7 @@ struct RenderObjectSortKey {
 		return lhs.renderQueue < rhs.renderQueue						||
 			   lhs.renderPriority < rhs.renderPriority					||
 			   lhs.pipelineStateHashCode < rhs.pipelineStateHashCode	||
-			   lhs.distance <= rhs.distance;
+			   lhs.distanceSqr <= rhs.distanceSqr;
 	}
 	friend bool operator<=(const RenderObjectSortKey &lhs, const RenderObjectSortKey &rhs) {
 		return !(rhs < lhs);
@@ -26,7 +26,7 @@ struct RenderObjectSortKey {
 	uint16_t renderQueue = 0;
 	uint16_t renderPriority = 0;
 	uint32_t pipelineStateHashCode = 0;
-	uint32_t distance = 0;
+	uint32_t distanceSqr = 0;
 };
 
 struct RenderObject {

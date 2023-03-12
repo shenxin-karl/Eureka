@@ -72,9 +72,13 @@ public:
 			DEF_DESC("BONEINDICES", 0, DXGI_FORMAT_R32G32B32_FLOAT,		13),
 		};
 #undef DEF_DESC
-		size_t index = (size_t)layoutIndex - 1;
+		size_t index = static_cast<size_t>(layoutIndex) - 1;
 		assert(index < std::size(descMap));
 		return descMap[index];
+	}
+
+	static constexpr size_t getLayoutSize() noexcept {
+		return Max-1;
 	}
 private:
 	size_t _value = Nothing;

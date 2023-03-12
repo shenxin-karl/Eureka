@@ -4,17 +4,19 @@
 #include "Math/MathHelper.h"
 #include <filesystem>
 
+using namespace Eureka;
+
 int main(int argc, char *argv[]) {
 	try {
-		auto pGameTimer = std::make_shared<Eureka::GameTimer>();
-		Eureka::Application::Initialize(new Eureka::EurekaApplication);
-		while (Eureka::Application::IsRunning()) {
+		auto pGameTimer = std::make_shared<GameTimer>();
+		Application::Initialize(new EurekaApplication);
+		while (Application::IsRunning()) {
 			pGameTimer->startNewFrame();
-			Eureka::Application::BeginTick(pGameTimer);
-			Eureka::Application::Tick(pGameTimer);
-			Eureka::Application::EndTick(pGameTimer);
+			Application::BeginTick(pGameTimer);
+			Application::Tick(pGameTimer);
+			Application::EndTick(pGameTimer);
 		}
-		Eureka::Application::Destroy();
+		Application::Destroy();
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 		std::wstring message = dx12lib::to_wstring(e.what());

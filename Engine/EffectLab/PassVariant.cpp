@@ -1,5 +1,4 @@
 #include "PassVariant.h"
-
 #include "Effect.h"
 #include "PropertyBlock.h"
 #include "ShaderKeywordSet.h"

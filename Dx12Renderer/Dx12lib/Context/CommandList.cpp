@@ -690,7 +690,7 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 			IID_PPV_ARGS(&pd3dAliasResource)
 		));
 
-		pShardDevice->getGlobalResourceState()->addGlobalResourceState(
+		pShardDevice->getGlobalResourceState()->addResourceState(
 			pd3dAliasResource.Get(), 
 			D3D12_RESOURCE_STATE_COMMON
 		);
@@ -705,7 +705,7 @@ void CommandList::generateMips(std::shared_ptr<Texture> pTexture) {
 			IID_PPV_ARGS(&pd3dUAVResource)
 		));
 
-		pShardDevice->getGlobalResourceState()->addGlobalResourceState(
+		pShardDevice->getGlobalResourceState()->addResourceState(
 			pd3dUAVResource.Get(), 
 			D3D12_RESOURCE_STATE_COMMON
 		);
@@ -794,7 +794,7 @@ void CommandList::reset() {
 
 	auto pGlobalResourceState = _pDevice.lock()->getGlobalResourceState();
 	for (auto &pResource : _staleRawResourceBuffers) 
-		pGlobalResourceState->removeGlobalResourceState(pResource.Get());
+		pGlobalResourceState->removeResourceState(pResource.Get());
 	_staleRawResourceBuffers.clear();
 
 	_renderProfiler = RenderProfiler{};
@@ -912,7 +912,7 @@ std::shared_ptr<Texture> CommandList::createTextureImpl(const DX::TexMetadata &m
 		IID_PPV_ARGS(&pTextureResource)
 	));
 	auto pGlobalResourceState = _pDevice.lock()->getGlobalResourceState();
-	pGlobalResourceState->addGlobalResourceState(pTextureResource.Get(), D3D12_RESOURCE_STATE_COMMON);
+	pGlobalResourceState->addResourceState(pTextureResource.Get(), D3D12_RESOURCE_STATE_COMMON);
 
 	std::vector<D3D12_SUBRESOURCE_DATA> subResources{ scratchImage.GetImageCount() };
 	const DX::Image *pImages = scratchImage.GetImages();

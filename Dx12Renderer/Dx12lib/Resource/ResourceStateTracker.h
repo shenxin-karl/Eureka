@@ -51,11 +51,12 @@ class GlobalResourceState {
 public:
 	void lock();
 	void unlock();
-	void addGlobalResourceState(ID3D12Resource *pResource, D3D12_RESOURCE_STATES state);
-	void removeGlobalResourceState(ID3D12Resource *pResource);
+	auto getResourceState(ID3D12Resource *pResource, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES) -> D3D12_RESOURCE_STATES;
+	void addResourceState(ID3D12Resource *pResource, D3D12_RESOURCE_STATES state);
+	void removeResourceState(ID3D12Resource *pResource);
 	void setResourceState(ID3D12Resource *pResource, const ResourceState &state);
-	const ResourceState *findResourceState(ID3D12Resource *pResource) const;
-	ResourceState *findResourceState(ID3D12Resource *pResource);
+	auto findResourceState(ID3D12Resource *pResource) const -> const ResourceState*;
+	auto findResourceState(ID3D12Resource *pResource) -> ResourceState*;
 	bool isLocked() const;
 private:
 	bool              _isLocked = false;
